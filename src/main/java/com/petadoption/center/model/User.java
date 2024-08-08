@@ -5,11 +5,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "Users")
+@Table(name = "users")
 public class User {
 
     @Id
@@ -25,6 +26,12 @@ public class User {
     private LocalDate dateOfBirth;
 
     private String address;
+
+    private String postalCode;
+
+    private String phoneCountryCode;
+
+    private Integer phoneNumber;
 
     private List<Pet> favoritePets;
 
