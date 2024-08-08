@@ -1,7 +1,13 @@
 package com.petadoption.center.model;
 
-public class PetAttribute {
+import jakarta.persistence.Embeddable;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Embeddable
+@Data
+@NoArgsConstructor
+public class PetAttribute {
     private Boolean sterilized;
     private Boolean vaccinated;
     private Boolean chipped;

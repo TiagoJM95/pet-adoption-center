@@ -1,8 +1,15 @@
 package com.petadoption.center.model;
 
-public class PetColor {
+import com.petadoption.center.enums.Colors;
+import jakarta.persistence.Embeddable;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-        private String primary;
-        private String secondary;
-        private String tertiary;
+@Embeddable
+@Data
+@NoArgsConstructor
+public class PetColor {
+        private Colors primary;
+        private Colors secondary;
+        private Colors tertiary;
 }
