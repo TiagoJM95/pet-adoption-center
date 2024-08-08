@@ -2,11 +2,16 @@ package com.petadoption.center.model;
 
 import com.petadoption.center.enums.*;
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@MappedSuperclass
-public abstract class Pet {
+@Entity
+@Data
+@NoArgsConstructor
+@Table(name = "pets")
+public class Pet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -14,13 +19,14 @@ public abstract class Pet {
 
     private String name;
 
-    private Species species;
+    @Column(name = "species")
+    private PetSpecies petSpecies;
 
     @Column(name = "primary_breed")
-    private Breeds primaryBreed;
+    private PetBreed primaryBreed;
 
     @Column(name = "secondary_breed")
-    private Breeds secondaryBreed;
+    private PetBreed secondaryBreed;
 
     @Embedded
     @AttributeOverrides({
