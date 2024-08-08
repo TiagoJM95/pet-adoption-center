@@ -36,6 +36,7 @@ public abstract class Pet {
 
     private String description;
 
+    @Column(name = "image_url")
     private String imageUrl;
 
     private Boolean isAdopted;
@@ -53,6 +54,7 @@ public abstract class Pet {
     })
     private PetAttribute attributes;
 
+    @Column(name = "date_added")
     private LocalDate dateAdded;
 
     private Organization organization;
