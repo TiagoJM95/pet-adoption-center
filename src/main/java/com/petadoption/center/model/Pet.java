@@ -14,6 +14,14 @@ public abstract class Pet {
 
     private String name;
 
+    private Species species;
+
+    @Column(name = "primary_breed")
+    private Breeds primaryBreed;
+
+    @Column(name = "secondary_breed")
+    private Breeds secondaryBreed;
+
     @Embedded
     @AttributeOverrides({
             @AttributeOverride( name = "primary", column = @Column(name = "pet_color_primary")),
