@@ -1,12 +1,14 @@
 package com.petadoption.center.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @Table(name = "adoption_forms")
 public class AdoptionForm {
