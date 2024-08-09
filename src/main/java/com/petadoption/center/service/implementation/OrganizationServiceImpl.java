@@ -5,9 +5,11 @@ import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.organization.OrganizationPatchDto;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.OrganizationService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrganizationServiceImpl implements OrganizationService {
 
     private final OrganizationRepository organizationRepository;
