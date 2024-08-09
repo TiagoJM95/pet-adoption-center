@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -43,12 +44,22 @@ public class User {
     @Column(name = "phone_number")
     private Integer phoneNumber;
 
-    @Column(name = "favorite_pets")
-    private List<Pet> favoritePets;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_favorite_pets",
+            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), // TESTING MAPPING WORKS WITH OR WITHOUT REFERENCE COLUMN
+            inverseJoinColumns = @JoinColumn(name = "pets_id")
+    )
+    private Set<Pet> favoritePets;
 
-    @Column(name = "adopted_pets")
-    private List<Pet> adoptedPets;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "user_adopted_pets",
+            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), // TESTING MAPPING WORKS WITH OR WITHOUT REFERENCE COLUMN
+            inverseJoinColumns = @JoinColumn(name = "pets_id")
+    )
+    private Set<Pet> adoptedPets;
 
-    @Column(name = "adoption_forms")
-    private List<AdoptionForm> adoptionForms;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Set<AdoptionForm> userAdoptionForms;
 }

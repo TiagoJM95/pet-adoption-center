@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -39,5 +40,8 @@ public class Organization {
     private SocialMedia socialMedia;
 
     @Column(name = "owned_pets")
-    private List<Pet> ownedPets;
+    private Set<Pet> ownedPets;
+
+    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    private List<Pet> petsOwned;
 }

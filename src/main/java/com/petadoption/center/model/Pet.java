@@ -6,6 +6,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -19,13 +21,17 @@ public class Pet {
 
     private String name;
 
-    @Column(name = "species")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "species_id")
     private PetSpecies petSpecies;
 
-    @Column(name = "primary_breed")
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "primary_breed_id")
     private PetBreed primaryBreed;
 
-    @Column(name = "secondary_breed")
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "secondary_breed_id")
     private PetBreed secondaryBreed;
 
     @Embedded
@@ -71,5 +77,12 @@ public class Pet {
     @Column(name = "date_added")
     private LocalDate dateAdded;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
     private Organization organization;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "adoption_form_id")
+    private Set<AdoptionForm> petAdoptionForm;
+
 }
