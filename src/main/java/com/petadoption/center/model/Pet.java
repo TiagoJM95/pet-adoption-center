@@ -4,6 +4,7 @@ import com.petadoption.center.enums.*;
 import com.petadoption.center.model.embeddable.PetAttribute;
 import com.petadoption.center.model.embeddable.PetColor;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -12,6 +13,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @Table(name = "pets")
 public class Pet {
@@ -25,7 +27,6 @@ public class Pet {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "species_id")
     private PetSpecies petSpecies;
-
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "primary_breed_id")

@@ -3,6 +3,7 @@ package com.petadoption.center.model;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Data
+@Builder
 @NoArgsConstructor
 @Table(name = "organizations")
 public class Organization {
