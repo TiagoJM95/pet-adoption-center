@@ -10,7 +10,13 @@ public record UserUpdateDto(
 
         String email,
 
-        Address address,
+        String street,
+
+        String city,
+
+        String state,
+
+        String postalCode,
 
         String phoneCountryCode,
 
