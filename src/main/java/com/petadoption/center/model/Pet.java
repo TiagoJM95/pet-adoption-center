@@ -4,17 +4,16 @@ import com.petadoption.center.enums.*;
 import com.petadoption.center.model.embeddable.PetAttribute;
 import com.petadoption.center.model.embeddable.PetColor;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Data
-@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "pets")
 public class Pet {
 

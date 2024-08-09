@@ -1,5 +1,6 @@
 package com.petadoption.center.dto.user;
 
+import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.AdoptionForm;
@@ -30,6 +31,6 @@ public record UserGetDto(
 
         List<PetGetDto> adoptedPets,
 
-      //  List<AdoptionFormGetDto> adoptionForms // TODO
+        List<AdoptionFormGetDto> adoptionForms
 ) {
 }

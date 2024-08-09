@@ -2,17 +2,16 @@ package com.petadoption.center.model;
 
 import com.petadoption.center.model.embeddable.Address;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Data
-@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
 
