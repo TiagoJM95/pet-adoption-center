@@ -4,9 +4,11 @@ import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetPatchDto;
 import com.petadoption.center.service.PetService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class PetServiceImpl implements PetService {
     @Override
     public List<PetGetDto> getAllPets() {
