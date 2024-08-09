@@ -14,7 +14,13 @@ public record UserCreateDto(
 
         LocalDate dateOfBirth,
 
-        Address address,
+        String street,
+
+        String city,
+
+        String state,
+
+        String postalCode,
 
         String phoneCountryCode,
 
