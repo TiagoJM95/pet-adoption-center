@@ -31,15 +31,14 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserGetDto> addNewUser(@RequestBody UserCreateDto UserCreateDto){
-        return new ResponseEntity<>(userService.addNewUser(UserCreateDto), HttpStatus.CREATED);
+    public ResponseEntity<UserGetDto> addNewUser(@RequestBody UserCreateDto userCreateDto){
+        return new ResponseEntity<>(userService.addNewUser(userCreateDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("userId") Long userId, @RequestBody UserPatchDto UserPatchDto){
-        return new ResponseEntity<>(userService.updateUser(userId, UserPatchDto), HttpStatus.OK);
+    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("userId") Long userId, @RequestBody UserPatchDto userPatchDto){
+        return new ResponseEntity<>(userService.updateUser(userId, userPatchDto), HttpStatus.OK);
     }
-
 
 
 }
