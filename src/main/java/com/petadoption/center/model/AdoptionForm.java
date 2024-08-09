@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
 
 @Entity
 @Data
@@ -16,9 +15,9 @@ public class AdoptionForm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "userAdoptionForms", fetch = FetchType.EAGER)
-    private List<User> users;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private User user_id;
 
-    @OneToMany(mappedBy = "petAdoptionForm", fetch = FetchType.EAGER)
-    private List<Pet> pets;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private Pet pet_id;
 }

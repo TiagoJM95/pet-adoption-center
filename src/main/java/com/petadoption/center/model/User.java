@@ -47,7 +47,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_favorite_pets",
-            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), // TESTING MAPPING WORKS WITH OR WITHOUT REFERENCE COLUMN
+            joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "pets_id")
     )
     private Set<Pet> favoritePets;
@@ -55,11 +55,11 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_adopted_pets",
-            joinColumns = @JoinColumn(name = "users_id", referencedColumnName = "id"), // TESTING MAPPING WORKS WITH OR WITHOUT REFERENCE COLUMN
+            joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "pets_id")
     )
     private Set<Pet> adoptedPets;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user_id", fetch = FetchType.EAGER)
     private Set<AdoptionForm> userAdoptionForms;
 }

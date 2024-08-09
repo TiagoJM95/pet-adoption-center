@@ -39,9 +39,7 @@ public class Organization {
     @Column(name = "social_media")
     private SocialMedia socialMedia;
 
-    @Column(name = "owned_pets")
-    private Set<Pet> ownedPets;
-
     @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @Column(name = "pets_owned")
     private List<Pet> petsOwned;
 }

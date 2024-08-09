@@ -81,8 +81,7 @@ public class Pet {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "adoption_form_id")
+    @OneToMany(mappedBy = "pet_id", fetch = FetchType.EAGER)
     private Set<AdoptionForm> petAdoptionForm;
 
 }
