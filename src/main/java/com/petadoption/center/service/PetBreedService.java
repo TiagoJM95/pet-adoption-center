@@ -2,7 +2,7 @@ package com.petadoption.center.service;
 
 import com.petadoption.center.dto.petBreed.PetBreedCreateDto;
 import com.petadoption.center.dto.petBreed.PetBreedGetDto;
-import com.petadoption.center.dto.petBreed.PetBreedPatchDto;
+import com.petadoption.center.dto.petBreed.PetBreedUpdateDto;
 
 import java.util.List;
 
@@ -10,10 +10,10 @@ public interface PetBreedService {
 
     List<PetBreedGetDto> getAllPetBreeds();
 
-    PetBreedGetDto getPetBreedById(Long petBreedId);
+    PetBreedGetDto getPetBreedById(Long id);
 
-    PetBreedGetDto addNewPetBreed(PetBreedCreateDto petBreedCreateDto);
+    PetBreedGetDto addNewPetBreed(PetBreedCreateDto petBreed);
 
-    PetBreedGetDto updatePetBreed(Long petBreedId, PetBreedPatchDto petBreedPatchDto);
+    PetBreedGetDto updatePetBreed(Long id, PetBreedUpdateDto petBreed);
 
 }

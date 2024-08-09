@@ -1,6 +1,6 @@
 package com.petadoption.center.dto.petBreed;
 
-public record PetBreedPatchDto(
+public record PetBreedUpdateDto(
 
         String name
 ) {

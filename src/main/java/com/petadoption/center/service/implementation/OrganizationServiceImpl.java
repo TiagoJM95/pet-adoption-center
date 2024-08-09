@@ -2,9 +2,10 @@ package com.petadoption.center.service.implementation;
 
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
-import com.petadoption.center.dto.organization.OrganizationPatchDto;
+import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.OrganizationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,12 +13,8 @@ import java.util.List;
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
 
-    private final OrganizationRepository organizationRepository;
-
-    public OrganizationServiceImpl(OrganizationRepository organizationRepository) {
-        this.organizationRepository = organizationRepository;
-    }
-
+    @Autowired
+    private OrganizationRepository organizationRepository;
 
     @Override
     public List<OrganizationGetDto> getAllOrganizations() {
@@ -25,17 +22,17 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public OrganizationGetDto getOrganizationById(Long organizationId) {
+    public OrganizationGetDto getOrganizationById(Long id) {
         return null;
     }
 
     @Override
-    public OrganizationGetDto addNewOrganization(OrganizationCreateDto organizationCreateDto) {
+    public OrganizationGetDto addNewOrganization(OrganizationCreateDto organization) {
         return null;
     }
 
     @Override
-    public OrganizationGetDto updateOrganization(Long organizationId, OrganizationPatchDto organizationPatchDto) {
+    public OrganizationGetDto updateOrganization(Long id, OrganizationUpdateDto organization) {
         return null;
     }
 }

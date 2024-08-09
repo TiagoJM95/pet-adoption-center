@@ -2,16 +2,16 @@ package com.petadoption.center.service;
 
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
-import com.petadoption.center.dto.adoptionForm.AdoptionFormPatchDto;
+import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 
 import java.util.List;
 
 public interface AdoptionFormService {
     List<AdoptionFormGetDto> getAllAdoptionForms();
 
-    AdoptionFormGetDto getAdoptionFormById(Long AdoptionFormId);
+    AdoptionFormGetDto getAdoptionFormById(Long id);
 
-    AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto AdoptionFormCreateDto);
+    AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionForm);
 
-    AdoptionFormGetDto updateAdoptionForm(Long AdoptionFormId, AdoptionFormPatchDto AdoptionFormPatchDto);
+    AdoptionFormGetDto updateAdoptionForm(Long id, AdoptionFormUpdateDto adoptionForm);
 }

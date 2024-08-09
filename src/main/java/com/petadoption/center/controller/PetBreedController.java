@@ -2,7 +2,7 @@ package com.petadoption.center.controller;
 
 import com.petadoption.center.dto.petBreed.PetBreedCreateDto;
 import com.petadoption.center.dto.petBreed.PetBreedGetDto;
-import com.petadoption.center.dto.petBreed.PetBreedPatchDto;
+import com.petadoption.center.dto.petBreed.PetBreedUpdateDto;
 import com.petadoption.center.service.PetBreedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pet-breed")
+@RequestMapping("/api/v1/pet-breed")
 public class PetBreedController {
 
     @Autowired
@@ -23,18 +23,19 @@ public class PetBreedController {
         return new ResponseEntity<>(petBreedService.getAllPetBreeds(), HttpStatus.OK);
     }
 
-    @GetMapping("/id/{petBreedId}")
-    public ResponseEntity<PetBreedGetDto> getPetBreedById(@PathVariable("petBreedId") Long petBreedId){
-        return new ResponseEntity<>(petBreedService.getPetBreedById(petBreedId), HttpStatus.OK);
+    @GetMapping("/id/{id}")
+    public ResponseEntity<PetBreedGetDto> getPetBreedById(@PathVariable("id") Long id){
+        return new ResponseEntity<>(petBreedService.getPetBreedById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<PetBreedGetDto> addNewUser(@RequestBody PetBreedCreateDto petBreedCreateDto){
-        return new ResponseEntity<>(petBreedService.addNewPetBreed(petBreedCreateDto), HttpStatus.CREATED);
+    public ResponseEntity<PetBreedGetDto> addNewUser(@RequestBody PetBreedCreateDto petBreed){
+        return new ResponseEntity<>(petBreedService.addNewPetBreed(petBreed), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{petBreedId}")
-    public ResponseEntity<PetBreedGetDto> updatePetBreed(@PathVariable ("petBreedId") Long petBreedId, @RequestBody PetBreedPatchDto petBreedPatchDto){
-        return new ResponseEntity<>(petBreedService.updatePetBreed(petBreedId, petBreedPatchDto), HttpStatus.OK);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<PetBreedGetDto> updatePetBreed(@PathVariable ("id") Long id,
+                                                         @RequestBody PetBreedUpdateDto petBreed){
+        return new ResponseEntity<>(petBreedService.updatePetBreed(id, petBreed), HttpStatus.OK);
     }
 }

@@ -2,7 +2,7 @@ package com.petadoption.center.service.implementation;
 
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
-import com.petadoption.center.dto.user.UserPatchDto;
+import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +13,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserRepository userRepository;
-
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
+    private UserRepository userRepository;
 
     @Override
     public List<UserGetDto> getAllUsers() {
@@ -27,17 +22,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto getUserById(Long userId) {
+    public UserGetDto getUserById(Long id) {
         return null;
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto userCreateDto) {
+    public UserGetDto addNewUser(UserCreateDto user) {
         return null;
     }
 
     @Override
-    public UserGetDto updateUser(Long userId, UserPatchDto userPatchDto) {
+    public UserGetDto updateUser(Long id, UserUpdateDto user) {
         return null;
     }
 }

@@ -1,9 +1,11 @@
 package com.petadoption.center.dto.pet;
 
-
+import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.model.embeddable.PetAttribute;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 public record PetGetDto(
         Long id,

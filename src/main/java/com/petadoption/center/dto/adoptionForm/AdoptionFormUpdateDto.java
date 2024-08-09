@@ -1,4 +1,4 @@
 package com.petadoption.center.dto.adoptionForm;
 
-public record AdoptionFormPatchDto() {
+public record AdoptionFormUpdateDto() {
 }

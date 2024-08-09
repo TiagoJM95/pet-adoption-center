@@ -1,6 +1,6 @@
 package com.petadoption.center.dto.organization;
 
-public record OrganizationPatchDto(
+public record OrganizationUpdateDto(
 
         String name,
 

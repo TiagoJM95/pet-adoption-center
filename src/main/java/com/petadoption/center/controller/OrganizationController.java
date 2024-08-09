@@ -1,9 +1,8 @@
 package com.petadoption.center.controller;
 
-
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
-import com.petadoption.center.dto.organization.OrganizationPatchDto;
+import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/organization")
+@RequestMapping("/api/v1/organization")
 public class OrganizationController {
 
     @Autowired
@@ -24,19 +23,20 @@ public class OrganizationController {
         return new ResponseEntity<>(organizationService.getAllOrganizations(), HttpStatus.OK);
     }
 
-    @GetMapping("/id/{organizationId}")
-    public ResponseEntity<OrganizationGetDto> getOrganizationById(@PathVariable("organizationId") Long organizationId){
-        return new ResponseEntity<>(organizationService.getOrganizationById(organizationId), HttpStatus.OK);
+    @GetMapping("/id/{id}")
+    public ResponseEntity<OrganizationGetDto> getOrganizationById(@PathVariable("id") Long id){
+        return new ResponseEntity<>(organizationService.getOrganizationById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrganizationGetDto> addNewOrganization(@RequestBody OrganizationCreateDto organizationCreateDto){
-        return new ResponseEntity<>(organizationService.addNewOrganization(organizationCreateDto), HttpStatus.CREATED);
+    public ResponseEntity<OrganizationGetDto> addNewOrganization(@RequestBody OrganizationCreateDto organization){
+        return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{organizationId}")
-    public ResponseEntity<OrganizationGetDto> updateOrganization(@PathVariable ("organizationId") Long organizationId, @RequestBody OrganizationPatchDto organizationPatchDto){
-        return new ResponseEntity<>(organizationService.updateOrganization(organizationId, organizationPatchDto), HttpStatus.OK);
+    @PutMapping("/update/{id}")
+    public ResponseEntity<OrganizationGetDto> updateOrganization(@PathVariable ("id") Long id,
+                                                                 @RequestBody OrganizationUpdateDto organization){
+        return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
     }
 
 }

@@ -1,6 +1,6 @@
 package com.petadoption.center.dto.pet;
 
-public record PetPatchDto(
+public record PetUpdateDto(
         String size,
         String age,
         String description,
