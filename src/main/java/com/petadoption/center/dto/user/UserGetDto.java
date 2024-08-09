@@ -1,6 +1,6 @@
 package com.petadoption.center.dto.user;
 
-import com.petadoption.center.model.Address;
+import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Pet;
 

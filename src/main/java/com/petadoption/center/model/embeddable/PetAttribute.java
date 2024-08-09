@@ -1,4 +1,4 @@
-package com.petadoption.center.model;
+package com.petadoption.center.model.embeddable;
 
 import jakarta.persistence.Embeddable;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package com.petadoption.center.dto.user;
 
-import com.petadoption.center.model.Address;
+import com.petadoption.center.model.embeddable.Address;
 
 public record UserPatchDto(
 

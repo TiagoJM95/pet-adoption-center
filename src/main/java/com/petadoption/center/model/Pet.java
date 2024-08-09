@@ -1,12 +1,13 @@
 package com.petadoption.center.model;
 
 import com.petadoption.center.enums.*;
+import com.petadoption.center.model.embeddable.PetAttribute;
+import com.petadoption.center.model.embeddable.PetColor;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 @Entity

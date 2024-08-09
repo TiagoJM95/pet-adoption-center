@@ -1,4 +1,4 @@
-package com.petadoption.center.model;
+package com.petadoption.center.model.embeddable;
 
 import com.petadoption.center.enums.Colors;
 import jakarta.persistence.Embeddable;
