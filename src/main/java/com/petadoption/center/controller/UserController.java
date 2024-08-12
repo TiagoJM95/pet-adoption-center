@@ -3,6 +3,8 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.user.UserAlreadyExistsException;
+import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,17 +26,17 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") Long id){
+    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserGetDto> addNewUser(@RequestBody UserCreateDto user){
+    public ResponseEntity<UserGetDto> addNewUser(@RequestBody UserCreateDto user) throws UserAlreadyExistsException {
         return new ResponseEntity<>(userService.addNewUser(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") Long id, @RequestBody UserUpdateDto user){
+    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") Long id, @RequestBody UserUpdateDto user) throws UserNotFoundException, UserAlreadyExistsException {
         return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
     }
 

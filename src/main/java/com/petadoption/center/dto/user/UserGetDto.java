@@ -8,6 +8,7 @@ import com.petadoption.center.model.Pet;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public record UserGetDto(
 
@@ -27,10 +28,12 @@ public record UserGetDto(
 
         Integer phoneNumber,
 
-        List<PetGetDto> favoritePets,
+        // TODO change to dto when converters are done
 
-        List<PetGetDto> adoptedPets,
+        Set<Pet> favoritePets,
 
-        List<AdoptionFormGetDto> adoptionForms
+        Set<Pet> adoptedPets,
+
+        Set<AdoptionForm> adoptionForms
 ) {
 }
