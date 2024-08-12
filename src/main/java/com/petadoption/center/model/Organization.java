@@ -39,6 +39,7 @@ public class Organization {
     @Column(name = "website_url")
     private String websiteUrl;
 
+    @Embedded
     @Column(name = "social_media")
     private SocialMedia socialMedia;
 
@@ -46,3 +47,10 @@ public class Organization {
     @Column(name = "pets_owned")
     private List<Pet> petsOwned;
 }
+
+/*@AttributeOverrides({
+            @AttributeOverride( name = "facebook", column = @Column(name = "facebook")),
+            @AttributeOverride( name = "instagram", column = @Column(name = "instagram")),
+            @AttributeOverride( name = "twitter", column = @Column(name = "twitter")),
+            @AttributeOverride( name = "youtube", column = @Column(name = "youtube"))
+    })*/
