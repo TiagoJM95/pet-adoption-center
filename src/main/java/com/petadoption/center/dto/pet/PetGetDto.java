@@ -1,8 +1,11 @@
 package com.petadoption.center.dto.pet;
 
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
+import com.petadoption.center.dto.breed.BreedGetDto;
+import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
-import com.petadoption.center.model.embeddable.PetAttribute;
+import com.petadoption.center.dto.species.SpeciesGetDto;
+import com.petadoption.center.model.embeddable.Attributes;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -10,10 +13,12 @@ import java.util.Set;
 public record PetGetDto(
         Long id,
         String name,
-        String petSpecies,
-        String primaryBreed,
-        String secondaryBreed,
-        String color,
+        SpeciesGetDto species,
+        BreedGetDto primaryBreed,
+        BreedGetDto secondaryBreed,
+        ColorGetDto primaryColor,
+        ColorGetDto secondaryColor,
+        ColorGetDto tertiaryColor,
         String gender,
         String coat,
         String size,
@@ -21,9 +26,8 @@ public record PetGetDto(
         String description,
         String imageUrl,
         Boolean isAdopted,
-        PetAttribute attributes,
+        Attributes attributes,
         LocalDate dateAdded,
-        OrganizationGetDto organization,
-        Set<AdoptionFormGetDto> adoptionForms
+        OrganizationGetDto organization
 ) {
 }

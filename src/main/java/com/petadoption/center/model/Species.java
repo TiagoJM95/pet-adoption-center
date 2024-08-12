@@ -10,13 +10,14 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "pet_species")
-public class PetSpecies {
+public class Species {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "petSpecies", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "species", fetch = FetchType.LAZY)
     private List<Pet> pets;
 }

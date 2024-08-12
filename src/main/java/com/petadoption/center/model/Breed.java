@@ -10,8 +10,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "pet_breeds")
-public class PetBreed {
+public class Breed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +20,7 @@ public class PetBreed {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "species_id")
-    private PetSpecies species;
+    private Species species;
 
     @OneToMany(mappedBy = "primaryBreed", fetch = FetchType.LAZY)
     private List<Pet> petsWithPrimaryBreed;

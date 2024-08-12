@@ -1,8 +1,7 @@
 package com.petadoption.center.model;
 
 import com.petadoption.center.enums.*;
-import com.petadoption.center.model.embeddable.PetAttribute;
-import com.petadoption.center.model.embeddable.PetColor;
+import com.petadoption.center.model.embeddable.Attributes;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,6 +13,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @Table(name = "pets")
 public class Pet {
 
@@ -25,23 +25,27 @@ public class Pet {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "species_id")
-    private PetSpecies petSpecies;
+    private Species species;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "primary_breed_id")
-    private PetBreed primaryBreed;
+    private Breed primaryBreed;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "secondary_breed_id")
-    private PetBreed secondaryBreed;
+    private Breed secondaryBreed;
 
-    @Embedded
-    @AttributeOverrides({
-            @AttributeOverride( name = "primary", column = @Column(name = "pet_color_primary")),
-            @AttributeOverride( name = "secondary", column = @Column(name = "pet_color_secondary")),
-            @AttributeOverride( name = "tertiary", column = @Column(name = "pet_color_tertiary"))
-    })
-    private PetColor color;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "primary_color_id")
+    private Color primaryColor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "secondary_color_id")
+    private Color secondaryColor;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "tertiary_color_id")
+    private Color tertiaryColor;
 
     @Enumerated(EnumType.STRING)
     private Genders gender;
@@ -73,7 +77,7 @@ public class Pet {
             @AttributeOverride( name = "goodWithDogs", column = @Column(name = "pet_good_with_dogs")),
             @AttributeOverride( name = "goodWithCats", column = @Column(name = "pet_good_with_cats"))
     })
-    private PetAttribute attributes;
+    private Attributes attributes;
 
     @Column(name = "date_added")
     private LocalDate dateAdded;
@@ -82,7 +86,7 @@ public class Pet {
     @JoinColumn(name = "organization_id")
     private Organization organization;
 
-    @OneToMany(mappedBy = "pet_id", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "petId", fetch = FetchType.EAGER)
     private Set<AdoptionForm> petAdoptionForm;
 
 }

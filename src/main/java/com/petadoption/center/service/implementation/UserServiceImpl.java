@@ -53,14 +53,14 @@ public class UserServiceImpl implements UserService {
             userToUpdate.setLastName(user.lastName());
         }
         if(user.email() != null && !user.email().isEmpty() && !user.email().equals(userToUpdate.getEmail())){
-            Optional<User> userEmail = userRepository.findByEMail(user.email());
+            Optional<User> userEmail = userRepository.findByEmail(user.email());
             if(userEmail.isPresent()){
                 throw new UserAlreadyExistsException("User with email: " + user.email() + " already exists");
             }
             userToUpdate.setEmail(user.email());
         }
         if(user.email() != null && !user.email().isEmpty() && !user.email().equals(userToUpdate.getEmail())){
-            Optional<User> userEmail = userRepository.findByEMail(user.email());
+            Optional<User> userEmail = userRepository.findByEmail(user.email());
             if(userEmail.isPresent()){
                 throw new UserAlreadyExistsException("User with email: " + user.email() + " already exists");
             }
@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void verifyIfUserAlreadyExists(UserCreateDto user) throws UserAlreadyExistsException {
-        Optional<User> userEmail = userRepository.findByEMail(user.email());
+        Optional<User> userEmail = userRepository.findByEmail(user.email());
         Optional<User> userPhoneNumber = userRepository.findByPhoneNumber(user.phoneNumber());
         if(userEmail.isPresent()){
             throw new UserAlreadyExistsException("User with email: " + user.email() + " already exists");

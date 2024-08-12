@@ -62,6 +62,6 @@ public class User {
     )
     private Set<Pet> adoptedPets;
 
-    @OneToMany(mappedBy = "user_id", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private Set<AdoptionForm> userAdoptionForms;
 }
