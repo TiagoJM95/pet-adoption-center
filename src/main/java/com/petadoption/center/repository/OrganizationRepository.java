@@ -16,9 +16,9 @@ public interface OrganizationRepository extends JpaRepository<Organization, Long
 
     Optional<Organization> findByPhoneNumber(String phoneNumber);
 
-    List<Optional<Organization>> findByCity(String city);
+    List<Organization> findByAddress_City(String city);
 
-    List<Optional<Organization>> findByState(String state);
+    List<Organization> findByAddress_State(String state);
 
-    List<Optional<Organization>> findByPostalCode(String postalCode);
+    List<Organization> findByAddress_PostalCode(String postalCode);
 }

@@ -13,5 +13,5 @@ public interface BreedRepository extends JpaRepository<Breed, Long> {
 
     Optional<Breed> findByName(String name);
 
-    List<Optional<Breed>> findBySpecies(Species species);
+    List<Breed> findBySpecies(Species species);
 }

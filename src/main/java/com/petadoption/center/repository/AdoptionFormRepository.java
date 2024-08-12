@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface AdoptionFormRepository extends JpaRepository<AdoptionForm, Long> {
 
-    List<Optional<AdoptionForm>> findByUserId(User userId);
+    List<AdoptionForm> findByUserId(User userId);
 
-    List<Optional<AdoptionForm>> findByPetId(Pet petId);
+    List<AdoptionForm> findByPetId(Pet petId);
 }

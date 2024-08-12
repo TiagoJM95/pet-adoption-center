@@ -16,46 +16,46 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
 
     Optional<Pet> findByName(String name);
 
-    List<Optional<Pet>> findBySpecies(Species species);
+    List<Pet> findBySpecies(Species species);
 
-    List<Optional<Pet>> findByPrimaryBreed(Breed breed);
+    List<Pet> findByPrimaryBreed(Breed breed);
 
-    List<Optional<Pet>> findBySecondaryBreed(Breed breed);
+    List<Pet> findBySecondaryBreed(Breed breed);
 
-    List<Pet> findByPrimaryBreedOrSecondaryBreed(Breed breed);
+    /*List<Pet> findByPrimaryBreedOrSecondaryBreed(Breed breed);*/
 
-    List<Optional<Pet>> findByPrimaryColor(Color color);
+    List<Pet> findByPrimaryColor(Color color);
 
-    List<Optional<Pet>> findBySecondaryColor(Color color);
+    List<Pet> findBySecondaryColor(Color color);
 
-    List<Optional<Pet>> findByTertiaryColor(Color color);
+    List<Pet> findByTertiaryColor(Color color);
 
-    List<Optional<Pet>> findByPrimaryColorOrSecondaryColorOrTertiaryColor(Color color);
+    /*List<Pet> findByPrimaryColorOrSecondaryColorOrTertiaryColor(Color color);*/
 
-    List<Optional<Pet>> findByGender(Genders gender);
+    List<Pet> findByGender(Genders gender);
 
-    List<Optional<Pet>> findByCoat(Coats coat);
+    List<Pet> findByCoat(Coats coat);
 
-    List<Optional<Pet>> findBySize(Sizes size);
+    List<Pet> findBySize(Sizes size);
 
-    List<Optional<Pet>> findByAge(Ages age);
+    List<Pet> findByAge(Ages age);
 
-    List<Optional<Pet>> findByIsAdopted(Boolean isAdopted);
+    List<Pet> findByIsAdopted(Boolean isAdopted);
 
-    List<Optional<Pet>> findBySterilized(Boolean sterilized);
+    List<Pet> findByAttributes_Sterilized(Boolean sterilized);
 
-    List<Optional<Pet>> findByVaccinated(Boolean vaccinated);
+    List<Pet> findByAttributes_Vaccinated(Boolean vaccinated);
 
-    List<Optional<Pet>> findByChipped(Boolean chipped);
+    List<Pet> findByAttributes_Chipped(Boolean chipped);
 
-    List<Optional<Pet>> findBySpecialNeeds(Boolean specialNeeds);
+    List<Pet> findByAttributes_SpecialNeeds(Boolean specialNeeds);
 
-    List<Optional<Pet>> findByHouseTrained(Boolean houseTrained);
+    List<Pet> findByAttributes_HouseTrained(Boolean houseTrained);
 
-    List<Optional<Pet>> findByGoodWithKids(Boolean goodWithKids);
+    List<Pet> findByAttributes_GoodWithKids(Boolean goodWithKids);
 
-    List<Optional<Pet>> findByGoodWithDogs(Boolean goodWithDogs);
+    List<Pet> findByAttributes_GoodWithDogs(Boolean goodWithDogs);
 
-    List<Optional<Pet>> findByGoodWithCats(Boolean goodWithCats);
+    List<Pet> findByAttributes_GoodWithCats(Boolean goodWithCats);
 
 }
