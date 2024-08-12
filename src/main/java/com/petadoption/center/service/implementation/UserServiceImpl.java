@@ -4,8 +4,10 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserAlreadyExistsException;
+import com.petadoption.center.exception.db.DatabaseConnectionException;
+import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
@@ -14,97 +16,95 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+
+import static com.petadoption.center.converter.UserConverter.fromModelToUserGetDto;
+import static com.petadoption.center.converter.UserConverter.fromUserCreateDtoToModel;
+import static com.petadoption.center.util.Utils.checkDbConnection;
 
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserRepository userRepository;
+
     @Autowired
-    private UserRepository userRepository;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public List<UserGetDto> getAllUsers() {
-        List<User> usersList = userRepository.findAll().stream().toList();
-        return usersList.stream().map(UserConverter::fromModelToUserGetDto).toList();
+        return userRepository.findAll().stream().map(UserConverter::fromModelToUserGetDto).toList();
     }
 
     @Override
     public UserGetDto getUserById(Long id) throws UserNotFoundException {
-        VerifyIfUserExists(id);
-        return UserConverter.fromModelToUserGetDto(VerifyIfUserExists(id).get());
+        return fromModelToUserGetDto(findUserById(id));
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto user) throws UserAlreadyExistsException {
-        verifyIfUserAlreadyExists(user);
-        User userToSave = UserConverter.fromUserCreateDtoToModel(user);
-        userRepository.save(userToSave);
-        return UserConverter.fromModelToUserGetDto(userToSave);
+    public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
+        checkDbConnection();
+        checkIfUserExistsByEmail(user.email());
+        checkIfUserExistsByPhoneNumber(user.phoneNumber());
+        return fromModelToUserGetDto(userRepository.save(fromUserCreateDtoToModel(user)));
     }
 
     @Override
-    public UserGetDto updateUser(Long id, UserUpdateDto user) throws UserNotFoundException, UserAlreadyExistsException {
-        User userToUpdate = VerifyIfUserExists(id).get();
+    public UserGetDto updateUser(Long id, UserUpdateDto user) throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
+        User userToUpdate = findUserById(id);
+        if(!userToUpdate.getEmail().equals(user.email())){
+            checkIfUserExistsByEmail(user.email());
+        }
+        if(!userToUpdate.getPhoneNumber().equals(user.phoneNumber())){
+            checkIfUserExistsByPhoneNumber(user.phoneNumber());
+        }
+        updateUserFields(user, userToUpdate);
+        updateAddressFields(user, userToUpdate);
+
+        return fromModelToUserGetDto(userRepository.save(userToUpdate));
+    }
+
+    private void updateUserFields(UserUpdateDto user, User userToUpdate) {
+        updateFieldIfChanged(user.firstName(), userToUpdate.getFirstName(), userToUpdate::setFirstName);
+        updateFieldIfChanged(user.lastName(), userToUpdate.getLastName(), userToUpdate::setLastName);
+        updateFieldIfChanged(user.email(), userToUpdate.getEmail(), userToUpdate::setEmail);
+        updateFieldIfChanged(user.phoneNumber(), userToUpdate.getPhoneNumber(), userToUpdate::setPhoneNumber);
+        updateFieldIfChanged(user.phoneCountryCode(), userToUpdate.getPhoneCountryCode(), userToUpdate::setPhoneCountryCode);
+    }
+
+    private void updateAddressFields(UserUpdateDto user, User userToUpdate){
         Address addressToUpdate = userToUpdate.getAddress();
-        if(user.firstName() != null && !user.firstName().isEmpty() && !user.firstName().equals(userToUpdate.getFirstName())){
-            userToUpdate.setFirstName(user.firstName());
-        }
-        if(user.lastName() != null && !user.lastName().isEmpty() && !user.lastName().equals(userToUpdate.getLastName())){
-            userToUpdate.setLastName(user.lastName());
-        }
-        if(user.email() != null && !user.email().isEmpty() && !user.email().equals(userToUpdate.getEmail())){
-            Optional<User> userEmail = userRepository.findByEmail(user.email());
-            if(userEmail.isPresent()){
-                throw new UserAlreadyExistsException("User with email: " + user.email() + " already exists");
-            }
-            userToUpdate.setEmail(user.email());
-        }
-        if(user.email() != null && !user.email().isEmpty() && !user.email().equals(userToUpdate.getEmail())){
-            Optional<User> userEmail = userRepository.findByEmail(user.email());
-            if(userEmail.isPresent()){
-                throw new UserAlreadyExistsException("User with email: " + user.email() + " already exists");
-            }
-            userToUpdate.setEmail(user.email());
-        }
-        if(user.street() != null && !user.street().isEmpty() && !user.street().equals(addressToUpdate.getStreet())){
-            addressToUpdate.setStreet(user.street());
-        }
-        if(user.city() != null && !user.city().isEmpty() && !user.city().equals(addressToUpdate.getCity())){
-            addressToUpdate.setCity(user.city());
-        }
-        if(user.state() != null && !user.state().isEmpty() && !user.state().equals(addressToUpdate.getState())){
-            addressToUpdate.setState(user.state());
-        }
-        if(user.postalCode() != null && !user.postalCode().isEmpty() && !user.postalCode().equals(addressToUpdate.getPostalCode())){
-            addressToUpdate.setPostalCode(user.postalCode());
-        }
-        if(user.phoneCountryCode() != null && !user.phoneCountryCode().isEmpty() && !user.phoneCountryCode().equals(userToUpdate.getPhoneCountryCode())){
-            userToUpdate.setPhoneCountryCode(user.phoneCountryCode());
-        }
-        if(user.phoneNumber() != null && !user.phoneNumber().equals(userToUpdate.getPhoneNumber())){
-            userToUpdate.setPhoneNumber(user.phoneNumber());
-        }
-        return UserConverter.fromModelToUserGetDto(userToUpdate);
+        updateFieldIfChanged(user.street(), addressToUpdate.getStreet(), addressToUpdate::setStreet);
+        updateFieldIfChanged(user.city(), addressToUpdate.getCity(), addressToUpdate::setCity);
+        updateFieldIfChanged(user.state(), addressToUpdate.getState(), addressToUpdate::setState);
+        updateFieldIfChanged(user.postalCode(), addressToUpdate.getPostalCode(), addressToUpdate::setPostalCode);
     }
 
-    private Optional<User> VerifyIfUserExists(Long id) throws UserNotFoundException {
-        Optional<User> userOptional = userRepository.findById(id);
-        if(userOptional.isEmpty()){
-            throw new UserNotFoundException("user with " + id + " doesn't exists");
-        }
-        return userOptional;
-    }
-
-    private void verifyIfUserAlreadyExists(UserCreateDto user) throws UserAlreadyExistsException {
-        Optional<User> userEmail = userRepository.findByEmail(user.email());
-        Optional<User> userPhoneNumber = userRepository.findByPhoneNumber(user.phoneNumber());
-        if(userEmail.isPresent()){
-            throw new UserAlreadyExistsException("User with email: " + user.email() + " already exists");
-        }
-        if(userPhoneNumber.isPresent()){
-            throw new UserAlreadyExistsException("User with phone number: " + user.phoneNumber() + " already exists" );
+    private <T> void updateFieldIfChanged(T newValue, T oldValue, Consumer<T> updateField) {
+        if (!newValue.equals(oldValue) && !newValue.equals("")) {
+            updateField.accept(newValue);
         }
     }
 
+    private User findUserById(Long id) throws UserNotFoundException {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+    }
+
+    private void checkIfUserExistsByEmail(String email) throws UserEmailDuplicateException {
+        Optional<User> userEmail = userRepository.findByEmail(email);
+        if (userEmail.isPresent()) {
+            throw new UserEmailDuplicateException(email);
+        }
+    }
+
+    private void checkIfUserExistsByPhoneNumber(Integer phoneNumber) throws UserPhoneNumberDuplicateException {
+        Optional<User> userPhoneNumber = userRepository.findByPhoneNumber(phoneNumber);
+        if (userPhoneNumber.isPresent()) {
+            throw new UserPhoneNumberDuplicateException(phoneNumber);
+        }
+    }
 
 }
