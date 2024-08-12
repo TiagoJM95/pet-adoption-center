@@ -3,6 +3,7 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.db.DatabaseConnectionException;
 import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
@@ -27,17 +28,17 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
+    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") Long id) throws UserNotFoundException, DatabaseConnectionException {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserGetDto> addNewUser(@RequestBody UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
+    public ResponseEntity<UserGetDto> addNewUser(@RequestBody UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
         return new ResponseEntity<>(userService.addNewUser(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") Long id, @RequestBody UserUpdateDto user) throws UserNotFoundException, UserEmailDuplicateException {
+    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") Long id, @RequestBody UserUpdateDto user) throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
     }
 
