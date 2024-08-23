@@ -3,3 +3,5 @@ docker run --name petCenter -e POSTGRES_DB=petCenter -e POSTGRES_USER=root -e PO
 
 AOP Before
         checkDbConnection();
+
+Verificar as exceções pq podem ter que receber tipos variados de argumentos. BreedServiceImpl.getBreedsBySpecies() está martelado.

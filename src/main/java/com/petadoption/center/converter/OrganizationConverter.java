@@ -36,7 +36,7 @@ public class OrganizationConverter {
                 build();
     }
 
-    public static OrganizationGetDto fromModelToOrganizationGetDto(Organization organization, List<PetGetDto> petsOwned) {
+    public static OrganizationGetDto fromModelToOrganizationGetDto(Organization organization) {
         return new OrganizationGetDto(
                 organization.getId(),
                 organization.getName(),
@@ -44,8 +44,7 @@ public class OrganizationConverter {
                 organization.getPhoneNumber(),
                 organization.getAddress(),
                 organization.getWebsiteUrl(),
-                organization.getSocialMedia(),
-                petsOwned
+                organization.getSocialMedia()
         );
     }
 }
