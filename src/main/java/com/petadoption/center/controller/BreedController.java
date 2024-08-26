@@ -3,6 +3,9 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.exception.breed.BreedNameDuplicateException;
+import com.petadoption.center.exception.breed.BreedNotFoundException;
+import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.BreedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,30 +15,35 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/pet-breed")
+@RequestMapping("/api/v1/breed")
 public class BreedController {
 
     @Autowired
     private BreedService petBreedService;
 
     @GetMapping("/")
-    public ResponseEntity<List<BreedGetDto>> getAllPetBreeds(){
-        return new ResponseEntity<>(petBreedService.getAllPetBreeds(), HttpStatus.OK);
+    public ResponseEntity<List<BreedGetDto>> getAllBreeds(){
+        return new ResponseEntity<>(petBreedService.getAllBreeds(), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<BreedGetDto> getPetBreedById(@PathVariable("id") Long id){
-        return new ResponseEntity<>(petBreedService.getPetBreedById(id), HttpStatus.OK);
+    public ResponseEntity<BreedGetDto> getBreedById(@PathVariable("id") Long id) throws BreedNotFoundException {
+        return new ResponseEntity<>(petBreedService.getBreedById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/species/{species}")
+    public ResponseEntity<List<BreedGetDto>> getBreedsBySpecies(@PathVariable("species") String species) throws SpeciesNotFoundException {
+        return new ResponseEntity<>(petBreedService.getBreedsBySpecies(species), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<BreedGetDto> addNewUser(@RequestBody BreedCreateDto breed){
-        return new ResponseEntity<>(petBreedService.addNewPetBreed(breed), HttpStatus.CREATED);
+    public ResponseEntity<BreedGetDto> addNewBreed(@RequestBody BreedCreateDto breed) throws BreedNameDuplicateException, SpeciesNotFoundException {
+        return new ResponseEntity<>(petBreedService.addNewBreed(breed), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BreedGetDto> updatePetBreed(@PathVariable ("id") Long id,
-                                                      @RequestBody BreedUpdateDto breed){
-        return new ResponseEntity<>(petBreedService.updatePetBreed(id, breed), HttpStatus.OK);
+    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") Long id,
+                                                      @RequestBody BreedUpdateDto breed) throws BreedNameDuplicateException, BreedNotFoundException {
+        return new ResponseEntity<>(petBreedService.updateBreed(id, breed), HttpStatus.OK);
     }
 }

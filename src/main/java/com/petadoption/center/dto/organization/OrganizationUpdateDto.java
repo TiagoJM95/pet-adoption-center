@@ -8,15 +8,13 @@ public record OrganizationUpdateDto(
 
         String phoneNumber,
 
-        String Street,
+        String street,
 
-         String street,
+        String city,
 
-         String city,
+        String state,
 
-         String state,
-
-         String postalCode,
+        String postalCode,
 
         String websiteUrl,
 

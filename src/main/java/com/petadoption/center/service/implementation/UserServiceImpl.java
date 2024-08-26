@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
-        checkDbConnection();
+        //checkDbConnection();
         checkIfUserExistsByEmail(user.email());
         checkIfUserExistsByPhoneNumber(user.phoneNumber());
         return fromModelToUserGetDto(userRepository.save(fromUserCreateDtoToModel(user)));
