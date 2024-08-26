@@ -20,9 +20,6 @@ public record OrganizationGetDto(
 
         String websiteUrl,
 
-        SocialMedia socialMedia,
-
-        List<PetGetDto> petsOwned
-
+        SocialMedia socialMedia
 ) {
 }

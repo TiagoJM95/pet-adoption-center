@@ -1,38 +1,72 @@
 package com.petadoption.center.service.implementation;
 
+import com.petadoption.center.converter.BreedConverter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.exception.breed.BreedNameDuplicateException;
+import com.petadoption.center.exception.breed.BreedNotFoundException;
+import com.petadoption.center.exception.species.SpeciesNotFoundException;
+import com.petadoption.center.model.Breed;
+import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.BreedRepository;
+import com.petadoption.center.repository.SpeciesRepository;
 import com.petadoption.center.service.BreedService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
+import static com.petadoption.center.converter.BreedConverter.fromBreedCreateDtoToModel;
+import static com.petadoption.center.converter.BreedConverter.fromModelToBreedGetDto;
 
 @Service
 public class BreedServiceImpl implements BreedService {
 
     @Autowired
-    private BreedRepository petBreedRepository;
+    private BreedRepository breedRepository;
+    private SpeciesRepository speciesRepository;
 
     @Override
-    public List<BreedGetDto> getAllPetBreeds() {
-        return List.of();
+    public List<BreedGetDto> getAllBreeds() {
+        return breedRepository.findAll().stream().map(BreedConverter::fromModelToBreedGetDto).toList();
     }
 
     @Override
-    public BreedGetDto getPetBreedById(Long id) {
-        return null;
+    public BreedGetDto getBreedById(Long id) throws BreedNotFoundException {
+        return fromModelToBreedGetDto(findBreedById(id));
     }
 
     @Override
-    public BreedGetDto addNewPetBreed(BreedCreateDto breed) {
-        return null;
+    public List<BreedGetDto> getBreedsBySpecies(String species) throws SpeciesNotFoundException {
+        return breedRepository.findBySpecies(
+                speciesRepository.findByName(species).orElseThrow(() -> new SpeciesNotFoundException(Long.valueOf(species))))
+                .stream().map(BreedConverter::fromModelToBreedGetDto).toList();
     }
 
     @Override
-    public BreedGetDto updatePetBreed(Long id, BreedUpdateDto breed) {
-        return null;
+    public BreedGetDto addNewBreed(BreedCreateDto breed) throws BreedNameDuplicateException, SpeciesNotFoundException {
+        checkIfBreedsExistsByName(breed.name());
+        Species species = speciesRepository.findById(breed.specieId()).orElseThrow(() -> new SpeciesNotFoundException(breed.specieId()));
+        return fromModelToBreedGetDto(breedRepository.save(fromBreedCreateDtoToModel(breed, species)));
+    }
+
+    @Override
+    public BreedGetDto updateBreed(Long id, BreedUpdateDto breed) throws BreedNotFoundException, BreedNameDuplicateException {
+        Breed breedToUpdate = findBreedById(id);
+        checkIfBreedsExistsByName(breed.name());
+        breedToUpdate.setName(breed.name());
+        return fromModelToBreedGetDto(breedRepository.save(breedToUpdate));
+    }
+
+    private Breed findBreedById(Long id) throws BreedNotFoundException {
+        return breedRepository.findById(id).orElseThrow(() -> new BreedNotFoundException(id));
+    }
+
+    private void checkIfBreedsExistsByName(String name) throws BreedNameDuplicateException {
+        if (breedRepository.findByName(name).isPresent()) {
+            throw new BreedNameDuplicateException(name);
+        }
     }
 }

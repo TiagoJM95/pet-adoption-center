@@ -2,6 +2,8 @@ package com.petadoption.center.controller;
 
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
+import com.petadoption.center.exception.color.ColorDuplicateException;
+import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.service.ColorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,12 +25,12 @@ public class ColorController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") Long id){
+    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") Long id) throws ColorNotFoundException {
         return new ResponseEntity<>(colorService.getColorById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<ColorGetDto> addNewColor(@RequestBody ColorCreateDto color){
+    public ResponseEntity<ColorGetDto> addNewColor(@RequestBody ColorCreateDto color) throws ColorDuplicateException {
         return new ResponseEntity<>(colorService.addNewColor(color), HttpStatus.CREATED);
     }
 }

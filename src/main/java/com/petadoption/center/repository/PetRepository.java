@@ -6,6 +6,7 @@ import com.petadoption.center.enums.Genders;
 import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,7 +23,8 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
 
     List<Pet> findBySecondaryBreed(Breed breed);
 
-    /*List<Pet> findByPrimaryBreedOrSecondaryBreed(Breed breed);*/
+    @Query("SELECT p FROM Pet p WHERE p.primaryBreed = :breed OR p.secondaryBreed = :breed")
+    List<Pet> findByBreed(Breed breed);
 
     List<Pet> findByPrimaryColor(Color color);
 
@@ -30,7 +32,8 @@ public interface PetRepository extends JpaRepository<Pet, Long> {
 
     List<Pet> findByTertiaryColor(Color color);
 
-    /*List<Pet> findByPrimaryColorOrSecondaryColorOrTertiaryColor(Color color);*/
+    @Query("SELECT p FROM Pet p WHERE p.primaryColor = :color OR p.secondaryColor = :color OR p.tertiaryColor = :color")
+    List<Pet> findByColor(Color color);
 
     List<Pet> findByGender(Genders gender);
 
