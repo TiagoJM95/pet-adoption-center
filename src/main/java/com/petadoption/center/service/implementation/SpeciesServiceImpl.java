@@ -31,7 +31,7 @@ public class SpeciesServiceImpl implements SpeciesService {
 
     @Override
     public List<SpeciesGetDto> getAllPetSpecies() {
-        return petSpeciesRepository.findAll().stream().map(SpeciesConverter::fromModelToSpeciesGetDto).toList();
+        return speciesRepository.findAll().stream().map(SpeciesConverter::fromModelToSpeciesGetDto).toList();
     }
 
     @Override
@@ -42,7 +42,7 @@ public class SpeciesServiceImpl implements SpeciesService {
     @Override
     public SpeciesGetDto addNewPetSpecies(SpeciesCreateDto species) throws SpeciesNameDuplicateException {
         checkIfSpeciesExistsByName(species.name());
-        return fromModelToSpeciesGetDto(petSpeciesRepository.save(fromSpeciesCreateDtoToModel(species)));
+        return fromModelToSpeciesGetDto(speciesRepository.save(fromSpeciesCreateDtoToModel(species)));
     }
 
     @Override
@@ -50,15 +50,15 @@ public class SpeciesServiceImpl implements SpeciesService {
         Species speciesToUpdate = findSpeciesById(id);
         checkIfSpeciesExistsByName(species.name());
         speciesToUpdate.setName(species.name());
-        return fromModelToSpeciesGetDto(petSpeciesRepository.save(speciesToUpdate));
+        return fromModelToSpeciesGetDto(speciesRepository.save(speciesToUpdate));
     }
 
     private Species findSpeciesById(Long id) throws SpeciesNotFoundException {
-        return petSpeciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
+        return speciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
     }
 
     private void checkIfSpeciesExistsByName(String name) throws SpeciesNameDuplicateException {
-        Optional<Species> species = petSpeciesRepository.findByName(name);
+        Optional<Species> species = speciesRepository.findByName(name);
         if (species.isPresent()) {
             throw new SpeciesNameDuplicateException(name);
         }

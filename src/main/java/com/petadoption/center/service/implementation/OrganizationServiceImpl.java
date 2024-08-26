@@ -38,27 +38,28 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     @Override
     public OrganizationGetDto addNewOrganization(OrganizationCreateDto organization) throws OrganizationDuplicateSocialMediaException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateEmailException {
-        checkIfOrganizationExists(organization);
+        //checkIfOrganizationExists(organization);
         return fromModelToOrganizationGetDto(organizationRepository.save(fromOrganizationCreateDtoToModel(organization)));
     }
 
     @Override
     public OrganizationGetDto updateOrganization(Long id, OrganizationUpdateDto organization) throws OrganizationNotFoundException, OrganizationDuplicateSocialMediaException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateEmailException {
         Organization organizationToUpdate = findById(id);
-        checkIfOrganizationExists(organization);
+        return null;
+        //checkIfOrganizationExists(organization);
     }
 
     private Organization findById(Long id) throws OrganizationNotFoundException {
         return organizationRepository.findById(id).orElseThrow(() -> new OrganizationNotFoundException("id"));
     }
 
-    private <T> void checkIfOrganizationExists(T organization) throws OrganizationDuplicateEmailException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateSocialMediaException {
-        checkIfOrganizationExistsByEmail(organization.email());
-        checkIfOrganizationExistsByPhoneNumber(organization.phoneNumber());
-        checkIfOrganizationExistsByAddress(organization.street(), organization.postalCode());
-        checkIfOrganizationExistsByWebsiteUrl(organization.websiteUrl());
-        checkIfOrganizationExistsBySocialMedia(organization.facebook(), organization.instagram(), organization.twitter(), organization.youtube());
-    }
+//    private <T> void checkIfOrganizationExists(T organization) throws OrganizationDuplicateEmailException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateSocialMediaException {
+//        checkIfOrganizationExistsByEmail(organization.email());
+//        checkIfOrganizationExistsByPhoneNumber(organization.phoneNumber());
+//        checkIfOrganizationExistsByAddress(organization.street(), organization.postalCode());
+//        checkIfOrganizationExistsByWebsiteUrl(organization.websiteUrl());
+//        checkIfOrganizationExistsBySocialMedia(organization.facebook(), organization.instagram(), organization.twitter(), organization.youtube());
+//    }
 
     private void checkIfOrganizationExistsByEmail(String email) throws OrganizationDuplicateEmailException {
         if(organizationRepository.findByEmail(email).isPresent()) {
