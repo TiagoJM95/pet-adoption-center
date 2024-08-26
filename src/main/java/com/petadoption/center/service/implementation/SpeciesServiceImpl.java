@@ -21,8 +21,13 @@ import static com.petadoption.center.converter.SpeciesConverter.fromSpeciesCreat
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
 
+
+    private final SpeciesRepository speciesRepository;
+
     @Autowired
-    private SpeciesRepository petSpeciesRepository;
+    public SpeciesServiceImpl(SpeciesRepository speciesRepository) {
+        this.speciesRepository = speciesRepository;
+    }
 
     @Override
     public List<SpeciesGetDto> getAllPetSpecies() {

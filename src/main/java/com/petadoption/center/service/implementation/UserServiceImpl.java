@@ -22,6 +22,8 @@ import java.util.function.Consumer;
 
 import static com.petadoption.center.converter.UserConverter.fromModelToUserGetDto;
 import static com.petadoption.center.converter.UserConverter.fromUserCreateDtoToModel;
+import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.FieldUpdater.updateIfChangedCheckDuplicates;
 import static com.petadoption.center.util.Utils.checkDbConnection;
 
 @Service
@@ -53,40 +55,44 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto updateUser(Long id, UserUpdateDto user) throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
+    public UserGetDto updateUser(Long id, UserUpdateDto user)
+            throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         User userToUpdate = findUserById(id);
-        if(!userToUpdate.getEmail().equals(user.email())){
-            checkIfUserExistsByEmail(user.email());
-        }
-        if(!userToUpdate.getPhoneNumber().equals(user.phoneNumber())){
-            checkIfUserExistsByPhoneNumber(user.phoneNumber());
-        }
+        updateIfChangedCheckDuplicates(user::email, userToUpdate::getEmail,
+                userToUpdate::setEmail,
+                () -> {
+                    try {
+                        checkIfUserExistsByEmail(user.email());
+                    } catch (UserEmailDuplicateException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+        updateIfChangedCheckDuplicates(user::phoneNumber, userToUpdate::getPhoneNumber,
+                userToUpdate::setPhoneNumber,
+                () -> {
+                    try {
+                        checkIfUserExistsByPhoneNumber(user.phoneNumber());
+                    } catch (UserPhoneNumberDuplicateException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
         updateUserFields(user, userToUpdate);
         updateAddressFields(user, userToUpdate);
-
         return fromModelToUserGetDto(userRepository.save(userToUpdate));
     }
 
     private void updateUserFields(UserUpdateDto user, User userToUpdate) {
-        updateFieldIfChanged(user.firstName(), userToUpdate.getFirstName(), userToUpdate::setFirstName);
-        updateFieldIfChanged(user.lastName(), userToUpdate.getLastName(), userToUpdate::setLastName);
-        updateFieldIfChanged(user.email(), userToUpdate.getEmail(), userToUpdate::setEmail);
-        updateFieldIfChanged(user.phoneNumber(), userToUpdate.getPhoneNumber(), userToUpdate::setPhoneNumber);
-        updateFieldIfChanged(user.phoneCountryCode(), userToUpdate.getPhoneCountryCode(), userToUpdate::setPhoneCountryCode);
+        updateIfChanged(user::firstName, userToUpdate::getFirstName, userToUpdate::setFirstName);
+        updateIfChanged(user::lastName, userToUpdate::getLastName, userToUpdate::setLastName);
+        updateIfChanged(user::phoneCountryCode, userToUpdate::getPhoneCountryCode, userToUpdate::setPhoneCountryCode);
     }
 
-    private void updateAddressFields(UserUpdateDto user, User userToUpdate){
+    private void updateAddressFields(UserUpdateDto user, User userToUpdate) {
         Address addressToUpdate = userToUpdate.getAddress();
-        updateFieldIfChanged(user.street(), addressToUpdate.getStreet(), addressToUpdate::setStreet);
-        updateFieldIfChanged(user.city(), addressToUpdate.getCity(), addressToUpdate::setCity);
-        updateFieldIfChanged(user.state(), addressToUpdate.getState(), addressToUpdate::setState);
-        updateFieldIfChanged(user.postalCode(), addressToUpdate.getPostalCode(), addressToUpdate::setPostalCode);
-    }
-
-    private <T> void updateFieldIfChanged(T newValue, T oldValue, Consumer<T> updateField) {
-        if (!newValue.equals(oldValue) && !newValue.equals("")) {
-            updateField.accept(newValue);
-        }
+        updateIfChanged(user::street, addressToUpdate::getStreet, addressToUpdate::setStreet);
+        updateIfChanged(user::city, addressToUpdate::getCity, addressToUpdate::setCity);
+        updateIfChanged(user::state, addressToUpdate::getState, addressToUpdate::setState);
+        updateIfChanged(user::postalCode, addressToUpdate::getPostalCode, addressToUpdate::setPostalCode);
     }
 
     private User findUserById(Long id) throws UserNotFoundException {
