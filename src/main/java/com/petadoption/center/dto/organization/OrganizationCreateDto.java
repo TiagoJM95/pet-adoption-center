@@ -29,5 +29,5 @@ public record OrganizationCreateDto(
         String youtube
 
 
-        ) {
+        ) implements OrganizationDto {
 }

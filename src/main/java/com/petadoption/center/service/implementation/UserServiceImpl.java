@@ -16,15 +16,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
 
 import static com.petadoption.center.converter.UserConverter.fromModelToUserGetDto;
 import static com.petadoption.center.converter.UserConverter.fromUserCreateDtoToModel;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
 import static com.petadoption.center.util.FieldUpdater.updateIfChangedCheckDuplicates;
-import static com.petadoption.center.util.Utils.checkDbConnection;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -59,23 +56,11 @@ public class UserServiceImpl implements UserService {
             throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         User userToUpdate = findUserById(id);
         updateIfChangedCheckDuplicates(user::email, userToUpdate::getEmail,
-                userToUpdate::setEmail,
-                () -> {
-                    try {
-                        checkIfUserExistsByEmail(user.email());
-                    } catch (UserEmailDuplicateException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                userToUpdate::setEmail, checkIfUserExistsByEmail(user.email()));
+
         updateIfChangedCheckDuplicates(user::phoneNumber, userToUpdate::getPhoneNumber,
-                userToUpdate::setPhoneNumber,
-                () -> {
-                    try {
-                        checkIfUserExistsByPhoneNumber(user.phoneNumber());
-                    } catch (UserPhoneNumberDuplicateException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+                userToUpdate::setPhoneNumber,checkIfUserExistsByPhoneNumber(user.phoneNumber()));
+
         updateUserFields(user, userToUpdate);
         updateAddressFields(user, userToUpdate);
         return fromModelToUserGetDto(userRepository.save(userToUpdate));
@@ -99,18 +84,20 @@ public class UserServiceImpl implements UserService {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    private void checkIfUserExistsByEmail(String email) throws UserEmailDuplicateException {
+    private Runnable checkIfUserExistsByEmail(String email) throws UserEmailDuplicateException {
         Optional<User> userEmail = userRepository.findByEmail(email);
         if (userEmail.isPresent()) {
             throw new UserEmailDuplicateException(email);
         }
+        return null;
     }
 
-    private void checkIfUserExistsByPhoneNumber(Integer phoneNumber) throws UserPhoneNumberDuplicateException {
+    private Runnable checkIfUserExistsByPhoneNumber(Integer phoneNumber) throws UserPhoneNumberDuplicateException {
         Optional<User> userPhoneNumber = userRepository.findByPhoneNumber(phoneNumber);
         if (userPhoneNumber.isPresent()) {
             throw new UserPhoneNumberDuplicateException(phoneNumber);
         }
+        return null;
     }
 
 }

@@ -25,5 +25,5 @@ public record OrganizationUpdateDto(
         String twitter,
 
         String youtube
-) {
+) implements OrganizationDto {
 }
