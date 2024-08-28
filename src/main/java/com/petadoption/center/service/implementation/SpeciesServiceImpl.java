@@ -17,10 +17,10 @@ import java.util.Optional;
 
 import static com.petadoption.center.converter.SpeciesConverter.fromModelToSpeciesGetDto;
 import static com.petadoption.center.converter.SpeciesConverter.fromSpeciesCreateDtoToModel;
+import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
-
 
     private final SpeciesRepository speciesRepository;
 
@@ -49,11 +49,11 @@ public class SpeciesServiceImpl implements SpeciesService {
     public SpeciesGetDto updatePetSpecies(Long id, SpeciesUpdateDto species) throws SpeciesNotFoundException, SpeciesNameDuplicateException {
         Species speciesToUpdate = findSpeciesById(id);
         checkIfSpeciesExistsByName(species.name());
-        speciesToUpdate.setName(species.name());
+        updateIfChanged(species::name, speciesToUpdate::getName, speciesToUpdate::setName);
         return fromModelToSpeciesGetDto(speciesRepository.save(speciesToUpdate));
     }
 
-    private Species findSpeciesById(Long id) throws SpeciesNotFoundException {
+    Species findSpeciesById(Long id) throws SpeciesNotFoundException {
         return speciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
     }
 

@@ -17,7 +17,4 @@ public class Species {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    @OneToMany(mappedBy = "species", fetch = FetchType.LAZY)
-    private List<Pet> pets;
 }
