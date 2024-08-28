@@ -43,7 +43,7 @@ public class Organization {
     @Column(name = "social_media")
     private SocialMedia socialMedia;
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
     @Column(name = "pets_owned")
     private List<Pet> petsOwned;
 }

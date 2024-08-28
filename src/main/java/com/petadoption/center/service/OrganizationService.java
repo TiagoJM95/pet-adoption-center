@@ -1,19 +1,19 @@
 package com.petadoption.center.service;
 
-import com.petadoption.center.dto.organization.OrganizationCreateDto;
-import com.petadoption.center.dto.organization.OrganizationGetDto;
-import com.petadoption.center.dto.organization.OrganizationUpdateDto;
+import com.petadoption.center.dto.organization.OrgCreateDto;
+import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.*;
 
 import java.util.List;
 
 public interface OrganizationService {
 
-    List<OrganizationGetDto> getAllOrganizations();
+    List<OrgGetDto> getAllOrganizations();
 
-    OrganizationGetDto getOrganizationById(Long id) throws OrganizationNotFoundException;
+    OrgGetDto getOrganizationById(Long id) throws OrgNotFoundException;
 
-    OrganizationGetDto addNewOrganization(OrganizationCreateDto organization) throws OrganizationDuplicateSocialMediaException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateEmailException;
+    OrgGetDto addNewOrganization(OrgCreateDto organization) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException;
 
-    OrganizationGetDto updateOrganization(Long id, OrganizationUpdateDto organization) throws OrganizationNotFoundException, OrganizationDuplicateSocialMediaException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateEmailException;
+    OrgGetDto updateOrganization(Long id, OrgUpdateDto organization) throws OrgNotFoundException, OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException;
 }

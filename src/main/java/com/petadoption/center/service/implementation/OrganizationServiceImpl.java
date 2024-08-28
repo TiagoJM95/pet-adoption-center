@@ -1,10 +1,10 @@
 package com.petadoption.center.service.implementation;
 
-import com.petadoption.center.converter.OrganizationConverter;
-import com.petadoption.center.dto.organization.OrganizationCreateDto;
-import com.petadoption.center.dto.organization.OrganizationDto;
-import com.petadoption.center.dto.organization.OrganizationGetDto;
-import com.petadoption.center.dto.organization.OrganizationUpdateDto;
+import com.petadoption.center.converter.OrgConverter;
+import com.petadoption.center.dto.organization.OrgCreateDto;
+import com.petadoption.center.dto.organization.OrgDto;
+import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.*;
 import com.petadoption.center.model.Organization;
 import com.petadoption.center.model.embeddable.Address;
@@ -15,118 +15,134 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-import static com.petadoption.center.converter.OrganizationConverter.fromModelToOrganizationGetDto;
-import static com.petadoption.center.converter.OrganizationConverter.fromOrganizationCreateDtoToModel;
+import static com.petadoption.center.converter.OrgConverter.fromModelToOrgGetDto;
+import static com.petadoption.center.converter.OrgConverter.fromOrgCreateDtoToModel;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
 
     @Autowired
-    private OrganizationRepository organizationRepository;
+    private OrganizationRepository orgRepository;
 
     @Override
-    public List<OrganizationGetDto> getAllOrganizations() {
-        return organizationRepository.findAll().stream().map(OrganizationConverter::fromModelToOrganizationGetDto).toList();
-    }
-
-    @Override
-    public OrganizationGetDto getOrganizationById(Long id) throws OrganizationNotFoundException {
-        return fromModelToOrganizationGetDto(findById(id));
+    public List<OrgGetDto> getAllOrganizations() {
+        return orgRepository.findAll().stream().map(OrgConverter::fromModelToOrgGetDto).toList();
     }
 
     @Override
-    public OrganizationGetDto addNewOrganization(OrganizationCreateDto organization) throws OrganizationDuplicateSocialMediaException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateEmailException {
-        checkIfOrganizationExists(organization);
-        return fromModelToOrganizationGetDto(organizationRepository.save(fromOrganizationCreateDtoToModel(organization)));
+    public OrgGetDto getOrganizationById(Long id) throws OrgNotFoundException {
+        return fromModelToOrgGetDto(findById(id));
     }
 
     @Override
-    public OrganizationGetDto updateOrganization(Long id, OrganizationUpdateDto organization) throws OrganizationNotFoundException, OrganizationDuplicateSocialMediaException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateEmailException {
-        Organization organizationToUpdate = findById(id);
-        checkOrganizationDuplicates(organization, organizationToUpdate);
-        updateOrganizationFields(organization, organizationToUpdate);
-        return fromModelToOrganizationGetDto(organizationRepository.save(organizationToUpdate));
+    public OrgGetDto addNewOrganization(OrgCreateDto org) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
+
+        checkOrgDuplicatesOrExists(org, null);
+        return fromModelToOrgGetDto(orgRepository.save(fromOrgCreateDtoToModel(org)));
+
     }
 
-    private void updateOrganizationFields(OrganizationUpdateDto organization, Organization organizationToUpdate) {
-        updateIfChanged(organization::name, organizationToUpdate::getName, organizationToUpdate::setName);
-        updateIfChanged(organization::email, organizationToUpdate::getEmail, organizationToUpdate::setEmail);
-        updateIfChanged(organization::phoneNumber, organizationToUpdate::getPhoneNumber, organizationToUpdate::setPhoneNumber);
-        updateIfChanged(organization::websiteUrl, organizationToUpdate::getWebsiteUrl, organizationToUpdate::setWebsiteUrl);
-        updateIfChanged(() -> new SocialMedia(organization.facebook(), organization.instagram(), organization.twitter(), organization.youtube()),
-                organizationToUpdate::getSocialMedia, organizationToUpdate::setSocialMedia);
-        updateIfChanged(() -> new Address(organization.street(), organization.city(), organization.state(), organization.postalCode()),
-                organizationToUpdate::getAddress, organizationToUpdate::setAddress);
+    @Override
+    public OrgGetDto updateOrganization(Long id, OrgUpdateDto org) throws OrgNotFoundException, OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
+
+        Organization orgToUpdate = findById(id);
+        checkOrgDuplicatesOrExists(org, orgToUpdate);
+        updateOrgFields(org, orgToUpdate);
+        return fromModelToOrgGetDto(orgRepository.save(orgToUpdate));
+
     }
 
-    private void checkOrganizationDuplicates(OrganizationUpdateDto organization, Organization organizationToUpdate) throws OrganizationDuplicateEmailException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateSocialMediaException {
-        if(!organization.email().equals(organizationToUpdate.getEmail())) {
-            checkIfOrganizationExistsByEmail(organization.email());
-        }
-        if(!organization.phoneNumber().equals(organizationToUpdate.getPhoneNumber())) {
-            checkIfOrganizationExistsByPhoneNumber(organization.phoneNumber());
-        }
-        if(!organization.street().equals(organizationToUpdate.getAddress().getStreet()) && !organization.postalCode().equals(organizationToUpdate.getAddress().getPostalCode())) {
-            checkIfOrganizationExistsByAddress(organization.street(), organization.postalCode());
-        }
-        if(!organization.websiteUrl().equals(organizationToUpdate.getWebsiteUrl())) {
-            checkIfOrganizationExistsByWebsiteUrl(organization.websiteUrl());
-        }
-        if(!organization.facebook().equals(organizationToUpdate.getSocialMedia().getFacebook()) || !organization.instagram().equals(organizationToUpdate.getSocialMedia().getInstagram()) ||
-                !organization.twitter().equals(organizationToUpdate.getSocialMedia().getTwitter()) || !organization.youtube().equals(organizationToUpdate.getSocialMedia().getYoutube())) {
-            checkIfOrganizationExistsBySocialMedia(organization.facebook(), organization.instagram(), organization.twitter(), organization.youtube());
-        }
-    }
+    private void checkOrgDuplicatesOrExists(OrgDto org, Organization orgToUpdate) throws OrgDuplicateEmailException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateSocialMediaException {
 
-    private void checkIfOrganizationExists(OrganizationDto organization) throws OrganizationDuplicateEmailException, OrganizationDuplicatePhoneNumberException, OrganizationDuplicateAddressException, OrganizationDuplicateWebsiteException, OrganizationDuplicateSocialMediaException {
-        checkIfOrganizationExistsByEmail(organization.email());
-        checkIfOrganizationExistsByPhoneNumber(organization.phoneNumber());
-        checkIfOrganizationExistsByAddress(organization.street(), organization.postalCode());
-        checkIfOrganizationExistsByWebsiteUrl(organization.websiteUrl());
-        checkIfOrganizationExistsBySocialMedia(organization.facebook(), organization.instagram(), organization.twitter(), organization.youtube());
-    }
+        if (orgToUpdate == null ||
+                !org.email().equals(orgToUpdate.getEmail())) {
 
-    private Organization findById(Long id) throws OrganizationNotFoundException {
-        return organizationRepository.findById(id).orElseThrow(() -> new OrganizationNotFoundException("id"));
-    }
+            checkIfOrgExistsByEmail(org.email());
+        }
+        if (orgToUpdate == null ||
+                !org.phoneNumber().equals(orgToUpdate.getPhoneNumber())) {
 
-    private void checkIfOrganizationExistsByEmail(String email) throws OrganizationDuplicateEmailException {
-        if(organizationRepository.findByEmail(email).isPresent()) {
-            throw new OrganizationDuplicateEmailException("Email already exists");
+            checkIfOrgExistsByPhoneNumber(org.phoneNumber());
+        }
+        if (orgToUpdate == null ||
+                !org.street().equals(orgToUpdate.getAddress().getStreet()) &&
+                !org.postalCode().equals(orgToUpdate.getAddress().getPostalCode())) {
+
+            checkIfOrgExistsByAddress(org.street(), org.postalCode());
+        }
+        if (orgToUpdate == null ||
+                !org.websiteUrl().equals(orgToUpdate.getWebsiteUrl())) {
+
+            checkIfOrgExistsByWebsiteUrl(org.websiteUrl());
+        }
+        if (orgToUpdate == null ||
+                !org.facebook().equals(orgToUpdate.getSocialMedia().getFacebook()) ||
+                !org.instagram().equals(orgToUpdate.getSocialMedia().getInstagram()) ||
+                !org.twitter().equals(orgToUpdate.getSocialMedia().getTwitter()) ||
+                !org.youtube().equals(orgToUpdate.getSocialMedia().getYoutube())) {
+
+            checkIfOrgExistsBySocialMedia(org.facebook(), org.instagram(), org.twitter(), org.youtube());
         }
     }
 
-    private void checkIfOrganizationExistsByPhoneNumber(String phoneNumber) throws OrganizationDuplicatePhoneNumberException {
-        if(organizationRepository.findByPhoneNumber(phoneNumber).isPresent()) {
-            throw new OrganizationDuplicatePhoneNumberException("Phone number already exists");
+    private void updateOrgFields(OrgUpdateDto org, Organization orgToUpdate) {
+
+        updateIfChanged(org::name, orgToUpdate::getName, orgToUpdate::setName);
+
+        updateIfChanged(org::email, orgToUpdate::getEmail, orgToUpdate::setEmail);
+
+        updateIfChanged(org::phoneNumber, orgToUpdate::getPhoneNumber, orgToUpdate::setPhoneNumber);
+
+        updateIfChanged(org::websiteUrl, orgToUpdate::getWebsiteUrl, orgToUpdate::setWebsiteUrl);
+
+        updateIfChanged(() -> new SocialMedia(org.facebook(), org.instagram(), org.twitter(), org.youtube()),
+                orgToUpdate::getSocialMedia, orgToUpdate::setSocialMedia);
+
+        updateIfChanged(() -> new Address(org.street(), org.city(), org.state(), org.postalCode()),
+                orgToUpdate::getAddress, orgToUpdate::setAddress);
+    }
+
+    public Organization findById(Long id) throws OrgNotFoundException {
+        return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException("id"));
+    }
+
+    private void checkIfOrgExistsByEmail(String email) throws OrgDuplicateEmailException {
+        if(orgRepository.findByEmail(email).isPresent()) {
+            throw new OrgDuplicateEmailException("Email already exists");
         }
     }
 
-    private void checkIfOrganizationExistsByAddress(String street, String postalCode) throws OrganizationDuplicateAddressException {
-        if (organizationRepository.findByAddress_StreetAndAddress_PostalCode(street, postalCode).isPresent()) {
-            throw new OrganizationDuplicateAddressException("Address already exists");
+    private void checkIfOrgExistsByPhoneNumber(String phoneNumber) throws OrgDuplicatePhoneNumberException {
+        if(orgRepository.findByPhoneNumber(phoneNumber).isPresent()) {
+            throw new OrgDuplicatePhoneNumberException("Phone number already exists");
         }
     }
 
-    private void checkIfOrganizationExistsByWebsiteUrl(String websiteUrl) throws OrganizationDuplicateWebsiteException {
-        if(organizationRepository.findByWebsiteUrl(websiteUrl).isPresent()) {
-            throw new OrganizationDuplicateWebsiteException("Website already exists");
+    private void checkIfOrgExistsByAddress(String street, String postalCode) throws OrgDuplicateAddressException {
+        if (orgRepository.findByAddress_StreetAndAddress_PostalCode(street, postalCode).isPresent()) {
+            throw new OrgDuplicateAddressException("Address already exists");
         }
     }
 
-    private void checkIfOrganizationExistsBySocialMedia(String facebook, String instagram, String twitter, String youtube) throws OrganizationDuplicateSocialMediaException {
-        if(organizationRepository.findBySocialMedia_Facebook(facebook).isPresent()) {
-            throw new OrganizationDuplicateSocialMediaException("Facebook already exists");
+    private void checkIfOrgExistsByWebsiteUrl(String websiteUrl) throws OrgDuplicateWebsiteException {
+        if(orgRepository.findByWebsiteUrl(websiteUrl).isPresent()) {
+            throw new OrgDuplicateWebsiteException("Website already exists");
         }
-        if(organizationRepository.findBySocialMedia_Instagram(instagram).isPresent()) {
-            throw new OrganizationDuplicateSocialMediaException("Instagram already exists");
+    }
+
+    private void checkIfOrgExistsBySocialMedia(String facebook, String instagram, String twitter, String youtube) throws OrgDuplicateSocialMediaException {
+        if(orgRepository.findBySocialMedia_Facebook(facebook).isPresent()) {
+            throw new OrgDuplicateSocialMediaException("Facebook already exists");
         }
-        if(organizationRepository.findBySocialMedia_Twitter(twitter).isPresent()) {
-            throw new OrganizationDuplicateSocialMediaException("Twitter already exists");
+        if(orgRepository.findBySocialMedia_Instagram(instagram).isPresent()) {
+            throw new OrgDuplicateSocialMediaException("Instagram already exists");
         }
-        if(organizationRepository.findBySocialMedia_Youtube(youtube).isPresent()) {
-            throw new OrganizationDuplicateSocialMediaException("Youtube already exists");
+        if(orgRepository.findBySocialMedia_Twitter(twitter).isPresent()) {
+            throw new OrgDuplicateSocialMediaException("Twitter already exists");
+        }
+        if(orgRepository.findBySocialMedia_Youtube(youtube).isPresent()) {
+            throw new OrgDuplicateSocialMediaException("Youtube already exists");
         }
     }
 
