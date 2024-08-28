@@ -50,6 +50,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     private void updateOrganizationFields(OrganizationUpdateDto organization, Organization organizationToUpdate) {
+        updateIfChanged(organization::name, organizationToUpdate::getName, organizationToUpdate::setName);
         updateIfChanged(organization::email, organizationToUpdate::getEmail, organizationToUpdate::setEmail);
         updateIfChanged(organization::phoneNumber, organizationToUpdate::getPhoneNumber, organizationToUpdate::setPhoneNumber);
         updateIfChanged(organization::websiteUrl, organizationToUpdate::getWebsiteUrl, organizationToUpdate::setWebsiteUrl);
