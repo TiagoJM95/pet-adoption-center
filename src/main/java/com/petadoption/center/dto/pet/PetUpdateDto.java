@@ -1,6 +1,7 @@
 package com.petadoption.center.dto.pet;
 
 public record PetUpdateDto(
+        String name,
         String size,
         String age,
         String description,
@@ -15,5 +16,4 @@ public record PetUpdateDto(
         Boolean goodWithDogs,
         Boolean goodWithCats,
         Long organizationId
-) {
-}
+) {}

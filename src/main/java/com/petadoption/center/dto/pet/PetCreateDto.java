@@ -24,5 +24,4 @@ public record PetCreateDto(
         Boolean goodWithDogs,
         Boolean goodWithCats,
         Long organizationId
-) {
-}
+) {}
