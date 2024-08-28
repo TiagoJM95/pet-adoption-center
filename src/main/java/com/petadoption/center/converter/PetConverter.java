@@ -5,6 +5,7 @@ import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
+import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Attributes;
@@ -73,10 +74,10 @@ public class PetConverter {
                 primaryColor,
                 secondaryColor,
                 tertiaryColor,
-                pet.getGender().getDescription(),
-                pet.getCoat().getDescription(),
-                pet.getSize().getDescription(),
-                pet.getAge().getDescription(),
+                pet.getGender(),
+                pet.getCoat(),
+                pet.getSize(),
+                pet.getAge(),
                 pet.getDescription(),
                 pet.getImageUrl(),
                 pet.getIsAdopted(),
