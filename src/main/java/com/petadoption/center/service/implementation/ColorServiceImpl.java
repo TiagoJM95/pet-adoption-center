@@ -18,8 +18,12 @@ import static com.petadoption.center.converter.ColorConverter.fromModelToColorGe
 @Service
 public class ColorServiceImpl implements ColorService {
 
+    private final ColorRepository colorRepository;
+
     @Autowired
-    private ColorRepository colorRepository;
+    public ColorServiceImpl(ColorRepository colorRepository) {
+        this.colorRepository = colorRepository;
+    }
 
     @Override
     public List<ColorGetDto> getAllColors() {
@@ -37,7 +41,7 @@ public class ColorServiceImpl implements ColorService {
         return fromModelToColorGetDto(colorRepository.save(ColorConverter.fromColorCreateDtoToModel(color)));
     }
 
-    private Color findColorById(Long id) throws ColorNotFoundException {
+    Color findColorById(Long id) throws ColorNotFoundException {
         return colorRepository.findById(id).orElseThrow(() -> new ColorNotFoundException("id"));
     }
 

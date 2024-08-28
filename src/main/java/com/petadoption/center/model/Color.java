@@ -19,13 +19,4 @@ public class Color {
     private Long id;
 
     private String name;
-
-    @OneToMany(mappedBy = "primaryColor", fetch = FetchType.LAZY)
-    private List<Pet> petsWithPrimaryColor;
-
-    @OneToMany(mappedBy = "secondaryColor", fetch = FetchType.LAZY)
-    private List<Pet> petsWithSecondaryColor;
-
-    @OneToMany(mappedBy = "tertiaryColor", fetch = FetchType.LAZY)
-    private List<Pet> petsWithTertiaryColor;
 }
