@@ -69,17 +69,21 @@ public class PetServiceImpl implements PetService {
     public PetGetDto updatePet(Long id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateImageException, OrgNotFoundException {
         Pet petToUpdate = findById(id);
         checkIfPetExistsByImageUrl(pet.imageUrl());
-        Organization org = organizationService.findById(pet.organizationId());
+        updatePetFields(pet, petToUpdate);
+        return convertToPetGetDto(petRepository.save(petToUpdate));
     }
 
-    private void updatePetFields(PetUpdateDto pet, Pet petToUpdate) {
+    private void updatePetFields(PetUpdateDto pet, Pet petToUpdate) throws OrgNotFoundException {
         updateIfChanged(pet::size, petToUpdate::getSize, petToUpdate::setSize);
         updateIfChanged(pet::age, petToUpdate::getAge, petToUpdate::setAge);
         updateIfChanged(pet::description, petToUpdate::getDescription, petToUpdate::setDescription);
         updateIfChanged(pet::imageUrl, petToUpdate::getImageUrl, petToUpdate::setImageUrl);
         updateIfChanged(pet::isAdopted, petToUpdate::getIsAdopted, petToUpdate::setIsAdopted);
         updateIfChanged(() -> new Attributes(pet.sterilized(), pet.vaccinated(), pet.chipped(), pet.specialNeeds(), pet.houseTrained(), pet.goodWithKids(), pet.goodWithDogs(), pet.goodWithCats()), petToUpdate::getAttributes, petToUpdate::setAttributes);
-        updateIfChanged(pet::organizationId, () -> petToUpdate.getOrganization().getId(), () -> petToUpdate.setOrganization(organizationService.findById(pet.organizationId())));
+        Organization org = organizationService.findById(pet.organizationId());
+        if(pet.organizationId() != null && !org.equals(petToUpdate.getOrganization())) {
+            petToUpdate.setOrganization(org);
+        }
     }
 
     private Pet findById(Long id) throws PetNotFoundException {

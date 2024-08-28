@@ -6,6 +6,7 @@ import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.pet.PetDuplicateImageException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Pet;
@@ -35,12 +36,12 @@ public class PetController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<PetGetDto> addNewPet(@RequestBody PetCreateDto pet) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException {
+    public ResponseEntity<PetGetDto> addNewPet(@RequestBody PetCreateDto pet) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, PetDuplicateImageException {
         return new ResponseEntity<>(petService.addNewPet(pet), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PetGetDto> updatePet(@PathVariable ("id") Long id, @RequestBody PetUpdateDto pet){
+    public ResponseEntity<PetGetDto> updatePet(@PathVariable ("id") Long id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetDuplicateImageException, PetNotFoundException {
         return new ResponseEntity<>(petService.updatePet(id, pet), HttpStatus.OK);
     }
 }
