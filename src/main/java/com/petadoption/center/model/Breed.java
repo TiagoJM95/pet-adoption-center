@@ -22,10 +22,4 @@ public class Breed {
     @JoinColumn(name = "species_id")
     private Species species;
 
-    @OneToMany(mappedBy = "primaryBreed", fetch = FetchType.LAZY)
-    private List<Pet> petsWithPrimaryBreed;
-
-    @OneToMany(mappedBy = "secondaryBreed", fetch = FetchType.LAZY)
-    private List<Pet> petsWithSecondaryBreed;
-
 }

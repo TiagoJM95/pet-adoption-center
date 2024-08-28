@@ -20,13 +20,19 @@ import java.util.Optional;
 
 import static com.petadoption.center.converter.BreedConverter.fromBreedCreateDtoToModel;
 import static com.petadoption.center.converter.BreedConverter.fromModelToBreedGetDto;
+import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
 
 @Service
 public class BreedServiceImpl implements BreedService {
 
+    private final BreedRepository breedRepository;
+    private final SpeciesRepository speciesRepository;
+
     @Autowired
-    private BreedRepository breedRepository;
-    private SpeciesRepository speciesRepository;
+    public BreedServiceImpl(BreedRepository breedRepository, SpeciesRepository speciesRepository) {
+        this.breedRepository = breedRepository;
+        this.speciesRepository = speciesRepository;
+    }
 
     @Override
     public List<BreedGetDto> getAllBreeds() {
@@ -56,11 +62,11 @@ public class BreedServiceImpl implements BreedService {
     public BreedGetDto updateBreed(Long id, BreedUpdateDto breed) throws BreedNotFoundException, BreedNameDuplicateException {
         Breed breedToUpdate = findBreedById(id);
         checkIfBreedsExistsByName(breed.name());
-        breedToUpdate.setName(breed.name());
+        updateIfChanged(breed::name, breedToUpdate::getName, breedToUpdate::setName);
         return fromModelToBreedGetDto(breedRepository.save(breedToUpdate));
     }
 
-    private Breed findBreedById(Long id) throws BreedNotFoundException {
+    Breed findBreedById(Long id) throws BreedNotFoundException {
         return breedRepository.findById(id).orElseThrow(() -> new BreedNotFoundException(id));
     }
 
