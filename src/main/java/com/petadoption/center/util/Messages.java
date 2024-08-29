@@ -32,9 +32,11 @@ public class Messages {
     public static final String YOUTUBE = "Youtube: ";
 
     public static final String ADDRESS_STREET = "Address with street: ";
+
     public static final String ADDRESS_POSTAL_CODE = " and postal code: ";
 
-    public static final String DB_CONNECTION_ERROR = "Something went wrong connection to the database.";
+    public static final String DB_CONNECTION_ERROR = "Something went wrong with the connection to the database.";
+
 
     // EMAIL MESSAGES
 
@@ -43,7 +45,6 @@ public class Messages {
     public static final String EMAIL_SUCCESS = "Email sent successfully";
 
     public static final String EMAIL_ERROR = "Error sending email";
-
 
 
     // ASPECT MESSAGES
