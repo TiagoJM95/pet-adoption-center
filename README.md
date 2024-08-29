@@ -10,5 +10,7 @@ TODO:
         Sort de Pets por date;
         Pageable em todos os endpoints;
         Validations;
+        Auth0 ou parecido;
+        Métodos Delete;
         CODE CLEANUP;
         Testes;
