@@ -59,7 +59,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetGetDto> getAllPets(String nameLikeFilter, Breed breed, Breed primaryBreed, Breed secondaryBreed, Color color, Color primaryColor, Color secondaryColor, Color tertiaryColor, String gender, String coat, String size, String age, Boolean isAdopted, Boolean isSterilized) {
+    public List<PetGetDto> getAllPets(String nameLikeFilter, Breed breed, Breed primaryBreed, Breed secondaryBreed, Color color, Color primaryColor, Color secondaryColor, Color tertiaryColor, String gender, String coat, String size, String age, Boolean isAdopted, Boolean isSterilized, Boolean isVaccinated, Boolean isChipped, Boolean isSpecialNeeds, Boolean isHouseTrained, Boolean goodWithKids, Boolean goodWithDogs, Boolean goodWithCats) {
         Specification<Pet> filters = Specification.where(
                 StringUtils.isBlank(nameLikeFilter) ? null : nameLike(nameLikeFilter.toLowerCase()))
                 .and(breed == null ? null : findByBreed(breed))
@@ -74,7 +74,14 @@ public class PetServiceImpl implements PetService {
                 .and(size == null ? null : findBySize(getSizeByDescription(gender).get()))
                 .and(age == null ? null : findByAge(getAgeByDescription(gender).get()))
                 .and(isAdopted == null ? null : isAdopted(isAdopted))
-                .and(isSterilized == null ? null : isSterilized(isSterilized));
+                .and(isSterilized == null ? null : isSterilized(isSterilized))
+                .and(isVaccinated == null ? null : isVaccinated(isVaccinated))
+                .and(isChipped == null ? null : isChipped(isChipped))
+                .and(isSpecialNeeds == null ? null : isSpecialNeeds(isSpecialNeeds))
+                .and(isHouseTrained == null ? null : isHouseTrained(isHouseTrained))
+                .and(goodWithKids == null ? null : isGoodWithKids(goodWithKids))
+                .and(goodWithDogs == null ? null : isGoodWithDogs(goodWithDogs))
+                .and(goodWithCats == null ? null : isGoodWithCats(goodWithCats));
         return petRepository.findAll(filters).stream().map(this::convertToPetGetDto).toList();
     }
 

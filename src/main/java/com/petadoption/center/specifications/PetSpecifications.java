@@ -39,9 +39,11 @@ public class PetSpecifications {
     public static Specification<Pet> findByPrimaryColor(Color color) {
         return (root, query, builder) -> builder.equal(root.get("primaryColor") , color);
     }
+
     public static Specification<Pet> findBySecondaryColor(Color color) {
         return (root, query, builder) -> builder.equal(root.get("secondaryColor") , color);
     }
+
     public static Specification<Pet> findByTertiaryColor(Color color) {
         return (root, query, builder) -> builder.equal(root.get("tertiaryColor") , color);
     }
@@ -53,9 +55,11 @@ public class PetSpecifications {
     public static Specification<Pet> findByCoat(Coats coats) {
         return (root, query, builder) -> builder.equal(root.get("coat"), coats);
     }
+
     public static Specification<Pet> findBySize(Sizes sizes) {
         return (root, query, builder) -> builder.equal(root.get("size"), sizes);
     }
+
     public static Specification<Pet> findByAge(Ages ages) {
         return (root, query, builder) -> builder.equal(root.get("age"), ages);
     }
@@ -65,7 +69,35 @@ public class PetSpecifications {
     }
 
     public static Specification<Pet> isSterilized(Boolean isSterilized) {
-        return (root, query, builder) -> builder.equal(root.get("pet_sterilized"), isSterilized);
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("sterilized"), isSterilized);
+    }
+
+    public static Specification<Pet> isVaccinated(Boolean isVaccinated) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("vaccinated"), isVaccinated);
+    }
+
+    public static Specification<Pet> isChipped(Boolean isChipped) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("chipped"), isChipped);
+    }
+
+    public static Specification<Pet> isSpecialNeeds(Boolean isSpecialNeeds) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("specialNeeds"), isSpecialNeeds);
+    }
+
+    public static Specification<Pet> isHouseTrained(Boolean isHouseTrained) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("houseTrained"), isHouseTrained);
+    }
+
+    public static Specification<Pet> isGoodWithKids(Boolean isGoodWithKids) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("goodWithKids"), isGoodWithKids);
+    }
+
+    public static Specification<Pet> isGoodWithDogs(Boolean isGoodWithDogs) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("goodWithDogs"), isGoodWithDogs);
+    }
+
+    public static Specification<Pet> isGoodWithCats(Boolean isGoodWithCats) {
+        return (root, query, builder) -> builder.equal(root.get("attributes").get("goodWithCats"), isGoodWithCats);
     }
 
 }

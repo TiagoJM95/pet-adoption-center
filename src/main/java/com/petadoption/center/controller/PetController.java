@@ -45,8 +45,15 @@ public class PetController {
                                                       @RequestParam(required = false) String size,
                                                       @RequestParam(required = false) String age,
                                                       @RequestParam(required = false) Boolean isAdopted,
-                                                      @RequestParam(required = false) Boolean isSterilized) {
-        return new ResponseEntity<>(petService.getAllPets(nameLike, breed, primaryBreed, secondaryBreed, color, primaryColor, secondaryColor, tertiaryColor, gender, coat, size, age, isAdopted, isSterilized), HttpStatus.OK);
+                                                      @RequestParam(required = false) Boolean isSterilized,
+                                                      @RequestParam(required = false) Boolean isVaccinated,
+                                                      @RequestParam(required = false) Boolean isChipped,
+                                                      @RequestParam(required = false) Boolean isSpecialNeeds,
+                                                      @RequestParam(required = false) Boolean isHouseTrained,
+                                                      @RequestParam(required = false) Boolean goodWithKids,
+                                                      @RequestParam(required = false) Boolean goodWithDogs,
+                                                      @RequestParam(required = false) Boolean goodWithCats){
+        return new ResponseEntity<>(petService.getAllPets(nameLike, breed, primaryBreed, secondaryBreed, color, primaryColor, secondaryColor, tertiaryColor, gender, coat, size, age, isAdopted, isSterilized, isVaccinated, isChipped, isSpecialNeeds, isHouseTrained, goodWithKids, goodWithDogs, goodWithCats), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

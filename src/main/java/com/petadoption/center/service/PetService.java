@@ -20,7 +20,7 @@ import java.util.List;
 
 public interface PetService {
 
-    List<PetGetDto> getAllPets(String nameLikeFilter, Breed breed, Breed primaryBreed, Breed secondaryBreed, Color color, Color primaryColor, Color secondaryColor, Color tertiaryColor, String gender, String coat, String size, String age, Boolean isAdopted, Boolean isSterilized);
+    List<PetGetDto> getAllPets(String nameLikeFilter, Breed breed, Breed primaryBreed, Breed secondaryBreed, Color color, Color primaryColor, Color secondaryColor, Color tertiaryColor, String gender, String coat, String size, String age, Boolean isAdopted, Boolean isSterilized, Boolean isVaccinated, Boolean isChipped, Boolean isSpecialNeeds, Boolean isHouseTrained, Boolean goodWithKids, Boolean goodWithDogs, Boolean goodWithCats);
 
     PetGetDto getPetById(Long id) throws PetNotFoundException;
 
