@@ -3,6 +3,7 @@ package com.petadoption.center.service.implementation;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
+import com.petadoption.center.dto.petSearchCriteria.PetSearchCriteria;
 import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Coats;
 import com.petadoption.center.enums.Genders;
@@ -13,10 +14,7 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetDuplicateImageException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.model.Breed;
-import com.petadoption.center.model.Color;
-import com.petadoption.center.model.Organization;
-import com.petadoption.center.model.Pet;
+import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.repository.*;
 import com.petadoption.center.service.*;
@@ -59,36 +57,46 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetGetDto> getAllPets(String nameLikeFilter, Breed breed, Breed primaryBreed, Breed secondaryBreed, Color color, Color primaryColor, Color secondaryColor, Color tertiaryColor, String gender, String coat, String size, String age, Boolean isAdopted, Boolean isSterilized, Boolean isVaccinated, Boolean isChipped, Boolean isSpecialNeeds, Boolean isHouseTrained, Boolean goodWithKids, Boolean goodWithDogs, Boolean goodWithCats) {
-        Specification<Pet> filters = Specification.where(
-                StringUtils.isBlank(nameLikeFilter) ? null : nameLike(nameLikeFilter.toLowerCase()))
-                .and(breed == null ? null : findByBreed(breed))
-                .and(primaryBreed == null ? null : findByPrimaryBreed(primaryBreed))
-                .and(secondaryBreed == null ? null : findBySecondaryBreed(secondaryBreed))
-                .and(color == null ? null : findByColor(color))
-                .and(primaryColor == null ? null : findByPrimaryColor(primaryColor))
-                .and(secondaryColor == null ? null : findBySecondaryColor(secondaryColor))
-                .and(tertiaryColor == null ? null : findByTertiaryColor(tertiaryColor))
-                .and(gender == null ? null : findByGender(getGenderByDescription(gender).get()))
-                .and(coat == null ? null : findByCoat(getCoatByDescription(gender).get()))
-                .and(size == null ? null : findBySize(getSizeByDescription(gender).get()))
-                .and(age == null ? null : findByAge(getAgeByDescription(gender).get()))
-                .and(isAdopted == null ? null : isAdopted(isAdopted))
-                .and(isSterilized == null ? null : isSterilized(isSterilized))
-                .and(isVaccinated == null ? null : isVaccinated(isVaccinated))
-                .and(isChipped == null ? null : isChipped(isChipped))
-                .and(isSpecialNeeds == null ? null : isSpecialNeeds(isSpecialNeeds))
-                .and(isHouseTrained == null ? null : isHouseTrained(isHouseTrained))
-                .and(goodWithKids == null ? null : isGoodWithKids(goodWithKids))
-                .and(goodWithDogs == null ? null : isGoodWithDogs(goodWithDogs))
-                .and(goodWithCats == null ? null : isGoodWithCats(goodWithCats));
-        return petRepository.findAll(filters).stream().map(this::convertToPetGetDto).toList();
-    }
-
-    @Override
     public PetGetDto getPetById(Long id) throws PetNotFoundException {
         return convertToPetGetDto(findById(id));
     }
+
+    @Override
+    public List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, String species, String state, String city) throws SpeciesNotFoundException {
+        Specification<Pet> filters = buildFilters(searchCriteria, speciesService.findSpeciesByName(species), state, city);
+        return petRepository.findAll(filters).stream().map(this::convertToPetGetDto).toList();
+    }
+
+    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria, Species species, String state, String city) {
+
+        Genders gender = getGenderByDescription(searchCriteria.gender()).orElseThrow(() -> new IllegalArgumentException(""));
+        Coats coat = getCoatByDescription(searchCriteria.coat()).orElseThrow(() -> new IllegalArgumentException(""));
+        Sizes size = getSizeByDescription(searchCriteria.size()).orElseThrow(() -> new IllegalArgumentException(""));
+        Ages age = getAgeByDescription(searchCriteria.age()).orElseThrow(() -> new IllegalArgumentException(""));
+
+        return Specification.where(
+                        StringUtils.isBlank(searchCriteria.nameLike()) ? null : nameLike(searchCriteria.nameLike().toLowerCase()))
+                        .and(species == null ? null : findBySpecies(species))
+                        .and(state == null ? null : findByState(state))
+                        .and(city == null ? null : findByCity(city))
+                        .and(searchCriteria.breed() == null ? null : findByBreed((searchCriteria.breed()))
+                        .and(searchCriteria.color() == null ? null : findByColor(searchCriteria.color()))
+                        .and(searchCriteria.gender() == null ? null : findByGender(gender))
+                        .and(searchCriteria.coat() == null ? null : findByCoat(coat))
+                        .and(searchCriteria.size() == null ? null : findBySize(size))
+                        .and(searchCriteria.age() == null ? null : findByAge(age))
+                        .and(searchCriteria.isAdopted() == null ? null : isAdopted(searchCriteria.isAdopted()))
+                        .and(searchCriteria.isSterilized() == null ? null : isSterilized(searchCriteria.isSterilized()))
+                        .and(searchCriteria.isVaccinated() == null ? null : isVaccinated(searchCriteria.isVaccinated()))
+                        .and(searchCriteria.isChipped() == null ? null : isChipped(searchCriteria.isChipped()))
+                        .and(searchCriteria.isSpecialNeeds() == null ? null : isSpecialNeeds(searchCriteria.isSpecialNeeds()))
+                        .and(searchCriteria.isHouseTrained() == null ? null : isHouseTrained(searchCriteria.isHouseTrained()))
+                        .and(searchCriteria.goodWithKids() == null ? null : isGoodWithKids(searchCriteria.goodWithKids()))
+                        .and(searchCriteria.goodWithDogs() == null ? null : isGoodWithDogs(searchCriteria.goodWithDogs()))
+                        .and(searchCriteria.goodWithCats() == null ? null : isGoodWithCats(searchCriteria.goodWithCats()))
+        );
+    }
+
 
     @Override
     public PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateImageException {

@@ -12,5 +12,7 @@ TODO:
         Validations;
         Auth0 ou parecido;
         Métodos Delete;
+        Permitir pesquisa de raças puras (secondaryBreed = none);
+        Na criação de um pet, se não existir secondaryBreed, colocar none; Igual color;
         CODE CLEANUP;
         Testes;
