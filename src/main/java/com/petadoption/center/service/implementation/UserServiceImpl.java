@@ -12,7 +12,6 @@ import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.UserService;
-import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +24,10 @@ import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final Utils utils;
-
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(Utils utils, UserRepository userRepository) {
-        this.utils = utils;
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -47,7 +43,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
-        utils.checkDbConnection();
         checkIfUserExistsByEmail(user.email());
         checkIfUserExistsByPhoneNumber(user.phoneNumber());
         return fromModelToUserGetDto(userRepository.save(fromUserCreateDtoToModel(user)));

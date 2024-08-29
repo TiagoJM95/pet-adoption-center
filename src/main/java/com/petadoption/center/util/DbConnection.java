@@ -1,17 +1,20 @@
 package com.petadoption.center.util;
 
 import com.petadoption.center.exception.db.DatabaseConnectionException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
-public class Utils {
+public class DbConnection {
+
 
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public Utils(JdbcTemplate jdbcTemplate) {
+    public DbConnection(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -20,7 +23,8 @@ public class Utils {
         try {
             jdbcTemplate.execute("SELECT 1");
         } catch (Exception e) {
-            throw new DatabaseConnectionException(e.getMessage());
+            log.info("Database Connection Error: {}", e.getMessage());
+            throw new DatabaseConnectionException();
         }
     }
 }

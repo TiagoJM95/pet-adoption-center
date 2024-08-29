@@ -13,9 +13,12 @@ import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
+import com.petadoption.center.util.DbConnection;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -28,7 +31,14 @@ import static com.petadoption.center.util.Messages.*;
 @ControllerAdvice
 public class ExceptionsHandler {
 
+    private final DbConnection dbConnection;
+
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
+
+    @Autowired
+    public ExceptionsHandler(DbConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
 
     @ExceptionHandler(value = {UserNotFoundException.class, BreedNotFoundException.class, ColorNotFoundException.class, OrgNotFoundException.class, PetNotFoundException.class, SpeciesNotFoundException.class})
     public ResponseEntity<String> NotFoundHandler(Exception ex) {
@@ -52,6 +62,10 @@ public class ExceptionsHandler {
 
     }
 
+    @Before("execution(* com.petadoption.center.service.*.*(..))")
+    public void testDbConnection() throws DatabaseConnectionException {
+        dbConnection.checkDbConnection();
 
+    }
 
 }
