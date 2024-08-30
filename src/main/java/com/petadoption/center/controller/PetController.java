@@ -30,7 +30,7 @@ public class PetController {
         return new ResponseEntity<>(petService.getPetById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/search/{species}/{state}/{city}/{")
+    @PostMapping("/search/{species}/{state}/{city}")
     public ResponseEntity<List<PetGetDto>> searchPets(@RequestBody PetSearchCriteria searchCriteria,
                                                       @PathVariable("species") String species,
                                                       @PathVariable("state") String state,
