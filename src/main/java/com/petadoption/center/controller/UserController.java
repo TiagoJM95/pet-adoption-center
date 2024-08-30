@@ -23,8 +23,10 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/")
-    public ResponseEntity<List<UserGetDto>> getAllUsers(){
-        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    public ResponseEntity<List<UserGetDto>> getAllUsers(@RequestParam (defaultValue = "0", required = false) int page,
+                                                        @RequestParam (defaultValue = "5", required = false) int size,
+                                                        @RequestParam (defaultValue = "id", required = false) String sortBy) {
+        return new ResponseEntity<>(userService.getAllUsers(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

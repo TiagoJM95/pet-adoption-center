@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface UserService {
 
-    List<UserGetDto> getAllUsers();
+    List<UserGetDto> getAllUsers(int page, int size, String sortBy);
 
     UserGetDto getUserById(Long id) throws UserNotFoundException, DatabaseConnectionException;
 

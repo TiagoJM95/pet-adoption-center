@@ -13,6 +13,8 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,8 +34,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserGetDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserConverter::fromModelToUserGetDto).toList();
+    public List<UserGetDto> getAllUsers(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return userRepository.findAll(pageRequest).stream().map(UserConverter::fromModelToUserGetDto).toList();
     }
 
     @Override
