@@ -31,14 +31,7 @@ import static com.petadoption.center.util.Messages.*;
 @ControllerAdvice
 public class ExceptionsHandler {
 
-    private final DbConnection dbConnection;
-
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
-
-    @Autowired
-    public ExceptionsHandler(DbConnection dbConnection) {
-        this.dbConnection = dbConnection;
-    }
 
     @ExceptionHandler(value = {UserNotFoundException.class, BreedNotFoundException.class, ColorNotFoundException.class, OrgNotFoundException.class, PetNotFoundException.class, SpeciesNotFoundException.class})
     public ResponseEntity<String> NotFoundHandler(Exception ex) {
@@ -46,7 +39,6 @@ public class ExceptionsHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
 
     }
-
 
     @ExceptionHandler(value = {BreedNameDuplicateException.class, ColorDuplicateException.class, OrgDuplicateAddressException.class, OrgDuplicateEmailException.class, OrgDuplicatePhoneNumberException.class, OrgDuplicateSocialMediaException.class, OrgDuplicateWebsiteException.class, PetDuplicateImageException.class, SpeciesNameDuplicateException.class, UserPhoneNumberDuplicateException.class, UserEmailDuplicateException.class})
     public ResponseEntity<String> DuplicateHandler(Exception ex) {
@@ -59,12 +51,6 @@ public class ExceptionsHandler {
     public ResponseEntity<String> DbConnectionHandler(Exception ex) {
         logger.error(LOGGER_DB_CONNECTION, ex.getMessage());
         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(ex.getMessage());
-
-    }
-
-    @Before("execution(* com.petadoption.center.service.*.*(..))")
-    public void testDbConnection() throws DatabaseConnectionException {
-        dbConnection.checkDbConnection();
 
     }
 
