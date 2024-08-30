@@ -9,7 +9,7 @@ import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import java.util.List;
 
 public interface SpeciesService {
-    List<SpeciesGetDto> getAllPetSpecies();
+    List<SpeciesGetDto> getAllPetSpecies(int page, int size, String sortBy);
 
     SpeciesGetDto getPetSpeciesById(Long id) throws SpeciesNotFoundException;
 

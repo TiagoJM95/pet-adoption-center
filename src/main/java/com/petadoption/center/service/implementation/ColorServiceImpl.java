@@ -9,6 +9,8 @@ import com.petadoption.center.model.Color;
 import com.petadoption.center.repository.ColorRepository;
 import com.petadoption.center.service.ColorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,8 +28,9 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
-    public List<ColorGetDto> getAllColors() {
-        return colorRepository.findAll().stream().map(ColorConverter::fromModelToColorGetDto).toList();
+    public List<ColorGetDto> getAllColors(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return colorRepository.findAll(pageRequest).stream().map(ColorConverter::fromModelToColorGetDto).toList();
     }
 
     @Override

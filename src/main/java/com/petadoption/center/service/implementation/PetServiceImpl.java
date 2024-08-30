@@ -20,6 +20,8 @@ import com.petadoption.center.repository.*;
 import com.petadoption.center.service.*;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -62,9 +64,10 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, String species, String state, String city) throws SpeciesNotFoundException {
+    public List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy, String species, String state, String city) throws SpeciesNotFoundException {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         Specification<Pet> filters = buildFilters(searchCriteria, speciesService.findSpeciesByName(species), state, city);
-        return petRepository.findAll(filters).stream().map(this::convertToPetGetDto).toList();
+        return petRepository.findAll(filters, pageRequest).stream().map(this::convertToPetGetDto).toList();
     }
 
     @Override

@@ -20,8 +20,10 @@ public class ColorController {
     private ColorService colorService;
 
     @GetMapping("/")
-    public ResponseEntity<List<ColorGetDto>> getAllColors(){
-        return new ResponseEntity<>(colorService.getAllColors(), HttpStatus.OK);
+    public ResponseEntity<List<ColorGetDto>> getAllColors(@RequestParam (defaultValue = "0", required = false) int page,
+                                                          @RequestParam (defaultValue = "5", required = false) int size,
+                                                          @RequestParam (defaultValue = "id", required = false) String sortBy){
+        return new ResponseEntity<>(colorService.getAllColors(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

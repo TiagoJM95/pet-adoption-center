@@ -22,8 +22,10 @@ public class SpeciesController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<SpeciesGetDto>> getAllPetSpecies(){
-        return new ResponseEntity<>(petSpeciesService.getAllPetSpecies(), HttpStatus.OK);
+    public ResponseEntity<List<SpeciesGetDto>> getAllPetSpecies(@RequestParam (defaultValue = "0", required = false) int page,
+                                                                @RequestParam (defaultValue = "5", required = false) int size,
+                                                                @RequestParam (defaultValue = "id", required = false) String sortBy){
+        return new ResponseEntity<>(petSpeciesService.getAllPetSpecies(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

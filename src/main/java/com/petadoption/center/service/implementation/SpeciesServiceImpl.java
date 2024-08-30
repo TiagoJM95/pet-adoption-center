@@ -10,6 +10,8 @@ import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
 import com.petadoption.center.service.SpeciesService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -30,8 +32,9 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public List<SpeciesGetDto> getAllPetSpecies() {
-        return speciesRepository.findAll().stream().map(SpeciesConverter::fromModelToSpeciesGetDto).toList();
+    public List<SpeciesGetDto> getAllPetSpecies(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return speciesRepository.findAll(pageRequest).stream().map(SpeciesConverter::fromModelToSpeciesGetDto).toList();
     }
 
     @Override

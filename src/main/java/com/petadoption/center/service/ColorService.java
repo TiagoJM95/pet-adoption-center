@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface ColorService {
 
-    List<ColorGetDto> getAllColors();
+    List<ColorGetDto> getAllColors(int page, int size, String sortBy);
 
     ColorGetDto getColorById(Long id) throws ColorNotFoundException;
 

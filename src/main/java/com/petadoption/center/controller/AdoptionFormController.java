@@ -21,8 +21,10 @@ public class AdoptionFormController {
 
 
     @GetMapping("/")
-    public ResponseEntity<List<AdoptionFormGetDto>> getAllAdoptionForms(){
-        return new ResponseEntity<>(adoptionFormService.getAllAdoptionForms(), HttpStatus.OK);
+    public ResponseEntity<List<AdoptionFormGetDto>> getAllAdoptionForms(@RequestParam (defaultValue = "0", required = false) int page,
+                                                                        @RequestParam (defaultValue = "5", required = false) int size,
+                                                                        @RequestParam (defaultValue = "id", required = false) String sortBy){
+        return new ResponseEntity<>(adoptionFormService.getAllAdoptionForms(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

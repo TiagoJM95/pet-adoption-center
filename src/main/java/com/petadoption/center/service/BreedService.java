@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface BreedService {
 
-    List<BreedGetDto> getAllBreeds();
+    List<BreedGetDto> getAllBreeds(int page, int size, String sortBy);
 
     BreedGetDto getBreedById(Long id) throws BreedNotFoundException;
 

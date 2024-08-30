@@ -22,8 +22,10 @@ public class BreedController {
     private BreedService petBreedService;
 
     @GetMapping("/")
-    public ResponseEntity<List<BreedGetDto>> getAllBreeds(){
-        return new ResponseEntity<>(petBreedService.getAllBreeds(), HttpStatus.OK);
+    public ResponseEntity<List<BreedGetDto>> getAllBreeds(@RequestParam (defaultValue = "0", required = false) int page,
+                                                          @RequestParam (defaultValue = "5", required = false) int size,
+                                                          @RequestParam (defaultValue = "id", required = false) String sortBy){
+        return new ResponseEntity<>(petBreedService.getAllBreeds(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

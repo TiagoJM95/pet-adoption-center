@@ -17,7 +17,7 @@ public class AdoptionFormServiceImpl implements AdoptionFormService {
     private AdoptionFormRepository adoptionFormRepository;
 
     @Override
-    public List<AdoptionFormGetDto> getAllAdoptionForms() {
+    public List<AdoptionFormGetDto> getAllAdoptionForms(int page, int size, String sortBy) {
         return List.of();
     }
 

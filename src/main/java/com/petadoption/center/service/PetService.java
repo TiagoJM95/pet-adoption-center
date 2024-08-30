@@ -21,7 +21,7 @@ public interface PetService {
 
     PetGetDto getPetById(Long id) throws PetNotFoundException;
 
-    List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, String species, String state, String city) throws SpeciesNotFoundException;
+    List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy, String species, String state, String city) throws SpeciesNotFoundException;
 
     PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateImageException;
 

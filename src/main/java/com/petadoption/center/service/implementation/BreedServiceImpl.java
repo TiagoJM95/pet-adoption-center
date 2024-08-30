@@ -13,6 +13,8 @@ import com.petadoption.center.repository.BreedRepository;
 import com.petadoption.center.repository.SpeciesRepository;
 import com.petadoption.center.service.BreedService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,8 +37,9 @@ public class BreedServiceImpl implements BreedService {
     }
 
     @Override
-    public List<BreedGetDto> getAllBreeds() {
-        return breedRepository.findAll().stream().map(BreedConverter::fromModelToBreedGetDto).toList();
+    public List<BreedGetDto> getAllBreeds(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return breedRepository.findAll(pageRequest).stream().map(BreedConverter::fromModelToBreedGetDto).toList();
     }
 
     @Override

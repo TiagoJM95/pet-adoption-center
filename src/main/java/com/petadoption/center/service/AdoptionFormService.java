@@ -7,7 +7,7 @@ import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import java.util.List;
 
 public interface AdoptionFormService {
-    List<AdoptionFormGetDto> getAllAdoptionForms();
+    List<AdoptionFormGetDto> getAllAdoptionForms(int page, int size, String sortBy);
 
     AdoptionFormGetDto getAdoptionFormById(Long id);
 

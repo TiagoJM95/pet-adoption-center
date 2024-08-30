@@ -32,10 +32,13 @@ public class PetController {
 
     @PostMapping("/search/{species}/{state}/{city}")
     public ResponseEntity<List<PetGetDto>> searchPets(@RequestBody PetSearchCriteria searchCriteria,
+                                                      @RequestParam (defaultValue = "0", required = false) int page,
+                                                      @RequestParam (defaultValue = "5", required = false) int size,
+                                                      @RequestParam (defaultValue = "id", required = false) String sortBy,
                                                       @PathVariable("species") String species,
                                                       @PathVariable("state") String state,
                                                       @PathVariable("city") String city) throws SpeciesNotFoundException {
-        return new ResponseEntity<>(petService.searchPets(searchCriteria, species, state, city), HttpStatus.OK);
+        return new ResponseEntity<>(petService.searchPets(searchCriteria, page, size, sortBy, species, state, city), HttpStatus.OK);
     }
 
     @PostMapping("/addSingle")
