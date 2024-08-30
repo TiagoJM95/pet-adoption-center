@@ -67,41 +67,18 @@ public class PetServiceImpl implements PetService {
         return petRepository.findAll(filters).stream().map(this::convertToPetGetDto).toList();
     }
 
-    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria, Species species, String state, String city) {
-
-        Genders gender = getGenderByDescription(searchCriteria.gender()).orElseThrow(() -> new IllegalArgumentException(""));
-        Coats coat = getCoatByDescription(searchCriteria.coat()).orElseThrow(() -> new IllegalArgumentException(""));
-        Sizes size = getSizeByDescription(searchCriteria.size()).orElseThrow(() -> new IllegalArgumentException(""));
-        Ages age = getAgeByDescription(searchCriteria.age()).orElseThrow(() -> new IllegalArgumentException(""));
-
-        return Specification.where(
-                        StringUtils.isBlank(searchCriteria.nameLike()) ? null : nameLike(searchCriteria.nameLike().toLowerCase()))
-                        .and(species == null ? null : findBySpecies(species))
-                        .and(state == null ? null : findByState(state))
-                        .and(city == null ? null : findByCity(city))
-                        .and(searchCriteria.breed() == null ? null : findByBreed((searchCriteria.breed()))
-                        .and(searchCriteria.color() == null ? null : findByColor(searchCriteria.color()))
-                        .and(searchCriteria.gender() == null ? null : findByGender(gender))
-                        .and(searchCriteria.coat() == null ? null : findByCoat(coat))
-                        .and(searchCriteria.size() == null ? null : findBySize(size))
-                        .and(searchCriteria.age() == null ? null : findByAge(age))
-                        .and(searchCriteria.isAdopted() == null ? null : isAdopted(searchCriteria.isAdopted()))
-                        .and(searchCriteria.isSterilized() == null ? null : isSterilized(searchCriteria.isSterilized()))
-                        .and(searchCriteria.isVaccinated() == null ? null : isVaccinated(searchCriteria.isVaccinated()))
-                        .and(searchCriteria.isChipped() == null ? null : isChipped(searchCriteria.isChipped()))
-                        .and(searchCriteria.isSpecialNeeds() == null ? null : isSpecialNeeds(searchCriteria.isSpecialNeeds()))
-                        .and(searchCriteria.isHouseTrained() == null ? null : isHouseTrained(searchCriteria.isHouseTrained()))
-                        .and(searchCriteria.goodWithKids() == null ? null : isGoodWithKids(searchCriteria.goodWithKids()))
-                        .and(searchCriteria.goodWithDogs() == null ? null : isGoodWithDogs(searchCriteria.goodWithDogs()))
-                        .and(searchCriteria.goodWithCats() == null ? null : isGoodWithCats(searchCriteria.goodWithCats()))
-        );
-    }
-
-
     @Override
     public PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateImageException {
-        checkIfPetExistsByImageUrl(pet.imageUrl());
+        //checkIfPetExistsByImageUrl(pet.imageUrl());
         return convertToPetGetDto(petRepository.save(convertToPetModel(pet)));
+    }
+
+    @Override
+    public void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateImageException {
+        for (PetCreateDto pet : pets) {
+            //checkIfPetExistsByImageUrl(pet.imageUrl());
+            petRepository.save(convertToPetModel(pet));
+        }
     }
 
     @Override
@@ -114,20 +91,7 @@ public class PetServiceImpl implements PetService {
         return convertToPetGetDto(petRepository.save(petToUpdate));
     }
 
-    private void updatePetFields(PetUpdateDto pet, Pet petToUpdate) throws OrgNotFoundException {
-        updateIfChanged(pet::size, petToUpdate::getSize, petToUpdate::setSize);
-        updateIfChanged(pet::age, petToUpdate::getAge, petToUpdate::setAge);
-        updateIfChanged(pet::description, petToUpdate::getDescription, petToUpdate::setDescription);
-        updateIfChanged(pet::imageUrl, petToUpdate::getImageUrl, petToUpdate::setImageUrl);
-        updateIfChanged(pet::isAdopted, petToUpdate::getIsAdopted, petToUpdate::setIsAdopted);
-        updateIfChanged(() -> new Attributes(pet.sterilized(), pet.vaccinated(), pet.chipped(), pet.specialNeeds(), pet.houseTrained(), pet.goodWithKids(), pet.goodWithDogs(), pet.goodWithCats()), petToUpdate::getAttributes, petToUpdate::setAttributes);
-        Organization org = organizationService.findById(pet.organizationId());
-        if(pet.organizationId() != null && !org.equals(petToUpdate.getOrganization())) {
-            petToUpdate.setOrganization(org);
-        }
-    }
-
-    private Pet findById(Long id) throws PetNotFoundException {
+    Pet findById(Long id) throws PetNotFoundException {
         return petRepository.findById(id).orElseThrow(() -> new PetNotFoundException("id"));
     }
 
@@ -157,9 +121,53 @@ public class PetServiceImpl implements PetService {
         );
     }
 
+    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria, Species species, String state, String city) {
+
+        Genders gender = getGenderByDescription(searchCriteria.gender()).orElseThrow(() -> new IllegalArgumentException(""));
+        Coats coat = getCoatByDescription(searchCriteria.coat()).orElseThrow(() -> new IllegalArgumentException(""));
+        Sizes size = getSizeByDescription(searchCriteria.size()).orElseThrow(() -> new IllegalArgumentException(""));
+        Ages age = getAgeByDescription(searchCriteria.age()).orElseThrow(() -> new IllegalArgumentException(""));
+
+        return Specification.where(
+                        StringUtils.isBlank(searchCriteria.nameLike()) ? null : nameLike(searchCriteria.nameLike().toLowerCase()))
+                .and(species == null ? null : findBySpecies(species))
+                .and(state == null ? null : findByState(state))
+                .and(city == null ? null : findByCity(city))
+                .and(searchCriteria.breed() == null ? null : findByBreed((searchCriteria.breed()))
+                        .and(searchCriteria.color() == null ? null : findByColor(searchCriteria.color()))
+                        .and(searchCriteria.gender() == null ? null : findByGender(gender))
+                        .and(searchCriteria.coat() == null ? null : findByCoat(coat))
+                        .and(searchCriteria.size() == null ? null : findBySize(size))
+                        .and(searchCriteria.age() == null ? null : findByAge(age))
+                        .and(searchCriteria.isAdopted() == null ? null : isAdopted(searchCriteria.isAdopted()))
+                        .and(searchCriteria.isSterilized() == null ? null : isSterilized(searchCriteria.isSterilized()))
+                        .and(searchCriteria.isVaccinated() == null ? null : isVaccinated(searchCriteria.isVaccinated()))
+                        .and(searchCriteria.isChipped() == null ? null : isChipped(searchCriteria.isChipped()))
+                        .and(searchCriteria.isSpecialNeeds() == null ? null : isSpecialNeeds(searchCriteria.isSpecialNeeds()))
+                        .and(searchCriteria.isHouseTrained() == null ? null : isHouseTrained(searchCriteria.isHouseTrained()))
+                        .and(searchCriteria.goodWithKids() == null ? null : isGoodWithKids(searchCriteria.goodWithKids()))
+                        .and(searchCriteria.goodWithDogs() == null ? null : isGoodWithDogs(searchCriteria.goodWithDogs()))
+                        .and(searchCriteria.goodWithCats() == null ? null : isGoodWithCats(searchCriteria.goodWithCats()))
+                );
+    }
+
     private void checkIfPetExistsByImageUrl(String imageUrl) throws PetDuplicateImageException {
         if (petRepository.findByImageUrl(imageUrl).isPresent()) {
             throw new PetDuplicateImageException("imageUrl");
         }
     }
+
+    private void updatePetFields(PetUpdateDto pet, Pet petToUpdate) throws OrgNotFoundException {
+        updateIfChanged(pet::size, petToUpdate::getSize, petToUpdate::setSize);
+        updateIfChanged(pet::age, petToUpdate::getAge, petToUpdate::setAge);
+        updateIfChanged(pet::description, petToUpdate::getDescription, petToUpdate::setDescription);
+        updateIfChanged(pet::imageUrl, petToUpdate::getImageUrl, petToUpdate::setImageUrl);
+        updateIfChanged(pet::isAdopted, petToUpdate::getIsAdopted, petToUpdate::setIsAdopted);
+        updateIfChanged(() -> new Attributes(pet.sterilized(), pet.vaccinated(), pet.chipped(), pet.specialNeeds(), pet.houseTrained(), pet.goodWithKids(), pet.goodWithDogs(), pet.goodWithCats()), petToUpdate::getAttributes, petToUpdate::setAttributes);
+        Organization org = organizationService.findById(pet.organizationId());
+        if(pet.organizationId() != null && !org.equals(petToUpdate.getOrganization())) {
+            petToUpdate.setOrganization(org);
+        }
+    }
+
 }

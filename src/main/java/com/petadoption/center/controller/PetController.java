@@ -38,9 +38,15 @@ public class PetController {
         return new ResponseEntity<>(petService.searchPets(searchCriteria, species, state, city), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping("/addSingle")
     public ResponseEntity<PetGetDto> addNewPet(@RequestBody PetCreateDto pet) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, PetDuplicateImageException {
         return new ResponseEntity<>(petService.addNewPet(pet), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/addList")
+    public ResponseEntity<String> addListOfNewPets(@RequestBody List<PetCreateDto> pets) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, PetDuplicateImageException {
+        petService.addListOfNewPets(pets);
+        return new ResponseEntity<>("Added", HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
