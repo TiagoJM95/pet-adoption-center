@@ -3,6 +3,5 @@ docker run --name petCenter -e POSTGRES_DB=petCenter -e POSTGRES_USER=root -e PO
 
 TODO:
         Auth;
-        Permitir pesquisa de raças puras (secondaryBreed = none);
         CODE CLEANUP;
         Testes;

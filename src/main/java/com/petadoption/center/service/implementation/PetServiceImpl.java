@@ -160,6 +160,7 @@ public class PetServiceImpl implements PetService {
                         .and(searchCriteria.goodWithKids() == null ? null : isGoodWithKids(searchCriteria.goodWithKids()))
                         .and(searchCriteria.goodWithDogs() == null ? null : isGoodWithDogs(searchCriteria.goodWithDogs()))
                         .and(searchCriteria.goodWithCats() == null ? null : isGoodWithCats(searchCriteria.goodWithCats()))
+                        .and(searchCriteria.isPureBreed() == null ? null : findByPureBreed(searchCriteria.isPureBreed()))
                 );
     }
 

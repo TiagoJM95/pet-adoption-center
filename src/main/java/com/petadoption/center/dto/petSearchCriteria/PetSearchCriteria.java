@@ -19,5 +19,6 @@ public record PetSearchCriteria(
         Boolean isHouseTrained,
         Boolean goodWithKids,
         Boolean goodWithDogs,
-        Boolean goodWithCats
+        Boolean goodWithCats,
+        Boolean isPureBreed
 ) {}

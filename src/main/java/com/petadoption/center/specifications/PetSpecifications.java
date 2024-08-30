@@ -96,4 +96,11 @@ public class PetSpecifications {
         return (root, query, builder) -> builder.equal(root.get("organization").get("city"), city);
     }
 
+    public static Specification<Pet> findByPureBreed(Boolean isPureBreed) {
+        if(isPureBreed){
+            return (root, query, builder) -> builder.equal(root.get("secondaryBreed") , null);
+        }
+        return null;
+    }
+
 }
