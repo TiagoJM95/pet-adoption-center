@@ -16,4 +16,6 @@ public interface OrganizationService {
     OrgGetDto addNewOrganization(OrgCreateDto organization) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException;
 
     OrgGetDto updateOrganization(Long id, OrgUpdateDto organization) throws OrgNotFoundException, OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException;
+
+    String deleteOrganization(Long id) throws OrgNotFoundException;
 }

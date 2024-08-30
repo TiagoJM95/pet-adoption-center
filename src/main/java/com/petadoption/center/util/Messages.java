@@ -80,16 +80,22 @@ public class Messages {
 
     public static final String PHONE_NUMBER_SIZE = "Phone number must be less than 10 characters";
 
-
     public static final String LETTERS_AND_NUMBERS = "Only letters and numbers are allowed";
 
     public static final String WEBSITE_URL = "Special characters allowed are  . - ";
 
     public static final String FACEBOOK_VALID = "Special characters allowed are  . - / ";
+
     public static final String INSTAGRAM_VALID = "Special characters allowed are  . - @ ";
+
     public static final String TWITTER_VALID = "Special characters allowed are  . - / ";
+
     public static final String YOUTUBE_VALID = "Special characters allowed are  . - / ";
 
+
+    //SERVICE MESSAGES
+
+    public static final String DELETE_SUCCESS = " deleted successfully";
 
 }
 

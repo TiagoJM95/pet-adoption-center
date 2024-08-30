@@ -4,7 +4,6 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.db.DatabaseConnectionException;
 import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
@@ -22,6 +21,8 @@ import java.util.List;
 import static com.petadoption.center.converter.UserConverter.fromModelToUserGetDto;
 import static com.petadoption.center.converter.UserConverter.fromUserCreateDtoToModel;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.USER_WITH_ID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,7 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
+    public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         checkIfUserExistsByEmail(user.email());
         checkIfUserExistsByPhoneNumber(user.phoneNumber());
         return fromModelToUserGetDto(userRepository.save(fromUserCreateDtoToModel(user)));
@@ -58,6 +59,13 @@ public class UserServiceImpl implements UserService {
         checkUserDuplicates(user, userToUpdate);
         updateUserFields(user, userToUpdate);
         return fromModelToUserGetDto(userRepository.save(userToUpdate));
+    }
+
+    @Override
+    public String deleteUser(Long id) throws UserNotFoundException {
+        findUserById(id);
+        userRepository.deleteById(id);
+        return USER_WITH_ID + id + DELETE_SUCCESS;
     }
 
     private void checkUserDuplicates(UserUpdateDto user, User userToUpdate) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {

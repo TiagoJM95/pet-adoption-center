@@ -57,6 +57,13 @@ public class OrganizationServiceImpl implements OrganizationService {
 
     }
 
+    @Override
+    public String deleteOrganization(Long id) throws OrgNotFoundException {
+        findById(id);
+        orgRepository.deleteById(id);
+        return ORG_WITH_ID + id + DELETE_SUCCESS;
+    }
+
     private void checkOrgDuplicatesOrExists(OrgDto org, Organization orgToUpdate) throws OrgDuplicateEmailException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateSocialMediaException {
 
         if (orgToUpdate == null ||

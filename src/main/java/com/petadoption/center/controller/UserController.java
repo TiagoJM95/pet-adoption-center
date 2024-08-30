@@ -31,18 +31,23 @@ public class UserController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") Long id) throws UserNotFoundException, DatabaseConnectionException {
+    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") Long id) throws UserNotFoundException {
         return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserGetDto> addNewUser(@Valid @RequestBody UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
+    public ResponseEntity<UserGetDto> addNewUser(@Valid @RequestBody UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         return new ResponseEntity<>(userService.addNewUser(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") Long id, @Valid @RequestBody UserUpdateDto user) throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         return new ResponseEntity<>(userService.updateUser(id, user), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable ("id") Long id) throws UserNotFoundException {
+        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
     }
 
 }

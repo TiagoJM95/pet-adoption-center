@@ -43,4 +43,8 @@ public class OrganizationController {
         return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
     }
 
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteOrganization(@PathVariable ("id") Long id) throws OrgNotFoundException {
+        return new ResponseEntity<>(organizationService.deleteOrganization(id), HttpStatus.OK);
+    }
 }
