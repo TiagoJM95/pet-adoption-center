@@ -3,6 +3,7 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
+import com.petadoption.center.exception.species.SpeciesNotFoundException;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface AdoptionFormService {
     AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionForm);
 
     AdoptionFormGetDto updateAdoptionForm(Long id, AdoptionFormUpdateDto adoptionForm);
+
+    String deleteAdoptionForm(Long id);
 }

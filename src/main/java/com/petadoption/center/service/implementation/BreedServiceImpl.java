@@ -23,6 +23,8 @@ import java.util.Optional;
 import static com.petadoption.center.converter.BreedConverter.fromBreedCreateDtoToModel;
 import static com.petadoption.center.converter.BreedConverter.fromModelToBreedGetDto;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.Messages.BREED_WITH_ID;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 
 @Service
 public class BreedServiceImpl implements BreedService {
@@ -67,6 +69,13 @@ public class BreedServiceImpl implements BreedService {
         checkIfBreedsExistsByName(breed.name());
         updateIfChanged(breed::name, breedToUpdate::getName, breedToUpdate::setName);
         return fromModelToBreedGetDto(breedRepository.save(breedToUpdate));
+    }
+
+    @Override
+    public String deleteBreed(Long id) throws BreedNotFoundException {
+        findBreedById(id);
+        breedRepository.deleteById(id);
+        return BREED_WITH_ID + id + DELETE_SUCCESS;
     }
 
     Breed findBreedById(Long id) throws BreedNotFoundException {

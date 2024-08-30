@@ -35,4 +35,9 @@ public class AdoptionFormServiceImpl implements AdoptionFormService {
     public AdoptionFormGetDto updateAdoptionForm(Long id, AdoptionFormUpdateDto adoptionForm) {
         return null;
     }
+
+    @Override
+    public String deleteAdoptionForm(Long id) {
+        return "";
+    }
 }

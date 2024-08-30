@@ -13,6 +13,16 @@ public class Messages {
 
     public static final String ORG_WITH_ID = "Organization with id: ";
 
+    public static final String BREED_WITH_ID = "Breed with id: ";
+
+    public static final String SPECIES_WITH_ID = "Species with id: ";
+
+    public static final String COLOR_WITH_ID = "Color with id: ";
+
+    public static final String PET_WITH_ID = "Pet with id: ";
+
+    public static final String ADOPTION_FORM_WITH_ID = "Adoption form with id: ";
+
     public static final String WEBSITE = "Website: ";
 
     public static final String DOESNT_EXIST = " doesn't exist.";

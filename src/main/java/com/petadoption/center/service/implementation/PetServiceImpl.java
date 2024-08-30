@@ -39,6 +39,8 @@ import static com.petadoption.center.enums.Genders.getGenderByDescription;
 import static com.petadoption.center.enums.Sizes.getSizeByDescription;
 import static com.petadoption.center.specifications.PetSpecifications.*;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.PET_WITH_ID;
 
 @Service
 public class PetServiceImpl implements PetService {
@@ -92,6 +94,13 @@ public class PetServiceImpl implements PetService {
         }
         updatePetFields(pet, petToUpdate);
         return convertToPetGetDto(petRepository.save(petToUpdate));
+    }
+
+    @Override
+    public String deletePet(Long id) throws PetNotFoundException {
+        findById(id);
+        petRepository.deleteById(id);
+        return PET_WITH_ID + id + DELETE_SUCCESS;
     }
 
     Pet findById(Long id) throws PetNotFoundException {

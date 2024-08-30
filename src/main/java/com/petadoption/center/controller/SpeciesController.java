@@ -19,29 +19,34 @@ import java.util.List;
 public class SpeciesController {
 
     @Autowired
-    private SpeciesService petSpeciesService;
+    private SpeciesService speciesService;
 
 
     @GetMapping("/")
     public ResponseEntity<List<SpeciesGetDto>> getAllPetSpecies(@RequestParam (defaultValue = "0", required = false) int page,
                                                                 @RequestParam (defaultValue = "5", required = false) int size,
                                                                 @RequestParam (defaultValue = "id", required = false) String sortBy){
-        return new ResponseEntity<>(petSpeciesService.getAllPetSpecies(page, size, sortBy), HttpStatus.OK);
+        return new ResponseEntity<>(speciesService.getAllPetSpecies(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<SpeciesGetDto> getPetSpeciesById(@PathVariable("id") Long id) throws SpeciesNotFoundException {
-        return new ResponseEntity<>(petSpeciesService.getPetSpeciesById(id), HttpStatus.OK);
+        return new ResponseEntity<>(speciesService.getPetSpeciesById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
     public ResponseEntity<SpeciesGetDto> addNewPetSpecies(@Valid @RequestBody SpeciesCreateDto species) throws SpeciesNameDuplicateException {
-        return new ResponseEntity<>(petSpeciesService.addNewPetSpecies(species), HttpStatus.CREATED);
+        return new ResponseEntity<>(speciesService.addNewPetSpecies(species), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<SpeciesGetDto> updatePetSpecies(@PathVariable ("id") Long id,
                                                           @Valid @RequestBody SpeciesUpdateDto species) throws SpeciesNameDuplicateException, SpeciesNotFoundException {
-        return new ResponseEntity<>(petSpeciesService.updatePetSpecies(id, species), HttpStatus.OK);
+        return new ResponseEntity<>(speciesService.updatePetSpecies(id, species), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteSpecies(@PathVariable ("id") Long id) throws SpeciesNotFoundException {
+        return new ResponseEntity<>(speciesService.deleteSpecies(id), HttpStatus.OK);
     }
 }

@@ -28,4 +28,6 @@ public interface PetService {
     void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateImageException;
 
     PetGetDto updatePet(Long id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateImageException, OrgNotFoundException;
+
+    String deletePet(Long id) throws PetNotFoundException;
 }

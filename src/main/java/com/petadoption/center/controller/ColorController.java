@@ -36,4 +36,9 @@ public class ColorController {
     public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto color) throws ColorDuplicateException {
         return new ResponseEntity<>(colorService.addNewColor(color), HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteColor(@PathVariable ("id") Long id) throws ColorNotFoundException {
+        return new ResponseEntity<>(colorService.deleteColor(id), HttpStatus.OK);
+    }
 }

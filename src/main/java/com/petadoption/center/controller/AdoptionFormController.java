@@ -3,6 +3,7 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
+import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.AdoptionFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,5 +42,10 @@ public class AdoptionFormController {
     public ResponseEntity<AdoptionFormGetDto> updateAdoptionForm(@PathVariable ("id") Long id,
                                                                  @RequestBody AdoptionFormUpdateDto adoptionForm){
         return new ResponseEntity<>(adoptionFormService.updateAdoptionForm(id, adoptionForm), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deleteAdoptionForm(@PathVariable ("id") Long id) {
+        return new ResponseEntity<>(adoptionFormService.deleteAdoptionForm(id), HttpStatus.OK);
     }
 }

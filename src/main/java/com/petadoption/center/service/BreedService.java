@@ -21,4 +21,6 @@ public interface BreedService {
 
     BreedGetDto updateBreed(Long id, BreedUpdateDto breed) throws BreedNotFoundException, BreedNameDuplicateException;
 
+    String deleteBreed(Long id) throws BreedNotFoundException;
+
 }

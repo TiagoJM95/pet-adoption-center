@@ -20,6 +20,8 @@ import java.util.Optional;
 import static com.petadoption.center.converter.SpeciesConverter.fromModelToSpeciesGetDto;
 import static com.petadoption.center.converter.SpeciesConverter.fromSpeciesCreateDtoToModel;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
@@ -54,6 +56,13 @@ public class SpeciesServiceImpl implements SpeciesService {
         checkIfSpeciesExistsByName(species.name());
         updateIfChanged(species::name, speciesToUpdate::getName, speciesToUpdate::setName);
         return fromModelToSpeciesGetDto(speciesRepository.save(speciesToUpdate));
+    }
+
+    @Override
+    public String deleteSpecies(Long id) throws SpeciesNotFoundException {
+        findSpeciesById(id);
+        speciesRepository.deleteById(id);
+        return SPECIES_WITH_ID + id + DELETE_SUCCESS;
     }
 
     Species findSpeciesById(Long id) throws SpeciesNotFoundException {

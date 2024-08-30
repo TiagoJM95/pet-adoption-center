@@ -57,4 +57,9 @@ public class PetController {
     public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") Long id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetDuplicateImageException, PetNotFoundException {
         return new ResponseEntity<>(petService.updatePet(id, pet), HttpStatus.OK);
     }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> deletePet(@PathVariable ("id") Long id) throws PetNotFoundException {
+        return new ResponseEntity<>(petService.deletePet(id), HttpStatus.OK);
+    }
 }

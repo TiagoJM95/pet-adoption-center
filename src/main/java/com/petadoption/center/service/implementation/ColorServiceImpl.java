@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.petadoption.center.converter.ColorConverter.fromModelToColorGetDto;
+import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 
 @Service
 public class ColorServiceImpl implements ColorService {
@@ -42,6 +44,13 @@ public class ColorServiceImpl implements ColorService {
     public ColorGetDto addNewColor(ColorCreateDto color) throws ColorDuplicateException {
         checkIfColorExistsByName(color.name());
         return fromModelToColorGetDto(colorRepository.save(ColorConverter.fromColorCreateDtoToModel(color)));
+    }
+
+    @Override
+    public String deleteColor(Long id) throws ColorNotFoundException {
+        findColorById(id);
+        colorRepository.deleteById(id);
+        return COLOR_WITH_ID + id + DELETE_SUCCESS;
     }
 
     Color findColorById(Long id) throws ColorNotFoundException {
