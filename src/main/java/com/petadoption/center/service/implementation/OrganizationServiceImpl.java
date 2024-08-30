@@ -12,6 +12,8 @@ import com.petadoption.center.model.embeddable.SocialMedia;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -27,8 +29,9 @@ public class OrganizationServiceImpl implements OrganizationService {
     private OrganizationRepository orgRepository;
 
     @Override
-    public List<OrgGetDto> getAllOrganizations() {
-        return orgRepository.findAll().stream().map(OrgConverter::fromModelToOrgGetDto).toList();
+    public List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return orgRepository.findAll(pageRequest).stream().map(OrgConverter::fromModelToOrgGetDto).toList();
     }
 
     @Override

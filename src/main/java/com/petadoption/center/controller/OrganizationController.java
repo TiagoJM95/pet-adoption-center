@@ -20,8 +20,10 @@ public class OrganizationController {
     private OrganizationService organizationService;
 
     @GetMapping("/")
-    public ResponseEntity<List<OrgGetDto>> getAllOrganizations(){
-        return new ResponseEntity<>(organizationService.getAllOrganizations(), HttpStatus.OK);
+    public ResponseEntity<List<OrgGetDto>> getAllOrganizations(@RequestParam (defaultValue = "0", required = false) int page,
+                                                               @RequestParam (defaultValue = "5", required = false) int size,
+                                                               @RequestParam (defaultValue = "id", required = false) String sortBy){
+        return new ResponseEntity<>(organizationService.getAllOrganizations(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

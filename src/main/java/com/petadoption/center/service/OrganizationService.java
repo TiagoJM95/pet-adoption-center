@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface OrganizationService {
 
-    List<OrgGetDto> getAllOrganizations();
+    List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy);
 
     OrgGetDto getOrganizationById(Long id) throws OrgNotFoundException;
 
