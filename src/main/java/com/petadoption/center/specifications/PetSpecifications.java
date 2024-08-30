@@ -7,6 +7,7 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.model.Pet;
+import com.petadoption.center.model.Species;
 import org.springframework.data.jpa.domain.Specification;
 
 public class PetSpecifications {
@@ -14,19 +15,14 @@ public class PetSpecifications {
     private PetSpecifications() {}
 
     public static Specification<Pet> nameLike(String nameLike) {
-        return (root, query, builder) -> builder.like(builder.lower(root.get("name")), "%" + nameLike + "%");
+        return (root, query, builder) -> builder.like(
+                builder.lower(root.get("name")), "%" + nameLike + "%");
     }
 
     public static Specification<Pet> findByBreed(Breed breed) {
-        return (root, query, builder) -> builder.or(builder.equal(root.get("primaryBreed") , breed), builder.equal(root.get("secondaryBreed") , breed));
-    }
-
-    public static Specification<Pet> findByPrimaryBreed(Breed breed) {
-        return (root, query, builder) -> builder.equal(root.get("primaryBreed") , breed);
-    }
-
-    public static Specification<Pet> findBySecondaryBreed(Breed breed) {
-        return (root, query, builder) -> builder.equal(root.get("secondaryBreed") , breed);
+        return (root, query, builder) -> builder.or(
+                builder.equal(root.get("primaryBreed") , breed),
+                builder.equal(root.get("secondaryBreed") , breed));
     }
 
     public static Specification<Pet> findByColor(Color color) {
@@ -34,18 +30,6 @@ public class PetSpecifications {
                 (builder.equal(root.get("primaryColor") , color),
                 builder.equal(root.get("secondaryColor") , color),
                 builder.equal(root.get("tertiaryColor") , color));
-    }
-
-    public static Specification<Pet> findByPrimaryColor(Color color) {
-        return (root, query, builder) -> builder.equal(root.get("primaryColor") , color);
-    }
-
-    public static Specification<Pet> findBySecondaryColor(Color color) {
-        return (root, query, builder) -> builder.equal(root.get("secondaryColor") , color);
-    }
-
-    public static Specification<Pet> findByTertiaryColor(Color color) {
-        return (root, query, builder) -> builder.equal(root.get("tertiaryColor") , color);
     }
 
     public static Specification<Pet> findByGender(Genders genders) {
@@ -98,6 +82,18 @@ public class PetSpecifications {
 
     public static Specification<Pet> isGoodWithCats(Boolean isGoodWithCats) {
         return (root, query, builder) -> builder.equal(root.get("attributes").get("goodWithCats"), isGoodWithCats);
+    }
+
+    public static Specification<Pet> findBySpecies(Species species) {
+        return (root, query, builder) -> builder.equal(root.get("species"), species);
+    }
+
+    public static Specification<Pet> findByState(String state) {
+        return (root, query, builder) -> builder.equal(root.get("organization").get("state"), state);
+    }
+
+    public static Specification<Pet> findByCity(String city) {
+        return (root, query, builder) -> builder.equal(root.get("organization").get("city"), city);
     }
 
 }

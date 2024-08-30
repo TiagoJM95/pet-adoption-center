@@ -57,6 +57,10 @@ public class SpeciesServiceImpl implements SpeciesService {
         return speciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
     }
 
+    Species findSpeciesByName(String name) throws SpeciesNotFoundException {
+        return speciesRepository.findByName(name).orElseThrow(() -> new SpeciesNotFoundException(Long.valueOf(name)));
+    }
+
     private void checkIfSpeciesExistsByName(String name) throws SpeciesNameDuplicateException {
         Optional<Species> species = speciesRepository.findByName(name);
         if (species.isPresent()) {
