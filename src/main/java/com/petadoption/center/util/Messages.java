@@ -56,4 +56,31 @@ public class Messages {
     public static final String LOGGER_DB_CONNECTION = "Exception DbConnection: {} ";
 
 
+    // VALIDATION MESSAGES
+
+    public static final String BLANK_FIELD = "This field cannot be blank";
+
+    public static final String FIRSTNAME_ONLY_LETTERS = "Firstname must be only letters";
+
+    public static final String LASTNAME_ONLY_LETTERS = "Lastname must be only letters";
+
+    public static final String EMAIL_CHARACTERS = "Email must be less than 100 characters";
+
+    public static final String STREET_CHARACTERS = "Don't use special characters, characters allowed are  , . - ";
+
+    public static final String ONLY_LETTERS = "Only letters are allowed";
+
+    public static final String POSTAL_CODE_FORMAT = "Postal Code must be in the format XXXX-XXX";
+
+    public static final String POSTAL_CODE_SIZE = "Postal Code must be less than 9 characters";
+
+    public static final String PHONE_COUNTRY_CODE = "Phone Country Code must be in the format +XXX";
+
+    public static final String PHONE_NUMBER_FORMAT = "Phone number must be only numbers";
+
+    public static final String PHONE_NUMBER_SIZE = "Phone number must be less than 10 characters";
+
+
+
 }
+
