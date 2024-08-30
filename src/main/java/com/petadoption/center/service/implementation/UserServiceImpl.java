@@ -4,7 +4,6 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.db.DatabaseConnectionException;
 import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
@@ -12,8 +11,9 @@ import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.UserService;
-import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,23 +21,23 @@ import java.util.List;
 import static com.petadoption.center.converter.UserConverter.fromModelToUserGetDto;
 import static com.petadoption.center.converter.UserConverter.fromUserCreateDtoToModel;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.USER_WITH_ID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final Utils utils;
-
     private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(Utils utils, UserRepository userRepository) {
-        this.utils = utils;
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public List<UserGetDto> getAllUsers() {
-        return userRepository.findAll().stream().map(UserConverter::fromModelToUserGetDto).toList();
+    public List<UserGetDto> getAllUsers(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return userRepository.findAll(pageRequest).stream().map(UserConverter::fromModelToUserGetDto).toList();
     }
 
     @Override
@@ -46,8 +46,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException {
-        utils.checkDbConnection();
+    public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         checkIfUserExistsByEmail(user.email());
         checkIfUserExistsByPhoneNumber(user.phoneNumber());
         return fromModelToUserGetDto(userRepository.save(fromUserCreateDtoToModel(user)));
@@ -60,6 +59,13 @@ public class UserServiceImpl implements UserService {
         checkUserDuplicates(user, userToUpdate);
         updateUserFields(user, userToUpdate);
         return fromModelToUserGetDto(userRepository.save(userToUpdate));
+    }
+
+    @Override
+    public String deleteUser(Long id) throws UserNotFoundException {
+        findUserById(id);
+        userRepository.deleteById(id);
+        return USER_WITH_ID + id + DELETE_SUCCESS;
     }
 
     private void checkUserDuplicates(UserUpdateDto user, User userToUpdate) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {

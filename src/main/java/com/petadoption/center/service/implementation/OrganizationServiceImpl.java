@@ -12,12 +12,15 @@ import com.petadoption.center.model.embeddable.SocialMedia;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.petadoption.center.converter.OrgConverter.fromModelToOrgGetDto;
 import static com.petadoption.center.converter.OrgConverter.fromOrgCreateDtoToModel;
 import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
+import static com.petadoption.center.util.Messages.*;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -26,8 +29,9 @@ public class OrganizationServiceImpl implements OrganizationService {
     private OrganizationRepository orgRepository;
 
     @Override
-    public List<OrgGetDto> getAllOrganizations() {
-        return orgRepository.findAll().stream().map(OrgConverter::fromModelToOrgGetDto).toList();
+    public List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
+        return orgRepository.findAll(pageRequest).stream().map(OrgConverter::fromModelToOrgGetDto).toList();
     }
 
     @Override
@@ -51,6 +55,13 @@ public class OrganizationServiceImpl implements OrganizationService {
         updateOrgFields(org, orgToUpdate);
         return fromModelToOrgGetDto(orgRepository.save(orgToUpdate));
 
+    }
+
+    @Override
+    public String deleteOrganization(Long id) throws OrgNotFoundException {
+        findById(id);
+        orgRepository.deleteById(id);
+        return ORG_WITH_ID + id + DELETE_SUCCESS;
     }
 
     private void checkOrgDuplicatesOrExists(OrgDto org, Organization orgToUpdate) throws OrgDuplicateEmailException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateSocialMediaException {
@@ -104,45 +115,45 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     public Organization findById(Long id) throws OrgNotFoundException {
-        return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException("id"));
+        return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException(id));
     }
 
     private void checkIfOrgExistsByEmail(String email) throws OrgDuplicateEmailException {
         if(orgRepository.findByEmail(email).isPresent()) {
-            throw new OrgDuplicateEmailException("Email already exists");
+            throw new OrgDuplicateEmailException(email);
         }
     }
 
     private void checkIfOrgExistsByPhoneNumber(String phoneNumber) throws OrgDuplicatePhoneNumberException {
         if(orgRepository.findByPhoneNumber(phoneNumber).isPresent()) {
-            throw new OrgDuplicatePhoneNumberException("Phone number already exists");
+            throw new OrgDuplicatePhoneNumberException(phoneNumber);
         }
     }
 
     private void checkIfOrgExistsByAddress(String street, String postalCode) throws OrgDuplicateAddressException {
         if (orgRepository.findByAddress_StreetAndAddress_PostalCode(street, postalCode).isPresent()) {
-            throw new OrgDuplicateAddressException("Address already exists");
+            throw new OrgDuplicateAddressException(street, postalCode);
         }
     }
 
     private void checkIfOrgExistsByWebsiteUrl(String websiteUrl) throws OrgDuplicateWebsiteException {
         if(orgRepository.findByWebsiteUrl(websiteUrl).isPresent()) {
-            throw new OrgDuplicateWebsiteException("Website already exists");
+            throw new OrgDuplicateWebsiteException(websiteUrl);
         }
     }
 
     private void checkIfOrgExistsBySocialMedia(String facebook, String instagram, String twitter, String youtube) throws OrgDuplicateSocialMediaException {
         if(orgRepository.findBySocialMedia_Facebook(facebook).isPresent()) {
-            throw new OrgDuplicateSocialMediaException("Facebook already exists");
+            throw new OrgDuplicateSocialMediaException(FACEBOOK, facebook);
         }
         if(orgRepository.findBySocialMedia_Instagram(instagram).isPresent()) {
-            throw new OrgDuplicateSocialMediaException("Instagram already exists");
+            throw new OrgDuplicateSocialMediaException(INSTAGRAM, instagram);
         }
         if(orgRepository.findBySocialMedia_Twitter(twitter).isPresent()) {
-            throw new OrgDuplicateSocialMediaException("Twitter already exists");
+            throw new OrgDuplicateSocialMediaException(TWITTER, twitter);
         }
         if(orgRepository.findBySocialMedia_Youtube(youtube).isPresent()) {
-            throw new OrgDuplicateSocialMediaException("Youtube already exists");
+            throw new OrgDuplicateSocialMediaException(YOUTUBE, youtube);
         }
     }
 

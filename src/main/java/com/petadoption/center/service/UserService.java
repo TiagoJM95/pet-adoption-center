@@ -12,11 +12,13 @@ import java.util.List;
 
 public interface UserService {
 
-    List<UserGetDto> getAllUsers();
+    List<UserGetDto> getAllUsers(int page, int size, String sortBy);
 
-    UserGetDto getUserById(Long id) throws UserNotFoundException, DatabaseConnectionException;
+    UserGetDto getUserById(Long id) throws UserNotFoundException;
 
-    UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException, DatabaseConnectionException;
+    UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException;
 
     UserGetDto updateUser(Long id, UserUpdateDto user) throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException;
+
+    String deleteUser(Long id) throws UserNotFoundException;
 }

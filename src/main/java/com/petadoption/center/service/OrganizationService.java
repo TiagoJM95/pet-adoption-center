@@ -9,11 +9,13 @@ import java.util.List;
 
 public interface OrganizationService {
 
-    List<OrgGetDto> getAllOrganizations();
+    List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy);
 
     OrgGetDto getOrganizationById(Long id) throws OrgNotFoundException;
 
     OrgGetDto addNewOrganization(OrgCreateDto organization) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException;
 
     OrgGetDto updateOrganization(Long id, OrgUpdateDto organization) throws OrgNotFoundException, OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException;
+
+    String deleteOrganization(Long id) throws OrgNotFoundException;
 }
