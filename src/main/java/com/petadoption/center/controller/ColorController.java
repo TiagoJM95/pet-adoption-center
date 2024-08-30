@@ -5,6 +5,7 @@ import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.service.ColorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +33,7 @@ public class ColorController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<ColorGetDto> addNewColor(@RequestBody ColorCreateDto color) throws ColorDuplicateException {
+    public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto color) throws ColorDuplicateException {
         return new ResponseEntity<>(colorService.addNewColor(color), HttpStatus.CREATED);
     }
 }

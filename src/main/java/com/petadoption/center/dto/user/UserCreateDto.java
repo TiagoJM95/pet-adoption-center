@@ -13,11 +13,11 @@ import static com.petadoption.center.util.Messages.*;
 public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z]+", message = FIRSTNAME_ONLY_LETTERS)
+        @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String firstName,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z]+", message = LASTNAME_ONLY_LETTERS)
+        @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String lastName,
 
         @NotBlank(message = BLANK_FIELD)

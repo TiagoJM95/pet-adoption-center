@@ -55,20 +55,17 @@ public class Messages {
 
     public static final String LOGGER_DB_CONNECTION = "Exception DbConnection: {} ";
 
-
     // VALIDATION MESSAGES
 
     public static final String BLANK_FIELD = "This field cannot be blank";
-
-    public static final String FIRSTNAME_ONLY_LETTERS = "Firstname must be only letters";
-
-    public static final String LASTNAME_ONLY_LETTERS = "Lastname must be only letters";
 
     public static final String CHARACTERS_LIMIT = "Must be less than 100 characters";
 
     public static final String STREET_CHARACTERS = "Special characters allowed are  , . - ";
 
     public static final String ONLY_LETTERS = "Only letters are allowed";
+
+    public static final String ONLY_NUMBERS = "Only numbers are allowed";
 
     public static final String POSTAL_CODE_FORMAT = "Postal Code must be in the format XXXX-XXX";
 

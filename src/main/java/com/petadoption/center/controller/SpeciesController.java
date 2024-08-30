@@ -6,6 +6,7 @@ import com.petadoption.center.dto.species.SpeciesUpdateDto;
 import com.petadoption.center.exception.species.SpeciesNameDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.SpeciesService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +35,13 @@ public class SpeciesController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<SpeciesGetDto> addNewPetSpecies(@RequestBody SpeciesCreateDto species) throws SpeciesNameDuplicateException {
+    public ResponseEntity<SpeciesGetDto> addNewPetSpecies(@Valid @RequestBody SpeciesCreateDto species) throws SpeciesNameDuplicateException {
         return new ResponseEntity<>(petSpeciesService.addNewPetSpecies(species), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<SpeciesGetDto> updatePetSpecies(@PathVariable ("id") Long id,
-                                                          @RequestBody SpeciesUpdateDto species) throws SpeciesNameDuplicateException, SpeciesNotFoundException {
+                                                          @Valid @RequestBody SpeciesUpdateDto species) throws SpeciesNameDuplicateException, SpeciesNotFoundException {
         return new ResponseEntity<>(petSpeciesService.updatePetSpecies(id, species), HttpStatus.OK);
     }
 }

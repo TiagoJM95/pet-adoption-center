@@ -8,10 +8,10 @@ import static com.petadoption.center.util.Messages.*;
 
 public record UserUpdateDto(
 
-        @Pattern(regexp = "[a-zA-Z]+", message = FIRSTNAME_ONLY_LETTERS)
+        @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String firstName,
 
-        @Pattern(regexp = "[a-zA-Z]+", message = LASTNAME_ONLY_LETTERS)
+        @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String lastName,
 
         @Email
