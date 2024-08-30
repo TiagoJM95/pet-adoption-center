@@ -3,5 +3,6 @@ docker run --name petCenter -e POSTGRES_DB=petCenter -e POSTGRES_USER=root -e PO
 
 TODO:
         Auth;
+        AdoptionForm;
         CODE CLEANUP;
         Testes;
