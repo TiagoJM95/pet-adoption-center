@@ -1,7 +1,6 @@
 package com.petadoption.center.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.petadoption.center.model.embeddable.Address;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -23,7 +22,7 @@ public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Email
-        @Size(max = 100, message = EMAIL_CHARACTERS)
+        @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
         @NotBlank(message = BLANK_FIELD)

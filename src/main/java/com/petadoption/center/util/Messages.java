@@ -64,9 +64,9 @@ public class Messages {
 
     public static final String LASTNAME_ONLY_LETTERS = "Lastname must be only letters";
 
-    public static final String EMAIL_CHARACTERS = "Email must be less than 100 characters";
+    public static final String CHARACTERS_LIMIT = "Must be less than 100 characters";
 
-    public static final String STREET_CHARACTERS = "Don't use special characters, characters allowed are  , . - ";
+    public static final String STREET_CHARACTERS = "Special characters allowed are  , . - ";
 
     public static final String ONLY_LETTERS = "Only letters are allowed";
 
@@ -80,6 +80,15 @@ public class Messages {
 
     public static final String PHONE_NUMBER_SIZE = "Phone number must be less than 10 characters";
 
+
+    public static final String LETTERS_AND_NUMBERS = "Only letters and numbers are allowed";
+
+    public static final String WEBSITE_URL = "Special characters allowed are  . - ";
+
+    public static final String FACEBOOK_VALID = "Special characters allowed are  . - / ";
+    public static final String INSTAGRAM_VALID = "Special characters allowed are  . - @ ";
+    public static final String TWITTER_VALID = "Special characters allowed are  . - / ";
+    public static final String YOUTUBE_VALID = "Special characters allowed are  . - / ";
 
 
 }

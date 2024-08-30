@@ -15,7 +15,7 @@ public record UserUpdateDto(
         String lastName,
 
         @Email
-        @Size(max = 100, message = EMAIL_CHARACTERS)
+        @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
         @Pattern(regexp = "[a-zA-Z_0-9,.-]+", message = STREET_CHARACTERS)

@@ -5,6 +5,7 @@ import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.*;
 import com.petadoption.center.service.OrganizationService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,13 +33,13 @@ public class OrganizationController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrgGetDto> addNewOrganization(@RequestBody OrgCreateDto organization) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
+    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
         return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<OrgGetDto> updateOrganization(@PathVariable ("id") Long id,
-                                                        @RequestBody OrgUpdateDto organization) throws OrgDuplicateSocialMediaException, OrgNotFoundException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
+                                                        @Valid @RequestBody OrgUpdateDto organization) throws OrgDuplicateSocialMediaException, OrgNotFoundException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
         return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
     }
 
