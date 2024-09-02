@@ -6,6 +6,7 @@ import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
+import jakarta.mail.internet.AddressException;
 
 import java.util.List;
 
