@@ -5,7 +5,7 @@ import java.util.function.Supplier;
 
 public class FieldUpdater {
 
-    public static <T> void updateIfChanged(Supplier<T> newValueSupplier, Supplier <T> oldValueSupplier, Consumer<T> setterField ){
+    public static <T> void updateIfChanged(Supplier<T> newValueSupplier, Supplier <T> oldValueSupplier, Consumer<T> setterField){
         T newValue = newValueSupplier.get();
         T oldValue = oldValueSupplier.get();
 

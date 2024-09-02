@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class DbAspect {
 
-
     private final DbConnection dbConnection;
 
     @Autowired
@@ -22,6 +21,5 @@ public class DbAspect {
     @Before("execution(* com.petadoption.center.service.*.*(..))")
     public void testDbConnection() throws DatabaseConnectionException {
         dbConnection.checkDbConnection();
-
     }
 }
