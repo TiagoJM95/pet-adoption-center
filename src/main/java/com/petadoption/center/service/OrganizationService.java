@@ -4,10 +4,13 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.*;
+import com.petadoption.center.model.Organization;
 
 import java.util.List;
 
 public interface OrganizationService {
+
+    Organization findOrgById(Long id) throws OrgNotFoundException;
 
     List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy);
 

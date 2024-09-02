@@ -30,7 +30,7 @@ public class UserConverter {
         return new UserGetDto(
                 user.getId(),
                 user.getFirstName(),
-                user.getEmail(),
+                user.getLastName(),
                 user.getEmail(),
                 user.getDateOfBirth(),
                 user.getAddress(),

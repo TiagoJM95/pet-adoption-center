@@ -1,6 +1,9 @@
 package com.petadoption.center.model;
 
-import com.petadoption.center.enums.*;
+import com.petadoption.center.enums.Ages;
+import com.petadoption.center.enums.Coats;
+import com.petadoption.center.enums.Genders;
+import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.embeddable.Attributes;
 import jakarta.persistence.*;
 import lombok.*;

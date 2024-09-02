@@ -6,10 +6,13 @@ import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.exception.breed.BreedNameDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
+import com.petadoption.center.model.Breed;
 
 import java.util.List;
 
 public interface BreedService {
+
+    Breed findBreedById(Long id) throws BreedNotFoundException;
 
     List<BreedGetDto> getAllBreeds(int page, int size, String sortBy);
 

@@ -34,6 +34,16 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
+    public Species findSpeciesById(Long id) throws SpeciesNotFoundException {
+        return speciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
+    }
+
+    @Override
+    public Species findSpeciesByName(String name) throws SpeciesNotFoundException {
+        return speciesRepository.findByName(name).orElseThrow(() -> new SpeciesNotFoundException(Long.valueOf(name)));
+    }
+
+    @Override
     public List<SpeciesGetDto> getAllPetSpecies(int page, int size, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         return speciesRepository.findAll(pageRequest).stream().map(SpeciesConverter::fromModelToSpeciesGetDto).toList();
@@ -63,14 +73,6 @@ public class SpeciesServiceImpl implements SpeciesService {
         findSpeciesById(id);
         speciesRepository.deleteById(id);
         return SPECIES_WITH_ID + id + DELETE_SUCCESS;
-    }
-
-    Species findSpeciesById(Long id) throws SpeciesNotFoundException {
-        return speciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
-    }
-
-    Species findSpeciesByName(String name) throws SpeciesNotFoundException {
-        return speciesRepository.findByName(name).orElseThrow(() -> new SpeciesNotFoundException(Long.valueOf(name)));
     }
 
     private void checkIfSpeciesExistsByName(String name) throws SpeciesNameDuplicateException {

@@ -30,6 +30,11 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
+    public Color findColorById(Long id) throws ColorNotFoundException {
+        return colorRepository.findById(id).orElseThrow(() -> new ColorNotFoundException("id"));
+    }
+
+    @Override
     public List<ColorGetDto> getAllColors(int page, int size, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         return colorRepository.findAll(pageRequest).stream().map(ColorConverter::fromModelToColorGetDto).toList();
@@ -51,10 +56,6 @@ public class ColorServiceImpl implements ColorService {
         findColorById(id);
         colorRepository.deleteById(id);
         return COLOR_WITH_ID + id + DELETE_SUCCESS;
-    }
-
-    Color findColorById(Long id) throws ColorNotFoundException {
-        return colorRepository.findById(id).orElseThrow(() -> new ColorNotFoundException("id"));
     }
 
     private void checkIfColorExistsByName(String name) throws ColorDuplicateException {

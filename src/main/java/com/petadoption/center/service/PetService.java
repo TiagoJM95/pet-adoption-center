@@ -10,14 +10,13 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetDuplicateImageException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.model.Breed;
-import com.petadoption.center.model.Color;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.petadoption.center.model.Pet;
 
 import java.util.List;
 
 public interface PetService {
+
+    Pet findPetById(Long id) throws PetNotFoundException;
 
     PetGetDto getPetById(Long id) throws PetNotFoundException;
 

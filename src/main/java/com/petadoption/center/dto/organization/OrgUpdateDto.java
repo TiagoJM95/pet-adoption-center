@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import static com.petadoption.center.util.Messages.*;
-import static com.petadoption.center.util.Messages.PHONE_NUMBER_SIZE;
 
 public record OrgUpdateDto(
 

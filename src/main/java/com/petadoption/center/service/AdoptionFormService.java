@@ -3,7 +3,6 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
-import com.petadoption.center.exception.species.SpeciesNotFoundException;
 
 import java.util.List;
 

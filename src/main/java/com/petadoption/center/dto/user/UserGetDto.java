@@ -1,13 +1,10 @@
 package com.petadoption.center.dto.user;
 
-import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
-import com.petadoption.center.dto.pet.PetGetDto;
-import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Pet;
+import com.petadoption.center.model.embeddable.Address;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 public record UserGetDto(

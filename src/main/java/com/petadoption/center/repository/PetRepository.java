@@ -1,6 +1,6 @@
 package com.petadoption.center.repository;
 
-import com.petadoption.center.model.*;
+import com.petadoption.center.model.Pet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;

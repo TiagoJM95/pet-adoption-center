@@ -18,7 +18,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.petadoption.center.converter.BreedConverter.fromBreedCreateDtoToModel;
 import static com.petadoption.center.converter.BreedConverter.fromModelToBreedGetDto;
@@ -36,6 +35,11 @@ public class BreedServiceImpl implements BreedService {
     public BreedServiceImpl(BreedRepository breedRepository, SpeciesRepository speciesRepository) {
         this.breedRepository = breedRepository;
         this.speciesRepository = speciesRepository;
+    }
+
+    @Override
+    public Breed findBreedById(Long id) throws BreedNotFoundException {
+        return breedRepository.findById(id).orElseThrow(() -> new BreedNotFoundException(id));
     }
 
     @Override
@@ -76,10 +80,6 @@ public class BreedServiceImpl implements BreedService {
         findBreedById(id);
         breedRepository.deleteById(id);
         return BREED_WITH_ID + id + DELETE_SUCCESS;
-    }
-
-    Breed findBreedById(Long id) throws BreedNotFoundException {
-        return breedRepository.findById(id).orElseThrow(() -> new BreedNotFoundException(id));
     }
 
     private void checkIfBreedsExistsByName(String name) throws BreedNameDuplicateException {

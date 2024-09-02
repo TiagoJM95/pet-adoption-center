@@ -14,9 +14,11 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetDuplicateImageException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.model.*;
+import com.petadoption.center.model.Organization;
+import com.petadoption.center.model.Pet;
+import com.petadoption.center.model.Species;
 import com.petadoption.center.model.embeddable.Attributes;
-import com.petadoption.center.repository.*;
+import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.*;
 import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,10 +48,10 @@ import static com.petadoption.center.util.Messages.PET_WITH_ID;
 public class PetServiceImpl implements PetService {
 
     private final PetRepository petRepository;
-    private final SpeciesServiceImpl speciesService;
-    private final BreedServiceImpl breedService;
-    private final ColorServiceImpl colorService;
-    private final OrganizationServiceImpl organizationService;
+    private final SpeciesService speciesService;
+    private final BreedService breedService;
+    private final ColorService colorService;
+    private final OrganizationService organizationService;
 
     @Autowired
     public PetServiceImpl(PetRepository petRepository, SpeciesServiceImpl speciesService, BreedServiceImpl breedService, ColorServiceImpl colorService, OrganizationServiceImpl organizationService) {
@@ -61,8 +63,13 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
+    public Pet findPetById(Long id) throws PetNotFoundException {
+        return petRepository.findById(id).orElseThrow(() -> new PetNotFoundException("id"));
+    }
+
+    @Override
     public PetGetDto getPetById(Long id) throws PetNotFoundException {
-        return convertToPetGetDto(findById(id));
+        return convertToPetGetDto(findPetById(id));
     }
 
     @Override
@@ -88,7 +95,7 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public PetGetDto updatePet(Long id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateImageException, OrgNotFoundException {
-        Pet petToUpdate = findById(id);
+        Pet petToUpdate = findPetById(id);
         if(!pet.imageUrl().equals(petToUpdate.getImageUrl())) {
             checkIfPetExistsByImageUrl(pet.imageUrl());
         }
@@ -98,13 +105,9 @@ public class PetServiceImpl implements PetService {
 
     @Override
     public String deletePet(Long id) throws PetNotFoundException {
-        findById(id);
+        findPetById(id);
         petRepository.deleteById(id);
         return PET_WITH_ID + id + DELETE_SUCCESS;
-    }
-
-    Pet findById(Long id) throws PetNotFoundException {
-        return petRepository.findById(id).orElseThrow(() -> new PetNotFoundException("id"));
     }
 
     private PetGetDto convertToPetGetDto(Pet pet) {
@@ -129,7 +132,7 @@ public class PetServiceImpl implements PetService {
                 colorService.findColorById(pet.primaryColor()),
                 colorService.findColorById(pet.secondaryColor()),
                 colorService.findColorById(pet.tertiaryColor()),
-                organizationService.findById(pet.organizationId())
+                organizationService.findOrgById(pet.organizationId())
         );
     }
 
@@ -177,7 +180,7 @@ public class PetServiceImpl implements PetService {
         updateIfChanged(pet::imageUrl, petToUpdate::getImageUrl, petToUpdate::setImageUrl);
         updateIfChanged(pet::isAdopted, petToUpdate::getIsAdopted, petToUpdate::setIsAdopted);
         updateIfChanged(() -> new Attributes(pet.sterilized(), pet.vaccinated(), pet.chipped(), pet.specialNeeds(), pet.houseTrained(), pet.goodWithKids(), pet.goodWithDogs(), pet.goodWithCats()), petToUpdate::getAttributes, petToUpdate::setAttributes);
-        Organization org = organizationService.findById(pet.organizationId());
+        Organization org = organizationService.findOrgById(pet.organizationId());
         if(pet.organizationId() != null && !org.equals(petToUpdate.getOrganization())) {
             petToUpdate.setOrganization(org);
         }

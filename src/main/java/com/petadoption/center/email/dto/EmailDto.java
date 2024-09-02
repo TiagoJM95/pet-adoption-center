@@ -2,7 +2,10 @@ package com.petadoption.center.email.dto;
 
 
 import jakarta.mail.internet.InternetAddress;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder

@@ -3,7 +3,6 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
-import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.AdoptionFormService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
