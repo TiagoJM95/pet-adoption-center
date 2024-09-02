@@ -10,9 +10,13 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
+
+import java.nio.charset.StandardCharsets;
 
 import static com.petadoption.center.util.Messages.*;
 
@@ -53,27 +57,41 @@ public class EmailServiceImpl implements EmailService {
 
     }
 
-    public Object sendWelcomeMail(User user) throws AddressException {
+    public void sendWelcomeMail(User user){
 
-        InternetAddress recipient = new InternetAddress(user.getEmail());
-        try{
+        try {
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
 
             mimeMessageHelper.setFrom(fromEmail);
-            mimeMessageHelper.setTo(recipient);
+            mimeMessageHelper.setTo(user.getEmail());
             mimeMessageHelper.setSubject(WELCOME_EMAIL_SUBJECT);
-            mimeMessageHelper.setText("Welcome " + user.getFirstName() + "!");
 
-            log.info("Welcome Email Sent Successfully to: {}", recipient);
-            return new Response(EMAIL_SUCCESS, recipient, ResponseMessage.SUCCESS);
+            ClassPathResource resource = new ClassPathResource("emailTemplates/welcomeEmail.html");
+            String htmlTemplate = StreamUtils.copyToString(resource.getInputStream(), StandardCharsets.UTF_8);
+
+            String htmlContent = htmlTemplate
+                    .replace("{{firstName}}", user.getFirstName())
+                    .replace("{{lastName}}", user.getLastName())
+                    .replace("{{email}}", user.getEmail())
+                    .replace("{{dateOfBirth}}", user.getDateOfBirth().toString())
+                    .replace("{{street}}", user.getAddress().getStreet())
+                    .replace("{{city}}", user.getAddress().getCity())
+                    .replace("{{state}}", user.getAddress().getState())
+                    .replace("{{postalCode}}", user.getAddress().getPostalCode())
+                    .replace("{{phoneCountryCode}}", user.getPhoneCountryCode())
+                    .replace("{{phoneNumber}}", user.getPhoneNumber().toString());
+
+            mimeMessageHelper.setText(htmlContent, true);
+
+            javaMailSender.send(mimeMessage);
+
+            log.info("Welcome Email Sent Successfully to: {}", user.getEmail());
+
         } catch (Exception e) {
-            System.out.println(e.getCause().getMessage());
-            log.error("sendWelcomeMail() | Error : {}", e.getMessage());
-            return new Response(EMAIL_ERROR, recipient, ResponseMessage.FAILURE);
+            log.error("sendWelcomeMail() | Error: ", e);
         }
-
     }
 
 }

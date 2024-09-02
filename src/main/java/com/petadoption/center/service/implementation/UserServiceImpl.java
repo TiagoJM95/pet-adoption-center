@@ -4,6 +4,7 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.email.service.EmailService;
 import com.petadoption.center.exception.user.UserEmailDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
@@ -29,9 +30,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    private final EmailService emailService;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -49,7 +53,9 @@ public class UserServiceImpl implements UserService {
     public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
         checkIfUserExistsByEmail(user.email());
         checkIfUserExistsByPhoneNumber(user.phoneNumber());
-        return fromModelToUserGetDto(userRepository.save(fromUserCreateDtoToModel(user)));
+        User userSaved = userRepository.save(fromUserCreateDtoToModel(user));
+        emailService.sendWelcomeMail(userSaved);
+        return fromModelToUserGetDto(userSaved);
     }
 
     @Override
