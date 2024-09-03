@@ -11,6 +11,7 @@ public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
+        @NotNull
         String firstName,
 
         @NotBlank(message = BLANK_FIELD)
