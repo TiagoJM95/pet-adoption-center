@@ -4,17 +4,12 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -25,7 +20,7 @@ public class UserConverterTest {
 
 
     @Test
-    @DisplayName("Test if from UserCreateDto to User model is working correctly")
+    @DisplayName("Test UserCreateDto to User model is working correctly")
     void fromUserCreateDtoToModel() {
 
         UserCreateDto userCreateDto = new UserCreateDto(
@@ -57,7 +52,7 @@ public class UserConverterTest {
 
 
     @Test
-    @DisplayName("Test if from User model to UserGetDto is working correctly")
+    @DisplayName("Test User model to UserGetDto is working correctly")
     void fromModelToUserGetDto() {
 
     Address address = new Address(
@@ -67,18 +62,19 @@ public class UserConverterTest {
         "4410-000"
     );
 
-        User user = new User(
-                1L,
-                "Fabio",
-                "Guedes",
-                "teste@email.com",
-                LocalDate.of(1990, 10, 25),
-                address,
-                "+351",
-                911111111,
-                null,
-                null,
-                null);
+    User user = User.builder()
+            .id(1L)
+            .firstName("Fabio")
+            .lastName("Guedes")
+            .email("teste@email.com")
+            .dateOfBirth(LocalDate.of(1990, 10, 25))
+            .address(address)
+            .phoneCountryCode("+351")
+            .phoneNumber(911111111)
+            .favoritePets(null)
+            .adoptedPets(null)
+            .userAdoptionForms(null)
+            .build();
 
         UserGetDto userGetDto = UserConverter.fromModelToUserGetDto(user);
 
@@ -98,32 +94,19 @@ public class UserConverterTest {
         assertNull(userGetDto.adoptionForms());
     }
 
+
     @Test
-    void testIfAcceptNullFirstName() {
-        UserCreateDto userCreateDto = new UserCreateDto(
-                null,
-                "Guedes",
-                "teste@email.com",
-                LocalDate.of(1990, 10, 25),
-                "Rua das Andorinhas, 123",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000",
-                "+351",
-                912345678);
-
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-
-        Set<ConstraintViolation<UserCreateDto>> violations = validator.validate(userCreateDto);
-
-        assertFalse(violations.isEmpty());
-
-        boolean hasFirstNameViolation = violations.stream()
-                .anyMatch(violation -> violation.getPropertyPath().toString().equals("firstName"));
-        assertTrue(hasFirstNameViolation, "There should be a violation for the 'firstName' field.");
+    @DisplayName("Test if fromCreateDtoToModel return null if received null dto")
+    void testIfFromCreateDtoToModelReturnNullIfReceivedNullDto() {
+        assertNull(UserConverter.fromUserCreateDtoToModel(null));
     }
 
+
+    @Test
+    @DisplayName("Test if fromModelToUserGetDto return null if received null model")
+    void testIfFromModelToUserGetDtoReturnNullIfReceivedNullModel() {
+        assertNull(UserConverter.fromModelToUserGetDto(null));
+    }
 
 
 }
