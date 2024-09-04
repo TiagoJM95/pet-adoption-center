@@ -54,7 +54,7 @@ public class UserServiceImpl implements UserService {
         checkIfUserExistsByEmail(user.email());
         checkIfUserExistsByPhoneNumber(user.phoneNumber());
         User userSaved = userRepository.save(fromUserCreateDtoToModel(user));
-        emailService.sendWelcomeMail(userSaved);
+        //emailService.sendWelcomeMail(userSaved);
         return fromModelToUserGetDto(userSaved);
     }
 
