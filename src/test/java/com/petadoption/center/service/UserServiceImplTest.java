@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 
 
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.USER_WITH_ID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -80,7 +82,7 @@ public class UserServiceImplTest {
                 934587967);
 
         updatedUser = new User();
-        updatedUser.setId(1L);
+        updatedUser.setId(2L);
         updatedUser.setFirstName("Tiago");
         updatedUser.setLastName("Moreira");
         updatedUser.setEmail("tm@email.com");
@@ -103,6 +105,83 @@ public class UserServiceImplTest {
 
         assertEquals(1, result.size());
         assertEquals(testUser.getEmail(), result.getFirst().email());
+    }
+
+    @Test
+    @DisplayName("Test if get all users return empty list if no users")
+    void getAllUsersShouldReturnEmpty(){
+
+        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
+
+        Page<User> pagedUsers = new PageImpl<>(List.of());
+
+        when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
+
+        List<UserGetDto> result = userService.getAllUsers(0,10,"id");
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    @DisplayName("Test if get all users return number of elements of page size")
+    void getAllUsersShouldReturnNumberOfElementsOfPageSize(){
+
+        User userToAdd = new User();
+        List<User> allUsers = List.of(testUser, updatedUser, userToAdd);
+        PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "id");
+
+        Page<User> pagedUsers = new PageImpl<>(List.of(testUser, updatedUser), pageRequest, allUsers.size());
+
+        when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
+
+        List<UserGetDto> result = userService.getAllUsers(0,2,"id");
+
+        assertEquals(2, result.size());
+        assertFalse(result.size() > 2);
+    }
+
+    @Test
+    @DisplayName("Test if get all users return with Descending Order")
+    void getAllUsersShouldReturnUsersInDescendingOrder(){
+
+        User userToAdd = new User();
+        userToAdd.setId(100L);
+
+        List<User> allUsers = List.of(userToAdd, updatedUser, testUser);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+
+        Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
+
+        when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
+
+        List<UserGetDto> result = userService.getAllUsers(0,3,"id");
+
+        assertNotNull(result);
+        assertEquals(3,result.size());
+        assertTrue(result.get(0).id() > result.get(1).id());
+        assertTrue(result.get(1).id() > result.get(2).id());
+    }
+
+    @Test
+    @DisplayName("Test if get all users return with Ascending Order")
+    void getAllUsersShouldReturnUsersInAscendingOrder(){
+
+        User userToAdd = new User();
+        userToAdd.setId(100L);
+
+        List<User> allUsers = List.of(testUser,updatedUser, userToAdd);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "id");
+
+        Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
+
+        when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
+
+        List<UserGetDto> result = userService.getAllUsers(0,3,"id");
+
+        assertNotNull(result);
+        assertEquals(3,result.size());
+        assertTrue(result.get(0).id() < result.get(1).id());
+        assertTrue(result.get(1).id() < result.get(2).id());
     }
 
 
@@ -167,6 +246,54 @@ public class UserServiceImplTest {
         assertEquals(userUpdateDto.email(), result.email());
     }
 
+    @Test
+    @DisplayName("Test if update user throw exception user not found")
+    void updateUserShouldThrowExceptionUserNotFound(){
+
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
+    }
+
+    @Test
+    @DisplayName("Test if update user throw exception user email duplicate")
+    void updateUserShouldThrowExceptionUserDuplicateEmail(){
+
+        User userWithSameEmail = new User();
+        userWithSameEmail.setId(100L);
+        userWithSameEmail.setEmail(userUpdateDto.email());
+
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+        when(userRepository.findByEmail(userUpdateDto.email())).thenReturn(Optional.of(userWithSameEmail));
+
+        assertThrows(UserEmailDuplicateException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
+    }
+
+
+    @Test
+    @DisplayName("Test if delete user erase user and return message")
+    void deleteUserShouldEraseAndDisplayMessage() throws UserNotFoundException {
+
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
+
+        assertEquals(userService.deleteUser(testUser.getId()),USER_WITH_ID + testUser.getId() + DELETE_SUCCESS);
+    }
+
+    @Test
+    @DisplayName("Test if delete user throw exception user not found")
+    void deleteUserShouldThrowExceptionUserNotFound(){
+
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(testUser.getId()));
+    }
+
+
+
+
+
+    // FOR VALIDATION TESTS
 
     //    @Test
 //    @DisplayName("Test if validator works correctly")
