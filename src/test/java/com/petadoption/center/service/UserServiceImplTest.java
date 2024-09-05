@@ -217,7 +217,7 @@ public class UserServiceImplTest {
 
 
     @Test
-    @DisplayName("Test if throw exception if email is duplicated")
+    @DisplayName("Test if add new user throws exception if email is duplicated")
     void addNewUserShouldThrowUserEmailDuplicateException() {
 
         when(userRepository.findByEmail(userCreateDto.email())).thenReturn(Optional.of(testUser));
@@ -226,7 +226,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test if throw exception if phone number is duplicated")
+    @DisplayName("Test if add new user throws exception if phone number is duplicated")
     void addNewUserShouldThrowUserPhoneNumberDuplicateException() {
 
         when(userRepository.findByPhoneNumber(userCreateDto.phoneNumber())).thenReturn(Optional.of(testUser));
@@ -247,7 +247,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test if update user throw exception user not found")
+    @DisplayName("Test if update user throws exception user not found")
     void updateUserShouldThrowExceptionUserNotFound(){
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
@@ -256,7 +256,7 @@ public class UserServiceImplTest {
     }
 
     @Test
-    @DisplayName("Test if update user throw exception user email duplicate")
+    @DisplayName("Test if update user throws exception user email duplicate")
     void updateUserShouldThrowExceptionUserDuplicateEmail(){
 
         User userWithSameEmail = new User();
