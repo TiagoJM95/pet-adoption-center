@@ -96,6 +96,7 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("Test if get all users works correctly")
     void getAllUsersShouldReturnListOfUsers() {
+
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<User> pagedUsers = new PageImpl<>(List.of(testUser));
 
@@ -112,7 +113,6 @@ public class UserServiceImplTest {
     void getAllUsersShouldReturnEmpty(){
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
-
         Page<User> pagedUsers = new PageImpl<>(List.of());
 
         when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
@@ -129,7 +129,6 @@ public class UserServiceImplTest {
         User userToAdd = new User();
         List<User> allUsers = List.of(testUser, updatedUser, userToAdd);
         PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "id");
-
         Page<User> pagedUsers = new PageImpl<>(List.of(testUser, updatedUser), pageRequest, allUsers.size());
 
         when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
@@ -146,10 +145,8 @@ public class UserServiceImplTest {
 
         User userToAdd = new User();
         userToAdd.setId(100L);
-
         List<User> allUsers = List.of(userToAdd, updatedUser, testUser);
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
-
         Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
@@ -168,10 +165,8 @@ public class UserServiceImplTest {
 
         User userToAdd = new User();
         userToAdd.setId(100L);
-
         List<User> allUsers = List.of(testUser,updatedUser, userToAdd);
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "id");
-
         Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
@@ -188,19 +183,20 @@ public class UserServiceImplTest {
     @Test
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturnUser() throws UserNotFoundException {
-        Long id = 1L;
-        when(userRepository.findById(id)).thenReturn(Optional.of(testUser));
 
-            UserGetDto result = userService.getUserById(id);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+            UserGetDto result = userService.getUserById(1L);
             assertEquals(testUser.getEmail(), result.email());
     }
 
     @Test
     @DisplayName("Test if get user by id throws UserNotFoundException")
     void getUserByIdShouldThrowUserNotFoundException() {
-        Long id = 1L;
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
-        assertThrows(UserNotFoundException.class, () -> userService.getUserById(id));
+
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(1L));
     }
 
     @Test
@@ -212,7 +208,6 @@ public class UserServiceImplTest {
 
         assertNotNull(userCreateDto);
         assertEquals(userCreateDto.email(), result.email());
-
    }
 
 
@@ -240,6 +235,7 @@ public class UserServiceImplTest {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
+
         UserGetDto result = userService.updateUser(testUser.getId(), userUpdateDto);
 
         assertNotNull(userUpdateDto);
