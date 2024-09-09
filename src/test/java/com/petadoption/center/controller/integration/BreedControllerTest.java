@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Species;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
