@@ -182,7 +182,7 @@ public class BreedServiceImplTest {
 
     @Test
     @DisplayName("Test if get Breed by id throws BreedNotFoundException")
-    void getBreedByIdShouldThrowBreedNotFoundException() throws BreedNotFoundException {
+    void getBreedByIdShouldThrowBreedNotFoundException() {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.empty());
 
@@ -263,6 +263,7 @@ public class BreedServiceImplTest {
     void deleteBreedShouldWorkCorrectly() throws BreedNotFoundException {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.of(testBreed));
+
         breedService.deleteBreed(testBreed.getId());
 
         assertEquals(breedService.deleteBreed(testBreed.getId()),BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
