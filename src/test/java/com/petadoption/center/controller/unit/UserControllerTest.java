@@ -9,7 +9,6 @@ import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.service.UserService;
-import com.petadoption.center.service.implementation.UserServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
