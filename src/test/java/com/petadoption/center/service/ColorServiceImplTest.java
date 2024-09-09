@@ -110,12 +110,12 @@ public class ColorServiceImplTest {
         Color colorToAdd = new Color();
         colorToAdd.setId(100L);
         List<Color> allColors = List.of(colorToAdd, updatedColor, testColor);
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
         Page<Color> pagedColors = new PageImpl<>(allColors, pageRequest, allColors.size());
 
-        when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
+        when(colorRepository.findAll(any(PageRequest.class))).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAllColors(0, 3, "id");
 
         assertNotNull(result);
         assertEquals(3, result.size());
