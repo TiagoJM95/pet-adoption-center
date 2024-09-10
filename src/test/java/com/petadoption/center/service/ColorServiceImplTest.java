@@ -195,8 +195,6 @@ public class ColorServiceImplTest {
 
         when(colorRepository.findById(1L)).thenReturn(Optional.of(testColor));
 
-        colorService.deleteColor(testColor.getId());
-
         assertEquals(colorService.deleteColor(testColor.getId()), COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
     }
 

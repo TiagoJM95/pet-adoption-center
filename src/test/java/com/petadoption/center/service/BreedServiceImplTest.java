@@ -264,8 +264,6 @@ public class BreedServiceImplTest {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.of(testBreed));
 
-        breedService.deleteBreed(testBreed.getId());
-
         assertEquals(breedService.deleteBreed(testBreed.getId()),BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
     }
 
