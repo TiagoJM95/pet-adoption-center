@@ -65,6 +65,7 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test create breed is working correctly")
+    @DirtiesContext
     void createBreed() throws Exception {
 
         mockMvc.perform(post("/api/v1/pet-species/")

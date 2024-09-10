@@ -66,7 +66,7 @@ public class SpeciesControllerTest {
     }
 
     @Test
-    @DisplayName("Test  if get all species works correctly")
+    @DisplayName("Test if get all species works correctly")
     @DirtiesContext
     void getAllSpecies() throws Exception {
 
