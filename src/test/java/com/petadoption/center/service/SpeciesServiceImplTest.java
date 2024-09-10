@@ -217,6 +217,8 @@ public class SpeciesServiceImplTest {
     @DisplayName("Test if update species throws SpeciesNameDuplicateException")
     void updatePetSpeciesShouldThrowDuplicatedNameException(){
 
+        when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
+
         when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.of(testSpecies));
 
         assertThrows(SpeciesNameDuplicateException.class, () -> speciesService.updatePetSpecies(testSpecies.getId(), speciesUpdateDto));
