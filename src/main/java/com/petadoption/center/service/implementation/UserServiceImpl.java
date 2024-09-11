@@ -5,9 +5,8 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.email.service.EmailService;
-import com.petadoption.center.exception.user.UserEmailDuplicateException;
+import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
@@ -19,11 +18,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.converter.UserConverter.fromModelToUserGetDto;
-import static com.petadoption.center.converter.UserConverter.fromUserCreateDtoToModel;
-import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.converter.UserConverter.toDto;
+import static com.petadoption.center.converter.UserConverter.toModel;
+import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -41,30 +39,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserGetDto> getAllUsers(int page, int size, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return userRepository.findAll(pageRequest).stream().map(UserConverter::fromModelToUserGetDto).toList();
+        return userRepository.findAll(pageRequest).stream().map(UserConverter::toDto).toList();
     }
 
     @Override
     public UserGetDto getUserById(Long id) throws UserNotFoundException {
-        return fromModelToUserGetDto(findUserById(id));
+        return toDto(findUserById(id));
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto user) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
-        checkIfUserExistsByEmail(user.email());
-        checkIfUserExistsByPhoneNumber(user.phoneNumber());
-        User userSaved = userRepository.save(fromUserCreateDtoToModel(user));
+    public UserGetDto addNewUser(UserCreateDto dto) throws UserDuplicateException {
+        checkIfUserExistsByEmail(dto.email());
+        checkIfUserExistsByPhoneNumber(dto.phoneNumber());
+        User userSaved = userRepository.save(toModel(dto));
         emailService.sendWelcomeMail(userSaved);
-        return fromModelToUserGetDto(userSaved);
+        return toDto(userSaved);
     }
 
     @Override
-    public UserGetDto updateUser(Long id, UserUpdateDto user)
-            throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
-        User userToUpdate = findUserById(id);
-        checkUserDuplicates(user, userToUpdate);
-        updateUserFields(user, userToUpdate);
-        return fromModelToUserGetDto(userRepository.save(userToUpdate));
+    public UserGetDto updateUser(Long id, UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException {
+        User user = findUserById(id);
+        checkUserDuplicates(dto, user);
+        updateUserFields(dto, user);
+        return toDto(userRepository.save(user));
     }
 
     @Override
@@ -74,36 +71,39 @@ public class UserServiceImpl implements UserService {
         return USER_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private void checkUserDuplicates(UserUpdateDto user, User userToUpdate) throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
-        if(!user.email().equals(userToUpdate.getEmail())){
-            checkIfUserExistsByEmail(user.email());
+    private void checkUserDuplicates(UserUpdateDto dto, User user) throws UserDuplicateException {
+        if(!dto.email().equals(user.getEmail())){
+            checkIfUserExistsByEmail(dto.email());
         }
-        if(!user.phoneNumber().equals(userToUpdate.getPhoneNumber())){
-            checkIfUserExistsByPhoneNumber(user.phoneNumber());
+        if(!dto.phoneNumber().equals(user.getPhoneNumber())){
+            checkIfUserExistsByPhoneNumber(dto.phoneNumber());
         }
     }
 
-    private void updateUserFields(UserUpdateDto user, User userToUpdate) {
-        updateIfChanged(user::firstName, userToUpdate::getFirstName, userToUpdate::setFirstName);
-        updateIfChanged(user::lastName, userToUpdate::getLastName, userToUpdate::setLastName);
-        updateIfChanged(user::phoneCountryCode, userToUpdate::getPhoneCountryCode, userToUpdate::setPhoneCountryCode);
-        updateIfChanged(() -> new Address(user.street(), user.city(), user.state(), user.postalCode()),
-                userToUpdate::getAddress, userToUpdate::setAddress);
+    private void updateUserFields(UserUpdateDto dto, User user) {
+        updateFields(dto.firstName(), user.getFirstName(), user::setFirstName);
+        updateFields(dto.lastName(), user.getLastName(), user::setLastName);
+        updateFields(dto.phoneCountryCode(), user.getPhoneCountryCode(), user::setPhoneCountryCode);
+        updateFields(createAddress(dto), user.getAddress(), user::setAddress);
     }
 
     private User findUserById(Long id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-    private void checkIfUserExistsByEmail(String email) throws UserEmailDuplicateException {
+    private void checkIfUserExistsByEmail(String email) throws UserDuplicateException {
         if (userRepository.findByEmail(email).isPresent()) {
-            throw new UserEmailDuplicateException(email);
+            throw new UserDuplicateException(USER_WITH_EMAIL + email + ALREADY_EXISTS);
         }
     }
 
-    private void checkIfUserExistsByPhoneNumber(Integer phoneNumber) throws UserPhoneNumberDuplicateException {
+    private void checkIfUserExistsByPhoneNumber(Integer phoneNumber) throws UserDuplicateException {
         if (userRepository.findByPhoneNumber(phoneNumber).isPresent()) {
-            throw new UserPhoneNumberDuplicateException(phoneNumber);
+            throw new UserDuplicateException(USER_WITH_PHONE_NUMBER + phoneNumber.toString() + ALREADY_EXISTS);
         }
+    }
+
+    private Address createAddress(UserUpdateDto dto) {
+        return new Address(dto.street(), dto.city(), dto.state(), dto.postalCode());
     }
 }

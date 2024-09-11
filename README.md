@@ -7,5 +7,6 @@ TODO:
         Enums criar ranges (ages, size)
         Auth;
         AdoptionForm;
+        Potencialmente adiciona Embeddable de Info de Chip;
         CODE CLEANUP;
         Testes;
