@@ -16,14 +16,14 @@ import static com.petadoption.center.enums.Sizes.getSizeByDescription;
 
 public class PetConverter {
 
-    public static Pet fromPetCreateDtoToModel(PetCreateDto pet,
-                                              Species species,
-                                              Breed primaryBreed,
-                                              Breed secondaryBreed,
-                                              Color primaryColor,
-                                              Color secondaryColor,
-                                              Color tertiaryColor,
-                                              Organization organization) {
+    public static Pet toModel(PetCreateDto pet,
+                              Species species,
+                              Breed primaryBreed,
+                              Breed secondaryBreed,
+                              Color primaryColor,
+                              Color secondaryColor,
+                              Color tertiaryColor,
+                              Organization organization) {
 
         Attributes attributes = new Attributes(
                 pet.petSterilized(),
@@ -56,14 +56,14 @@ public class PetConverter {
                 .build();
     }
 
-    public static PetGetDto fromModelToPetGetDto(Pet pet,
-                                                 OrgGetDto organization,
-                                                 SpeciesGetDto species,
-                                                 BreedGetDto primaryBreed,
-                                                 BreedGetDto secondaryBreed,
-                                                 ColorGetDto primaryColor,
-                                                 ColorGetDto secondaryColor,
-                                                 ColorGetDto tertiaryColor) {
+    public static PetGetDto toDto(Pet pet,
+                                  OrgGetDto organization,
+                                  SpeciesGetDto species,
+                                  BreedGetDto primaryBreed,
+                                  BreedGetDto secondaryBreed,
+                                  ColorGetDto primaryColor,
+                                  ColorGetDto secondaryColor,
+                                  ColorGetDto tertiaryColor) {
         return new PetGetDto(
                 pet.getId(),
                 pet.getName(),
