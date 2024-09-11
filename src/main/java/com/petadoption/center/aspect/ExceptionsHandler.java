@@ -37,7 +37,7 @@ public class ExceptionsHandler {
 
     }
 
-    @ExceptionHandler(value = {BreedNameDuplicateException.class, ColorDuplicateException.class, OrgDuplicateAddressException.class, OrgDuplicateEmailException.class, OrgDuplicatePhoneNumberException.class, OrgDuplicateSocialMediaException.class, OrgDuplicateWebsiteException.class, PetDuplicateImageException.class, SpeciesNameDuplicateException.class, UserPhoneNumberDuplicateException.class, UserEmailDuplicateException.class})
+    @ExceptionHandler(value = {BreedNameDuplicateException.class, ColorDuplicateException.class, PetDuplicateImageException.class, SpeciesNameDuplicateException.class, UserPhoneNumberDuplicateException.class, UserEmailDuplicateException.class})
     public ResponseEntity<String> DuplicateHandler(Exception ex) {
         logger.error(LOGGER_DUPLICATE, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
