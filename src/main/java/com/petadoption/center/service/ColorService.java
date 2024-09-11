@@ -10,13 +10,8 @@ import java.util.List;
 
 public interface ColorService {
 
-    Color findColorById(Long id) throws ColorNotFoundException;
-
     List<ColorGetDto> getAllColors(int page, int size, String sortBy);
-
     ColorGetDto getColorById(Long id) throws ColorNotFoundException;
-
     ColorGetDto addNewColor(ColorCreateDto color) throws ColorDuplicateException;
-
     String deleteColor(Long id) throws ColorNotFoundException;
 }
