@@ -33,13 +33,13 @@ public class OrganizationController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) throws OrgDuplicateSocialMediaException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
+    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) throws OrganizationDuplicateException {
         return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<OrgGetDto> updateOrganization(@PathVariable ("id") Long id,
-                                                        @Valid @RequestBody OrgUpdateDto organization) throws OrgDuplicateSocialMediaException, OrgNotFoundException, OrgDuplicatePhoneNumberException, OrgDuplicateAddressException, OrgDuplicateWebsiteException, OrgDuplicateEmailException {
+                                                        @Valid @RequestBody OrgUpdateDto organization) throws OrgNotFoundException, OrganizationDuplicateException {
         return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
     }
 
