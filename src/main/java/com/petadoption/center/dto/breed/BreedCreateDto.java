@@ -13,6 +13,6 @@ public record BreedCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        Long specieId
+        Long speciesId
 ) {
 }
