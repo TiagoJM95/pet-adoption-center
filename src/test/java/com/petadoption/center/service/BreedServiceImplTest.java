@@ -28,6 +28,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
+import static com.petadoption.center.converter.SpeciesConverter.toDto;
 import static com.petadoption.center.converter.SpeciesConverter.toModel;
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
@@ -202,7 +203,7 @@ public class BreedServiceImplTest {
 
         when(breedRepository.findByName(breedCreateDto.name())).thenReturn(Optional.empty());
 
-        when(SpeciesConverter.toModel(speciesService.getSpeciesById(breedCreateDto.specieId()))).thenReturn(species);
+        when(speciesService.getSpeciesById(breedCreateDto.specieId())).thenReturn(toDto(species));
 
         when(breedRepository.save(any(Breed.class))).thenReturn(testBreed);
 
@@ -224,11 +225,11 @@ public class BreedServiceImplTest {
 
     @Test
     @DisplayName("Test if add new breed throws exception if specie is not found")
-    void addNewBreedShouldThrowSpeciesNotFoundException(){
+    void addNewBreedShouldThrowSpeciesNotFoundException() throws SpeciesNotFoundException {
 
         when(breedRepository.save(any(Breed.class))).thenReturn(testBreed);
 
-        when(speciesRepository.findById(breedCreateDto.specieId())).thenReturn(Optional.empty());
+        when(speciesService.getSpeciesById(breedCreateDto.specieId())).thenThrow(SpeciesNotFoundException.class);
 
         assertThrows(SpeciesNotFoundException.class, () -> breedService.addNewBreed(breedCreateDto));
     }
