@@ -80,6 +80,8 @@ public class PetServiceImpl implements PetService {
     public void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, InvalidDescriptionException {
         for (PetCreateDto dto : pets) {
             breedService.verifyIfBreedsAndSpeciesMatch(dto);
+        }
+        for (PetCreateDto dto : pets) {
             petRepository.save(PetConverter.toModel(dto, buildCreateContext(dto)));
         }
     }

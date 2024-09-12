@@ -7,15 +7,17 @@ import static com.petadoption.center.util.Messages.INVALID_SIZE;
 
 @Getter
 public enum Sizes {
-    SMALL("Small"),
-    MEDIUM("Medium"),
-    LARGE("Large"),
-    EXTRA_LARGE("Extra Large");
+    SMALL("Small", "0-11 kg"),
+    MEDIUM("Medium", "12-27 kg"),
+    LARGE("Large", "28-45 kg"),
+    EXTRA_LARGE("Extra Large", "46+ kg");
 
     final String description;
+    final String range;
 
-    Sizes (String description){
+    Sizes (String description, String range) {
         this.description = description;
+        this.range = range;
     }
 
     public static Sizes getSizeByDescription(String description) throws InvalidDescriptionException {

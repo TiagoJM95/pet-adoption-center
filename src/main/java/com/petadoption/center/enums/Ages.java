@@ -7,16 +7,18 @@ import static com.petadoption.center.util.Messages.INVALID_AGE;
 
 @Getter
 public enum Ages {
-    BABY("Baby"),
-    YOUNG("Young"),
-    ADULT("Adult"),
-    SENIOR("Senior"),
-    UNKNOWN("Unknown");
+    PUPPY("Baby", "0-6 months"),
+    YOUNG("Young", "6 months - 2 years"),
+    ADULT("Adult", "2-8 years"),
+    SENIOR("Senior", "8+ years"),
+    UNKNOWN("Unknown", "Unknown");
 
     final String description;
+    final String range;
 
-    Ages(String description) {
+    Ages(String description, String range) {
         this.description = description;
+        this.range = range;
     }
 
     public static Ages getAgeByDescription(String description) throws InvalidDescriptionException {
