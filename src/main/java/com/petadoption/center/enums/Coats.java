@@ -1,8 +1,9 @@
 package com.petadoption.center.enums;
 
+import com.petadoption.center.exception.pet.InvalidDescriptionException;
 import lombok.Getter;
 
-import java.util.Optional;
+import static com.petadoption.center.util.Messages.INVALID_COAT;
 
 @Getter
 public enum Coats {
@@ -17,12 +18,12 @@ public enum Coats {
         this.description = description;
     }
 
-    public static Optional<Coats> getCoatByDescription(String description) {
+    public static Coats getCoatByDescription(String description) throws InvalidDescriptionException {
         for(Coats coat : values()) {
             if(coat.getDescription().equalsIgnoreCase(description)) {
-                return Optional.of(coat);
+                return coat;
             }
         }
-        return Optional.empty();
+        throw new InvalidDescriptionException(INVALID_COAT + description);
     }
 }

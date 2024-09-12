@@ -1,8 +1,9 @@
 package com.petadoption.center.enums;
 
+import com.petadoption.center.exception.pet.InvalidDescriptionException;
 import lombok.Getter;
 
-import java.util.Optional;
+import static com.petadoption.center.util.Messages.INVALID_SIZE;
 
 @Getter
 public enum Sizes {
@@ -17,12 +18,12 @@ public enum Sizes {
         this.description = description;
     }
 
-    public static Optional<Sizes> getSizeByDescription(String description) {
+    public static Sizes getSizeByDescription(String description) throws InvalidDescriptionException {
         for(Sizes size : values()) {
             if(size.getDescription().equalsIgnoreCase(description)) {
-                return Optional.of(size);
+                return size;
             }
         }
-        return Optional.empty();
+        throw new InvalidDescriptionException(INVALID_SIZE + description);
     }
 }

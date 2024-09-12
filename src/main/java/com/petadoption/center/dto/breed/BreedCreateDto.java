@@ -14,5 +14,4 @@ public record BreedCreateDto(
 
         @NotNull
         Long specieId
-) {
-}
+) {}

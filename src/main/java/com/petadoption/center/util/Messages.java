@@ -15,9 +15,15 @@ public class Messages {
 
     public static final String BREED_WITH_ID = "Breed with id: ";
 
+    public static final String BREED_WITH_NAME = "Breed with name: ";
+
     public static final String SPECIES_WITH_ID = "Species with id: ";
 
+    public static final String SPECIES_WITH_NAME = "Species with name: ";
+
     public static final String COLOR_WITH_ID = "Color with id: ";
+
+    public static final String COLOR_WITH_NAME = "Color with name: ";
 
     public static final String PET_WITH_ID = "Pet with id: ";
 
@@ -25,7 +31,7 @@ public class Messages {
 
     public static final String WEBSITE = "Website: ";
 
-    public static final String DOESNT_EXIST = " doesn't exist.";
+    public static final String NOT_FOUND = " not found.";
 
     public static final String USER_WITH_PHONE_NUMBER = "User with phone number: ";
 
@@ -46,6 +52,16 @@ public class Messages {
     public static final String ADDRESS_POSTAL_CODE = " and postal code: ";
 
     public static final String DB_CONNECTION_ERROR = "Something went wrong with the connection to the database.";
+
+    public static final String BREED_SPECIES_MISMATCH = "The breed and species do not match";
+
+    public static final String INVALID_AGE = "Invalid age description: ";
+
+    public static final String INVALID_COAT = "Invalid coat description: ";
+
+    public static final String INVALID_SIZE = "Invalid size description: ";
+
+    public static final String INVALID_GENDER = "Invalid gender description: ";
 
 
     // EMAIL MESSAGES

@@ -4,8 +4,6 @@ import com.petadoption.center.email.dto.EmailDto;
 import com.petadoption.center.email.dto.Response;
 import com.petadoption.center.email.enums.ResponseMessage;
 import com.petadoption.center.model.User;
-import jakarta.mail.internet.AddressException;
-import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
