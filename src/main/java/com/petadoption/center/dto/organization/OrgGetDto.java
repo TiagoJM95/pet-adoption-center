@@ -4,9 +4,10 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 
 public record OrgGetDto(
-        Long id,
+        String id,
         String name,
         String email,
+        String nif,
         String phoneNumber,
         Address address,
         String websiteUrl,

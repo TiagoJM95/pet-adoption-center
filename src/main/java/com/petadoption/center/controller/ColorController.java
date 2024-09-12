@@ -28,7 +28,7 @@ public class ColorController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") Long id)
+    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") String id)
             throws ColorNotFoundException {
         return new ResponseEntity<>(colorService.getColorById(id), HttpStatus.OK);
     }
@@ -40,7 +40,7 @@ public class ColorController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteColor(@PathVariable ("id") Long id)
+    public ResponseEntity<String> deleteColor(@PathVariable ("id") String id)
             throws ColorNotFoundException {
         return new ResponseEntity<>(colorService.deleteColor(id), HttpStatus.OK);
     }

@@ -26,6 +26,7 @@ public class OrgConverter {
         return Organization.builder().
                 name(org.name()).
                 email(org.email()).
+                nif(org.nif()).
                 phoneNumber(org.phoneNumber()).
                 address(address).
                 websiteUrl(org.websiteUrl()).
@@ -35,8 +36,10 @@ public class OrgConverter {
 
     public static Organization toModel(OrgGetDto org) {
         return Organization.builder().
+                id(org.id()).
                 name(org.name()).
                 email(org.email()).
+                nif(org.nif()).
                 phoneNumber(org.phoneNumber()).
                 address(org.address()).
                 websiteUrl(org.websiteUrl()).
@@ -49,6 +52,7 @@ public class OrgConverter {
                 org.getId(),
                 org.getName(),
                 org.getEmail(),
+                org.getNif(),
                 org.getPhoneNumber(),
                 org.getAddress(),
                 org.getWebsiteUrl(),

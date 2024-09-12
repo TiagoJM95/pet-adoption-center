@@ -19,16 +19,21 @@ public record OrgCreateDto(
         String email,
 
         @NotBlank(message = BLANK_FIELD)
+        @Size(min = 9, max = 9, message = PHONE_NUMBER_SIZE)
+        @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
+        String nif,
+
+        @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[0-9]+", message = PHONE_NUMBER_FORMAT)
         @Size(max = 10, message = PHONE_NUMBER_SIZE)
         String phoneNumber,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z_0-9,.-]+", message = STREET_CHARACTERS)
+        @Pattern(regexp = "[a-zA-Z_0-9, .-]+", message = STREET_CHARACTERS)
         String street,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
         String city,
 
         @NotBlank(message = BLANK_FIELD)
@@ -60,5 +65,4 @@ public record OrgCreateDto(
         @Pattern(regexp = "[a-zA-Z_0-9.-/]", message = YOUTUBE_VALID)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String youtube
-
-) implements OrgDto {}
+) {}

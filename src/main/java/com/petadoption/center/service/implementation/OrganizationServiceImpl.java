@@ -2,7 +2,6 @@ package com.petadoption.center.service.implementation;
 
 import com.petadoption.center.converter.OrgConverter;
 import com.petadoption.center.dto.organization.OrgCreateDto;
-import com.petadoption.center.dto.organization.OrgDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
@@ -35,7 +34,7 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public OrgGetDto getOrganizationById(Long id) throws OrgNotFoundException {
+    public OrgGetDto getOrganizationById(String id) throws OrgNotFoundException {
         return OrgConverter.toDto(findOrgById(id));
     }
 
@@ -45,20 +44,20 @@ public class OrganizationServiceImpl implements OrganizationService {
     }
 
     @Override
-    public OrgGetDto updateOrganization(Long id, OrgUpdateDto dto) throws OrgNotFoundException {
+    public OrgGetDto updateOrganization(String id, OrgUpdateDto dto) throws OrgNotFoundException {
         Organization org = findOrgById(id);
         updateOrgFields(dto, org);
         return OrgConverter.toDto(orgRepository.save(org));
     }
 
     @Override
-    public String deleteOrganization(Long id) throws OrgNotFoundException {
+    public String deleteOrganization(String id) throws OrgNotFoundException {
         findOrgById(id);
         orgRepository.deleteById(id);
         return ORG_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Organization findOrgById(Long id) throws OrgNotFoundException {
+    private Organization findOrgById(String id) throws OrgNotFoundException {
         return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException(id));
     }
 
@@ -71,11 +70,11 @@ public class OrganizationServiceImpl implements OrganizationService {
         updateFields(createAddress(dto), org.getAddress(), org::setAddress);
     }
 
-    private Address createAddress(OrgDto dto) {
+    private Address createAddress(OrgUpdateDto dto) {
         return new Address(dto.street(), dto.city(), dto.state(), dto.postalCode());
     }
 
-    private SocialMedia createSocialMedia(OrgDto dto) {
+    private SocialMedia createSocialMedia(OrgUpdateDto dto) {
         return new SocialMedia(dto.facebook(), dto.instagram(), dto.twitter(), dto.youtube());
     }
 }

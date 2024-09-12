@@ -11,8 +11,8 @@ import java.util.List;
 public interface UserService {
 
     List<UserGetDto> getAllUsers(int page, int size, String sortBy);
-    UserGetDto getUserById(Long id) throws UserNotFoundException;
+    UserGetDto getUserById(String id) throws UserNotFoundException;
     UserGetDto addNewUser(UserCreateDto user) throws UserDuplicateException;
-    UserGetDto updateUser(Long id, UserUpdateDto user) throws UserNotFoundException, UserDuplicateException;
-    String deleteUser(Long id) throws UserNotFoundException;
+    UserGetDto updateUser(String id, UserUpdateDto user) throws UserNotFoundException, UserDuplicateException;
+    String deleteUser(String id) throws UserNotFoundException;
 }

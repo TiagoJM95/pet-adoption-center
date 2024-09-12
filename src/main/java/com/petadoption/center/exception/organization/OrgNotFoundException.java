@@ -4,7 +4,7 @@ import static com.petadoption.center.util.Messages.NOT_FOUND;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 
 public class OrgNotFoundException extends OrgException {
-    public OrgNotFoundException(Long id) {
-        super(ORG_WITH_ID + id + NOT_FOUND);
+    public OrgNotFoundException(String message) {
+        super(ORG_WITH_ID + message + NOT_FOUND);
     }
 }

@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface PetRepository extends JpaRepository<Pet, Long>, JpaSpecificationExecutor<Pet> {
+public interface PetRepository extends JpaRepository<Pet, String>, JpaSpecificationExecutor<Pet> {
     Optional<Pet> findByImageUrl(String imageUrl);
 }

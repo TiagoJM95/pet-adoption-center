@@ -30,7 +30,7 @@ public class SpeciesController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<SpeciesGetDto> getPetSpeciesById(@PathVariable("id") Long id) throws SpeciesNotFoundException {
+    public ResponseEntity<SpeciesGetDto> getPetSpeciesById(@PathVariable("id") String id) throws SpeciesNotFoundException {
         return new ResponseEntity<>(speciesService.getSpeciesById(id), HttpStatus.OK);
     }
 
@@ -40,13 +40,13 @@ public class SpeciesController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<SpeciesGetDto> updatePetSpecies(@PathVariable ("id") Long id, @Valid @RequestBody SpeciesUpdateDto dto)
+    public ResponseEntity<SpeciesGetDto> updatePetSpecies(@PathVariable ("id") String id, @Valid @RequestBody SpeciesUpdateDto dto)
             throws SpeciesDuplicateException, SpeciesNotFoundException {
         return new ResponseEntity<>(speciesService.updateSpecies(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteSpecies(@PathVariable ("id") Long id) throws SpeciesNotFoundException {
+    public ResponseEntity<String> deleteSpecies(@PathVariable ("id") String id) throws SpeciesNotFoundException {
         return new ResponseEntity<>(speciesService.deleteSpecies(id), HttpStatus.OK);
     }
 }

@@ -17,15 +17,10 @@ import java.util.List;
 
 public interface PetService {
 
-    PetGetDto getPetById(Long id) throws PetNotFoundException;
-
+    PetGetDto getPetById(String id) throws PetNotFoundException;
     List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy, String species, String state, String city) throws SpeciesNotFoundException, InvalidDescriptionException;
-
     PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateException, BreedMismatchException, InvalidDescriptionException;
-
     void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateException, BreedMismatchException, InvalidDescriptionException;
-
-    PetGetDto updatePet(Long id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateException, OrgNotFoundException, InvalidDescriptionException;
-
-    String deletePet(Long id) throws PetNotFoundException;
+    PetGetDto updatePet(String id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateException, OrgNotFoundException, InvalidDescriptionException;
+    String deletePet(String id) throws PetNotFoundException;
 }

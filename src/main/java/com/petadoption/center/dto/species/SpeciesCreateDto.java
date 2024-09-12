@@ -11,5 +11,4 @@ public record SpeciesCreateDto(
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String name
-) {
-}
+) {}

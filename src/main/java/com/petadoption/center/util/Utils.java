@@ -9,15 +9,4 @@ public class Utils {
             setterField.accept(newValue);
         }
     }
-
-    /*
-    public static <Model, Prop, E extends Exception> void validateFields(Prop newValue, Optional<Prop> oldValue,
-                                                                  Supplier<Optional<Model>> findMethod, Supplier<E> exceptionSupplier) throws E {
-
-        if (oldValue.isEmpty() || !newValue.equals(oldValue.get())) {
-            if (findMethod.get().isPresent()) {
-                throw exceptionSupplier.get();
-            }
-        }
-    }*/
 }

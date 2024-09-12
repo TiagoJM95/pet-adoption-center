@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto getUserById(Long id) throws UserNotFoundException {
+    public UserGetDto getUserById(String id) throws UserNotFoundException {
         return toDto(findUserById(id));
     }
 
@@ -57,7 +57,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto updateUser(Long id, UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException {
+    public UserGetDto updateUser(String id, UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException {
         User user = findUserById(id);
         checkUserDuplicates(dto, user);
         updateUserFields(dto, user);
@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String deleteUser(Long id) throws UserNotFoundException {
+    public String deleteUser(String id) throws UserNotFoundException {
         findUserById(id);
         userRepository.deleteById(id);
         return USER_WITH_ID + id + DELETE_SUCCESS;
@@ -83,11 +83,10 @@ public class UserServiceImpl implements UserService {
     private void updateUserFields(UserUpdateDto dto, User user) {
         updateFields(dto.firstName(), user.getFirstName(), user::setFirstName);
         updateFields(dto.lastName(), user.getLastName(), user::setLastName);
-        updateFields(dto.phoneCountryCode(), user.getPhoneCountryCode(), user::setPhoneCountryCode);
         updateFields(createAddress(dto), user.getAddress(), user::setAddress);
     }
 
-    private User findUserById(Long id) throws UserNotFoundException {
+    private User findUserById(String id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
     }
 
@@ -97,7 +96,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    private void checkIfUserExistsByPhoneNumber(Integer phoneNumber) throws UserDuplicateException {
+    private void checkIfUserExistsByPhoneNumber(String phoneNumber) throws UserDuplicateException {
         if (userRepository.findByPhoneNumber(phoneNumber).isPresent()) {
             throw new UserDuplicateException(USER_WITH_PHONE_NUMBER + phoneNumber.toString() + ALREADY_EXISTS);
         }

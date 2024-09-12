@@ -11,14 +11,14 @@ import java.time.LocalDate;
 
 @Builder
 public record PetGetDto(
-        Long id,
+        String id,
         String name,
-        SpeciesGetDto species,
-        BreedGetDto primaryBreed,
-        BreedGetDto secondaryBreed,
-        ColorGetDto primaryColor,
-        ColorGetDto secondaryColor,
-        ColorGetDto tertiaryColor,
+        String species,
+        String primaryBreed,
+        String secondaryBreed,
+        String primaryColor,
+        String secondaryColor,
+        String tertiaryColor,
         String gender,
         String coat,
         String size,

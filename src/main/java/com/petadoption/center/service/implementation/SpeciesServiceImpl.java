@@ -36,7 +36,7 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public SpeciesGetDto getSpeciesById(Long id) throws SpeciesNotFoundException {
+    public SpeciesGetDto getSpeciesById(String id) throws SpeciesNotFoundException {
         return SpeciesConverter.toDto(findSpeciesById(id));
     }
 
@@ -52,7 +52,7 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public SpeciesGetDto updateSpecies(Long id, SpeciesUpdateDto dto) throws SpeciesNotFoundException, SpeciesDuplicateException {
+    public SpeciesGetDto updateSpecies(String id, SpeciesUpdateDto dto) throws SpeciesNotFoundException, SpeciesDuplicateException {
         Species species = findSpeciesById(id);
         checkIfSpeciesExistsByName(dto.name());
         updateFields(dto.name(), species.getName(), species::setName);
@@ -60,13 +60,13 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public String deleteSpecies(Long id) throws SpeciesNotFoundException {
+    public String deleteSpecies(String id) throws SpeciesNotFoundException {
         findSpeciesById(id);
         speciesRepository.deleteById(id);
         return SPECIES_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Species findSpeciesById(Long id) throws SpeciesNotFoundException {
+    private Species findSpeciesById(String id) throws SpeciesNotFoundException {
         return speciesRepository.findById(id).orElseThrow(
                 () -> new SpeciesNotFoundException(SPECIES_WITH_ID + id + NOT_FOUND));
     }

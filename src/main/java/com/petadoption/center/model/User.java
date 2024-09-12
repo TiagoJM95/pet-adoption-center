@@ -3,6 +3,7 @@ package com.petadoption.center.model;
 import com.petadoption.center.model.embeddable.Address;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -17,8 +18,8 @@ import java.util.Set;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String id;
 
     @Column(name = "first_name")
     private String firstName;
@@ -27,6 +28,8 @@ public class User {
     private String lastName;
 
     private String email;
+
+    private String nif;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -40,11 +43,8 @@ public class User {
     })
     private Address address;
 
-    @Column(name = "phone_country_code")
-    private String phoneCountryCode;
-
     @Column(name = "phone_number")
-    private Integer phoneNumber;
+    private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

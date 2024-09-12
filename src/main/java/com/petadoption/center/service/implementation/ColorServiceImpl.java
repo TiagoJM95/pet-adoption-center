@@ -34,7 +34,7 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
-    public ColorGetDto getColorById(Long id) throws ColorNotFoundException {
+    public ColorGetDto getColorById(String id) throws ColorNotFoundException {
         return ColorConverter.toDto(findColorById(id));
     }
 
@@ -45,13 +45,13 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
-    public String deleteColor(Long id) throws ColorNotFoundException {
+    public String deleteColor(String id) throws ColorNotFoundException {
         findColorById(id);
         colorRepository.deleteById(id);
         return COLOR_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Color findColorById(Long id) throws ColorNotFoundException {
+    private Color findColorById(String id) throws ColorNotFoundException {
         return colorRepository.findById(id).orElseThrow(
                 () -> new ColorNotFoundException(COLOR_WITH_ID + id + NOT_FOUND));
     }

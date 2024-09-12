@@ -31,9 +31,5 @@ public record UserUpdateDto(
         @Pattern(regexp = "[0-9-]+", message = POSTAL_CODE_FORMAT)
         String postalCode,
 
-        @Pattern(regexp = "[0-9+]{1,4}", message = PHONE_COUNTRY_CODE)
-        String phoneCountryCode,
-
-        Integer phoneNumber
-) {
-}
+        String phoneNumber
+) {}

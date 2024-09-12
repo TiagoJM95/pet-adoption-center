@@ -29,7 +29,7 @@ public class PetController {
     private PetService petService;
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<PetGetDto> getPetById(@PathVariable("id") Long id) throws PetNotFoundException {
+    public ResponseEntity<PetGetDto> getPetById(@PathVariable("id") String id) throws PetNotFoundException {
         return new ResponseEntity<>(petService.getPetById(id), HttpStatus.OK);
     }
 
@@ -38,9 +38,9 @@ public class PetController {
                                                       @RequestParam (defaultValue = "0", required = false) int page,
                                                       @RequestParam (defaultValue = "5", required = false) int size,
                                                       @RequestParam (defaultValue = "id", required = false) String sortBy,
-                                                      @PathVariable("species") String species,
-                                                      @PathVariable("state") String state,
-                                                      @PathVariable("city") String city) throws SpeciesNotFoundException, InvalidDescriptionException {
+                                                      @PathVariable(value = "species", required = false) String species,
+                                                      @PathVariable(value = "state", required = false) String state,
+                                                      @PathVariable(value = "city", required = false) String city) throws SpeciesNotFoundException, InvalidDescriptionException {
         return new ResponseEntity<>(petService.searchPets(searchCriteria, page, size, sortBy, species, state, city), HttpStatus.OK);
     }
 
@@ -56,12 +56,12 @@ public class PetController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") Long id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetDuplicateException, PetNotFoundException, InvalidDescriptionException {
+    public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") String id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetDuplicateException, PetNotFoundException, InvalidDescriptionException {
         return new ResponseEntity<>(petService.updatePet(id, pet), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deletePet(@PathVariable ("id") Long id) throws PetNotFoundException {
+    public ResponseEntity<String> deletePet(@PathVariable ("id") String id) throws PetNotFoundException {
         return new ResponseEntity<>(petService.deletePet(id), HttpStatus.OK);
     }
 }

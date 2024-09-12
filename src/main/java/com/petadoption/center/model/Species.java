@@ -2,6 +2,7 @@ package com.petadoption.center.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @NoArgsConstructor
@@ -12,7 +13,7 @@ import lombok.*;
 @Table(name = "pet_species")
 public class Species {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String id;
     private String name;
 }

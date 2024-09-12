@@ -29,23 +29,23 @@ public class OrganizationController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<OrgGetDto> getOrganizationById(@PathVariable("id") Long id) throws OrgNotFoundException {
+    public ResponseEntity<OrgGetDto> getOrganizationById(@PathVariable("id") String id) throws OrgNotFoundException {
         return new ResponseEntity<>(organizationService.getOrganizationById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) throws OrganizationDuplicateException {
+    public ResponseEntity<OrgGetDto> addNewOrganization(@RequestBody OrgCreateDto organization) throws OrganizationDuplicateException {
         return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<OrgGetDto> updateOrganization(@PathVariable ("id") Long id,
+    public ResponseEntity<OrgGetDto> updateOrganization(@PathVariable ("id") String id,
                                                         @Valid @RequestBody OrgUpdateDto organization) throws OrgNotFoundException, OrganizationDuplicateException {
         return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteOrganization(@PathVariable ("id") Long id) throws OrgNotFoundException {
+    public ResponseEntity<String> deleteOrganization(@PathVariable ("id") String id) throws OrgNotFoundException {
         return new ResponseEntity<>(organizationService.deleteOrganization(id), HttpStatus.OK);
     }
 }

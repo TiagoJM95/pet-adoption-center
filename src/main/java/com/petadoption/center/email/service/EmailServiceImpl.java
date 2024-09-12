@@ -78,7 +78,6 @@ public class EmailServiceImpl implements EmailService {
                     .replace("{{city}}", user.getAddress().getCity())
                     .replace("{{state}}", user.getAddress().getState())
                     .replace("{{postalCode}}", user.getAddress().getPostalCode())
-                    .replace("{{phoneCountryCode}}", user.getPhoneCountryCode())
                     .replace("{{phoneNumber}}", user.getPhoneNumber().toString());
 
             mimeMessageHelper.setText(htmlContent, true);

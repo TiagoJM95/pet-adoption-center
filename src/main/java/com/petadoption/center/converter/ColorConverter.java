@@ -14,6 +14,7 @@ public class ColorConverter {
 
     public static Color toModel(ColorGetDto color) {
         return Color.builder()
+                .id(color.id())
                 .name(color.name())
                 .build();
     }

@@ -4,6 +4,7 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.List;
 
@@ -19,13 +20,16 @@ import java.util.List;
 public class Organization {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String id;
 
     private String name;
 
     @Column(unique = true)
     private String email;
+
+    @Column(unique = true)
+    private String nif;
 
     @Column(name = "phone_number", unique = true)
     private String phoneNumber;

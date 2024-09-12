@@ -23,6 +23,11 @@ public record UserCreateDto(
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
+        @NotBlank(message = BLANK_FIELD)
+        @Size(min = 9, max = 9, message = PHONE_NUMBER_SIZE)
+        @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
+        String nif,
+
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
         LocalDate dateOfBirth,
 
@@ -43,11 +48,6 @@ public record UserCreateDto(
         @Pattern(regexp = "[0-9-]+", message = POSTAL_CODE_FORMAT)
         String postalCode,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[0-9+]{1,4}", message = PHONE_COUNTRY_CODE)
-        String phoneCountryCode,
-
         @NotNull(message = BLANK_FIELD)
-        Integer phoneNumber
-) {
-}
+        String phoneNumber
+) {}

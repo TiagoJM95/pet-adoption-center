@@ -11,9 +11,9 @@ import java.util.List;
 public interface SpeciesService {
 
     List<SpeciesGetDto> getAllSpecies(int page, int size, String sortBy);
-    SpeciesGetDto getSpeciesById(Long id) throws SpeciesNotFoundException;
+    SpeciesGetDto getSpeciesById(String id) throws SpeciesNotFoundException;
     SpeciesGetDto getSpeciesByName(String name) throws SpeciesNotFoundException;
     SpeciesGetDto addNewSpecies(SpeciesCreateDto species) throws SpeciesDuplicateException;
-    SpeciesGetDto updateSpecies(Long id, SpeciesUpdateDto species) throws SpeciesNotFoundException, SpeciesDuplicateException;
-    String deleteSpecies(Long id) throws SpeciesNotFoundException;
+    SpeciesGetDto updateSpecies(String id, SpeciesUpdateDto species) throws SpeciesNotFoundException, SpeciesDuplicateException;
+    String deleteSpecies(String id) throws SpeciesNotFoundException;
 }

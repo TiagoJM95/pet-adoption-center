@@ -9,10 +9,10 @@ import lombok.Builder;
 @Builder
 public record PetGetContext(
         OrgGetDto organization,
-        SpeciesGetDto species,
-        BreedGetDto primaryBreed,
-        BreedGetDto secondaryBreed,
-        ColorGetDto primaryColor,
-        ColorGetDto secondaryColor,
-        ColorGetDto tertiaryColor
+        String species,
+        String primaryBreed,
+        String secondaryBreed,
+        String primaryColor,
+        String secondaryColor,
+        String tertiaryColor
 ) {}

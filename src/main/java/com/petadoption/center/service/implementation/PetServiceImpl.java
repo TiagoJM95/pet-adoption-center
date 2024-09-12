@@ -13,6 +13,7 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.InvalidDescriptionException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
+import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Organization;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.Species;
@@ -57,7 +58,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetGetDto getPetById(Long id) throws PetNotFoundException {
+    public PetGetDto getPetById(String id) throws PetNotFoundException {
         return PetConverter.toDto(findPetById(id), buildGetContext(findPetById(id)));
     }
 
@@ -72,7 +73,8 @@ public class PetServiceImpl implements PetService {
     @Override
     public PetGetDto addNewPet(PetCreateDto dto) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, InvalidDescriptionException {
         breedService.verifyIfBreedsAndSpeciesMatch(dto);
-        Pet pet = petRepository.save(PetConverter.toModel(dto, buildCreateContext(dto)));
+        Pet p = PetConverter.toModel(dto, buildCreateContext(dto));
+        Pet pet = petRepository.save(p);
         return PetConverter.toDto(pet, buildGetContext(pet));
     }
 
@@ -87,7 +89,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetGetDto updatePet(Long id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException, InvalidDescriptionException {
+    public PetGetDto updatePet(String id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException, InvalidDescriptionException {
         Pet pet = findPetById(id);
         updatePetFields(dto, pet);
         petRepository.save(pet);
@@ -95,13 +97,13 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public String deletePet(Long id) throws PetNotFoundException {
+    public String deletePet(String id) throws PetNotFoundException {
         findPetById(id);
         petRepository.deleteById(id);
         return PET_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Pet findPetById(Long id) throws PetNotFoundException {
+    private Pet findPetById(String id) throws PetNotFoundException {
         return petRepository.findById(id).orElseThrow(
                 () -> new PetNotFoundException(PET_WITH_ID + id + NOT_FOUND));
     }
@@ -109,35 +111,39 @@ public class PetServiceImpl implements PetService {
     private PetGetContext buildGetContext(Pet pet){
         return PetGetContext.builder()
                 .organization(OrgConverter.toDto(pet.getOrganization()))
-                .species(SpeciesConverter.toDto(pet.getSpecies()))
-                .primaryBreed(BreedConverter.toDto(pet.getPrimaryBreed()))
-                .secondaryBreed(BreedConverter.toDto(pet.getSecondaryBreed()))
-                .primaryColor(ColorConverter.toDto(pet.getPrimaryColor()))
-                .secondaryColor(ColorConverter.toDto(pet.getSecondaryColor()))
-                .tertiaryColor(ColorConverter.toDto(pet.getTertiaryColor()))
+                .species(pet.getSpecies().getName())
+                .primaryBreed(pet.getPrimaryBreed().getName())
+                .secondaryBreed(pet.getSecondaryBreed() != null
+                        ? pet.getSecondaryBreed().getName()
+                        : "NONE")
+                .primaryColor(pet.getPrimaryColor().getName())
+                .secondaryColor(pet.getSecondaryColor() != null
+                        ? pet.getSecondaryColor().getName()
+                        : "NONE")
+                .tertiaryColor(pet.getTertiaryColor() != null
+                        ? pet.getTertiaryColor().getName()
+                        : "NONE")
                 .build();
     }
 
     private PetCreateContext buildCreateContext(PetCreateDto pet) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException, InvalidDescriptionException{
 
         Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(pet.petSpeciesId()));
-        BreedGetDto primaryBreed = breedService.getBreedById(pet.primaryBreedId());
-        BreedGetDto secondaryBreed = pet.secondaryBreedId() == null
+        Breed primaryBreed = BreedConverter.toModel(breedService.getBreedById(pet.primaryBreedId()), species);
+        Breed secondaryBreed = pet.secondaryBreedId().equals("NONE")
                 ? null
-                : breedService.getBreedById(pet.secondaryBreedId());
+                :  BreedConverter.toModel(breedService.getBreedById(pet.secondaryBreedId()), species);
 
 
         return PetCreateContext.builder()
                 .species(species)
-                .primaryBreed(BreedConverter.toModel(primaryBreed, species))
-                .secondaryBreed(secondaryBreed != null
-                        ? BreedConverter.toModel(secondaryBreed, species)
-                        : null)
+                .primaryBreed(primaryBreed)
+                .secondaryBreed(secondaryBreed)
                 .primaryColor(ColorConverter.toModel(colorService.getColorById(pet.primaryColor())))
-                .secondaryColor(pet.secondaryColor() == null
+                .secondaryColor(pet.secondaryColor().equals("NONE")
                         ? null
                         : ColorConverter.toModel(colorService.getColorById(pet.secondaryColor())))
-                .tertiaryColor(pet.tertiaryColor() == null
+                .tertiaryColor(pet.tertiaryColor().equals("NONE")
                         ? null
                         : ColorConverter.toModel(colorService.getColorById(pet.tertiaryColor())))
                 .organization(OrgConverter.toModel(organizationService.getOrganizationById(pet.organizationId())))
@@ -153,8 +159,8 @@ public class PetServiceImpl implements PetService {
         return Specification.where(
                         StringUtils.isBlank(searchCriteria.nameLike()) ? null : nameLike(searchCriteria.nameLike().toLowerCase()))
                         .and(species == null ? null : findBySpecies(species))
-                        .and(state == null ? null : findByState(state))
-                        .and(city == null ? null : findByCity(city))
+                        .and(state == null ? null : findByState(state.trim()))
+                        .and(city == null ? null : findByCity(city.trim()))
                         .and(searchCriteria.breed() == null ? null : findByBreed((searchCriteria.breed()))
                         .and(searchCriteria.color() == null ? null : findByColor(searchCriteria.color()))
                         .and(searchCriteria.gender() == null ? null : findByGender(getGenderByDescription(searchCriteria.gender())))
