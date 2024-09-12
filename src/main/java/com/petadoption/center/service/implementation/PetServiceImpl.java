@@ -63,10 +63,9 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy, String species, String state, String city) throws SpeciesNotFoundException, InvalidDescriptionException {
+    public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy) throws SpeciesNotFoundException, InvalidDescriptionException {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        Species speciesFilter = SpeciesConverter.toModel(speciesService.getSpeciesByName(species));
-        Specification<Pet> filters = buildFilters(criteria, speciesFilter, state, city);
+        Specification<Pet> filters = buildFilters(criteria);
         return petRepository.findAll(filters, pageRequest).stream().map(pet -> PetConverter.toDto(pet, buildGetContext(pet))).toList();
     }
 
@@ -155,12 +154,12 @@ public class PetServiceImpl implements PetService {
                 .build();
     }
 
-    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria, Species species, String state, String city) throws InvalidDescriptionException {
+    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria) throws InvalidDescriptionException {
         return Specification.where(
                         StringUtils.isBlank(searchCriteria.nameLike()) ? null : nameLike(searchCriteria.nameLike().toLowerCase()))
-                        .and(species == null ? null : findBySpecies(species))
-                        .and(state == null ? null : findByState(state.trim()))
-                        .and(city == null ? null : findByCity(city.trim()))
+                        .and(searchCriteria.species() == null ? null : findBySpecies(searchCriteria.species()))
+                        .and(searchCriteria.state() == null ? null : findByState(searchCriteria.state()))
+                        .and(searchCriteria.city() == null ? null : findByCity(searchCriteria.city()))
                         .and(searchCriteria.breed() == null ? null : findByBreed((searchCriteria.breed()))
                         .and(searchCriteria.color() == null ? null : findByColor(searchCriteria.color()))
                         .and(searchCriteria.gender() == null ? null : findByGender(getGenderByDescription(searchCriteria.gender())))

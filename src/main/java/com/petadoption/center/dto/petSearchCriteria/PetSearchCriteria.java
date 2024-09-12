@@ -2,9 +2,11 @@ package com.petadoption.center.dto.petSearchCriteria;
 
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Color;
+import com.petadoption.center.model.Species;
 
 public record PetSearchCriteria(
         String nameLike,
+        Species species,
         Breed breed,
         Color color,
         String gender,
@@ -20,5 +22,7 @@ public record PetSearchCriteria(
         Boolean goodWithKids,
         Boolean goodWithDogs,
         Boolean goodWithCats,
-        Boolean isPureBreed
+        Boolean isPureBreed,
+        String state,
+        String city
 ) {}
