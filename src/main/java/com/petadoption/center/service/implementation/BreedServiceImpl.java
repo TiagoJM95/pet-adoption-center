@@ -5,7 +5,9 @@ import com.petadoption.center.converter.SpeciesConverter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.exception.breed.BreedDuplicateException;
+import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Breed;
@@ -19,6 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.petadoption.center.util.Utils.updateFields;
 import static com.petadoption.center.util.Messages.*;
@@ -73,6 +76,23 @@ public class BreedServiceImpl implements BreedService {
         findBreedById(id);
         breedRepository.deleteById(id);
         return BREED_WITH_ID + id + DELETE_SUCCESS;
+    }
+
+    @Override
+    public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException {
+        Breed primaryBreed = findBreedById(dto.primaryBreedId());
+        Breed secondaryBreed;
+
+        if(!Objects.equals(primaryBreed.getSpecies().getId(), dto.petSpeciesId())) {
+            throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
+        }
+
+        if(dto.secondaryBreedId() != null) {
+            secondaryBreed = findBreedById(dto.secondaryBreedId());
+            if(!Objects.equals(secondaryBreed.getSpecies().getId(), dto.petSpeciesId())) {
+                throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
+            }
+        }
     }
 
     private Breed findBreedById(Long id) throws BreedNotFoundException {

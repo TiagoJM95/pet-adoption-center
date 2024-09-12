@@ -8,6 +8,8 @@ import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Attributes;
+import com.petadoption.center.util.aggregator.PetCreateContext;
+import com.petadoption.center.util.aggregator.PetGetContext;
 
 import static com.petadoption.center.enums.Ages.getAgeByDescription;
 import static com.petadoption.center.enums.Coats.getCoatByDescription;
@@ -16,73 +18,47 @@ import static com.petadoption.center.enums.Sizes.getSizeByDescription;
 
 public class PetConverter {
 
-    public static Pet toModel(PetCreateDto pet,
-                              Species species,
-                              Breed primaryBreed,
-                              Breed secondaryBreed,
-                              Color primaryColor,
-                              Color secondaryColor,
-                              Color tertiaryColor,
-                              Organization organization) {
-
-        Attributes attributes = new Attributes(
-                pet.petSterilized(),
-                pet.petVaccinated(),
-                pet.petChipped(),
-                pet.specialNeeds(),
-                pet.houseTrained(),
-                pet.goodWithKids(),
-                pet.goodWithDogs(),
-                pet.goodWithCats()
-        );
-
+    public static Pet toModel(PetCreateDto pet, PetCreateContext context) {
         return Pet.builder()
                 .name(pet.name())
-                .species(species)
-                .primaryBreed(primaryBreed)
-                .secondaryBreed(secondaryBreed)
-                .primaryColor(primaryColor)
-                .secondaryColor(secondaryColor)
-                .tertiaryColor(tertiaryColor)
-                .gender(getGenderByDescription(pet.gender()).orElseThrow(RuntimeException::new))
-                .coat(getCoatByDescription(pet.coat()).orElseThrow(RuntimeException::new))
-                .size(getSizeByDescription(pet.size()).orElseThrow(RuntimeException::new))
-                .age(getAgeByDescription(pet.age()).orElseThrow(RuntimeException::new))
+                .species(context.species())
+                .primaryBreed(context.primaryBreed())
+                .secondaryBreed(context.secondaryBreed())
+                .primaryColor(context.primaryColor())
+                .secondaryColor(context.secondaryColor())
+                .tertiaryColor(context.tertiaryColor())
+                .gender(context.gender())
+                .coat(context.coat())
+                .size(context.size())
+                .age(context.age())
                 .description(pet.description())
                 .imageUrl(pet.imageUrl())
                 .isAdopted(pet.isAdopted())
-                .attributes(attributes)
-                .organization(organization)
+                .attributes(context.attributes())
+                .organization(context.organization())
                 .build();
     }
 
-    public static PetGetDto toDto(Pet pet,
-                                  OrgGetDto organization,
-                                  SpeciesGetDto species,
-                                  BreedGetDto primaryBreed,
-                                  BreedGetDto secondaryBreed,
-                                  ColorGetDto primaryColor,
-                                  ColorGetDto secondaryColor,
-                                  ColorGetDto tertiaryColor) {
-        return new PetGetDto(
-                pet.getId(),
-                pet.getName(),
-                species,
-                primaryBreed,
-                secondaryBreed,
-                primaryColor,
-                secondaryColor,
-                tertiaryColor,
-                pet.getGender(),
-                pet.getCoat(),
-                pet.getSize(),
-                pet.getAge(),
-                pet.getDescription(),
-                pet.getImageUrl(),
-                pet.getIsAdopted(),
-                pet.getAttributes(),
-                pet.getDateAdded(),
-                organization
-        );
+    public static PetGetDto toDto(Pet pet, PetGetContext context) {
+        return PetGetDto.builder()
+                .id(pet.getId())
+                .name(pet.getName())
+                .species(context.species())
+                .primaryBreed(context.primaryBreed())
+                .secondaryBreed(context.secondaryBreed())
+                .primaryColor(context.primaryColor())
+                .secondaryColor(context.secondaryColor())
+                .tertiaryColor(context.tertiaryColor())
+                .gender(pet.getGender())
+                .coat(pet.getCoat())
+                .size(pet.getSize())
+                .age(pet.getAge())
+                .description(pet.getDescription())
+                .imageUrl(pet.getImageUrl())
+                .isAdopted(pet.getIsAdopted())
+                .attributes(pet.getAttributes())
+                .dateAdded(pet.getDateAdded())
+                .organization(context.organization())
+                .build();
     }
 }

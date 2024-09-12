@@ -12,6 +12,12 @@ public class ColorConverter {
                 .build();
     }
 
+    public static Color toModel(ColorGetDto color) {
+        return Color.builder()
+                .name(color.name())
+                .build();
+    }
+
     public static ColorGetDto toDto(Color color) {
         return new ColorGetDto(
                 color.getId(),

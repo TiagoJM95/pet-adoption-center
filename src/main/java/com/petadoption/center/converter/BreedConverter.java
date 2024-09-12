@@ -14,6 +14,13 @@ public class BreedConverter {
                 .build();
     }
 
+    public static Breed toModel(BreedGetDto breed, Species species) {
+        return Breed.builder()
+                .name(breed.name())
+                .species(species)
+                .build();
+    }
+
     public static BreedGetDto toDto(Breed breed) {
         return new BreedGetDto(
                 breed.getId(),

@@ -1,18 +1,17 @@
 package com.petadoption.center.aspect;
 
-import com.petadoption.center.exception.breed.BreedNameDuplicateException;
+import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.db.DatabaseConnectionException;
 import com.petadoption.center.exception.organization.*;
-import com.petadoption.center.exception.pet.PetDuplicateImageException;
+import com.petadoption.center.exception.pet.PetDuplicateException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.species.SpeciesNameDuplicateException;
+import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.exception.user.UserEmailDuplicateException;
+import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +36,7 @@ public class ExceptionsHandler {
 
     }
 
-    @ExceptionHandler(value = {BreedNameDuplicateException.class, ColorDuplicateException.class, PetDuplicateImageException.class, SpeciesNameDuplicateException.class, UserPhoneNumberDuplicateException.class, UserEmailDuplicateException.class})
+    @ExceptionHandler(value = {BreedDuplicateException.class, ColorDuplicateException.class, PetDuplicateException.class, SpeciesDuplicateException.class, OrganizationDuplicateException.class, UserDuplicateException.class})
     public ResponseEntity<String> DuplicateHandler(Exception ex) {
         logger.error(LOGGER_DUPLICATE, ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());

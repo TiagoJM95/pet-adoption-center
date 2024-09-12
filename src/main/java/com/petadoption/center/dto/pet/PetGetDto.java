@@ -5,9 +5,11 @@ import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.embeddable.Attributes;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
+@Builder
 public record PetGetDto(
         Long id,
         String name,
@@ -27,5 +29,4 @@ public record PetGetDto(
         Attributes attributes,
         LocalDate dateAdded,
         OrgGetDto organization
-) {
-}
+) {}

@@ -33,6 +33,17 @@ public class OrgConverter {
                 build();
     }
 
+    public static Organization toModel(OrgGetDto org) {
+        return Organization.builder().
+                name(org.name()).
+                email(org.email()).
+                phoneNumber(org.phoneNumber()).
+                address(org.address()).
+                websiteUrl(org.websiteUrl()).
+                socialMedia(org.socialMedia()).
+                build();
+    }
+
     public static OrgGetDto toDto(Organization org) {
         return new OrgGetDto(
                 org.getId(),

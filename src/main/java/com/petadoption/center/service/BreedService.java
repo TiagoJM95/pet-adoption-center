@@ -3,7 +3,9 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.exception.breed.BreedDuplicateException;
+import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 
@@ -17,4 +19,5 @@ public interface BreedService {
     BreedGetDto addNewBreed(BreedCreateDto breed) throws BreedDuplicateException, SpeciesNotFoundException;
     BreedGetDto updateBreed(Long id, BreedUpdateDto breed) throws BreedNotFoundException, BreedDuplicateException;
     String deleteBreed(Long id) throws BreedNotFoundException;
+    void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException;
 }
