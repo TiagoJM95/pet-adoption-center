@@ -45,7 +45,7 @@ public class BreedServiceImpl implements BreedService {
     }
 
     @Override
-    public BreedGetDto getBreedById(Long id) throws BreedNotFoundException {
+    public BreedGetDto getBreedById(String id) throws BreedNotFoundException {
         return BreedConverter.toDto(findBreedById(id));
     }
 
@@ -59,12 +59,12 @@ public class BreedServiceImpl implements BreedService {
     @Override
     public BreedGetDto addNewBreed(BreedCreateDto dto) throws BreedDuplicateException, SpeciesNotFoundException {
         checkIfBreedsExistsByName(dto.name());
-        Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(dto.specieId()));
+        Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(dto.speciesId()));
         return BreedConverter.toDto(breedRepository.save(BreedConverter.toModel(dto, species)));
     }
 
     @Override
-    public BreedGetDto updateBreed(Long id, BreedUpdateDto dto) throws BreedNotFoundException, BreedDuplicateException {
+    public BreedGetDto updateBreed(String id, BreedUpdateDto dto) throws BreedNotFoundException, BreedDuplicateException {
         Breed breed = findBreedById(id);
         checkIfBreedsExistsByName(dto.name());
         updateFields(dto.name(), breed.getName(), breed::setName);
@@ -72,7 +72,7 @@ public class BreedServiceImpl implements BreedService {
     }
 
     @Override
-    public String deleteBreed(Long id) throws BreedNotFoundException {
+    public String deleteBreed(String id) throws BreedNotFoundException {
         findBreedById(id);
         breedRepository.deleteById(id);
         return BREED_WITH_ID + id + DELETE_SUCCESS;
@@ -87,7 +87,7 @@ public class BreedServiceImpl implements BreedService {
             throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
         }
 
-        if(dto.secondaryBreedId() != null) {
+        if(!dto.secondaryBreedId().equals("NONE")) {
             secondaryBreed = findBreedById(dto.secondaryBreedId());
             if(!Objects.equals(secondaryBreed.getSpecies().getId(), dto.petSpeciesId())) {
                 throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
@@ -95,7 +95,7 @@ public class BreedServiceImpl implements BreedService {
         }
     }
 
-    private Breed findBreedById(Long id) throws BreedNotFoundException {
+    private Breed findBreedById(String id) throws BreedNotFoundException {
         return breedRepository.findById(id).orElseThrow(
                 () -> new BreedNotFoundException(BREED_WITH_ID + id + NOT_FOUND));
     }

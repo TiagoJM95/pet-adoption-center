@@ -14,10 +14,10 @@ import java.util.List;
 public interface BreedService {
 
     List<BreedGetDto> getAllBreeds(int page, int size, String sortBy);
-    BreedGetDto getBreedById(Long id) throws BreedNotFoundException;
+    BreedGetDto getBreedById(String id) throws BreedNotFoundException;
     List<BreedGetDto> getBreedsBySpecies(String species) throws SpeciesNotFoundException;
     BreedGetDto addNewBreed(BreedCreateDto breed) throws BreedDuplicateException, SpeciesNotFoundException;
-    BreedGetDto updateBreed(Long id, BreedUpdateDto breed) throws BreedNotFoundException, BreedDuplicateException;
-    String deleteBreed(Long id) throws BreedNotFoundException;
+    BreedGetDto updateBreed(String id, BreedUpdateDto breed) throws BreedNotFoundException, BreedDuplicateException;
+    String deleteBreed(String id) throws BreedNotFoundException;
     void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException;
 }

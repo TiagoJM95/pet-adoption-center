@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BreedRepository extends JpaRepository<Breed, Long> {
+public interface BreedRepository extends JpaRepository<Breed, String> {
 
     Optional<Breed> findByName(String name);
 

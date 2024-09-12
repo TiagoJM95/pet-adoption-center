@@ -44,7 +44,7 @@ public class BreedConverterTest {
 
         assertEquals(1L, breedGetDto.id());
         assertEquals("Labrador Retriever", breedGetDto.name());
-        assertEquals("Dog", breedGetDto.specie());
+        assertEquals("Dog", breedGetDto.species());
     }
 
 }

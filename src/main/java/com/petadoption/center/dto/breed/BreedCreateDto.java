@@ -7,11 +7,10 @@ import jakarta.validation.constraints.Pattern;
 import static com.petadoption.center.util.Messages.*;
 
 public record BreedCreateDto(
-
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
         String name,
 
         @NotNull
-        Long specieId
+        String speciesId
 ) {}

@@ -76,7 +76,7 @@ public class BreedControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$.specie", is(breedGetDto.specie())));
+                .andExpect(jsonPath("$.species", is(breedGetDto.species())));
 
     }
 
@@ -96,7 +96,7 @@ public class BreedControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
                 .andExpect(jsonPath("$[0].name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$[0].specie", is(breedGetDto.specie())));
+                .andExpect(jsonPath("$[0].species", is(breedGetDto.species())));
     }
 
 
@@ -112,7 +112,7 @@ public class BreedControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(breedGetDto.id().intValue())))
                 .andExpect(jsonPath("$.name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$.specie", is(breedGetDto.specie())));
+                .andExpect(jsonPath("$.species", is(breedGetDto.species())));
     }
 
 

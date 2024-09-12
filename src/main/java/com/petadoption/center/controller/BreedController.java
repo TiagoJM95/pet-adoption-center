@@ -30,7 +30,7 @@ public class BreedController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<BreedGetDto> getBreedById(@PathVariable("id") Long id) throws BreedNotFoundException {
+    public ResponseEntity<BreedGetDto> getBreedById(@PathVariable("id") String id) throws BreedNotFoundException {
         return new ResponseEntity<>(breedService.getBreedById(id), HttpStatus.OK);
     }
 
@@ -47,13 +47,13 @@ public class BreedController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") Long id, @Valid @RequestBody BreedUpdateDto dto)
+    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") String id, @Valid @RequestBody BreedUpdateDto dto)
             throws BreedDuplicateException, BreedNotFoundException {
         return new ResponseEntity<>(breedService.updateBreed(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteBreed(@PathVariable ("id") Long id) throws BreedNotFoundException {
+    public ResponseEntity<String> deleteBreed(@PathVariable ("id") String id) throws BreedNotFoundException {
         return new ResponseEntity<>(breedService.deleteBreed(id), HttpStatus.OK);
     }
 }
