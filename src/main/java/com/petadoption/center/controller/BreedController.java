@@ -3,7 +3,7 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.exception.breed.BreedNameDuplicateException;
+import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.BreedService;
@@ -35,19 +35,21 @@ public class BreedController {
     }
 
     @GetMapping("/species/{species}")
-    public ResponseEntity<List<BreedGetDto>> getBreedsBySpecies(@PathVariable("species") String species) throws SpeciesNotFoundException {
+    public ResponseEntity<List<BreedGetDto>> getBreedsBySpecies(@PathVariable("species") String species)
+            throws SpeciesNotFoundException {
         return new ResponseEntity<>(breedService.getBreedsBySpecies(species), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<BreedGetDto> addNewBreed(@Valid @RequestBody BreedCreateDto breed) throws BreedNameDuplicateException, SpeciesNotFoundException {
-        return new ResponseEntity<>(breedService.addNewBreed(breed), HttpStatus.CREATED);
+    public ResponseEntity<BreedGetDto> addNewBreed(@Valid @RequestBody BreedCreateDto dto)
+            throws BreedDuplicateException, SpeciesNotFoundException {
+        return new ResponseEntity<>(breedService.addNewBreed(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") Long id,
-                                                   @Valid @RequestBody BreedUpdateDto breed) throws BreedNameDuplicateException, BreedNotFoundException {
-        return new ResponseEntity<>(breedService.updateBreed(id, breed), HttpStatus.OK);
+    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") Long id, @Valid @RequestBody BreedUpdateDto dto)
+            throws BreedDuplicateException, BreedNotFoundException {
+        return new ResponseEntity<>(breedService.updateBreed(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

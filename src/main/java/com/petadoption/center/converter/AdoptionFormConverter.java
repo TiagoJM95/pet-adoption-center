@@ -9,16 +9,16 @@ import com.petadoption.center.model.User;
 
 public class AdoptionFormConverter {
 
-    public static AdoptionForm fromAdoptionFormCreateDtoToModel(User user, Pet pet) {
+    public static AdoptionForm toModel(User user, Pet pet) {
         return AdoptionForm.builder()
                 .userId(user)
                 .petId(pet)
                 .build();
     }
 
-    public static AdoptionFormGetDto fromModelToAdoptionFormGetDto(AdoptionForm adoptionForm,
-                                                                   UserGetDto user,
-                                                                   PetGetDto pet) {
+    public static AdoptionFormGetDto toDto(AdoptionForm adoptionForm,
+                                           UserGetDto user,
+                                           PetGetDto pet) {
         return new AdoptionFormGetDto(
                 adoptionForm.getId(),
                 user,

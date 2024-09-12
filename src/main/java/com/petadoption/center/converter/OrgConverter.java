@@ -8,7 +8,7 @@ import com.petadoption.center.model.embeddable.SocialMedia;
 
 public class OrgConverter {
 
-    public static Organization fromOrgCreateDtoToModel(OrgCreateDto org) {
+    public static Organization toModel(OrgCreateDto org) {
         Address address = new Address(
                 org.street(),
                 org.city(),
@@ -33,7 +33,18 @@ public class OrgConverter {
                 build();
     }
 
-    public static OrgGetDto fromModelToOrgGetDto(Organization org) {
+    public static Organization toModel(OrgGetDto org) {
+        return Organization.builder().
+                name(org.name()).
+                email(org.email()).
+                phoneNumber(org.phoneNumber()).
+                address(org.address()).
+                websiteUrl(org.websiteUrl()).
+                socialMedia(org.socialMedia()).
+                build();
+    }
+
+    public static OrgGetDto toDto(Organization org) {
         return new OrgGetDto(
                 org.getId(),
                 org.getName(),

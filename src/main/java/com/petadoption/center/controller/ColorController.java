@@ -28,17 +28,20 @@ public class ColorController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") Long id) throws ColorNotFoundException {
+    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") Long id)
+            throws ColorNotFoundException {
         return new ResponseEntity<>(colorService.getColorById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto color) throws ColorDuplicateException {
-        return new ResponseEntity<>(colorService.addNewColor(color), HttpStatus.CREATED);
+    public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto dto)
+            throws ColorDuplicateException {
+        return new ResponseEntity<>(colorService.addNewColor(dto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteColor(@PathVariable ("id") Long id) throws ColorNotFoundException {
+    public ResponseEntity<String> deleteColor(@PathVariable ("id") Long id)
+            throws ColorNotFoundException {
         return new ResponseEntity<>(colorService.deleteColor(id), HttpStatus.OK);
     }
 }

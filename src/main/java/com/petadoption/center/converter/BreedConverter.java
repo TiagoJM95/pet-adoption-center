@@ -7,14 +7,21 @@ import com.petadoption.center.model.Species;
 
 public class BreedConverter {
 
-    public static Breed fromBreedCreateDtoToModel(BreedCreateDto breed, Species species) {
+    public static Breed toModel(BreedCreateDto breed, Species species) {
         return Breed.builder()
                 .name(breed.name())
                 .species(species)
                 .build();
     }
 
-    public static BreedGetDto fromModelToBreedGetDto(Breed breed) {
+    public static Breed toModel(BreedGetDto breed, Species species) {
+        return Breed.builder()
+                .name(breed.name())
+                .species(species)
+                .build();
+    }
+
+    public static BreedGetDto toDto(Breed breed) {
         return new BreedGetDto(
                 breed.getId(),
                 breed.getName(),

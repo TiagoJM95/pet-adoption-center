@@ -13,7 +13,9 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-@Table(name = "organizations")
+@Table(name = "organizations", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueStreetAndPostalCode", columnNames = {"street", "postal_code"})
+})
 public class Organization {
 
     @Id
@@ -22,9 +24,10 @@ public class Organization {
 
     private String name;
 
+    @Column(unique = true)
     private String email;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_number", unique = true)
     private String phoneNumber;
 
     @Embedded
@@ -36,11 +39,11 @@ public class Organization {
     })
     private Address address;
 
-    @Column(name = "website_url")
+    @Column(name = "website_url", unique = true)
     private String websiteUrl;
 
     @Embedded
-    @Column(name = "social_media")
+    @Column(name = "social_media", unique = true)
     private SocialMedia socialMedia;
 
     @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)

@@ -11,11 +11,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static com.petadoption.center.enums.Ages.getAgeByDescription;
-import static com.petadoption.center.enums.Coats.getCoatByDescription;
-import static com.petadoption.center.enums.Genders.getGenderByDescription;
-import static com.petadoption.center.enums.Sizes.getSizeByDescription;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -96,37 +91,4 @@ public class Pet {
 
     @OneToMany(mappedBy = "petId", fetch = FetchType.EAGER)
     private Set<AdoptionForm> petAdoptionForm;
-
-
-    public String getSize() {
-        return size.getDescription();
-    }
-
-    public void setSize(String size) {
-        this.size = getSizeByDescription(size).orElseThrow(() -> new IllegalArgumentException("Invalid size"));
-    }
-
-    public String getGender() {
-        return gender.getDescription();
-    }
-
-    public void setGender(String gender) {
-        this.gender = getGenderByDescription(gender).orElseThrow(() -> new IllegalArgumentException("Invalid size"));
-    }
-
-    public String getCoat() {
-        return coat.getDescription();
-    }
-
-    public void setCoat(String coat) {
-        this.coat = getCoatByDescription(coat).orElseThrow(() -> new IllegalArgumentException("Invalid size"));
-    }
-
-    public String getAge() {
-        return age.getDescription();
-    }
-
-    public void setAge(String age) {
-        this.age = getAgeByDescription(age).orElseThrow(() -> new IllegalArgumentException("Invalid size"));
-    }
 }

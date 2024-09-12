@@ -4,7 +4,7 @@ import com.petadoption.center.converter.SpeciesConverter;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesNameDuplicateException;
+import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
@@ -15,13 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.petadoption.center.converter.SpeciesConverter.fromModelToSpeciesGetDto;
-import static com.petadoption.center.converter.SpeciesConverter.fromSpeciesCreateDtoToModel;
-import static com.petadoption.center.util.FieldUpdater.updateIfChanged;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
+import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
@@ -34,38 +30,33 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public Species findSpeciesById(Long id) throws SpeciesNotFoundException {
-        return speciesRepository.findById(id).orElseThrow(() -> new SpeciesNotFoundException(id));
-    }
-
-    @Override
-    public Species findSpeciesByName(String name) throws SpeciesNotFoundException {
-        return speciesRepository.findByName(name).orElseThrow(() -> new SpeciesNotFoundException(Long.valueOf(name)));
-    }
-
-    @Override
-    public List<SpeciesGetDto> getAllPetSpecies(int page, int size, String sortBy) {
+    public List<SpeciesGetDto> getAllSpecies(int page, int size, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return speciesRepository.findAll(pageRequest).stream().map(SpeciesConverter::fromModelToSpeciesGetDto).toList();
+        return speciesRepository.findAll(pageRequest).stream().map(SpeciesConverter::toDto).toList();
     }
 
     @Override
-    public SpeciesGetDto getPetSpeciesById(Long id) throws SpeciesNotFoundException {
-        return fromModelToSpeciesGetDto(findSpeciesById(id));
+    public SpeciesGetDto getSpeciesById(Long id) throws SpeciesNotFoundException {
+        return SpeciesConverter.toDto(findSpeciesById(id));
     }
 
     @Override
-    public SpeciesGetDto addNewPetSpecies(SpeciesCreateDto species) throws SpeciesNameDuplicateException {
-        checkIfSpeciesExistsByName(species.name());
-        return fromModelToSpeciesGetDto(speciesRepository.save(fromSpeciesCreateDtoToModel(species)));
+    public SpeciesGetDto getSpeciesByName(String name) throws SpeciesNotFoundException {
+        return SpeciesConverter.toDto(findSpeciesByName(name));
     }
 
     @Override
-    public SpeciesGetDto updatePetSpecies(Long id, SpeciesUpdateDto species) throws SpeciesNotFoundException, SpeciesNameDuplicateException {
-        Species speciesToUpdate = findSpeciesById(id);
-        checkIfSpeciesExistsByName(species.name());
-        updateIfChanged(species::name, speciesToUpdate::getName, speciesToUpdate::setName);
-        return fromModelToSpeciesGetDto(speciesRepository.save(speciesToUpdate));
+    public SpeciesGetDto addNewSpecies(SpeciesCreateDto dto) throws SpeciesDuplicateException {
+        checkIfSpeciesExistsByName(dto.name());
+        return SpeciesConverter.toDto(speciesRepository.save(SpeciesConverter.toModel(dto)));
+    }
+
+    @Override
+    public SpeciesGetDto updateSpecies(Long id, SpeciesUpdateDto dto) throws SpeciesNotFoundException, SpeciesDuplicateException {
+        Species species = findSpeciesById(id);
+        checkIfSpeciesExistsByName(dto.name());
+        updateFields(dto.name(), species.getName(), species::setName);
+        return SpeciesConverter.toDto(speciesRepository.save(species));
     }
 
     @Override
@@ -75,10 +66,19 @@ public class SpeciesServiceImpl implements SpeciesService {
         return SPECIES_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private void checkIfSpeciesExistsByName(String name) throws SpeciesNameDuplicateException {
-        Optional<Species> species = speciesRepository.findByName(name);
-        if (species.isPresent()) {
-            throw new SpeciesNameDuplicateException(name);
+    private Species findSpeciesById(Long id) throws SpeciesNotFoundException {
+        return speciesRepository.findById(id).orElseThrow(
+                () -> new SpeciesNotFoundException(SPECIES_WITH_ID + id + NOT_FOUND));
+    }
+
+    private Species findSpeciesByName(String name) throws SpeciesNotFoundException {
+        return speciesRepository.findByName(name).orElseThrow(
+                () -> new SpeciesNotFoundException(SPECIES_WITH_NAME + name + NOT_FOUND));
+    }
+
+    private void checkIfSpeciesExistsByName(String name) throws SpeciesDuplicateException {
+        if (speciesRepository.findByName(name).isPresent()) {
+            throw new SpeciesDuplicateException(SPECIES_WITH_NAME + name + ALREADY_EXISTS);
         }
     }
 }
