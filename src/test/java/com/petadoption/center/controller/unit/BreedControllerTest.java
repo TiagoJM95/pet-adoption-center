@@ -4,7 +4,7 @@ import com.petadoption.center.controller.BreedController;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.exception.breed.BreedNameDuplicateException;
+import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Breed;
@@ -111,7 +111,7 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if add new Breed works correctly")
-    void addNewBreedShouldReturnBreed() throws BreedNameDuplicateException, SpeciesNotFoundException {
+    void addNewBreedShouldReturnBreed() throws BreedDuplicateException, SpeciesNotFoundException {
 
         when(breedService.addNewBreed(breedCreateDto)).thenReturn(breedGetDto);
 
@@ -124,7 +124,7 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if update Breed works correctly")
-    void updateBreedShouldReturnBreed() throws BreedNotFoundException, BreedNameDuplicateException {
+    void updateBreedShouldReturnBreed() throws BreedNotFoundException, BreedDuplicateException {
 
         when(breedService.updateBreed(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
 

@@ -34,7 +34,7 @@ public class OrgConverterTest {
                 "petCenter",
                 "www.youtube.com/petCenter"
                 );
-        Organization org = OrgConverter.fromOrgCreateDtoToModel(orgCreateDto);
+        Organization org = OrgConverter.toModel(orgCreateDto);
 
         assertEquals("Pet Adoption Center", org.getName());
         assertEquals("petcenter@email.com", org.getEmail());
@@ -64,7 +64,7 @@ public class OrgConverterTest {
         org.setAddress(new Address("Rua do pet, 123", "Gondomar", "Porto", "4100-123"));
         org.setWebsiteUrl("www.petcenter.pt");
         org.setSocialMedia(new SocialMedia("www.facebook.com/petCenter", "@petCenter", "petCenter", "www.youtube.com/petCenter"));
-        OrgGetDto orgGetDto = OrgConverter.fromModelToOrgGetDto(org);
+        OrgGetDto orgGetDto = OrgConverter.toDto(org);
 
         assertEquals(1L, orgGetDto.id());
         assertEquals("Pet Adoption Center", orgGetDto.name());

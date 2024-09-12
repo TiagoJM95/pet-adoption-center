@@ -27,7 +27,7 @@ public class BreedConverterTest {
                 1L
         );
 
-        Breed breed = BreedConverter.fromBreedCreateDtoToModel(breedCreateDto, species);
+        Breed breed = BreedConverter.toModel(breedCreateDto, species);
 
         assertEquals("Golden Retriever", breed.getName());
         assertEquals(1L, breed.getSpecies().getId());
@@ -40,7 +40,7 @@ public class BreedConverterTest {
 
         Breed breed = new Breed(1L, "Labrador Retriever", species);
 
-        BreedGetDto breedGetDto = BreedConverter.fromModelToBreedGetDto(breed);
+        BreedGetDto breedGetDto = BreedConverter.toDto(breed);
 
         assertEquals(1L, breedGetDto.id());
         assertEquals("Labrador Retriever", breedGetDto.name());

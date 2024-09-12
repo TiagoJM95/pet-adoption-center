@@ -35,7 +35,7 @@ public class UserConverterTest {
                 "+351",
                 912345678);
 
-        User user = UserConverter.fromUserCreateDtoToModel(userCreateDto);
+        User user = UserConverter.toModel(userCreateDto);
 
         assertEquals("Fabio", user.getFirstName());
         assertEquals("Guedes", user.getLastName());
@@ -76,7 +76,7 @@ public class UserConverterTest {
             .userAdoptionForms(null)
             .build();
 
-        UserGetDto userGetDto = UserConverter.fromModelToUserGetDto(user);
+        UserGetDto userGetDto = UserConverter.toDto(user);
 
         assertEquals(1L, userGetDto.id());
         assertEquals("Fabio", userGetDto.firstName());
@@ -98,14 +98,14 @@ public class UserConverterTest {
     @Test
     @DisplayName("Test if fromCreateDtoToModel return null if received null dto")
     void testIfFromCreateDtoToModelReturnNullIfReceivedNullDto() {
-        assertNull(UserConverter.fromUserCreateDtoToModel(null));
+        assertNull(UserConverter.toModel(null));
     }
 
 
     @Test
     @DisplayName("Test if fromModelToUserGetDto return null if received null model")
     void testIfFromModelToUserGetDtoReturnNullIfReceivedNullModel() {
-        assertNull(UserConverter.fromModelToUserGetDto(null));
+        assertNull(UserConverter.toDto(null));
     }
 
 

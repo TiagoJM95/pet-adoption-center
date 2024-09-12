@@ -3,9 +3,8 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserEmailDuplicateException;
+import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.exception.user.UserPhoneNumberDuplicateException;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
@@ -201,7 +200,7 @@ public class UserServiceImplTest {
 
     @Test
     @DisplayName("Test if add new user saves and returns UserGetDto")
-    void addNewUserShouldSaveAndReturnUserGetDto() throws UserEmailDuplicateException, UserPhoneNumberDuplicateException {
+    void addNewUserShouldSaveAndReturnUserGetDto() throws UserDuplicateException {
 
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         UserGetDto result = userService.addNewUser(userCreateDto);
@@ -217,7 +216,7 @@ public class UserServiceImplTest {
 
         when(userRepository.findByEmail(userCreateDto.email())).thenReturn(Optional.of(testUser));
 
-        assertThrows(UserEmailDuplicateException.class, () -> userService.addNewUser(userCreateDto));
+        assertThrows(UserDuplicateException.class, () -> userService.addNewUser(userCreateDto));
     }
 
     @Test
@@ -226,16 +225,15 @@ public class UserServiceImplTest {
 
         when(userRepository.findByPhoneNumber(userCreateDto.phoneNumber())).thenReturn(Optional.of(testUser));
 
-        assertThrows(UserPhoneNumberDuplicateException.class, () -> userService.addNewUser(userCreateDto));
+        assertThrows(UserDuplicateException.class, () -> userService.addNewUser(userCreateDto));
     }
 
     @Test
     @DisplayName("Test if update user saves all fields and returns UserGetDto")
-    void updateUserShouldSaveAllFieldsAndReturnUserGetDto() throws UserNotFoundException, UserEmailDuplicateException, UserPhoneNumberDuplicateException {
+    void updateUserShouldSaveAllFieldsAndReturnUserGetDto() throws UserNotFoundException, UserDuplicateException {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
-
         UserGetDto result = userService.updateUser(testUser.getId(), userUpdateDto);
 
         assertNotNull(userUpdateDto);
@@ -263,7 +261,7 @@ public class UserServiceImplTest {
 
         when(userRepository.findByEmail(userUpdateDto.email())).thenReturn(Optional.of(userWithSameEmail));
 
-        assertThrows(UserEmailDuplicateException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
+        assertThrows(UserDuplicateException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
     }
 
 

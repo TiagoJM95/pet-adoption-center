@@ -21,7 +21,7 @@ public class SpeciesConverterTest {
 
         SpeciesCreateDto speciesCreateDto = new SpeciesCreateDto("Cat");
 
-        Species species = SpeciesConverter.fromSpeciesCreateDtoToModel(speciesCreateDto);
+        Species species = SpeciesConverter.toModel(speciesCreateDto);
 
         assertEquals("Cat", species.getName());
     }
@@ -32,7 +32,7 @@ public class SpeciesConverterTest {
 
         Species species = new Species(1L, "Cat");
 
-        SpeciesGetDto speciesGetDto = SpeciesConverter.fromModelToSpeciesGetDto(species);
+        SpeciesGetDto speciesGetDto = SpeciesConverter.toDto(species);
 
         assertEquals(1L, speciesGetDto.id());
         assertEquals("Cat", speciesGetDto.name());

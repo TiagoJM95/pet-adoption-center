@@ -3,7 +3,7 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesNameDuplicateException;
+import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
@@ -68,7 +68,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllPetSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
 
         assertEquals(0, result.size());
     }
@@ -83,7 +83,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllPetSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
 
         assertEquals(1, result.size());
         assertEquals(testSpecies.getName(), result.getFirst().name());
@@ -100,7 +100,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllPetSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
 
         assertEquals(2, result.size());
         assertEquals(testSpecies.getName(), result.get(0).name());
@@ -119,7 +119,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllPetSpecies(0, 3, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "id");
 
         assertEquals(3, result.size());
         assertTrue(result.get(0).id() > result.get(1).id());
@@ -138,7 +138,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllPetSpecies(0, 3, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "id");
 
         assertEquals(3, result.size());
         assertTrue(result.get(0).id() < result.get(1).id());
@@ -151,7 +151,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findById(1L)).thenReturn(Optional.of(testSpecies));
 
-        SpeciesGetDto result = speciesService.getPetSpeciesById(1L);
+        SpeciesGetDto result = speciesService.getSpeciesById(1L);
 
         assertEquals(testSpecies.getName(), result.name());
     }
@@ -162,18 +162,18 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getPetSpeciesById(1L));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getSpeciesById(1L));
     }
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
-    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNameDuplicateException {
+    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
 
         when(speciesRepository.findByName(testSpecies.getName())).thenReturn(Optional.empty());
 
         when(speciesRepository.save(any(Species.class))).thenReturn(testSpecies);
 
-        SpeciesGetDto result = speciesService.addNewPetSpecies(speciesCreateDto);
+        SpeciesGetDto result = speciesService.addNewSpecies(speciesCreateDto);
 
         assertNotNull(result);
         assertEquals(testSpecies.getName(), result.name());
@@ -181,16 +181,16 @@ public class SpeciesServiceImplTest {
 
     @Test
     @DisplayName("Test if add new species throws SpeciesNameDuplicateException")
-    void addPetSpeciesShouldThrowException() throws SpeciesNameDuplicateException {
+    void addPetSpeciesShouldThrowException() {
 
         when(speciesRepository.findByName(speciesCreateDto.name())).thenReturn(Optional.of(testSpecies));
 
-        assertThrows(SpeciesNameDuplicateException.class, () -> speciesService.addNewPetSpecies(speciesCreateDto));
+        assertThrows(SpeciesDuplicateException.class, () -> speciesService.addNewSpecies(speciesCreateDto));
     }
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
-    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesNameDuplicateException {
+    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
 
         when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.empty());
 
@@ -198,7 +198,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.save(any(Species.class))).thenReturn(updatedSpecies);
 
-        SpeciesGetDto result = speciesService.updatePetSpecies(testSpecies.getId(), speciesUpdateDto);
+        SpeciesGetDto result = speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto);
 
         assertNotNull(speciesUpdateDto);
         assertEquals(speciesUpdateDto.name(), result.name());
@@ -210,7 +210,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.updatePetSpecies(testSpecies.getId(), speciesUpdateDto));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
     }
 
     @Test
@@ -221,7 +221,7 @@ public class SpeciesServiceImplTest {
 
         when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.of(testSpecies));
 
-        assertThrows(SpeciesNameDuplicateException.class, () -> speciesService.updatePetSpecies(testSpecies.getId(), speciesUpdateDto));
+        assertThrows(SpeciesDuplicateException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
     }
 
     @Test

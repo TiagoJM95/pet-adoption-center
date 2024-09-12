@@ -4,7 +4,7 @@ import com.petadoption.center.controller.SpeciesController;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesNameDuplicateException;
+import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.service.SpeciesService;
@@ -65,52 +65,52 @@ public class SpeciesControllerTest {
 
         List<SpeciesGetDto> expectedSpecies = List.of(speciesGetDto);
 
-        when(speciesService.getAllPetSpecies(page, size, sortBy)).thenReturn(expectedSpecies);
+        when(speciesService.getAllSpecies(page, size, sortBy)).thenReturn(expectedSpecies);
 
         ResponseEntity<List<SpeciesGetDto>> result = speciesController.getAllPetSpecies(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(List.of(speciesGetDto), result.getBody());
-        verify(speciesService).getAllPetSpecies(page, size, sortBy);
+        verify(speciesService).getAllSpecies(page, size, sortBy);
     }
 
     @Test
     @DisplayName("Test if get Species by id works correctly")
     void getSpeciesByIdShouldReturnSpecies() throws SpeciesNotFoundException {
 
-        when(speciesService.getPetSpeciesById(1L)).thenReturn(speciesGetDto);
+        when(speciesService.getSpeciesById(1L)).thenReturn(speciesGetDto);
 
         ResponseEntity<SpeciesGetDto> result = speciesController.getPetSpeciesById(1L);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).getPetSpeciesById(1L);
+        verify(speciesService).getSpeciesById(1L);
     }
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
-    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNameDuplicateException {
+    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
 
-        when(speciesService.addNewPetSpecies(speciesCreateDto)).thenReturn(speciesGetDto);
+        when(speciesService.addNewSpecies(speciesCreateDto)).thenReturn(speciesGetDto);
 
         ResponseEntity<SpeciesGetDto> result = speciesController.addNewPetSpecies(speciesCreateDto);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).addNewPetSpecies(speciesCreateDto);
+        verify(speciesService).addNewSpecies(speciesCreateDto);
     }
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
-    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesNameDuplicateException {
+    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
 
-        when(speciesService.updatePetSpecies(1L, speciesUpdateDto)).thenReturn(speciesGetDto);
+        when(speciesService.updateSpecies(1L, speciesUpdateDto)).thenReturn(speciesGetDto);
 
         ResponseEntity<SpeciesGetDto> result = speciesController.updatePetSpecies(1L, speciesUpdateDto);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).updatePetSpecies(1L, speciesUpdateDto);
+        verify(speciesService).updateSpecies(1L, speciesUpdateDto);
     }
 
     @Test

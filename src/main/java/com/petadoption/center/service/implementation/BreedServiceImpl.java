@@ -59,7 +59,7 @@ public class BreedServiceImpl implements BreedService {
     @Override
     public BreedGetDto addNewBreed(BreedCreateDto dto) throws BreedDuplicateException, SpeciesNotFoundException {
         checkIfBreedsExistsByName(dto.name());
-        Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(dto.speciesId()));
+        Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(dto.specieId()));
         return BreedConverter.toDto(breedRepository.save(BreedConverter.toModel(dto, species)));
     }
 
