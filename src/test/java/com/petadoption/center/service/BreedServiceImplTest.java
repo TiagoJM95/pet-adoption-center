@@ -1,6 +1,5 @@
 package com.petadoption.center.service;
 
-import com.petadoption.center.converter.SpeciesConverter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
@@ -29,12 +28,11 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.petadoption.center.converter.SpeciesConverter.toDto;
-import static com.petadoption.center.converter.SpeciesConverter.toModel;
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")

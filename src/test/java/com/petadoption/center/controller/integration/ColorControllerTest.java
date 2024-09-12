@@ -18,7 +18,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 

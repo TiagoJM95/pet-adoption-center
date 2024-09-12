@@ -22,7 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.BREED_WITH_ID;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
