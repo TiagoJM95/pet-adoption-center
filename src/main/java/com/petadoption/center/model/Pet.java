@@ -11,11 +11,6 @@ import lombok.*;
 import java.time.LocalDate;
 import java.util.Set;
 
-import static com.petadoption.center.enums.Ages.getAgeByDescription;
-import static com.petadoption.center.enums.Coats.getCoatByDescription;
-import static com.petadoption.center.enums.Genders.getGenderByDescription;
-import static com.petadoption.center.enums.Sizes.getSizeByDescription;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor

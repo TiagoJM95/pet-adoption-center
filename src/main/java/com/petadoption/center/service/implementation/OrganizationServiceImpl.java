@@ -5,7 +5,7 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
-import com.petadoption.center.exception.organization.*;
+import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.model.Organization;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
@@ -17,10 +17,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.petadoption.center.util.Messages.*;
-import static com.petadoption.center.util.Utils.*;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.ORG_WITH_ID;
+import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {

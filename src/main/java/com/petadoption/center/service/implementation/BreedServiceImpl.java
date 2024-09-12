@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Objects;
 
-import static com.petadoption.center.util.Utils.updateFields;
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class BreedServiceImpl implements BreedService {

@@ -8,7 +8,9 @@ import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.pet.*;
+import com.petadoption.center.exception.pet.InvalidDescriptionException;
+import com.petadoption.center.exception.pet.PetDuplicateException;
+import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 
 import java.util.List;

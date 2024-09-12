@@ -4,7 +4,6 @@ import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.model.Color;
 
 import java.util.List;
 

@@ -15,11 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
-import static com.petadoption.center.converter.SpeciesConverter.toModel;
-import static com.petadoption.center.util.Utils.updateFields;
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class SpeciesServiceImpl implements SpeciesService {
