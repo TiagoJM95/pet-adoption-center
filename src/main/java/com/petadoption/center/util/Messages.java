@@ -53,6 +53,16 @@ public class Messages {
 
     public static final String DB_CONNECTION_ERROR = "Something went wrong with the connection to the database.";
 
+    public static final String BREED_SPECIES_MISMATCH = "The breed and species do not match";
+
+    public static final String INVALID_AGE = "Invalid age description: ";
+
+    public static final String INVALID_COAT = "Invalid coat description: ";
+
+    public static final String INVALID_SIZE = "Invalid size description: ";
+
+    public static final String INVALID_GENDER = "Invalid gender description: ";
+
 
     // EMAIL MESSAGES
 
