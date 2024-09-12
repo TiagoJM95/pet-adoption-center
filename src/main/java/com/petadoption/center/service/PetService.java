@@ -19,11 +19,11 @@ public interface PetService {
 
     List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy, String species, String state, String city) throws SpeciesNotFoundException, InvalidDescriptionException;
 
-    PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateException, BreedMismatchException, InvalidAgeException, InvalidDescriptionException, InvalidGenderException, InvalidCoatException;
+    PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateException, BreedMismatchException, InvalidDescriptionException;
 
     void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, PetDuplicateException, BreedMismatchException, InvalidDescriptionException;
 
-    PetGetDto updatePet(Long id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateException, OrgNotFoundException;
+    PetGetDto updatePet(Long id, PetUpdateDto pet) throws PetNotFoundException, PetDuplicateException, OrgNotFoundException, InvalidDescriptionException;
 
     String deletePet(Long id) throws PetNotFoundException;
 }

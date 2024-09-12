@@ -89,7 +89,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetGetDto updatePet(Long id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException {
+    public PetGetDto updatePet(Long id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException, InvalidDescriptionException {
         Pet pet = findPetById(id);
         updatePetFields(dto, pet);
         petRepository.save(pet);
@@ -176,11 +176,11 @@ public class PetServiceImpl implements PetService {
                 );
     }
 
-    private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrgNotFoundException {
+    private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrgNotFoundException, InvalidDescriptionException {
         Organization org = OrgConverter.toModel(organizationService.getOrganizationById(dto.organizationId()));
 
-        updateFields(dto.size(), pet.getSize(), pet::setSize);
-        updateFields(dto.age(), pet.getAge(), pet::setAge);
+        updateFields(getSizeByDescription(dto.size()), pet.getSize(), pet::setSize);
+        updateFields(getAgeByDescription(dto.age()), pet.getAge(), pet::setAge);
         updateFields(dto.description(), pet.getDescription(), pet::setDescription);
         updateFields(dto.imageUrl(), pet.getImageUrl(), pet::setImageUrl);
         updateFields(dto.isAdopted(), pet.getIsAdopted(), pet::setIsAdopted);

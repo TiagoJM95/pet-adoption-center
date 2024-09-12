@@ -56,7 +56,7 @@ public class PetController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") Long id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetDuplicateException, PetNotFoundException {
+    public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") Long id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetDuplicateException, PetNotFoundException, InvalidDescriptionException {
         return new ResponseEntity<>(petService.updatePet(id, pet), HttpStatus.OK);
     }
 
