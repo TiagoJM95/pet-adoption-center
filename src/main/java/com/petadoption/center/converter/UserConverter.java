@@ -7,7 +7,8 @@ import com.petadoption.center.model.embeddable.Address;
 
 public class UserConverter {
 
-    public static User toModel(UserCreateDto user){
+    public static User fromUserCreateDtoToModel(UserCreateDto user){
+        if (user == null) return null;
         Address address = new Address(
                 user.street(),
                 user.city(),
@@ -26,7 +27,8 @@ public class UserConverter {
 
     }
 
-    public static UserGetDto toDto(User user){
+    public static UserGetDto fromModelToUserGetDto(User user){
+        if (user == null) return null;
         return new UserGetDto(
                 user.getId(),
                 user.getFirstName(),
@@ -41,6 +43,4 @@ public class UserConverter {
                 user.getUserAdoptionForms()
         );
     }
-
-
 }

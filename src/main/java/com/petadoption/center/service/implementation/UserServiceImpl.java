@@ -52,7 +52,7 @@ public class UserServiceImpl implements UserService {
         checkIfUserExistsByEmail(dto.email());
         checkIfUserExistsByPhoneNumber(dto.phoneNumber());
         User userSaved = userRepository.save(toModel(dto));
-        emailService.sendWelcomeMail(userSaved);
+        //emailService.sendWelcomeMail(userSaved);
         return toDto(userSaved);
     }
 
