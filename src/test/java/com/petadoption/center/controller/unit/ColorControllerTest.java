@@ -42,10 +42,10 @@ public class ColorControllerTest {
     @BeforeEach
     void setUp() {
         testColor = new Color();
-        testColor.setId(1L);
+        testColor.setId("1111-1111-2222");
         testColor.setName("Black");
 
-        colorGetDto = new ColorGetDto(1L, "Black");
+        colorGetDto = new ColorGetDto("1111-1111-2222", "Black");
 
         colorCreateDto = new ColorCreateDto("Black");
     }
@@ -80,7 +80,7 @@ public class ColorControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorService).getColorById(1L);
+        verify(colorService).getColorById(testColor.getId());
 
     }
 

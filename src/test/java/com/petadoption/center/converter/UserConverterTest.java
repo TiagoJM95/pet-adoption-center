@@ -28,13 +28,14 @@ public class UserConverterTest {
                 "Fabio",
                 "Guedes",
                 "teste@email.com",
+                "123456789",
                 LocalDate.of(1990, 10, 25),
                 "Rua das Andorinhas, 123",
                 "Vila Nova de Gaia",
                 "Porto",
                 "4410-000",
-                "+351",
-                912345678);
+                "912345678"
+        );
 
         User user = UserConverter.toModel(userCreateDto);
 
@@ -46,8 +47,7 @@ public class UserConverterTest {
         assertEquals("Vila Nova de Gaia", user.getAddress().getCity());
         assertEquals("Porto", user.getAddress().getState());
         assertEquals("4410-000", user.getAddress().getPostalCode());
-        assertEquals("+351", user.getPhoneCountryCode());
-        assertEquals(912345678, user.getPhoneNumber());
+        assertEquals("912345678", user.getPhoneNumber());
 
     }
 
@@ -64,14 +64,13 @@ public class UserConverterTest {
     );
 
     User user = User.builder()
-            .id(1L)
+            .id("12321-2313-123213")
             .firstName("Fabio")
             .lastName("Guedes")
             .email("teste@email.com")
             .dateOfBirth(LocalDate.of(1990, 10, 25))
             .address(address)
-            .phoneCountryCode("+351")
-            .phoneNumber(911111111)
+            .phoneNumber("911111111")
             .favoritePets(null)
             .adoptedPets(null)
             .userAdoptionForms(null)
@@ -79,7 +78,7 @@ public class UserConverterTest {
 
         UserGetDto userGetDto = UserConverter.toDto(user);
 
-        assertEquals(1L, userGetDto.id());
+        assertEquals("12321-2313-123213", userGetDto.id());
         assertEquals("Fabio", userGetDto.firstName());
         assertEquals("Guedes", userGetDto.lastName());
         assertEquals("teste@email.com", userGetDto.email());
@@ -88,11 +87,8 @@ public class UserConverterTest {
         assertEquals("Vila Nova de Gaia", userGetDto.address().getCity());
         assertEquals("Porto", userGetDto.address().getState());
         assertEquals("4410-000", userGetDto.address().getPostalCode());
-        assertEquals("+351", userGetDto.phoneCountryCode());
-        assertEquals(911111111, userGetDto.phoneNumber());
-        assertNull(userGetDto.favoritePets());
-        assertNull(userGetDto.adoptedPets());
-        assertNull(userGetDto.adoptionForms());
+        assertEquals("911111111", userGetDto.phoneNumber());
+
     }
 
 

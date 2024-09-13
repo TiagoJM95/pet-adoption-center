@@ -44,10 +44,10 @@ public class SpeciesControllerTest {
     @BeforeEach
     void setUp() {
         testSpecies = new Species();
-        testSpecies.setId(1L);
+        testSpecies.setId("1111-1111-2222");
         testSpecies.setName("Dog");
 
-        speciesGetDto = new SpeciesGetDto(1L, "Dog");
+        speciesGetDto = new SpeciesGetDto("1111-1111-2222", "Dog");
 
         speciesCreateDto = new SpeciesCreateDto("Dog");
 
@@ -77,13 +77,13 @@ public class SpeciesControllerTest {
     @DisplayName("Test if get Species by id works correctly")
     void getSpeciesByIdShouldReturnSpecies() throws SpeciesNotFoundException {
 
-        when(speciesService.getSpeciesById(1L)).thenReturn(speciesGetDto);
+        when(speciesService.getSpeciesById(testSpecies.getId())).thenReturn(speciesGetDto);
 
-        ResponseEntity<SpeciesGetDto> result = speciesController.getPetSpeciesById(1L);
+        ResponseEntity<SpeciesGetDto> result = speciesController.getPetSpeciesById(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).getSpeciesById(1L);
+        verify(speciesService).getSpeciesById(testSpecies.getId());
     }
 
     @Test
@@ -103,25 +103,25 @@ public class SpeciesControllerTest {
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
     void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
 
-        when(speciesService.updateSpecies(1L, speciesUpdateDto)).thenReturn(speciesGetDto);
+        when(speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto)).thenReturn(speciesGetDto);
 
-        ResponseEntity<SpeciesGetDto> result = speciesController.updatePetSpecies(1L, speciesUpdateDto);
+        ResponseEntity<SpeciesGetDto> result = speciesController.updatePetSpecies(testSpecies.getId(), speciesUpdateDto);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).updateSpecies(1L, speciesUpdateDto);
+        verify(speciesService).updateSpecies(testSpecies.getId(), speciesUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete species works correctly")
     void deleteSpeciesShouldReturnMessage() throws SpeciesNotFoundException {
 
-        when(speciesService.deleteSpecies(1L)).thenReturn(SPECIES_WITH_ID + 1L + DELETE_SUCCESS);
+        when(speciesService.deleteSpecies(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
 
-        ResponseEntity<String> result = speciesController.deleteSpecies(1L);
+        ResponseEntity<String> result = speciesController.deleteSpecies(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(SPECIES_WITH_ID + 1L + DELETE_SUCCESS, result.getBody());
-        verify(speciesService).deleteSpecies(1L);
+        assertEquals(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS, result.getBody());
+        verify(speciesService).deleteSpecies(testSpecies.getId());
     }
 }

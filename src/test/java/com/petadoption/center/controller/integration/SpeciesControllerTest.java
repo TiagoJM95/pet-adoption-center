@@ -38,18 +38,13 @@ public class SpeciesControllerTest {
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
 
+    private String speciesId;
 
     @BeforeEach
     void setUp() {
-        speciesGetDto = new SpeciesGetDto(
-                1L,
-                "Dog");
+        speciesCreateDto = new SpeciesCreateDto("Dog");
 
-        speciesCreateDto = new SpeciesCreateDto(
-                "Dog");
-
-        speciesUpdateDto = new SpeciesUpdateDto(
-                "Cat");
+        speciesUpdateDto = new SpeciesUpdateDto("Cat");
     }
 
     @Test
@@ -57,11 +52,17 @@ public class SpeciesControllerTest {
     @DirtiesContext
     void createSpecies() throws Exception {
 
-        mockMvc.perform(post("/api/v1/pet-species/")
+       var result = mockMvc.perform(post("/api/v1/pet-species/")
                         .content(objectMapper.writeValueAsString(speciesCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(speciesGetDto.name())));
+                .andExpect(jsonPath("$.name", is(speciesCreateDto.name())))
+               .andReturn();
+
+        SpeciesGetDto specieCreated = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
+
+        speciesId = specieCreated.id();
+        speciesGetDto = new SpeciesGetDto(speciesId, speciesCreateDto.name());
     }
 
     @Test
@@ -88,7 +89,7 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(get("/api/v1/pet-species/id/{id}", 1L)
+        mockMvc.perform(get("/api/v1/pet-species/id/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(speciesGetDto.name())));
@@ -101,7 +102,7 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(put("/api/v1/pet-species/update/{id}", 1L)
+        mockMvc.perform(put("/api/v1/pet-species/update/{id}", speciesId)
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -115,9 +116,9 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(delete("/api/v1/pet-species/delete/{id}", 1L)
+        mockMvc.perform(delete("/api/v1/pet-species/delete/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(SPECIES_WITH_ID + 1L + DELETE_SUCCESS));
+                .andExpect(content().string(SPECIES_WITH_ID + speciesId + DELETE_SUCCESS));
     }
 }

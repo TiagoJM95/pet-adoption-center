@@ -45,11 +45,11 @@ public class ColorServiceImplTest {
     @BeforeEach
     void setUp() {
         testColor = new Color();
-        testColor.setId(1L);
+        testColor.setId("1111-1111-2222");
         testColor.setName("Black");
 
         updatedColor = new Color();
-        updatedColor.setId(2L);
+        updatedColor.setId("1111-2222-2222");
         updatedColor.setName("White");
 
         colorCreateDto = new ColorCreateDto("Black");
@@ -108,19 +108,22 @@ public class ColorServiceImplTest {
     void getAllColorsShouldReturnColorsInDescendingOrder() {
 
         Color colorToAdd = new Color();
-        colorToAdd.setId(100L);
-        List<Color> allColors = List.of(colorToAdd, updatedColor, testColor);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        colorToAdd.setId("0000-0000-0000");
+        colorToAdd.setName("Blue");
+
+        List<Color> allColors = List.of(updatedColor, colorToAdd, testColor);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
         Page<Color> pagedColors = new PageImpl<>(allColors, pageRequest, allColors.size());
 
         when(colorRepository.findAll(any(PageRequest.class))).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 3, "id");
+        List<ColorGetDto> result = colorService.getAllColors(0, 3, "name");
 
         assertNotNull(result);
-        assertEquals(3, result.size());
-        assertTrue(result.get(0).id() > result.get(1).id());
-        assertTrue(result.get(1).id() > result.get(2).id());
+        assertEquals(3,result.size());
+        assertEquals(result.get(0).name(), updatedColor.getName());
+        assertEquals(result.get(1).name(), colorToAdd.getName());
+        assertEquals(result.get(2).name(), testColor.getName());
     }
 
     @Test
@@ -128,8 +131,10 @@ public class ColorServiceImplTest {
     void getAllColorsShouldReturnColorsInAscendingOrder() {
 
         Color colorToAdd = new Color();
-        colorToAdd.setId(100L);
-        List<Color> allColors = List.of(testColor, updatedColor, colorToAdd);
+        colorToAdd.setId("0000-0000-0000");
+        colorToAdd.setName("Blue");
+
+        List<Color> allColors = List.of(testColor, colorToAdd, updatedColor);
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Color> pagedColors = new PageImpl<>(allColors, pageRequest, allColors.size());
 
@@ -138,9 +143,10 @@ public class ColorServiceImplTest {
         List<ColorGetDto> result = colorService.getAllColors(0, 10, "id");
 
         assertNotNull(result);
-        assertEquals(3, result.size());
-        assertTrue(result.get(0).id() < result.get(1).id());
-        assertTrue(result.get(1).id() < result.get(2).id());
+        assertEquals(3,result.size());
+        assertEquals(result.get(0).name(), testColor.getName());
+        assertEquals(result.get(1).name(), colorToAdd.getName());
+        assertEquals(result.get(2).name(), updatedColor.getName());
     }
 
 
@@ -148,9 +154,9 @@ public class ColorServiceImplTest {
     @DisplayName("Test if get color by id is working correctly")
     void getColorByIdShouldReturnColor() throws ColorNotFoundException {
 
-        when(colorRepository.findById(1L)).thenReturn(Optional.of(testColor));
+        when(colorRepository.findById(testColor.getId())).thenReturn(Optional.of(testColor));
 
-        ColorGetDto result = colorService.getColorById(1L);
+        ColorGetDto result = colorService.getColorById(testColor.getId());
 
         assertEquals(testColor.getName(), result.name());
     }
@@ -193,7 +199,7 @@ public class ColorServiceImplTest {
     @DisplayName("Test if delete color works correctly")
     void deleteColorShouldWorkCorrectly() throws ColorNotFoundException {
 
-        when(colorRepository.findById(1L)).thenReturn(Optional.of(testColor));
+        when(colorRepository.findById(testColor.getId())).thenReturn(Optional.of(testColor));
 
         assertEquals(colorService.deleteColor(testColor.getId()), COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
     }

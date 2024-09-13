@@ -50,43 +50,41 @@ public class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         testUser = new User();
-        testUser.setId(1L);
+        testUser.setId("2132-1234-1234");
         testUser.setFirstName("Manuel");
         testUser.setLastName("Silva");
         testUser.setEmail("email@email.com");
         testUser.setDateOfBirth(LocalDate.of(1990, 10, 25));
-        testUser.setPhoneCountryCode("+351");
-        testUser.setPhoneNumber(911234567);
+        testUser.setPhoneNumber("911234567");
         testUser.setAddress(new Address("Rua dos animais, 123", "Gondomar", "Porto", "4400-000"));
 
           userCreateDto = new UserCreateDto(
                 "Manuel",
                 "Silva",
                 "email@email.com",
+                "123456789",
                 LocalDate.of(1990, 10, 25),
                 "Rua dos animais, 123", "Gondomar",
                 "Porto",
                 "4400-000",
-                "+351",
-                912354678);
-          userUpdateDto = new UserUpdateDto("Tiago",
+                "912354678");
+          userUpdateDto = new UserUpdateDto(
+                  "Tiago",
                 "Moreira",
                 "tm@email.com",
                 "Rua dos bandidos, 123",
                 "Rio Tinto",
                 "Porto",
                 "4100-001",
-                "+351",
-                934587967);
+                "934587967");
 
         updatedUser = new User();
-        updatedUser.setId(2L);
+        updatedUser.setId("2132-1234-1234");
         updatedUser.setFirstName("Tiago");
         updatedUser.setLastName("Moreira");
         updatedUser.setEmail("tm@email.com");
         updatedUser.setDateOfBirth(LocalDate.of(1990, 10, 25));
-        updatedUser.setPhoneCountryCode("+351");
-        updatedUser.setPhoneNumber(934587967);
+        updatedUser.setPhoneNumber("934587967");
         updatedUser.setAddress(new Address("Rua dos animais, 123", "Rio Tinto", "Porto", "4100-001"));
 
     }
@@ -142,19 +140,20 @@ public class UserServiceImplTest {
     void getAllUsersShouldReturnUsersInDescendingOrder(){
 
         User userToAdd = new User();
-        userToAdd.setId(100L);
-        List<User> allUsers = List.of(userToAdd, updatedUser, testUser);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        userToAdd.setFirstName("Fabio");
+        List<User> allUsers = List.of(updatedUser, testUser, userToAdd);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "firstName");
         Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0,3,"id");
+        List<UserGetDto> result = userService.getAllUsers(0,3,"firstName");
 
         assertNotNull(result);
         assertEquals(3,result.size());
-        assertTrue(result.get(0).id() > result.get(1).id());
-        assertTrue(result.get(1).id() > result.get(2).id());
+        assertEquals(result.get(0).firstName(), updatedUser.getFirstName());
+        assertEquals(result.get(1).firstName(), testUser.getFirstName());
+        assertEquals(result.get(2).firstName(), userToAdd.getFirstName());
     }
 
     @Test
@@ -162,19 +161,20 @@ public class UserServiceImplTest {
     void getAllUsersShouldReturnUsersInAscendingOrder(){
 
         User userToAdd = new User();
-        userToAdd.setId(100L);
-        List<User> allUsers = List.of(testUser,updatedUser, userToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "id");
+        userToAdd.setFirstName("Fabio");
+        List<User> allUsers = List.of(userToAdd, testUser, updatedUser);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "firstName");
         Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0,3,"id");
+        List<UserGetDto> result = userService.getAllUsers(0,3,"firstName");
 
         assertNotNull(result);
         assertEquals(3,result.size());
-        assertTrue(result.get(0).id() < result.get(1).id());
-        assertTrue(result.get(1).id() < result.get(2).id());
+        assertEquals(result.get(0).firstName(), userToAdd.getFirstName());
+        assertEquals(result.get(1).firstName(), testUser.getFirstName());
+        assertEquals(result.get(2).firstName(), updatedUser.getFirstName());
     }
 
 
@@ -182,9 +182,9 @@ public class UserServiceImplTest {
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturnUser() throws UserNotFoundException {
 
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
 
-            UserGetDto result = userService.getUserById(1L);
+            UserGetDto result = userService.getUserById(testUser.getId());
             assertEquals(testUser.getEmail(), result.email());
     }
 
@@ -192,9 +192,9 @@ public class UserServiceImplTest {
     @DisplayName("Test if get user by id throws UserNotFoundException")
     void getUserByIdShouldThrowUserNotFoundException() {
 
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.getUserById(1L));
+        assertThrows(UserNotFoundException.class, () -> userService.getUserById(testUser.getId()));
     }
 
     @Test
@@ -253,7 +253,7 @@ public class UserServiceImplTest {
     void updateUserShouldThrowExceptionUserDuplicateEmail(){
 
         User userWithSameEmail = new User();
-        userWithSameEmail.setId(100L);
+        userWithSameEmail.setId("00000000-0000-0000-0000-000000000000");
         userWithSameEmail.setEmail(userUpdateDto.email());
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));

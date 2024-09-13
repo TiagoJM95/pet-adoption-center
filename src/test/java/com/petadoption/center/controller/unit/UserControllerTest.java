@@ -44,43 +44,41 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         userGetDto = new UserGetDto(
-                1L,
+                "1111-1111-2222",
                 "Manuel",
                 "Silva",
                 "email@email.com",
+                "123456789",
                 LocalDate.of(1990, 10, 25),
                 new Address("Rua das Andorinhas, 123",
                         "Vila Nova de Gaia",
                         "Porto",
                         "4410-000"),
-                "+351",
-                123456789,
-                null,
-                null,
-                null
+                "123456789"
         );
 
         userCreateDto = new UserCreateDto(
                 "Manuel",
                 "Silva",
                 "email@email.com",
+                "123456788",
                 LocalDate.of(1990, 10, 25),
                 "Rua dos animais, 123", "Gondomar",
                 "Porto",
                 "4400-000",
-                "+351",
-                912354678);
+                "912354678"
+        );
 
-        userUpdateDto = new UserUpdateDto("Tiago",
+        userUpdateDto = new UserUpdateDto(
+                "Tiago",
                 "Moreira",
                 "tm@email.com",
                 "Rua dos bandidos, 123",
                 "Rio Tinto",
                 "Porto",
                 "4100-001",
-                "+351",
-                934587967);
-
+                "934587967"
+                );
     }
 
     @Test
@@ -106,7 +104,7 @@ public class UserControllerTest {
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturnUser() throws UserNotFoundException {
 
-        Long id = 1L;
+        String id = "1111-1111-2222";
 
         when(userService.getUserById(id)).thenReturn(userGetDto);
 
@@ -135,26 +133,26 @@ public class UserControllerTest {
     @DisplayName("Test if update user works correctly")
     void updateUserShouldReturnUser() throws UserNotFoundException, UserDuplicateException {
 
-        when(userService.updateUser(1L, userUpdateDto)).thenReturn(userGetDto);
+        when(userService.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.updateUser(1L, userUpdateDto);
+        ResponseEntity<UserGetDto> response = userController.updateUser(userGetDto.id(), userUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userService).updateUser(1L, userUpdateDto);
+        verify(userService).updateUser(userGetDto.id(), userUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete user works correctly")
     void deleteUserShouldReturnUser() throws UserNotFoundException {
 
-        when(userService.deleteUser(1L)).thenReturn(USER_WITH_ID + 1L + DELETE_SUCCESS);
+        when(userService.deleteUser(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = userController.deleteUser(1L);
+        ResponseEntity<String> response = userController.deleteUser(userGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(USER_WITH_ID + 1L + DELETE_SUCCESS, response.getBody());
-        verify(userService).deleteUser(1L);
+        assertEquals(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS, response.getBody());
+        verify(userService).deleteUser(userGetDto.id());
     }
 
 }

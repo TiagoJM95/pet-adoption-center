@@ -49,21 +49,21 @@ public class BreedControllerTest {
     @BeforeEach
     void setUp() {
 
-        species = new Species(1L, "Dog");
+        species = new Species("1111-1111-2222", "Dog");
 
         testBreed = new Breed();
-        testBreed.setId(1L);
+        testBreed.setId("2222-2222-3333");
         testBreed.setName("Golden Retriever");
         testBreed.setSpecies(species);
 
         updatedBreed = new Breed();
-        updatedBreed.setId(2L);
+        updatedBreed.setId("1234-1234-5678");
         updatedBreed.setName("Weimaraner");
         updatedBreed.setSpecies(species);
 
         breedCreateDto = new BreedCreateDto(
                 "Golden Retriever",
-                1L
+                species.getId()
         );
 
         breedUpdateDto = new BreedUpdateDto(
@@ -71,7 +71,7 @@ public class BreedControllerTest {
         );
 
         breedGetDto = new BreedGetDto(
-                1L,
+                "2222-2222-3333",
                 "Golden Retriever",
                 "Dog"
         );
@@ -141,12 +141,12 @@ public class BreedControllerTest {
     @DisplayName("Test if delete Breed works correctly")
     void deleteBreedShouldReturnBreed() throws BreedNotFoundException {
 
-        when(breedService.deleteBreed(testBreed.getId())).thenReturn(BREED_WITH_ID + 1L + DELETE_SUCCESS);
+        when(breedService.deleteBreed(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> response = breedController.deleteBreed(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(BREED_WITH_ID + 1L + DELETE_SUCCESS, response.getBody());
+        assertEquals(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS, response.getBody());
         verify(breedService).deleteBreed(testBreed.getId());
     }
 }

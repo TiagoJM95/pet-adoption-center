@@ -24,11 +24,12 @@ public class OrgConverterTest {
                 "Pet Adoption Center",
                 "petcenter@email.com",
                 "227778899",
+                "229876567",
                 "Rua do pet, 123",
                 "Gondomar",
                 "Porto",
                 "4100-123",
-                "www.petcenter.pt",
+                "www.petcenter.com",
                 "www.facebook.com/petCenter",
                 "@petCenter",
                 "petCenter",
@@ -38,12 +39,13 @@ public class OrgConverterTest {
 
         assertEquals("Pet Adoption Center", org.getName());
         assertEquals("petcenter@email.com", org.getEmail());
-        assertEquals("227778899", org.getPhoneNumber());
+        assertEquals("227778899", org.getNif());
+        assertEquals("229876567", org.getPhoneNumber());
         assertEquals("Rua do pet, 123", org.getAddress().getStreet());
         assertEquals("Gondomar", org.getAddress().getCity());
         assertEquals("Porto", org.getAddress().getState());
         assertEquals("4100-123", org.getAddress().getPostalCode());
-        assertEquals("www.petcenter.pt", org.getWebsiteUrl());
+        assertEquals("www.petcenter.com", org.getWebsiteUrl());
         assertEquals("www.facebook.com/petCenter", org.getSocialMedia().getFacebook());
         assertEquals("@petCenter", org.getSocialMedia().getInstagram());
         assertEquals("petCenter", org.getSocialMedia().getTwitter());
@@ -57,7 +59,7 @@ public class OrgConverterTest {
     void fromModelToOrgGetDto() {
 
         Organization org = new Organization();
-        org.setId(1L);
+        org.setId("1111-3333-2222");
         org.setName("Pet Adoption Center");
         org.setEmail("petcenter@email.com");
         org.setPhoneNumber("227778899");
@@ -66,7 +68,7 @@ public class OrgConverterTest {
         org.setSocialMedia(new SocialMedia("www.facebook.com/petCenter", "@petCenter", "petCenter", "www.youtube.com/petCenter"));
         OrgGetDto orgGetDto = OrgConverter.toDto(org);
 
-        assertEquals(1L, orgGetDto.id());
+        assertEquals("1111-3333-2222", orgGetDto.id());
         assertEquals("Pet Adoption Center", orgGetDto.name());
         assertEquals("petcenter@email.com", orgGetDto.email());
         assertEquals("227778899", orgGetDto.phoneNumber());
