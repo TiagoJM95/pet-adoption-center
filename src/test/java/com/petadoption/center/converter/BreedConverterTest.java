@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 public class BreedConverterTest {
 
-    Species species = new Species(1L, "Dog");
+    Species species = new Species("123123-12312312-3123", "Dog");
 
     @Test
     @DisplayName("Test BreedCreateDto to Breed model is working correctly")
@@ -24,13 +24,13 @@ public class BreedConverterTest {
 
         BreedCreateDto breedCreateDto = new BreedCreateDto(
                 "Golden Retriever",
-                1L
+                "123123-12312312-3123"
         );
 
         Breed breed = BreedConverter.toModel(breedCreateDto, species);
 
         assertEquals("Golden Retriever", breed.getName());
-        assertEquals(1L, breed.getSpecies().getId());
+        assertEquals("123123-12312312-3123", breed.getSpecies().getId());
     }
 
 
@@ -38,11 +38,11 @@ public class BreedConverterTest {
     @DisplayName("Test Breed model to BreedGetDto is working correctly")
     void fromModelToBreedGetDto() {
 
-        Breed breed = new Breed(1L, "Labrador Retriever", species);
+        Breed breed = new Breed("123123-12312312-3333", "Labrador Retriever", species);
 
         BreedGetDto breedGetDto = BreedConverter.toDto(breed);
 
-        assertEquals(1L, breedGetDto.id());
+        assertEquals("123123-12312312-3333", breedGetDto.id());
         assertEquals("Labrador Retriever", breedGetDto.name());
         assertEquals("Dog", breedGetDto.species());
     }

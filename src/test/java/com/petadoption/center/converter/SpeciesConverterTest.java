@@ -30,11 +30,11 @@ public class SpeciesConverterTest {
     @DisplayName("Test Species model to SpeciesGetDto is working correctly")
     void fromModelToSpeciesGetDto() {
 
-        Species species = new Species(1L, "Cat");
+        Species species = new Species("2313-21321-31231", "Cat");
 
         SpeciesGetDto speciesGetDto = SpeciesConverter.toDto(species);
 
-        assertEquals(1L, speciesGetDto.id());
+        assertEquals("2313-21321-31231", speciesGetDto.id());
         assertEquals("Cat", speciesGetDto.name());
     }
 }

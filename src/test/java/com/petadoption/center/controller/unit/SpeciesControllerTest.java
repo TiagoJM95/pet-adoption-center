@@ -44,10 +44,10 @@ public class SpeciesControllerTest {
     @BeforeEach
     void setUp() {
         testSpecies = new Species();
-        testSpecies.setId(1L);
+        testSpecies.setId("1111-1111-2222");
         testSpecies.setName("Dog");
 
-        speciesGetDto = new SpeciesGetDto(1L, "Dog");
+        speciesGetDto = new SpeciesGetDto("1111-1111-2222", "Dog");
 
         speciesCreateDto = new SpeciesCreateDto("Dog");
 

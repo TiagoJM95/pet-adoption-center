@@ -44,43 +44,41 @@ public class UserControllerTest {
     @BeforeEach
     void setUp() {
         userGetDto = new UserGetDto(
-                1L,
+                "1111-1111-2222",
                 "Manuel",
                 "Silva",
                 "email@email.com",
+                "123456789",
                 LocalDate.of(1990, 10, 25),
                 new Address("Rua das Andorinhas, 123",
                         "Vila Nova de Gaia",
                         "Porto",
                         "4410-000"),
-                "+351",
-                123456789,
-                null,
-                null,
-                null
+                "123456789"
         );
 
         userCreateDto = new UserCreateDto(
                 "Manuel",
                 "Silva",
                 "email@email.com",
+                "123456788",
                 LocalDate.of(1990, 10, 25),
                 "Rua dos animais, 123", "Gondomar",
                 "Porto",
                 "4400-000",
-                "+351",
-                912354678);
+                "912354678"
+        );
 
-        userUpdateDto = new UserUpdateDto("Tiago",
+        userUpdateDto = new UserUpdateDto(
+                "Tiago",
                 "Moreira",
                 "tm@email.com",
                 "Rua dos bandidos, 123",
                 "Rio Tinto",
                 "Porto",
                 "4100-001",
-                "+351",
-                934587967);
-
+                "934587967"
+                );
     }
 
     @Test
