@@ -50,7 +50,7 @@ public class Organization {
     @Column(name = "social_media", unique = true)
     private SocialMedia socialMedia;
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Column(name = "pets_owned")
     private List<Pet> petsOwned;
 }

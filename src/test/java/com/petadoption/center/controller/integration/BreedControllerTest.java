@@ -38,28 +38,14 @@ public class BreedControllerTest {
     private BreedGetDto breedGetDto;
     private BreedCreateDto breedCreateDto;
     private BreedUpdateDto breedUpdateDto;
-
+    private String breedId;
     private Species species;
 
     @BeforeEach
     void setUp() {
-
-        species = new Species(1L, "Dog");
-
-        breedCreateDto = new BreedCreateDto(
-                "Golden Retriever",
-                1L
-        );
-
-        breedUpdateDto = new BreedUpdateDto(
-                "Weimaraner"
-        );
-
-        breedGetDto = new BreedGetDto(
-                1L,
-                "Golden Retriever",
-                "Dog"
-        );
+        species = new Species("123123-12312312-3123", "Dog");
+        breedCreateDto = new BreedCreateDto("Golden Retriever", "12312312-1232351");
+        breedUpdateDto = new BreedUpdateDto("Weimaraner");
     }
 
     @Test
@@ -71,13 +57,17 @@ public class BreedControllerTest {
                         .content(objectMapper.writeValueAsString(species))
                         .contentType(MediaType.APPLICATION_JSON));
 
-        mockMvc.perform(post("/api/v1/breed/")
+        var result = mockMvc.perform(post("/api/v1/breed/")
                         .content(objectMapper.writeValueAsString(breedCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$.species", is(breedGetDto.species())));
+                .andExpect(jsonPath("$.species", is(breedGetDto.species())))
+                .andReturn();
 
+        BreedGetDto breedCreated = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
+        breedId = breedCreated.id();
+        breedGetDto = new BreedGetDto(breedId, breedCreateDto.name(), species.getName());
     }
 
 
@@ -107,10 +97,10 @@ public class BreedControllerTest {
 
         createBreed();
 
-        mockMvc.perform(get("/api/v1/breed/id/{id}", 1L)
+        mockMvc.perform(get("/api/v1/breed/id/{id}", breedId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(breedGetDto.id().intValue())))
+                .andExpect(jsonPath("$.id", is(breedGetDto.id())))
                 .andExpect(jsonPath("$.name", is(breedGetDto.name())))
                 .andExpect(jsonPath("$.species", is(breedGetDto.species())));
     }
@@ -123,7 +113,7 @@ public class BreedControllerTest {
 
         createBreed();
 
-        mockMvc.perform(put("/api/v1/breed/update/{id}", 1L)
+        mockMvc.perform(put("/api/v1/breed/update/{id}",breedId)
                         .content(objectMapper.writeValueAsString(breedUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -137,9 +127,9 @@ public class BreedControllerTest {
 
         createBreed();
 
-        mockMvc.perform(delete("/api/v1/breed/delete/{id}", 1L)
+        mockMvc.perform(delete("/api/v1/breed/delete/{id}",breedId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(BREED_WITH_ID + 1L + DELETE_SUCCESS));
+                .andExpect(content().string(BREED_WITH_ID + breedId + DELETE_SUCCESS));
     }
 }

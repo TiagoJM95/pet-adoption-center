@@ -44,36 +44,22 @@ public class UserControllerTest {
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
 
+    private String userId;
+
     @BeforeEach
     void setUp() {
-        userGetDto = new UserGetDto(
-                1L,
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                LocalDate.of(1990, 10, 25),
-                new Address("Rua das Andorinhas, 123",
-                        "Vila Nova de Gaia",
-                        "Porto",
-                        "4410-000"),
-                "+351",
-                123456789,
-                null,
-                null,
-                null
-        );
 
         userCreateDto = new UserCreateDto(
                 "Manuel",
                 "Silva",
                 "email@email.com",
+                "123456789",
                 LocalDate.of(1990, 10, 25),
                 "Rua das Andorinhas, 123",
                 "Vila Nova de Gaia",
                 "Porto",
                 "4410-000",
-                "+351",
-                123456789);
+                "123456789");
 
         userUpdateDto = new UserUpdateDto(
                 "Tiago",
@@ -83,8 +69,7 @@ public class UserControllerTest {
                 "Rio Tinto",
                 "Porto",
                 "4100-001",
-                "+351",
-                934587967);
+                "934587967");
 
     }
 
@@ -94,12 +79,32 @@ public class UserControllerTest {
     @DirtiesContext
     void createUserShouldReturnUser() throws Exception {
 
-        mockMvc.perform(post("/api/v1/user/")
+       var result = mockMvc.perform(post("/api/v1/user/")
                         .content(objectMapper.writeValueAsString(userCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName", is(userGetDto.firstName())))
-                .andExpect(jsonPath("$.lastName", is(userGetDto.lastName())));
+                .andExpect(jsonPath("$.firstName", is(userCreateDto.firstName())))
+                .andExpect(jsonPath("$.lastName", is(userCreateDto.lastName())))
+                .andReturn();
+
+       UserGetDto userCreated = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+
+       userId = userCreated.id();
+
+       userGetDto = new UserGetDto(
+               userId,
+               userCreateDto.firstName(),
+               userCreateDto.lastName(),
+               userCreateDto.email(),
+               userCreateDto.nif(),
+               userCreateDto.dateOfBirth(),
+               new Address( userCreateDto.street(),
+                       userCreateDto.city(),
+                       userCreateDto.postalCode(),
+                       userCreateDto.state()),
+               userCreateDto.phoneNumber()
+       );
+
     }
 
     @Test
@@ -116,9 +121,10 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("$[0].id", is(userGetDto.id())))
                 .andExpect(jsonPath("$[0].firstName", is(userGetDto.firstName())))
-                .andExpect(jsonPath("$[0].lastName", is(userGetDto.lastName())));
-
+                .andExpect(jsonPath("$[0].lastName", is(userGetDto.lastName())))
+                .andExpect(jsonPath("$[0].nif", is(userGetDto.nif())));
     }
 
     @Test
@@ -128,10 +134,10 @@ public class UserControllerTest {
 
         createUserShouldReturnUser();
 
-        mockMvc.perform(get("/api/v1/user/id/{id}", 1L)
+        mockMvc.perform(get("/api/v1/user/id/{id}", userId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userGetDto.id().intValue())))
+                .andExpect(jsonPath("$.id", is(userGetDto.id())))
                 .andExpect(jsonPath("$.firstName", is(userGetDto.firstName())))
                 .andExpect(jsonPath("$.lastName", is(userGetDto.lastName())));
     }
@@ -145,7 +151,7 @@ public class UserControllerTest {
 
         createUserShouldReturnUser();
 
-        mockMvc.perform(put("/api/v1/user/update/{id}", 1L)
+        mockMvc.perform(put("/api/v1/user/update/{id}", userId)
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -160,9 +166,9 @@ public class UserControllerTest {
 
         createUserShouldReturnUser();
 
-        mockMvc.perform(delete("/api/v1/user/delete/{id}", 1L)
+        mockMvc.perform(delete("/api/v1/user/delete/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(USER_WITH_ID + 1L + DELETE_SUCCESS));
+                .andExpect(content().string(USER_WITH_ID + userId + DELETE_SUCCESS));
     }
 }

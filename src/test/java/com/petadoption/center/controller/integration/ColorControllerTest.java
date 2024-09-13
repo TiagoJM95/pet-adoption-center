@@ -35,16 +35,13 @@ public class ColorControllerTest {
 
     private ColorGetDto colorGetDto;
     private ColorCreateDto colorCreateDto;
+    private String colorId;
 
     @BeforeEach
     void setUp() {
 
-        colorCreateDto = new ColorCreateDto(
-                "Black");
+        colorCreateDto = new ColorCreateDto("Black");
 
-        colorGetDto = new ColorGetDto(
-                1L,
-                "Black");
     }
 
     @Test
@@ -52,11 +49,16 @@ public class ColorControllerTest {
     @DirtiesContext
     void createColor() throws Exception {
 
-        mockMvc.perform(post("/api/v1/color/")
+      var result =  mockMvc.perform(post("/api/v1/color/")
                         .content(objectMapper.writeValueAsString(colorCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(colorCreateDto.name())));
+                .andExpect(jsonPath("$.name", is(colorCreateDto.name())))
+                .andReturn();
+
+      ColorGetDto colorCreated = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
+      colorId = colorCreated.id();
+      colorGetDto = new ColorGetDto(colorId, colorCreateDto.name());
     }
 
     @Test
@@ -69,7 +71,7 @@ public class ColorControllerTest {
         mockMvc.perform(get("/api/v1/color/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(colorGetDto.id().intValue())))
+                .andExpect(jsonPath("$[0].id", is(colorGetDto.id())))
                 .andExpect(jsonPath("$[0].name", is(colorGetDto.name())));
     }
 
@@ -80,10 +82,10 @@ public class ColorControllerTest {
 
         createColor();
 
-        mockMvc.perform(get("/api/v1/color/id/{id}", 1L)
+        mockMvc.perform(get("/api/v1/color/id/{id}", colorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(colorGetDto.id().intValue())))
+                .andExpect(jsonPath("$.id", is(colorGetDto.id())))
                 .andExpect(jsonPath("$.name", is(colorGetDto.name())));
     }
 
@@ -94,9 +96,9 @@ public class ColorControllerTest {
 
         createColor();
 
-        mockMvc.perform(delete("/api/v1/color/delete/{id}", 1L)
+        mockMvc.perform(delete("/api/v1/color/delete/{id}", colorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(COLOR_WITH_ID + 1L + DELETE_SUCCESS));
+                .andExpect(content().string(COLOR_WITH_ID + colorId + DELETE_SUCCESS));
     }
 }
