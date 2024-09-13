@@ -104,7 +104,7 @@ public class UserControllerTest {
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturnUser() throws UserNotFoundException {
 
-        Long id = 1L;
+        String id = "1111-1111-2222";
 
         when(userService.getUserById(id)).thenReturn(userGetDto);
 
@@ -133,26 +133,26 @@ public class UserControllerTest {
     @DisplayName("Test if update user works correctly")
     void updateUserShouldReturnUser() throws UserNotFoundException, UserDuplicateException {
 
-        when(userService.updateUser(1L, userUpdateDto)).thenReturn(userGetDto);
+        when(userService.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.updateUser(1L, userUpdateDto);
+        ResponseEntity<UserGetDto> response = userController.updateUser(userGetDto.id(), userUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userService).updateUser(1L, userUpdateDto);
+        verify(userService).updateUser(userGetDto.id(), userUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete user works correctly")
     void deleteUserShouldReturnUser() throws UserNotFoundException {
 
-        when(userService.deleteUser(1L)).thenReturn(USER_WITH_ID + 1L + DELETE_SUCCESS);
+        when(userService.deleteUser(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = userController.deleteUser(1L);
+        ResponseEntity<String> response = userController.deleteUser(userGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(USER_WITH_ID + 1L + DELETE_SUCCESS, response.getBody());
-        verify(userService).deleteUser(1L);
+        assertEquals(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS, response.getBody());
+        verify(userService).deleteUser(userGetDto.id());
     }
 
 }

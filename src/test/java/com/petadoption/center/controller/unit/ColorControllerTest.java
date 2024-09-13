@@ -80,7 +80,7 @@ public class ColorControllerTest {
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorService).getColorById(1L);
+        verify(colorService).getColorById(testColor.getId());
 
     }
 
