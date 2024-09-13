@@ -7,22 +7,25 @@ import com.petadoption.center.model.Species;
 
 public class BreedConverter {
 
-    public static Breed toModel(BreedCreateDto breed, Species species) {
+    public static Breed toModel(BreedCreateDto dto, Species species) {
+        if (dto == null || species == null) return null;
         return Breed.builder()
-                .name(breed.name())
+                .name(dto.name())
                 .species(species)
                 .build();
     }
 
-    public static Breed toModel(BreedGetDto breed, Species species) {
+    public static Breed toModel(BreedGetDto dto, Species species) {
+        if (dto == null || species == null) return null;
         return Breed.builder()
-                .id(breed.id())
-                .name(breed.name())
+                .id(dto.id())
+                .name(dto.name())
                 .species(species)
                 .build();
     }
 
     public static BreedGetDto toDto(Breed breed) {
+        if (breed == null) return null;
         return new BreedGetDto(
                 breed.getId(),
                 breed.getName(),

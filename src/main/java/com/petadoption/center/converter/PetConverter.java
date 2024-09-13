@@ -8,9 +8,10 @@ import com.petadoption.center.util.aggregator.PetGetContext;
 
 public class PetConverter {
 
-    public static Pet toModel(PetCreateDto pet, PetCreateContext context) {
+    public static Pet toModel(PetCreateDto dto, PetCreateContext context) {
+        if (dto == null || context == null) return null;
         return Pet.builder()
-                .name(pet.name())
+                .name(dto.name())
                 .species(context.species())
                 .primaryBreed(context.primaryBreed())
                 .secondaryBreed(context.secondaryBreed())
@@ -21,15 +22,16 @@ public class PetConverter {
                 .coat(context.coat())
                 .size(context.size())
                 .age(context.age())
-                .description(pet.description())
-                .imageUrl(pet.imageUrl())
-                .isAdopted(pet.isAdopted())
+                .description(dto.description())
+                .imageUrl(dto.imageUrl())
+                .isAdopted(dto.isAdopted())
                 .attributes(context.attributes())
                 .organization(context.organization())
                 .build();
     }
 
     public static PetGetDto toDto(Pet pet, PetGetContext context) {
+        if (pet == null || context == null) return null;
         return PetGetDto.builder()
                 .id(pet.getId())
                 .name(pet.getName())

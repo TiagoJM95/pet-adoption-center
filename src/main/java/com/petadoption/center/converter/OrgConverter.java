@@ -6,48 +6,40 @@ import com.petadoption.center.model.Organization;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 
+import static com.petadoption.center.util.factory.AddressFactory.createAddress;
+import static com.petadoption.center.util.factory.SocialMediaFactory.createSocialMedia;
+
 public class OrgConverter {
 
-    public static Organization toModel(OrgCreateDto org) {
-        Address address = new Address(
-                org.street(),
-                org.city(),
-                org.state(),
-                org.postalCode()
-        );
-
-        SocialMedia socialMedia = new SocialMedia(
-                org.facebook(),
-                org.instagram(),
-                org.twitter(),
-                org.youtube()
-                );
-
+    public static Organization toModel(OrgCreateDto dto) {
+        if (dto == null) return null;
         return Organization.builder().
-                name(org.name()).
-                email(org.email()).
-                nif(org.nif()).
-                phoneNumber(org.phoneNumber()).
-                address(address).
-                websiteUrl(org.websiteUrl()).
-                socialMedia(socialMedia).
+                name(dto.name()).
+                email(dto.email()).
+                nif(dto.nif()).
+                phoneNumber(dto.phoneNumber()).
+                address(createAddress(dto)).
+                websiteUrl(dto.websiteUrl()).
+                socialMedia(createSocialMedia(dto)).
                 build();
     }
 
-    public static Organization toModel(OrgGetDto org) {
+    public static Organization toModel(OrgGetDto dto) {
+        if (dto == null) return null;
         return Organization.builder().
-                id(org.id()).
-                name(org.name()).
-                email(org.email()).
-                nif(org.nif()).
-                phoneNumber(org.phoneNumber()).
-                address(org.address()).
-                websiteUrl(org.websiteUrl()).
-                socialMedia(org.socialMedia()).
+                id(dto.id()).
+                name(dto.name()).
+                email(dto.email()).
+                nif(dto.nif()).
+                phoneNumber(dto.phoneNumber()).
+                address(dto.address()).
+                websiteUrl(dto.websiteUrl()).
+                socialMedia(dto.socialMedia()).
                 build();
     }
 
     public static OrgGetDto toDto(Organization org) {
+        if (org == null) return null;
         return new OrgGetDto(
                 org.getId(),
                 org.getName(),

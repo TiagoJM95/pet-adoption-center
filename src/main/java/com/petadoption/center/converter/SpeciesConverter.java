@@ -6,20 +6,23 @@ import com.petadoption.center.model.Species;
 
 public class SpeciesConverter {
 
-    public static Species toModel(SpeciesCreateDto species) {
+    public static Species toModel(SpeciesCreateDto dto) {
+        if (dto == null) return null;
         return Species.builder()
-                .name(species.name())
+                .name(dto.name())
                 .build();
     }
 
-    public static Species toModel(SpeciesGetDto species) {
+    public static Species toModel(SpeciesGetDto dto) {
+        if (dto == null) return null;
         return Species.builder()
-                .id(species.id())
-                .name(species.name())
+                .id(dto.id())
+                .name(dto.name())
                 .build();
     }
 
     public static SpeciesGetDto toDto(Species species) {
+        if (species == null) return null;
         return new SpeciesGetDto(
                 species.getId(),
                 species.getName());

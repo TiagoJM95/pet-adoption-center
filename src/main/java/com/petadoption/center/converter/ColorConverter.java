@@ -6,20 +6,23 @@ import com.petadoption.center.model.Color;
 
 public class ColorConverter {
 
-    public static Color toModel(ColorCreateDto color) {
+    public static Color toModel(ColorCreateDto dto) {
+        if (dto == null) return null;
         return Color.builder()
-                .name(color.name())
+                .name(dto.name())
                 .build();
     }
 
-    public static Color toModel(ColorGetDto color) {
+    public static Color toModel(ColorGetDto dto) {
+        if (dto == null) return null;
         return Color.builder()
-                .id(color.id())
-                .name(color.name())
+                .id(dto.id())
+                .name(dto.name())
                 .build();
     }
 
     public static ColorGetDto toDto(Color color) {
+        if (color == null) return null;
         return new ColorGetDto(
                 color.getId(),
                 color.getName());
