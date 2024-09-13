@@ -47,11 +47,11 @@ public class SpeciesServiceImplTest {
     @BeforeEach
     void setUp() {
         testSpecies = new Species();
-        testSpecies.setId(1L);
+        testSpecies.setId("1111-1111-2222");
         testSpecies.setName("Dog");
 
         updatedSpecies = new Species();
-        updatedSpecies.setId(2L);
+        updatedSpecies.setId("1111-2222-2222");
         updatedSpecies.setName("Cat");
 
         speciesCreateDto = new SpeciesCreateDto("Dog");
@@ -112,18 +112,21 @@ public class SpeciesServiceImplTest {
     void getAllPetSpeciesShouldReturnWithDescendingOrder() {
 
         Species speciesToAdd = new Species();
-        speciesToAdd.setId(10L);
-        List<Species> allSpecies = List.of(speciesToAdd, updatedSpecies, testSpecies);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        speciesToAdd.setId("3213-3213-3213");
+        speciesToAdd.setName("Bird");
+
+        List<Species> allSpecies = List.of(testSpecies, updatedSpecies, speciesToAdd);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
         Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageRequest, allSpecies.size());
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "name");
 
-        assertEquals(3, result.size());
-        assertTrue(result.get(0).id() > result.get(1).id());
-        assertTrue(result.get(1).id() > result.get(2).id());
+        assertEquals(3,result.size());
+        assertEquals(result.get(0).name(), testSpecies.getName());
+        assertEquals(result.get(1).name(), updatedSpecies.getName());
+        assertEquals(result.get(2).name(), speciesToAdd.getName());
     }
 
     @Test
@@ -131,27 +134,30 @@ public class SpeciesServiceImplTest {
     void getAllPetSpeciesShouldReturnWithAscendingOrder() {
 
         Species speciesToAdd = new Species();
-        speciesToAdd.setId(10L);
-        List<Species> allSpecies = List.of( testSpecies, updatedSpecies, speciesToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "id");
+        speciesToAdd.setId("3213-3213-3213");
+        speciesToAdd.setName("Bird");
+
+        List<Species> allSpecies = List.of( speciesToAdd, updatedSpecies, testSpecies);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "name");
         Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageRequest, allSpecies.size());
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "id");
+        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "name");
 
         assertEquals(3, result.size());
-        assertTrue(result.get(0).id() < result.get(1).id());
-        assertTrue(result.get(1).id() < result.get(2).id());
+        assertEquals(result.get(0).name(), speciesToAdd.getName());
+        assertEquals(result.get(1).name(), updatedSpecies.getName());
+        assertEquals(result.get(2).name(), testSpecies.getName());
     }
 
     @Test
     @DisplayName("Test if get species by id is working correctly")
     void getPetSpeciesByIdShouldReturnSpecies() throws SpeciesNotFoundException {
 
-        when(speciesRepository.findById(1L)).thenReturn(Optional.of(testSpecies));
+        when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
-        SpeciesGetDto result = speciesService.getSpeciesById(1L);
+        SpeciesGetDto result = speciesService.getSpeciesById(testSpecies.getId());
 
         assertEquals(testSpecies.getName(), result.name());
     }
@@ -160,9 +166,9 @@ public class SpeciesServiceImplTest {
     @DisplayName("Test if get species by id throw exception if not found")
     void getPetSpeciesByIdShouldThrowException() {
 
-        when(speciesRepository.findById(1L)).thenReturn(Optional.empty());
+        when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getSpeciesById(1L));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getSpeciesById(testSpecies.getId()));
     }
 
     @Test

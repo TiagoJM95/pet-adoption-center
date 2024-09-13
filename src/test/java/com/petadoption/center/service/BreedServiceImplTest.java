@@ -62,21 +62,21 @@ public class BreedServiceImplTest {
     @BeforeEach
     void setUp() {
 
-        species = new Species(1L, "Dog");
+        species = new Species("123123-12312312-3123", "Dog");
 
         testBreed = new Breed();
-        testBreed.setId(1L);
+        testBreed.setId("1111-1111-2222");
         testBreed.setName("Golden Retriever");
         testBreed.setSpecies(species);
 
         updatedBreed = new Breed();
-        updatedBreed.setId(2L);
+        updatedBreed.setId("1234-1234-5678");
         updatedBreed.setName("Weimaraner");
         updatedBreed.setSpecies(species);
 
         breedCreateDto = new BreedCreateDto(
                 "Golden Retriever",
-                1L
+                "123123-12312312-3123"
         );
 
         breedUpdateDto = new BreedUpdateDto(
@@ -136,21 +136,24 @@ public class BreedServiceImplTest {
     void getAllBreedsShouldReturnBreedsInDescendingOrder(){
 
         Breed breedToAdd = new Breed();
+        breedToAdd.setName("Labrador Retriever");
         breedToAdd.setSpecies(species);
+        breedToAdd.setId("2313-2313-2313");
 
-        breedToAdd.setId(100L);
-        List<Breed> allBreeds = List.of(breedToAdd, updatedBreed, testBreed);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "id");
+        List<Breed> allBreeds = List.of(updatedBreed,breedToAdd, testBreed);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
         Page<Breed> pagedBreeds = new PageImpl<>(allBreeds, pageRequest, allBreeds.size());
 
         when(breedRepository.findAll(any(PageRequest.class))).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,3,"id");
+        List<BreedGetDto> result = breedService.getAllBreeds(0,3,"name");
 
         assertNotNull(result);
         assertEquals(3,result.size());
-        assertTrue(result.get(0).id() > result.get(1).id());
-        assertTrue(result.get(1).id() > result.get(2).id());
+        assertEquals(result.get(0).name(), updatedBreed.getName());
+        assertEquals(result.get(1).name(), breedToAdd.getName());
+        assertEquals(result.get(2).name(), testBreed.getName());
+
     }
 
     @Test
@@ -158,20 +161,23 @@ public class BreedServiceImplTest {
     void getAllBreedsShouldReturnBreedsInAscendingOrder(){
 
         Breed breedToAdd = new Breed();
+        breedToAdd.setName("Labrador Retriever");
         breedToAdd.setSpecies(species);
-        breedToAdd.setId(100L);
-        List<Breed> allBreeds = List.of(testBreed,updatedBreed, breedToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "id");
+        breedToAdd.setId("2313-2313-2313");
+
+        List<Breed> allBreeds = List.of(testBreed, breedToAdd, updatedBreed);
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "name");
         Page<Breed> pagedBreeds = new PageImpl<>(allBreeds, pageRequest, allBreeds.size());
 
         when(breedRepository.findAll(any(PageRequest.class))).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,3,"id");
+        List<BreedGetDto> result = breedService.getAllBreeds(0,3,"name");
 
         assertNotNull(result);
         assertEquals(3,result.size());
-        assertTrue(result.get(0).id() < result.get(1).id());
-        assertTrue(result.get(1).id() < result.get(2).id());
+        assertEquals(result.get(0).name(), testBreed.getName());
+        assertEquals(result.get(1).name(), breedToAdd.getName());
+        assertEquals(result.get(2).name(), updatedBreed.getName());
     }
 
     @Test

@@ -116,7 +116,7 @@ public class SpeciesControllerTest {
     @DisplayName("Test if delete species works correctly")
     void deleteSpeciesShouldReturnMessage() throws SpeciesNotFoundException {
 
-        when(speciesService.deleteSpecies(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + 1L + DELETE_SUCCESS);
+        when(speciesService.deleteSpecies(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> result = speciesController.deleteSpecies(testSpecies.getId());
 

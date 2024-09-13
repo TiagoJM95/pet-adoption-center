@@ -1,9 +1,11 @@
 package com.petadoption.center.controller.integration;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.Species;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -42,9 +44,18 @@ public class BreedControllerTest {
     private Species species;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         species = new Species("123123-12312312-3123", "Dog");
-        breedCreateDto = new BreedCreateDto("Golden Retriever", "12312312-1232351");
+
+        var speciesResult =mockMvc.perform(post("/api/v1/pet-species/")
+                        .content(objectMapper.writeValueAsString(species))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andReturn();
+
+        SpeciesGetDto speciesCreated = objectMapper.readValue(speciesResult.getResponse().getContentAsString(), SpeciesGetDto.class);
+        species.setId(speciesCreated.id());
+
+        breedCreateDto = new BreedCreateDto("Golden Retriever", species.getId());
         breedUpdateDto = new BreedUpdateDto("Weimaraner");
     }
 
@@ -53,16 +64,11 @@ public class BreedControllerTest {
     @DirtiesContext
     void createBreed() throws Exception {
 
-        mockMvc.perform(post("/api/v1/pet-species/")
-                        .content(objectMapper.writeValueAsString(species))
-                        .contentType(MediaType.APPLICATION_JSON));
-
         var result = mockMvc.perform(post("/api/v1/breed/")
                         .content(objectMapper.writeValueAsString(breedCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$.species", is(breedGetDto.species())))
+                .andExpect(jsonPath("$.name", is(breedCreateDto.name())))
                 .andReturn();
 
         BreedGetDto breedCreated = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
