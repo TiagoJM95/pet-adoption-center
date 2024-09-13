@@ -15,15 +15,15 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "organizations", uniqueConstraints = {
-        @UniqueConstraint(name = "UniqueEmail", columnNames = {"email"}),
-        @UniqueConstraint(name = "UniqueNif", columnNames = {"nif"}),
-        @UniqueConstraint(name = "UniquePhoneNumber", columnNames = {"phone_number"}),
-        @UniqueConstraint(name = "UniqueStreetAndPostalCode", columnNames = {"street", "postal_code"}),
-        @UniqueConstraint(name = "UniqueWebsiteUrl", columnNames = {"website_url"}),
-        @UniqueConstraint(name = "UniqueFacebook", columnNames = {"facebook"}),
-        @UniqueConstraint(name = "UniqueInstagram", columnNames = {"instagram"}),
-        @UniqueConstraint(name = "UniqueTwitter", columnNames = {"twitter"}),
-        @UniqueConstraint(name = "UniqueYoutube", columnNames = {"youtube"})
+        @UniqueConstraint(name = "UniqueOrgEmail", columnNames = {"email"}),
+        @UniqueConstraint(name = "UniqueOrgNif", columnNames = {"nif"}),
+        @UniqueConstraint(name = "UniqueOrgPhoneNumber", columnNames = {"phone_number"}),
+        @UniqueConstraint(name = "UniqueOrgStreetAndPostalCode", columnNames = {"street", "postal_code"}),
+        @UniqueConstraint(name = "UniqueOrgWebsiteUrl", columnNames = {"website_url"}),
+        @UniqueConstraint(name = "UniqueOrgFacebook", columnNames = {"facebook"}),
+        @UniqueConstraint(name = "UniqueOrgInstagram", columnNames = {"instagram"}),
+        @UniqueConstraint(name = "UniqueOrgTwitter", columnNames = {"twitter"}),
+        @UniqueConstraint(name = "UniqueOrgYoutube", columnNames = {"youtube"})
 })
 public class Organization {
 

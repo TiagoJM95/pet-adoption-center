@@ -6,8 +6,6 @@ import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.model.Organization;
-import com.petadoption.center.model.embeddable.Address;
-import com.petadoption.center.model.embeddable.SocialMedia;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.OrganizationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +18,8 @@ import java.util.List;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 import static com.petadoption.center.util.Utils.updateFields;
+import static com.petadoption.center.util.factory.AddressFactory.createAddress;
+import static com.petadoption.center.util.factory.SocialMediaFactory.createSocialMedia;
 
 @Service
 public class OrganizationServiceImpl implements OrganizationService {
@@ -68,13 +68,5 @@ public class OrganizationServiceImpl implements OrganizationService {
         updateFields(dto.websiteUrl(), org.getWebsiteUrl(), org::setWebsiteUrl);
         updateFields(createSocialMedia(dto), org.getSocialMedia(), org::setSocialMedia);
         updateFields(createAddress(dto), org.getAddress(), org::setAddress);
-    }
-
-    private Address createAddress(OrgUpdateDto dto) {
-        return new Address(dto.street(), dto.city(), dto.state(), dto.postalCode());
-    }
-
-    private SocialMedia createSocialMedia(OrgUpdateDto dto) {
-        return new SocialMedia(dto.facebook(), dto.instagram(), dto.twitter(), dto.youtube());
     }
 }

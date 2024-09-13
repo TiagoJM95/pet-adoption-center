@@ -4,10 +4,8 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.User;
-import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,10 @@ import java.util.List;
 
 import static com.petadoption.center.converter.UserConverter.toDto;
 import static com.petadoption.center.converter.UserConverter.toModel;
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.USER_WITH_ID;
 import static com.petadoption.center.util.Utils.updateFields;
+import static com.petadoption.center.util.factory.AddressFactory.createAddress;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -44,18 +44,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto dto) throws UserDuplicateException {
-        checkIfUserExistsByEmail(dto.email());
-        checkIfUserExistsByPhoneNumber(dto.phoneNumber());
-        User userSaved = userRepository.save(toModel(dto));
-        return toDto(userSaved);
+    public UserGetDto addNewUser(UserCreateDto dto) {
+        return toDto(userRepository.save(toModel(dto)));
     }
 
     @Override
-    public UserGetDto updateUser(String id, UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException{
+    public UserGetDto updateUser(String id, UserUpdateDto dto) throws UserNotFoundException {
         User user = findUserById(id);
-        checkUserDuplicates(dto, user);
-        updateUserFields(dto, user);
         return toDto(userRepository.save(user));
     }
 
@@ -66,15 +61,6 @@ public class UserServiceImpl implements UserService {
         return USER_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private void checkUserDuplicates(UserUpdateDto dto, User user) throws UserDuplicateException {
-        if(!dto.email().equals(user.getEmail())){
-            checkIfUserExistsByEmail(dto.email());
-        }
-        if(!dto.phoneNumber().equals(user.getPhoneNumber())){
-            checkIfUserExistsByPhoneNumber(dto.phoneNumber());
-        }
-    }
-
     private void updateUserFields(UserUpdateDto dto, User user) {
         updateFields(dto.firstName(), user.getFirstName(), user::setFirstName);
         updateFields(dto.lastName(), user.getLastName(), user::setLastName);
@@ -83,21 +69,5 @@ public class UserServiceImpl implements UserService {
 
     private User findUserById(String id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-    }
-
-    private void checkIfUserExistsByEmail(String email) throws UserDuplicateException {
-        if (userRepository.findByEmail(email).isPresent()) {
-            throw new UserDuplicateException(USER_WITH_EMAIL + email + ALREADY_EXISTS);
-        }
-    }
-
-    private void checkIfUserExistsByPhoneNumber(String phoneNumber) throws UserDuplicateException {
-        if (userRepository.findByPhoneNumber(phoneNumber).isPresent()) {
-            throw new UserDuplicateException(USER_WITH_PHONE_NUMBER + phoneNumber.toString() + ALREADY_EXISTS);
-        }
-    }
-
-    private Address createAddress(UserUpdateDto dto) {
-        return new Address(dto.street(), dto.city(), dto.state(), dto.postalCode());
     }
 }

@@ -4,7 +4,6 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.organization.OrganizationDuplicateException;
 import com.petadoption.center.service.OrganizationService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +33,13 @@ public class OrganizationController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) throws OrganizationDuplicateException {
+    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) {
         return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<OrgGetDto> updateOrganization(@PathVariable ("id") String id,
-                                                        @Valid @RequestBody OrgUpdateDto organization) throws OrgNotFoundException, OrganizationDuplicateException {
+                                                        @Valid @RequestBody OrgUpdateDto organization) throws OrgNotFoundException {
         return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
     }
 

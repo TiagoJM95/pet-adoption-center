@@ -18,13 +18,14 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
-@Table(name = "pets")
+@Table(name = "pets", uniqueConstraints = {
+        @UniqueConstraint(name = "UniquePet", columnNames = {"name", "species_id", "primary_breed_id", "secondary_breed_id", "primary_color_id", "secondary_color_id", "tertiary_color_id", "gender", "coat", "size", "age", "description", "image_url", "is_adopted", "sterilized", "vaccinated", "chipped", "special_needs", "house_trained", "good_with_kids", "good_with_dogs", "good_with_cats", "date_added", "organization_id"})
+})
 public class Pet {
 
     @Id
     @UuidGenerator
     private String id;
-
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -62,24 +63,22 @@ public class Pet {
 
     @Enumerated(EnumType.STRING)
     private Ages age;
-
     private String description;
 
     @Column(name = "image_url")
     private String imageUrl;
-
     private Boolean isAdopted;
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride( name = "sterilized", column = @Column(name = "pet_sterilized")),
-            @AttributeOverride( name = "vaccinated", column = @Column(name = "pet_vaccinated")),
-            @AttributeOverride( name = "chipped", column = @Column(name = "pet_chipped")),
-            @AttributeOverride( name = "specialNeeds", column = @Column(name = "pet_special_needs")),
-            @AttributeOverride( name = "houseTrained", column = @Column(name = "pet_house_trained")),
-            @AttributeOverride( name = "goodWithKids", column = @Column(name = "pet_good_with_kids")),
-            @AttributeOverride( name = "goodWithDogs", column = @Column(name = "pet_good_with_dogs")),
-            @AttributeOverride( name = "goodWithCats", column = @Column(name = "pet_good_with_cats"))
+            @AttributeOverride( name = "sterilized", column = @Column(name = "sterilized")),
+            @AttributeOverride( name = "vaccinated", column = @Column(name = "vaccinated")),
+            @AttributeOverride( name = "chipped", column = @Column(name = "chipped")),
+            @AttributeOverride( name = "specialNeeds", column = @Column(name = "special_needs")),
+            @AttributeOverride( name = "houseTrained", column = @Column(name = "house_trained")),
+            @AttributeOverride( name = "goodWithKids", column = @Column(name = "good_with_kids")),
+            @AttributeOverride( name = "goodWithDogs", column = @Column(name = "good_with_dogs")),
+            @AttributeOverride( name = "goodWithCats", column = @Column(name = "good_with_cats"))
     })
     private Attributes attributes;
 

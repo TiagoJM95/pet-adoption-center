@@ -3,7 +3,6 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.SpeciesService;
 import jakarta.validation.Valid;
@@ -35,13 +34,13 @@ public class SpeciesController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<SpeciesGetDto> addNewPetSpecies(@Valid @RequestBody SpeciesCreateDto dto) throws SpeciesDuplicateException {
+    public ResponseEntity<SpeciesGetDto> addNewPetSpecies(@Valid @RequestBody SpeciesCreateDto dto) {
         return new ResponseEntity<>(speciesService.addNewSpecies(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<SpeciesGetDto> updatePetSpecies(@PathVariable ("id") String id, @Valid @RequestBody SpeciesUpdateDto dto)
-            throws SpeciesDuplicateException, SpeciesNotFoundException {
+            throws SpeciesNotFoundException {
         return new ResponseEntity<>(speciesService.updateSpecies(id, dto), HttpStatus.OK);
     }
 

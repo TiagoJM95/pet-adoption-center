@@ -4,7 +4,6 @@ import com.petadoption.center.converter.*;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
-import com.petadoption.center.util.PetSearchCriteria;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
@@ -18,6 +17,7 @@ import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.*;
+import com.petadoption.center.util.PetSearchCriteria;
 import com.petadoption.center.util.aggregator.PetCreateContext;
 import com.petadoption.center.util.aggregator.PetGetContext;
 import com.petadoption.center.util.factory.AttributesFactory;
@@ -62,7 +62,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy) throws SpeciesNotFoundException, PetDescriptionException {
+    public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy) throws PetDescriptionException {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         Specification<Pet> filters = buildFilters(criteria);
         return petRepository.findAll(filters, pageRequest).stream().map(pet -> PetConverter.toDto(pet, buildGetContext(pet))).toList();

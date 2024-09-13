@@ -1,6 +1,9 @@
 package com.petadoption.center.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -10,7 +13,9 @@ import org.hibernate.annotations.UuidGenerator;
 @Getter
 @Setter
 @Builder
-@Table(name = "pet_species")
+@Table(name = "species", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueSpeciesName", columnNames = {"name"}),
+})
 public class Species {
     @Id
     @UuidGenerator

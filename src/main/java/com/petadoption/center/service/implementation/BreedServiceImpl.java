@@ -6,7 +6,6 @@ import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
-import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
@@ -57,16 +56,14 @@ public class BreedServiceImpl implements BreedService {
     }
 
     @Override
-    public BreedGetDto addNewBreed(BreedCreateDto dto) throws BreedDuplicateException, SpeciesNotFoundException {
-        checkIfBreedsExistsByName(dto.name());
+    public BreedGetDto addNewBreed(BreedCreateDto dto) throws SpeciesNotFoundException {
         Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(dto.speciesId()));
         return BreedConverter.toDto(breedRepository.save(BreedConverter.toModel(dto, species)));
     }
 
     @Override
-    public BreedGetDto updateBreed(String id, BreedUpdateDto dto) throws BreedNotFoundException, BreedDuplicateException {
+    public BreedGetDto updateBreed(String id, BreedUpdateDto dto) throws BreedNotFoundException {
         Breed breed = findBreedById(id);
-        checkIfBreedsExistsByName(dto.name());
         updateFields(dto.name(), breed.getName(), breed::setName);
         return BreedConverter.toDto(breedRepository.save(breed));
     }
@@ -98,11 +95,5 @@ public class BreedServiceImpl implements BreedService {
     private Breed findBreedById(String id) throws BreedNotFoundException {
         return breedRepository.findById(id).orElseThrow(
                 () -> new BreedNotFoundException(BREED_WITH_ID + id + NOT_FOUND));
-    }
-
-    private void checkIfBreedsExistsByName(String name) throws BreedDuplicateException {
-        if (breedRepository.findByName(name).isPresent()) {
-            throw new BreedDuplicateException(BREED_WITH_NAME + name + ALREADY_EXISTS);
-        }
     }
 }

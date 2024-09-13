@@ -3,8 +3,6 @@ package com.petadoption.center.converter;
 import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.model.Organization;
-import com.petadoption.center.model.embeddable.Address;
-import com.petadoption.center.model.embeddable.SocialMedia;
 
 import static com.petadoption.center.util.factory.AddressFactory.createAddress;
 import static com.petadoption.center.util.factory.SocialMediaFactory.createSocialMedia;

@@ -3,7 +3,6 @@ package com.petadoption.center.service.implementation;
 import com.petadoption.center.converter.ColorConverter;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.repository.ColorRepository;
@@ -39,8 +38,7 @@ public class ColorServiceImpl implements ColorService {
     }
 
     @Override
-    public ColorGetDto addNewColor(ColorCreateDto dto) throws ColorDuplicateException {
-        checkIfColorExistsByName(dto.name());
+    public ColorGetDto addNewColor(ColorCreateDto dto) {
         return ColorConverter.toDto(colorRepository.save(ColorConverter.toModel(dto)));
     }
 
@@ -54,11 +52,5 @@ public class ColorServiceImpl implements ColorService {
     private Color findColorById(String id) throws ColorNotFoundException {
         return colorRepository.findById(id).orElseThrow(
                 () -> new ColorNotFoundException(COLOR_WITH_ID + id + NOT_FOUND));
-    }
-
-    private void checkIfColorExistsByName(String name) throws ColorDuplicateException {
-        if (colorRepository.findByName(name).isPresent()) {
-            throw new ColorDuplicateException(COLOR_WITH_NAME + name + ALREADY_EXISTS);
-        }
     }
 }

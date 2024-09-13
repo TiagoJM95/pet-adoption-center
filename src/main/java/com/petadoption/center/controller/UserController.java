@@ -3,7 +3,6 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.UserService;
 import jakarta.validation.Valid;
@@ -34,12 +33,12 @@ public class UserController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserGetDto> addNewUser(@Valid @RequestBody UserCreateDto dto) throws UserDuplicateException {
+    public ResponseEntity<UserGetDto> addNewUser(@Valid @RequestBody UserCreateDto dto) {
         return new ResponseEntity<>(userService.addNewUser(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") String id, @Valid @RequestBody UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException {
+    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") String id, @Valid @RequestBody UserUpdateDto dto) throws UserNotFoundException {
         return new ResponseEntity<>(userService.updateUser(id, dto), HttpStatus.OK);
     }
 

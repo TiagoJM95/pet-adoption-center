@@ -3,7 +3,6 @@ package com.petadoption.center.converter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.User;
-import com.petadoption.center.model.embeddable.Address;
 
 import static com.petadoption.center.util.factory.AddressFactory.createAddress;
 

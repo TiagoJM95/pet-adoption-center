@@ -3,7 +3,6 @@ package com.petadoption.center.dto.user;
 import com.petadoption.center.model.embeddable.Address;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public record UserGetDto(
         String id,

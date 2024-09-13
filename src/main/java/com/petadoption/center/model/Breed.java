@@ -10,16 +10,16 @@ import org.hibernate.annotations.UuidGenerator;
 @Getter
 @Setter
 @Builder
-@Table(name = "pet_breeds")
+@Table(name = "breeds", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueBreedName", columnNames = {"name"}),
+})
 public class Breed {
     @Id
     @UuidGenerator
     private String id;
-
     private String name;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "species_id")
     private Species species;
-
 }

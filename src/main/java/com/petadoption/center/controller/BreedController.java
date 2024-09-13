@@ -3,7 +3,6 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.BreedService;
@@ -42,13 +41,13 @@ public class BreedController {
 
     @PostMapping("/")
     public ResponseEntity<BreedGetDto> addNewBreed(@Valid @RequestBody BreedCreateDto dto)
-            throws BreedDuplicateException, SpeciesNotFoundException {
+            throws SpeciesNotFoundException {
         return new ResponseEntity<>(breedService.addNewBreed(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") String id, @Valid @RequestBody BreedUpdateDto dto)
-            throws BreedDuplicateException, BreedNotFoundException {
+            throws BreedNotFoundException {
         return new ResponseEntity<>(breedService.updateBreed(id, dto), HttpStatus.OK);
     }
 

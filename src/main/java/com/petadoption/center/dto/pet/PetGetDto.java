@@ -1,9 +1,6 @@
 package com.petadoption.center.dto.pet;
 
-import com.petadoption.center.dto.breed.BreedGetDto;
-import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
-import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.embeddable.Attributes;
 import lombok.Builder;
 

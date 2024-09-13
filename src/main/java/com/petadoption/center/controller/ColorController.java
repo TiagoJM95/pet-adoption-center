@@ -2,7 +2,6 @@ package com.petadoption.center.controller;
 
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.service.ColorService;
 import jakarta.validation.Valid;
@@ -34,8 +33,7 @@ public class ColorController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto dto)
-            throws ColorDuplicateException {
+    public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto dto) {
         return new ResponseEntity<>(colorService.addNewColor(dto), HttpStatus.CREATED);
     }
 

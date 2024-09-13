@@ -14,9 +14,12 @@ import java.util.Set;
 @Builder
 @Getter
 @Setter
-@Table(name = "users")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueUserEmail", columnNames = {"email"}),
+        @UniqueConstraint(name = "UniqueUserNif", columnNames = {"nif"}),
+        @UniqueConstraint(name = "UniqueUserPhoneNumber", columnNames = {"phone_number"})
+})
 public class User {
-
     @Id
     @UuidGenerator
     private String id;
@@ -26,10 +29,11 @@ public class User {
 
     @Column(name = "last_name")
     private String lastName;
-
     private String email;
-
     private String nif;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -42,9 +46,6 @@ public class User {
             @AttributeOverride( name = "postalCode", column = @Column(name = "postal_code"))
     })
     private Address address;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

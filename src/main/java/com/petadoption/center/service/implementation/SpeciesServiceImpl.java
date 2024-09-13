@@ -4,7 +4,6 @@ import com.petadoption.center.converter.SpeciesConverter;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
@@ -46,15 +45,13 @@ public class SpeciesServiceImpl implements SpeciesService {
     }
 
     @Override
-    public SpeciesGetDto addNewSpecies(SpeciesCreateDto dto) throws SpeciesDuplicateException {
-        checkIfSpeciesExistsByName(dto.name());
+    public SpeciesGetDto addNewSpecies(SpeciesCreateDto dto) {
         return SpeciesConverter.toDto(speciesRepository.save(SpeciesConverter.toModel(dto)));
     }
 
     @Override
-    public SpeciesGetDto updateSpecies(String id, SpeciesUpdateDto dto) throws SpeciesNotFoundException, SpeciesDuplicateException {
+    public SpeciesGetDto updateSpecies(String id, SpeciesUpdateDto dto) throws SpeciesNotFoundException {
         Species species = findSpeciesById(id);
-        checkIfSpeciesExistsByName(dto.name());
         updateFields(dto.name(), species.getName(), species::setName);
         return SpeciesConverter.toDto(speciesRepository.save(species));
     }
@@ -74,11 +71,5 @@ public class SpeciesServiceImpl implements SpeciesService {
     private Species findSpeciesByName(String name) throws SpeciesNotFoundException {
         return speciesRepository.findByName(name).orElseThrow(
                 () -> new SpeciesNotFoundException(SPECIES_WITH_NAME + name + NOT_FOUND));
-    }
-
-    private void checkIfSpeciesExistsByName(String name) throws SpeciesDuplicateException {
-        if (speciesRepository.findByName(name).isPresent()) {
-            throw new SpeciesDuplicateException(SPECIES_WITH_NAME + name + ALREADY_EXISTS);
-        }
     }
 }
