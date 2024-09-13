@@ -15,23 +15,26 @@ import java.util.List;
 @Setter
 @Builder
 @Table(name = "organizations", uniqueConstraints = {
-        @UniqueConstraint(name = "UniqueStreetAndPostalCode", columnNames = {"street", "postal_code"})
+        @UniqueConstraint(name = "UniqueEmail", columnNames = {"email"}),
+        @UniqueConstraint(name = "UniqueNif", columnNames = {"nif"}),
+        @UniqueConstraint(name = "UniquePhoneNumber", columnNames = {"phone_number"}),
+        @UniqueConstraint(name = "UniqueStreetAndPostalCode", columnNames = {"street", "postal_code"}),
+        @UniqueConstraint(name = "UniqueWebsiteUrl", columnNames = {"website_url"}),
+        @UniqueConstraint(name = "UniqueFacebook", columnNames = {"facebook"}),
+        @UniqueConstraint(name = "UniqueInstagram", columnNames = {"instagram"}),
+        @UniqueConstraint(name = "UniqueTwitter", columnNames = {"twitter"}),
+        @UniqueConstraint(name = "UniqueYoutube", columnNames = {"youtube"})
 })
 public class Organization {
 
     @Id
     @UuidGenerator
     private String id;
-
     private String name;
-
-    @Column(unique = true)
     private String email;
-
-    @Column(unique = true)
     private String nif;
 
-    @Column(name = "phone_number", unique = true)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Embedded
@@ -43,11 +46,16 @@ public class Organization {
     })
     private Address address;
 
-    @Column(name = "website_url", unique = true)
+    @Column(name = "website_url")
     private String websiteUrl;
 
     @Embedded
-    @Column(name = "social_media", unique = true)
+    @AttributeOverrides({
+            @AttributeOverride(name = "facebook", column = @Column(name = "facebook")),
+            @AttributeOverride(name = "instagram", column = @Column(name = "instagram")),
+            @AttributeOverride(name = "twitter", column = @Column(name = "twitter")),
+            @AttributeOverride(name = "youtube", column = @Column(name = "youtube"))
+    })
     private SocialMedia socialMedia;
 
     @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)

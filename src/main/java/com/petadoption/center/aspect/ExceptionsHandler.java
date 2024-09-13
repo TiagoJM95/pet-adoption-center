@@ -18,8 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.sql.SQLException;
 
 import static com.petadoption.center.util.Messages.*;
 
@@ -51,4 +54,15 @@ public class ExceptionsHandler {
 
     }
 
+    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
+    public ResponseEntity<String> RequestBodyHandler(Exception ex) {
+        logger.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(value = {SQLException.class})
+    public ResponseEntity<String> DbDuplicateHandler(Exception ex) {
+        logger.error(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
 }

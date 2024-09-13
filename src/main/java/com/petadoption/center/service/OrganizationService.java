@@ -9,7 +9,6 @@ import com.petadoption.center.exception.organization.OrganizationDuplicateExcept
 import java.util.List;
 
 public interface OrganizationService {
-
     List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy);
     OrgGetDto getOrganizationById(String id) throws OrgNotFoundException;
     OrgGetDto addNewOrganization(OrgCreateDto organization) throws OrganizationDuplicateException;

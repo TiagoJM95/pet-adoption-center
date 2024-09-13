@@ -34,7 +34,7 @@ public class OrganizationController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrgGetDto> addNewOrganization(@RequestBody OrgCreateDto organization) throws OrganizationDuplicateException {
+    public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) throws OrganizationDuplicateException {
         return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
     }
 

@@ -10,7 +10,7 @@ import static com.petadoption.center.util.Messages.*;
 public record OrgCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z_0-9]+", message = LETTERS_AND_NUMBERS)
+        @Pattern(regexp = "[a-zA-Z_0-9 .-]+", message = LETTERS_AND_NUMBERS)
         String name,
 
         @NotBlank(message = BLANK_FIELD)
@@ -42,27 +42,27 @@ public record OrgCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Size(max = 9, message = POSTAL_CODE_SIZE)
-        @Pattern(regexp = "[0-9]-]+", message = POSTAL_CODE_FORMAT)
+        @Pattern(regexp = "[0-9]{4}-[0-9]{3}", message = POSTAL_CODE_FORMAT)
         String postalCode,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z_0-9.-]", message = WEBSITE_URL)
+        @Pattern(regexp = "[a-zA-Z_0-9.-]+", message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,
 
-        @Pattern(regexp = "[a-zA-Z_0-9.-/]", message = FACEBOOK_VALID)
+        @Pattern(regexp = "[a-zA-Z_0-9.-/]+", message = FACEBOOK_VALID)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String facebook,
 
-        @Pattern(regexp = "[a-zA-Z_0-9.-@]", message = INSTAGRAM_VALID)
+        @Pattern(regexp = "[a-zA-Z_0-9.-@]+", message = INSTAGRAM_VALID)
         @Size(max = 30, message = CHARACTERS_LIMIT)
         String instagram,
 
-        @Pattern(regexp = "[a-zA-Z_0-9.-/]", message = TWITTER_VALID)
+        @Pattern(regexp = "[a-zA-Z_0-9.-/]+", message = TWITTER_VALID)
         @Size(max = 30, message = CHARACTERS_LIMIT)
         String twitter,
 
-        @Pattern(regexp = "[a-zA-Z_0-9.-/]", message = YOUTUBE_VALID)
+        @Pattern(regexp = "[a-zA-Z_0-9.-/]+", message = YOUTUBE_VALID)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String youtube
 ) {}

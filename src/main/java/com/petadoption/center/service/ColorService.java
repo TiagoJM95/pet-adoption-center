@@ -8,7 +8,6 @@ import com.petadoption.center.exception.color.ColorNotFoundException;
 import java.util.List;
 
 public interface ColorService {
-
     List<ColorGetDto> getAllColors(int page, int size, String sortBy);
     ColorGetDto getColorById(String id) throws ColorNotFoundException;
     ColorGetDto addNewColor(ColorCreateDto color) throws ColorDuplicateException;
