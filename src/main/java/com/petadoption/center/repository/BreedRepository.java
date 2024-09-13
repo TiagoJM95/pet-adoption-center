@@ -10,8 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface BreedRepository extends JpaRepository<Breed, String> {
-
     Optional<Breed> findByName(String name);
-
     List<Breed> findBySpecies(Species species);
 }

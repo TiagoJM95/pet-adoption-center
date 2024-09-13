@@ -1,6 +1,6 @@
 package com.petadoption.center.enums;
 
-import com.petadoption.center.exception.pet.InvalidDescriptionException;
+import com.petadoption.center.exception.pet.PetDescriptionException;
 import lombok.Getter;
 
 import static com.petadoption.center.util.Messages.INVALID_AGE;
@@ -21,12 +21,12 @@ public enum Ages {
         this.range = range;
     }
 
-    public static Ages getAgeByDescription(String description) throws InvalidDescriptionException {
+    public static Ages getAgeByDescription(String description) throws PetDescriptionException {
         for(Ages age : values()) {
             if(age.getDescription().equalsIgnoreCase(description)) {
                 return age;
             }
         }
-        throw new InvalidDescriptionException(INVALID_AGE + description);
+        throw new PetDescriptionException(INVALID_AGE + description);
     }
 }
