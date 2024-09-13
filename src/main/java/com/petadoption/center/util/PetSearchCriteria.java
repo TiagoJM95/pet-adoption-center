@@ -1,4 +1,4 @@
-package com.petadoption.center.dto.petSearchCriteria;
+package com.petadoption.center.util;
 
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Color;

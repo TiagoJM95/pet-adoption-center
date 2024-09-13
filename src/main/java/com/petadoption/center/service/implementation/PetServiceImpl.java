@@ -1,16 +1,15 @@
 package com.petadoption.center.service.implementation;
 
 import com.petadoption.center.converter.*;
-import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
-import com.petadoption.center.dto.petSearchCriteria.PetSearchCriteria;
+import com.petadoption.center.util.PetSearchCriteria;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.pet.InvalidDescriptionException;
+import com.petadoption.center.exception.pet.PetDescriptionException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Breed;
@@ -63,14 +62,14 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy) throws SpeciesNotFoundException, InvalidDescriptionException {
+    public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy) throws SpeciesNotFoundException, PetDescriptionException {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         Specification<Pet> filters = buildFilters(criteria);
         return petRepository.findAll(filters, pageRequest).stream().map(pet -> PetConverter.toDto(pet, buildGetContext(pet))).toList();
     }
 
     @Override
-    public PetGetDto addNewPet(PetCreateDto dto) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, InvalidDescriptionException {
+    public PetGetDto addNewPet(PetCreateDto dto) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, PetDescriptionException {
         breedService.verifyIfBreedsAndSpeciesMatch(dto);
         Pet p = PetConverter.toModel(dto, buildCreateContext(dto));
         Pet pet = petRepository.save(p);
@@ -78,7 +77,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, InvalidDescriptionException {
+    public void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, PetDescriptionException {
         for (PetCreateDto dto : pets) {
             breedService.verifyIfBreedsAndSpeciesMatch(dto);
         }
@@ -88,7 +87,7 @@ public class PetServiceImpl implements PetService {
     }
 
     @Override
-    public PetGetDto updatePet(String id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException, InvalidDescriptionException {
+    public PetGetDto updatePet(String id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException, PetDescriptionException {
         Pet pet = findPetById(id);
         updatePetFields(dto, pet);
         petRepository.save(pet);
@@ -125,7 +124,7 @@ public class PetServiceImpl implements PetService {
                 .build();
     }
 
-    private PetCreateContext buildCreateContext(PetCreateDto pet) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException, InvalidDescriptionException{
+    private PetCreateContext buildCreateContext(PetCreateDto pet) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException, PetDescriptionException {
 
         Species species = SpeciesConverter.toModel(speciesService.getSpeciesById(pet.petSpeciesId()));
         Breed primaryBreed = BreedConverter.toModel(breedService.getBreedById(pet.primaryBreedId()), species);
@@ -154,7 +153,7 @@ public class PetServiceImpl implements PetService {
                 .build();
     }
 
-    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria) throws InvalidDescriptionException {
+    private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria) throws PetDescriptionException {
         return Specification.where(
                         StringUtils.isBlank(searchCriteria.nameLike()) ? null : nameLike(searchCriteria.nameLike().toLowerCase()))
                         .and(searchCriteria.species() == null ? null : findBySpecies(searchCriteria.species()))
@@ -179,7 +178,7 @@ public class PetServiceImpl implements PetService {
                 );
     }
 
-    private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrgNotFoundException, InvalidDescriptionException {
+    private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrgNotFoundException, PetDescriptionException {
         Organization org = OrgConverter.toModel(organizationService.getOrganizationById(dto.organizationId()));
 
         updateFields(getSizeByDescription(dto.size()), pet.getSize(), pet::setSize);

@@ -4,15 +4,12 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.email.service.EmailService;
-import com.petadoption.center.exception.InvalidDtoException;
 import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.UserService;
-import org.springframework.beans.InvalidPropertyException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -30,12 +27,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final EmailService emailService;
-
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, EmailService emailService) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.emailService = emailService;
     }
 
     @Override
@@ -50,18 +44,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetDto addNewUser(UserCreateDto dto) throws UserDuplicateException, InvalidDtoException {
-        if (dto == null) throw new InvalidDtoException("No dto");
+    public UserGetDto addNewUser(UserCreateDto dto) throws UserDuplicateException {
         checkIfUserExistsByEmail(dto.email());
         checkIfUserExistsByPhoneNumber(dto.phoneNumber());
         User userSaved = userRepository.save(toModel(dto));
-        //emailService.sendWelcomeMail(userSaved);
         return toDto(userSaved);
     }
 
     @Override
-    public UserGetDto updateUser(String id, UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException, InvalidDtoException {
-        if (dto == null) throw new InvalidDtoException("No dto");
+    public UserGetDto updateUser(String id, UserUpdateDto dto) throws UserNotFoundException, UserDuplicateException{
         User user = findUserById(id);
         checkUserDuplicates(dto, user);
         updateUserFields(dto, user);
