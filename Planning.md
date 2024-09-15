@@ -1,7 +1,8 @@
 # Pet Adoption App - Planning
 
 ## 1. App Purpose
-This app is designed to allow users to browse pets available for adoption, favorite pets, and submit adoption forms. Organizations can register and post pets for adoption.
+This app is designed to centralize pet adoption listings from various non-profit organizations. 
+It will allow for these organizations to post their pets for adoption and users to find them in a single location, streamlining the adoption process.
 
 ## 2. Tech Stack
 - **Backend**: Spring Boot, Java
@@ -15,8 +16,8 @@ This app is designed to allow users to browse pets available for adoption, favor
 
 ### Authentication and Authorization
 #### Admin
-- Create accounts for organizations
-- Status: [ ] Not Started
+- Create accounts for organizations - Status: [ ] Not Started
+- Create new entries for species, breeds, etc. - Status: [ ] Not Started
 #### Organization
 - Register and post pets for adoption
 - Status: [ ] Not Started
