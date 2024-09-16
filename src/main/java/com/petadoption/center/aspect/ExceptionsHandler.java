@@ -16,6 +16,7 @@ import com.petadoption.center.exception.user.UserNotFoundException;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -60,9 +61,35 @@ public class ExceptionsHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(value = {SQLException.class})
+/*    @ExceptionHandler(value = {SQLException.class})
     public ResponseEntity<String> DbDuplicateHandler(Exception ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }*/
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) throws UserDuplicateException {
+        String message = ex.getMostSpecificCause().getMessage();
+
+        if (message.contains("UniqueUserEmail")) {
+            throw new UserDuplicateException("This email is already registered.");
+        } else if (message.contains("UniqueUserNif")) {
+            throw new UserDuplicateException("This NIF is already in use.");
+        } else if (message.contains("UniqueUserPhoneNumber")) {
+            throw new UserDuplicateException("This phone number is already in use.");
+        }
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving user in the database.");
+    }
+
+    @ExceptionHandler(UserDuplicateException.class)
+    public ResponseEntity<String> handleUserAlreadyExists(UserDuplicateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
+    }
+
+
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage());
     }
 }
