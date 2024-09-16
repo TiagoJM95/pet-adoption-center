@@ -27,10 +27,28 @@ public class ColorConverterTest {
     }
 
     @Test
+    @DisplayName("Test if ColorGetDto to Color model is working correctly")
+    void fromColorGetDtoToModel() {
+
+        ColorGetDto colorGetDto = new ColorGetDto(
+                "3213-3213-3213",
+                "Black");
+
+        Color color = ColorConverter.toModel(colorGetDto);
+
+        assertEquals("3213-3213-3213", color.getId());
+        assertEquals("Black", color.getName());
+    }
+
+    @Test
     @DisplayName("Test Color model to ColorGetDto is working correctly")
     void fromModelToColorGetDto() {
 
-        ColorGetDto colorGetDto = ColorConverter.toDto(new Color("3213-3213-3213", "Black"));
+        Color color = new Color(
+                "3213-3213-3213",
+                "Black");
+
+        ColorGetDto colorGetDto = ColorConverter.toDto(color);
 
         assertEquals("3213-3213-3213", colorGetDto.id());
         assertEquals("Black", colorGetDto.name());

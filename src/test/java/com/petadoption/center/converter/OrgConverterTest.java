@@ -52,6 +52,44 @@ public class OrgConverterTest {
         assertEquals("www.youtube.com/petCenter", org.getSocialMedia().getYoutube());
     }
 
+    @Test
+    @DisplayName("Test OrgGetDto to Org model is working correctly")
+    void fromOrgGetDtoToModel() {
+        OrgGetDto orgGetDto = new OrgGetDto(
+                "1111-3333-2222",
+                "Pet Adoption Center",
+                "petcenter@email.com",
+                "227778899",
+                "229876567",
+                new Address(
+                        "Rua do pet, 123",
+                        "Gondomar",
+                        "Porto",
+                        "4100-123"),
+                "www.petcenter.com",
+                new SocialMedia(
+                        "www.facebook.com/petCenter",
+                        "@petCenter",
+                        "petCenter",
+                        "www.youtube.com/petCenter")
+
+        );
+        Organization org = OrgConverter.toModel(orgGetDto);
+        assertEquals("1111-3333-2222", org.getId());
+        assertEquals("Pet Adoption Center", org.getName());
+        assertEquals("petcenter@email.com", org.getEmail());
+        assertEquals("227778899", org.getNif());
+        assertEquals("229876567", org.getPhoneNumber());
+        assertEquals("Rua do pet, 123", org.getAddress().getStreet());
+        assertEquals("Gondomar", org.getAddress().getCity());
+        assertEquals("Porto", org.getAddress().getState());
+        assertEquals("4100-123", org.getAddress().getPostalCode());
+        assertEquals("www.petcenter.com", org.getWebsiteUrl());
+        assertEquals("www.facebook.com/petCenter", org.getSocialMedia().getFacebook());
+        assertEquals("@petCenter", org.getSocialMedia().getInstagram());
+        assertEquals("petCenter", org.getSocialMedia().getTwitter());
+        assertEquals("www.youtube.com/petCenter", org.getSocialMedia().getYoutube());
+    }
 
 
     @Test

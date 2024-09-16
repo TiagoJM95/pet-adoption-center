@@ -33,6 +33,23 @@ public class BreedConverterTest {
         assertEquals("123123-12312312-3123", breed.getSpecies().getId());
     }
 
+    @Test
+    @DisplayName("Test if BreedGetDto to Breed model is working correctly")
+    void fromBreedGetDtoToModel() {
+
+        BreedGetDto breedGetDto = new BreedGetDto(
+                "123123-12312312-3333",
+                "Labrador Retriever",
+                "Dog"
+        );
+
+        Breed breed = BreedConverter.toModel(breedGetDto, species);
+
+        assertEquals("123123-12312312-3333", breed.getId());
+        assertEquals("Labrador Retriever", breed.getName());
+        assertEquals("Dog", breed.getSpecies().getName());
+    }
+
 
     @Test
     @DisplayName("Test Breed model to BreedGetDto is working correctly")

@@ -27,6 +27,20 @@ public class SpeciesConverterTest {
     }
 
     @Test
+    @DisplayName("Test if SpeciesGetDto to Species model is working correctly")
+    void fromSpeciesGetDtoToModel() {
+
+        SpeciesGetDto speciesGetDto = new SpeciesGetDto(
+                "2313-21321-31231",
+                "Cat");
+
+        Species species = SpeciesConverter.toModel(speciesGetDto);
+
+        assertEquals("2313-21321-31231", species.getId());
+        assertEquals("Cat", species.getName());
+    }
+
+    @Test
     @DisplayName("Test Species model to SpeciesGetDto is working correctly")
     void fromModelToSpeciesGetDto() {
 
