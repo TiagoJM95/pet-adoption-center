@@ -41,12 +41,6 @@ public class ExceptionsHandler {
 
     }
 
-    @ExceptionHandler(value = {BreedDuplicateException.class, ColorDuplicateException.class, PetDuplicateException.class, SpeciesDuplicateException.class, OrganizationDuplicateException.class, UserDuplicateException.class})
-    public ResponseEntity<String> DuplicateHandler(Exception ex) {
-        logger.error(LOGGER_DUPLICATE, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-
-    }
 
     @ExceptionHandler(value = {DatabaseConnectionException.class})
     public ResponseEntity<String> DbConnectionHandler(Exception ex) {
@@ -71,21 +65,16 @@ public class ExceptionsHandler {
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) throws UserDuplicateException {
         String message = ex.getMostSpecificCause().getMessage();
 
-        if (message.contains("UniqueUserEmail")) {
-            throw new UserDuplicateException("This email is already registered.");
-        } else if (message.contains("UniqueUserNif")) {
-            throw new UserDuplicateException("This NIF is already in use.");
-        } else if (message.contains("UniqueUserPhoneNumber")) {
-            throw new UserDuplicateException("This phone number is already in use.");
+        System.out.println(message);
+        if (message.contains("(email)")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This email is already registered.");
+        } else if (message.contains("(nif)")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This NIF is already in use.");
+        } else if (message.contains("(phoneNumber)")) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("This phone number is already in use.");
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving user in the database.");
     }
-
-    @ExceptionHandler(UserDuplicateException.class)
-    public ResponseEntity<String> handleUserAlreadyExists(UserDuplicateException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }
-
 
 
     @ExceptionHandler(Exception.class)
