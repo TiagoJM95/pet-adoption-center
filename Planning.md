@@ -12,6 +12,7 @@ It will allow for these organizations to post their pets for adoption and users 
 - **Storage**: AWS S3 for documents and images
 - **Deployment**: AWS
 - **Auth0**: Authentication and Authorization
+- **Email**: Send automatically emails (Microservice) node.js
 
 ## 3. Feature Outline
 
