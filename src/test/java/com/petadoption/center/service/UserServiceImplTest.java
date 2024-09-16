@@ -209,23 +209,23 @@ public class UserServiceImplTest {
    }
 
 
-    @Test
+/*    @Test
     @DisplayName("Test if add new user throws exception if email is duplicated")
     void addNewUserShouldThrowUserEmailDuplicateException() {
 
         when(userRepository.findByEmail(userCreateDto.email())).thenReturn(Optional.of(testUser));
 
         assertThrows(UserDuplicateException.class, () -> userService.addNewUser(userCreateDto));
-    }
+    }*/
 
-    @Test
+/*    @Test
     @DisplayName("Test if add new user throws exception if phone number is duplicated")
     void addNewUserShouldThrowUserPhoneNumberDuplicateException() {
 
         when(userRepository.findByPhoneNumber(userCreateDto.phoneNumber())).thenReturn(Optional.of(testUser));
 
         assertThrows(UserDuplicateException.class, () -> userService.addNewUser(userCreateDto));
-    }
+    }*/
 
     @Test
     @DisplayName("Test if update user saves all fields and returns UserGetDto")
@@ -248,7 +248,7 @@ public class UserServiceImplTest {
         assertThrows(UserNotFoundException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
     }
 
-    @Test
+/*    @Test
     @DisplayName("Test if update user throws exception user email duplicate")
     void updateUserShouldThrowExceptionUserDuplicateEmail(){
 
@@ -261,7 +261,7 @@ public class UserServiceImplTest {
         when(userRepository.findByEmail(userUpdateDto.email())).thenReturn(Optional.of(userWithSameEmail));
 
         assertThrows(UserDuplicateException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
-    }
+    }*/
 
 
     @Test

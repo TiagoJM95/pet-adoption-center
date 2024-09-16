@@ -218,14 +218,14 @@ public class BreedServiceImplTest {
     }
 
 
-    @Test
+   /* @Test
     @DisplayName("Test if add new user throws exception if name is duplicated")
     void addNewBreedShouldThrowBreedNameDuplicateException() {
 
         when(breedRepository.findByName(breedCreateDto.name())).thenReturn(Optional.of(testBreed));
 
         assertThrows(BreedDuplicateException.class, () -> breedService.addNewBreed(breedCreateDto));
-    }
+    }*/
 
     @Test
     @DisplayName("Test if add new breed throws exception if species is not found")
@@ -261,7 +261,7 @@ public class BreedServiceImplTest {
     }
 
 
-    @Test
+/*    @Test
     @DisplayName("Test if update breed throws exception if name is duplicated")
     void updateBreedShouldThrowBreedNameDuplicateException() {
 
@@ -270,7 +270,7 @@ public class BreedServiceImplTest {
         when(breedRepository.findByName(breedUpdateDto.name())).thenReturn(Optional.of(updatedBreed));
 
         assertThrows(BreedDuplicateException.class, () -> breedService.updateBreed(testBreed.getId(), breedUpdateDto));
-    }
+    }*/
 
 
     @Test

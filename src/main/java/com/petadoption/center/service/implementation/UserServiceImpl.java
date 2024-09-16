@@ -51,6 +51,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserGetDto updateUser(String id, UserUpdateDto dto) throws UserNotFoundException {
         User user = findUserById(id);
+        updateUserFields(dto, user);
         return toDto(userRepository.save(user));
     }
 
@@ -64,7 +65,9 @@ public class UserServiceImpl implements UserService {
     private void updateUserFields(UserUpdateDto dto, User user) {
         updateFields(dto.firstName(), user.getFirstName(), user::setFirstName);
         updateFields(dto.lastName(), user.getLastName(), user::setLastName);
+        updateFields(dto.email(), user.getEmail(), user::setEmail);
         updateFields(createAddress(dto), user.getAddress(), user::setAddress);
+        updateFields(dto.phoneNumber(), user.getPhoneNumber(), user::setPhoneNumber);
     }
 
     private User findUserById(String id) throws UserNotFoundException {
