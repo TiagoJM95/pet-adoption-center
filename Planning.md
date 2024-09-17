@@ -96,9 +96,9 @@ It will allow for these organizations to post their pets for adoption and users 
 - Add pet to favorites list
   - Status: [X] Testing;
 - View favorites list
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Remove pet from favorites list
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Manifest interest in adopting a specific pet. Notify organization.
   - Status: [ ] Not Started
 - Fill out adoption form when requested. Notify organization.

@@ -12,10 +12,7 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetDescriptionException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.model.Breed;
-import com.petadoption.center.model.Organization;
-import com.petadoption.center.model.Pet;
-import com.petadoption.center.model.Species;
+import com.petadoption.center.model.*;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.interfaces.*;
 import com.petadoption.center.specifications.PetSearchCriteria;
@@ -30,6 +27,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.petadoption.center.enums.Ages.getAgeByDescription;
 import static com.petadoption.center.enums.Coats.getCoatByDescription;
@@ -103,8 +101,19 @@ public class PetService implements PetServiceI {
     }
 
     @Override
-    public Set<Pet> findPetByIdAndAddToFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException {
+    public Set<Pet> addPetToFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException {
         dto.favoritePets().add(findPetById(petId));
+        return dto.favoritePets();
+    }
+
+    @Override
+    public Set<PetGetDto> convertFavoritesToDto(UserFavoritePetsDto dto) {
+        return dto.favoritePets().stream().map(pet -> PetConverter.toDto(pet, buildGetContext(pet))).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Pet> removePetFromFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException {
+        dto.favoritePets().remove(findPetById(petId));
         return dto.favoritePets();
     }
 
@@ -113,44 +122,28 @@ public class PetService implements PetServiceI {
                 () -> new PetNotFoundException(PET_WITH_ID + id + NOT_FOUND));
     }
 
-    private PetGetContext buildGetContext(Pet pet){
+    private PetGetContext buildGetContext(Pet pet) {
         return PetGetContext.builder()
                 .organization(OrgConverter.toDto(pet.getOrganization()))
                 .species(pet.getSpecies().getName())
-                .primaryBreed(pet.getPrimaryBreed().getName())
-                .secondaryBreed(pet.getSecondaryBreed() != null
-                        ? pet.getSecondaryBreed().getName()
-                        : "NONE")
-                .primaryColor(pet.getPrimaryColor().getName())
-                .secondaryColor(pet.getSecondaryColor() != null
-                        ? pet.getSecondaryColor().getName()
-                        : "NONE")
-                .tertiaryColor(pet.getTertiaryColor() != null
-                        ? pet.getTertiaryColor().getName()
-                        : "NONE")
+                .primaryBreed(getNameOrNone(pet.getPrimaryBreed()))
+                .secondaryBreed(getNameOrNone(pet.getSecondaryBreed()))
+                .primaryColor(getNameOrNone(pet.getPrimaryColor()))
+                .secondaryColor(getNameOrNone(pet.getSecondaryColor()))
+                .tertiaryColor(getNameOrNone(pet.getTertiaryColor()))
                 .build();
     }
 
     private PetCreateContext buildCreateContext(PetCreateDto pet) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException, PetDescriptionException {
-
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(pet.petSpeciesId()));
-        Breed primaryBreed = BreedConverter.toModel(breedServiceI.getBreedById(pet.primaryBreedId()), species);
-        Breed secondaryBreed = pet.secondaryBreedId().equals("NONE")
-                ? null
-                :  BreedConverter.toModel(breedServiceI.getBreedById(pet.secondaryBreedId()), species);
-
 
         return PetCreateContext.builder()
                 .species(species)
-                .primaryBreed(primaryBreed)
-                .secondaryBreed(secondaryBreed)
+                .primaryBreed(BreedConverter.toModel(breedServiceI.getBreedById(pet.primaryBreedId()), species))
+                .secondaryBreed(getBreedOrNone(pet.secondaryBreedId(), species))
                 .primaryColor(ColorConverter.toModel(colorServiceI.getColorById(pet.primaryColor())))
-                .secondaryColor(pet.secondaryColor().equals("NONE")
-                        ? null
-                        : ColorConverter.toModel(colorServiceI.getColorById(pet.secondaryColor())))
-                .tertiaryColor(pet.tertiaryColor().equals("NONE")
-                        ? null
-                        : ColorConverter.toModel(colorServiceI.getColorById(pet.tertiaryColor())))
+                .secondaryColor(getColorOrNone(pet.secondaryColor()))
+                .tertiaryColor(getColorOrNone(pet.tertiaryColor()))
                 .organization(OrgConverter.toModel(organizationServiceI.getOrganizationById(pet.organizationId())))
                 .gender(getGenderByDescription(pet.gender()))
                 .coat(getCoatByDescription(pet.coat()))
@@ -195,5 +188,21 @@ public class PetService implements PetServiceI {
         updateFields(dto.isAdopted(), pet.getIsAdopted(), pet::setIsAdopted);
         updateFields(AttributesFactory.create(dto), pet.getAttributes(), pet::setAttributes);
         updateFields(org, pet.getOrganization(), pet::setOrganization);
+    }
+
+    private Color getColorOrNone(String colorId) throws ColorNotFoundException {
+        return NONE.equals(colorId) ? null : ColorConverter.toModel(colorServiceI.getColorById(colorId));
+    }
+
+    private Breed getBreedOrNone(String breedId, Species species) throws BreedNotFoundException {
+        return NONE.equals(breedId) ? null : BreedConverter.toModel(breedServiceI.getBreedById(breedId), species);
+    }
+
+    private String getNameOrNone(Breed breed) {
+        return breed != null ? breed.getName() : NONE;
+    }
+
+    private String getNameOrNone(Color color) {
+        return color != null ? color.getName() : NONE;
     }
 }

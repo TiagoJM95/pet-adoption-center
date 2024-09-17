@@ -1,14 +1,12 @@
 package com.petadoption.center.service;
 
-import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.converter.UserConverter;
+import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
-import com.petadoption.center.dto.user.UserFavoritePetsDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.User;
 import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.interfaces.PetServiceI;
@@ -72,9 +70,23 @@ public class UserService implements UserServiceI {
     @Override
     public String addPetToFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
         User user = findUserById(userId);
-        user.setFavoritePets(petService.findPetByIdAndAddToFavorites(petId, UserConverter.toFavoritePetsDto(user)));
+        user.setFavoritePets(petService.addPetToFavorites(petId, UserConverter.toFavoritePetsDto(user)));
         userRepository.save(user);
         return ADDED_TO_FAVORITE_SUCCESS;
+    }
+
+    @Override
+    public Set<PetGetDto> getFavoritePets(String userId) throws UserNotFoundException {
+        User user = findUserById(userId);
+        return petService.convertFavoritesToDto(UserConverter.toFavoritePetsDto(user));
+    }
+
+    @Override
+    public String removePetFromFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
+        User user = findUserById(userId);
+        user.setFavoritePets(petService.removePetFromFavorites(petId, UserConverter.toFavoritePetsDto(user)));
+        userRepository.save(user);
+        return REMOVED_FROM_FAVORITE_SUCCESS;
     }
 
     private void updateUserFields(UserUpdateDto dto, User user) {

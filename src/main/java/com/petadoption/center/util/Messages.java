@@ -122,5 +122,9 @@ public class Messages {
 
     public static final String ADDED_TO_FAVORITE_SUCCESS = "Pet added to favorites";
 
+    public static final String REMOVED_FROM_FAVORITE_SUCCESS = "Pet removed from favorites";
+
+    public static final String NONE = "NONE";
+
 }
 

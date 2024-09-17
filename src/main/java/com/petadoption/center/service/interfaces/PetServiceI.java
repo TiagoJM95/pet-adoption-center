@@ -30,5 +30,9 @@ public interface PetServiceI {
 
     String deletePet(String id) throws PetNotFoundException;
 
-    Set<Pet> findPetByIdAndAddToFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException;
+    Set<Pet> addPetToFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException;
+
+    Set<PetGetDto> convertFavoritesToDto(UserFavoritePetsDto dto);
+
+    Set<Pet> removePetFromFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException;
 }
