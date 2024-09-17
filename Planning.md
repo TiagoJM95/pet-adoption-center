@@ -8,27 +8,25 @@ It will allow for these organizations to post their pets for adoption and users 
 - **Backend**: Spring Boot, Java
 - **Database**: PostgreSQL
 - **Cache**: Redis
-- **Message Broker**: Kafka
+- **Message Broker**: Kafka / RabbitMQ
 - **Storage**: AWS S3 for documents and images
 - **Deployment**: AWS
 - **Auth0**: Authentication and Authorization
-- **Email**: Send automatically emails (Microservice) node.js
+- **Notification Service**: Secondary app built for this purpose
 
 ## 3. Feature Outline
 
 ### Authentication and Authorization
 #### Admin
-- Have an account created for them
-  - Status: [ ]  - Not Started
 - Login
   - Status: [ ]  - Not Started
 - Create accounts for organizations
   - Status: [ ]  - Not Started
-- Update organization information
-    - Status: [ ]  - Not Started
-- Remove organizations
+- Create new entries for species, breeds and colors
   - Status: [ ]  - Not Started
-- Create new entries for species, breeds, colors
+- Update organizations, species, breeds and colors
+    - Status: [ ]  - Not Started
+- Remove organizations, species, breeds and colors
   - Status: [ ]  - Not Started
 #### Organization
 - Register account after invitation
@@ -54,8 +52,6 @@ It will allow for these organizations to post their pets for adoption and users 
 - Update adoption form fields related to organization
   - Status: [ ] Not Started
 #### User
-- Register an account
-  - Status: [ ] Not Started
 - Login
     - Status: [ ] Not Started
 - View account information
@@ -73,52 +69,53 @@ It will allow for these organizations to post their pets for adoption and users 
 - Update adoption form fields related to user
   - Status: [ ] Not Started
 #### Guest
+- Register a user account
+  - Status: [ ] Not Started
 - Browse pets
   - Status: [ ] Not Started
 
-### Pet Management (For Organizations)
+### What can an organization do?
 - Post single pet for adoption
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Post multiple pets for adoption
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Update owned pets information
-    - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Remove owned pets from adoption
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - View adoption requests for owned pets
   - Status: [ ] Not Started
-- Create adoption requests for a specific owned pet and with the information of the user requesting
+- Review user information if they manifest interest in adopting an owned pet
   - Status: [ ] Not Started
-- Accept adoption requests, send email/message to user and allow them to fill out adoption form
+- Create adoption forms for user interested in adopting a specific owned pet. The form is pre-filled with organization, pet and user information. Notify user.
   - Status: [ ] Not Started
-- Reject adoption requests and send email/message to user
+- Accept / reject adoption requests. Notify user.
   - Status: [ ] Not Started
 
-### Pet Management (For Users)
+### What can a user do?
 - Add pet to favorites list
   - Status: [ ] Not Started
 - View favorites list
   - Status: [ ] Not Started
 - Remove pet from favorites list
   - Status: [ ] Not Started
-- Manifest interest in adopting a specific pet, send email/message to organization
+- Manifest interest in adopting a specific pet. Notify organization.
   - Status: [ ] Not Started
-- Fill out adoption form when requested
+- Fill out adoption form when requested. Notify organization.
   - Status: [ ] Not Started
 - View all adoption requests pending
   - Status: [ ] Not Started
-- View adoption requests history (accept or reject)
-  - Status: [ ] Not Started
-- View adoption form history
+- View adoption requests history, accepted or rejected, with or without the respective adoption form.
   - Status: [ ] Not Started
 
 ### Pet Search and Filters (For Users, Guests, Organizations and Admins)
 - Browse Pets by breed, age, etc.
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 
-### Messaging Service
+### Notification Service
 - Communicate with external service to send emails and messages
   - Status: [ ] Not Started
 
 ## 4. Business Logic & Future Enhancements
 - Potentially launch a real-world product with simplified functionality like redirecting users to organization websites.
+
