@@ -1,17 +1,11 @@
 package com.petadoption.center.aspect;
 
-import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
-import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.db.DatabaseConnectionException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.organization.OrganizationDuplicateException;
-import com.petadoption.center.exception.pet.PetDuplicateException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
@@ -62,7 +56,7 @@ public class ExceptionsHandler {
     }*/
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) throws UserDuplicateException {
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         String message = ex.getMostSpecificCause().getMessage();
 
         System.out.println(message);
@@ -79,6 +73,6 @@ public class ExceptionsHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("An unexpected error occurred: " + ex.getMessage());
     }
 }
