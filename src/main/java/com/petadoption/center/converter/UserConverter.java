@@ -1,6 +1,7 @@
 package com.petadoption.center.converter;
 
 import com.petadoption.center.dto.user.UserCreateDto;
+import com.petadoption.center.dto.user.UserFavoritePetsDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.User;
 
@@ -24,15 +25,22 @@ public class UserConverter {
 
     public static UserGetDto toDto(User user){
         if (user == null) return null;
-        return new UserGetDto(
-                user.getId(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getNif(),
-                user.getDateOfBirth(),
-                user.getAddress(),
-                user.getPhoneNumber()
-        );
+        return UserGetDto.builder()
+                .id(user.getId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .nif(user.getNif())
+                .dateOfBirth(user.getDateOfBirth())
+                .address(user.getAddress())
+                .phoneNumber(user.getPhoneNumber())
+                .build();
+    }
+
+    public static UserFavoritePetsDto toFavoritePetsDto(User user){
+        if (user == null) return null;
+        return UserFavoritePetsDto.builder()
+                .favoritePets(user.getFavoritePets())
+                .build();
     }
 }

@@ -120,5 +120,7 @@ public class Messages {
 
     public static final String DELETE_SUCCESS = " deleted successfully";
 
+    public static final String ADDED_TO_FAVORITE_SUCCESS = "Pet added to favorites";
+
 }
 

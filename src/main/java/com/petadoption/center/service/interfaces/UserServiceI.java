@@ -3,6 +3,7 @@ package com.petadoption.center.service.interfaces;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public interface UserServiceI {
     UserGetDto addNewUser(UserCreateDto user);
     UserGetDto updateUser(String id, UserUpdateDto user) throws UserNotFoundException;
     String deleteUser(String id) throws UserNotFoundException;
+    String addPetToFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException;
 }

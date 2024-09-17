@@ -30,6 +30,29 @@ public class PetConverter {
                 .build();
     }
 
+    public static Pet toModel(PetGetDto dto, PetCreateContext context) {
+        if (dto == null || context == null) return null;
+        return Pet.builder()
+                .id(dto.id())
+                .name(dto.name())
+                .species(context.species())
+                .primaryBreed(context.primaryBreed())
+                .secondaryBreed(context.secondaryBreed())
+                .primaryColor(context.primaryColor())
+                .secondaryColor(context.secondaryColor())
+                .tertiaryColor(context.tertiaryColor())
+                .gender(context.gender())
+                .coat(context.coat())
+                .size(context.size())
+                .age(context.age())
+                .description(dto.description())
+                .imageUrl(dto.imageUrl())
+                .isAdopted(dto.isAdopted())
+                .attributes(context.attributes())
+                .organization(context.organization())
+                .build();
+    }
+
     public static PetGetDto toDto(Pet pet, PetGetContext context) {
         if (pet == null || context == null) return null;
         return PetGetDto.builder()

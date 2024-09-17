@@ -4,6 +4,7 @@ import com.petadoption.center.converter.*;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
+import com.petadoption.center.dto.user.UserFavoritePetsDto;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
@@ -28,6 +29,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.petadoption.center.enums.Ages.getAgeByDescription;
 import static com.petadoption.center.enums.Coats.getCoatByDescription;
@@ -98,6 +100,12 @@ public class PetService implements PetServiceI {
         findPetById(id);
         petRepository.deleteById(id);
         return PET_WITH_ID + id + DELETE_SUCCESS;
+    }
+
+    @Override
+    public Set<Pet> findPetByIdAndAddToFavorites(String petId, UserFavoritePetsDto dto) throws PetNotFoundException {
+        dto.favoritePets().add(findPetById(petId));
+        return dto.favoritePets();
     }
 
     private Pet findPetById(String id) throws PetNotFoundException {

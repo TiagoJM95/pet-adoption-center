@@ -94,7 +94,7 @@ It will allow for these organizations to post their pets for adoption and users 
 
 ### What can a user do?
 - Add pet to favorites list
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - View favorites list
   - Status: [ ] Not Started
 - Remove pet from favorites list

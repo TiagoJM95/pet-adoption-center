@@ -1,12 +1,17 @@
 package com.petadoption.center.service;
 
+import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.user.UserCreateDto;
+import com.petadoption.center.dto.user.UserFavoritePetsDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.User;
 import com.petadoption.center.repository.UserRepository;
+import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,11 +19,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.petadoption.center.converter.UserConverter.toDto;
 import static com.petadoption.center.converter.UserConverter.toModel;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.*;
 import static com.petadoption.center.util.Utils.updateFields;
 import static com.petadoption.center.factory.AddressFactory.createAddress;
 
@@ -26,10 +31,12 @@ import static com.petadoption.center.factory.AddressFactory.createAddress;
 public class UserService implements UserServiceI {
 
     private final UserRepository userRepository;
+    private final PetServiceI petService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PetServiceI petService) {
         this.userRepository = userRepository;
+        this.petService = petService;
     }
 
     @Override
@@ -60,6 +67,14 @@ public class UserService implements UserServiceI {
         findUserById(id);
         userRepository.deleteById(id);
         return USER_WITH_ID + id + DELETE_SUCCESS;
+    }
+
+    @Override
+    public String addPetToFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
+        User user = findUserById(userId);
+        user.setFavoritePets(petService.findPetByIdAndAddToFavorites(petId, UserConverter.toFavoritePetsDto(user)));
+        userRepository.save(user);
+        return ADDED_TO_FAVORITE_SUCCESS;
     }
 
     private void updateUserFields(UserUpdateDto dto, User user) {

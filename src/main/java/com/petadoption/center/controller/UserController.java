@@ -3,6 +3,7 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import jakarta.validation.Valid;
@@ -47,4 +48,9 @@ public class UserController {
         return new ResponseEntity<>(userServiceI.deleteUser(id), HttpStatus.OK);
     }
 
+    @PostMapping("/addPetToFavorites/{userId}/{petId}")
+    public ResponseEntity<String> addPetToFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) throws UserNotFoundException,
+            PetNotFoundException {
+        return new ResponseEntity<>(userServiceI.addPetToFavorites(userId, petId), HttpStatus.ACCEPTED);
+    }
 }
