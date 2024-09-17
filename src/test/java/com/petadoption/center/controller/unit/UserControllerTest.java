@@ -7,7 +7,7 @@ import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.embeddable.Address;
-import com.petadoption.center.service.UserService;
+import com.petadoption.center.service.interfaces.UserServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 public class UserControllerTest {
 
     @Mock
-    private UserService userService;
+    private UserServiceI userServiceI;
 
     @InjectMocks
     private UserController userController;
@@ -91,13 +91,13 @@ public class UserControllerTest {
 
         List<UserGetDto> expectedUsers = List.of(userGetDto);
 
-        when(userService.getAllUsers(page, size, sortBy)).thenReturn(expectedUsers);
+        when(userServiceI.getAllUsers(page, size, sortBy)).thenReturn(expectedUsers);
 
         ResponseEntity<List<UserGetDto>> response = userController.getAllUsers(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedUsers, response.getBody());
-        verify(userService).getAllUsers(page, size, sortBy);
+        verify(userServiceI).getAllUsers(page, size, sortBy);
     }
 
     @Test
@@ -106,13 +106,13 @@ public class UserControllerTest {
 
         String id = "1111-1111-2222";
 
-        when(userService.getUserById(id)).thenReturn(userGetDto);
+        when(userServiceI.getUserById(id)).thenReturn(userGetDto);
 
         ResponseEntity<UserGetDto> response = userController.getUserById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userService).getUserById(id);
+        verify(userServiceI).getUserById(id);
 
     }
 
@@ -120,39 +120,39 @@ public class UserControllerTest {
     @DisplayName("Test if add new user works correctly")
     void addNewUserShouldReturnUser() throws UserDuplicateException {
 
-        when(userService.addNewUser(userCreateDto)).thenReturn(userGetDto);
+        when(userServiceI.addNewUser(userCreateDto)).thenReturn(userGetDto);
 
         ResponseEntity<UserGetDto> response = userController.addNewUser(userCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userService).addNewUser(userCreateDto);
+        verify(userServiceI).addNewUser(userCreateDto);
     }
 
     @Test
     @DisplayName("Test if update user works correctly")
     void updateUserShouldReturnUser() throws UserNotFoundException, UserDuplicateException {
 
-        when(userService.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
+        when(userServiceI.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
 
         ResponseEntity<UserGetDto> response = userController.updateUser(userGetDto.id(), userUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userService).updateUser(userGetDto.id(), userUpdateDto);
+        verify(userServiceI).updateUser(userGetDto.id(), userUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete user works correctly")
     void deleteUserShouldReturnUser() throws UserNotFoundException {
 
-        when(userService.deleteUser(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
+        when(userServiceI.deleteUser(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
 
         ResponseEntity<String> response = userController.deleteUser(userGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS, response.getBody());
-        verify(userService).deleteUser(userGetDto.id());
+        verify(userServiceI).deleteUser(userGetDto.id());
     }
 
 }

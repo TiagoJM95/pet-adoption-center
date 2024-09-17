@@ -10,8 +10,6 @@ import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.BreedRepository;
 import com.petadoption.center.repository.SpeciesRepository;
-import com.petadoption.center.service.implementation.BreedServiceImpl;
-import com.petadoption.center.service.implementation.SpeciesServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,10 +34,10 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class BreedServiceImplTest {
+public class BreedServiceTest {
 
     @InjectMocks
-    private BreedServiceImpl breedService;
+    private BreedService breedService;
 
     @Mock
     private BreedRepository breedRepository;
@@ -48,7 +46,7 @@ public class BreedServiceImplTest {
     private SpeciesRepository speciesRepository;
 
     @Mock
-    private SpeciesServiceImpl speciesService;
+    private SpeciesService speciesService;
 
     private Species species;
 

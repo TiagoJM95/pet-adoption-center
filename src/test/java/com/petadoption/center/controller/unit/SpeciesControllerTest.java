@@ -7,7 +7,7 @@ import com.petadoption.center.dto.species.SpeciesUpdateDto;
 import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
-import com.petadoption.center.service.SpeciesService;
+import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class SpeciesControllerTest {
 
     @Mock
-    private SpeciesService speciesService;
+    private SpeciesServiceI speciesServiceI;
 
     @InjectMocks
     private SpeciesController speciesController;
@@ -64,64 +64,64 @@ public class SpeciesControllerTest {
 
         List<SpeciesGetDto> expectedSpecies = List.of(speciesGetDto);
 
-        when(speciesService.getAllSpecies(page, size, sortBy)).thenReturn(expectedSpecies);
+        when(speciesServiceI.getAllSpecies(page, size, sortBy)).thenReturn(expectedSpecies);
 
         ResponseEntity<List<SpeciesGetDto>> result = speciesController.getAllPetSpecies(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(List.of(speciesGetDto), result.getBody());
-        verify(speciesService).getAllSpecies(page, size, sortBy);
+        verify(speciesServiceI).getAllSpecies(page, size, sortBy);
     }
 
     @Test
     @DisplayName("Test if get Species by id works correctly")
     void getSpeciesByIdShouldReturnSpecies() throws SpeciesNotFoundException {
 
-        when(speciesService.getSpeciesById(testSpecies.getId())).thenReturn(speciesGetDto);
+        when(speciesServiceI.getSpeciesById(testSpecies.getId())).thenReturn(speciesGetDto);
 
         ResponseEntity<SpeciesGetDto> result = speciesController.getPetSpeciesById(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).getSpeciesById(testSpecies.getId());
+        verify(speciesServiceI).getSpeciesById(testSpecies.getId());
     }
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
     void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
 
-        when(speciesService.addNewSpecies(speciesCreateDto)).thenReturn(speciesGetDto);
+        when(speciesServiceI.addNewSpecies(speciesCreateDto)).thenReturn(speciesGetDto);
 
         ResponseEntity<SpeciesGetDto> result = speciesController.addNewPetSpecies(speciesCreateDto);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).addNewSpecies(speciesCreateDto);
+        verify(speciesServiceI).addNewSpecies(speciesCreateDto);
     }
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
     void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
 
-        when(speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto)).thenReturn(speciesGetDto);
+        when(speciesServiceI.updateSpecies(testSpecies.getId(), speciesUpdateDto)).thenReturn(speciesGetDto);
 
         ResponseEntity<SpeciesGetDto> result = speciesController.updatePetSpecies(testSpecies.getId(), speciesUpdateDto);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesService).updateSpecies(testSpecies.getId(), speciesUpdateDto);
+        verify(speciesServiceI).updateSpecies(testSpecies.getId(), speciesUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete species works correctly")
     void deleteSpeciesShouldReturnMessage() throws SpeciesNotFoundException {
 
-        when(speciesService.deleteSpecies(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
+        when(speciesServiceI.deleteSpecies(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> result = speciesController.deleteSpecies(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS, result.getBody());
-        verify(speciesService).deleteSpecies(testSpecies.getId());
+        verify(speciesServiceI).deleteSpecies(testSpecies.getId());
     }
 }

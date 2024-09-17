@@ -6,7 +6,7 @@ import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.model.Color;
-import com.petadoption.center.service.ColorService;
+import com.petadoption.center.service.interfaces.ColorServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import static org.mockito.Mockito.when;
 public class ColorControllerTest {
 
     @Mock
-    private ColorService colorService;
+    private ColorServiceI colorServiceI;
 
     @InjectMocks
     private ColorController colorController;
@@ -60,13 +60,13 @@ public class ColorControllerTest {
 
         List<ColorGetDto> expectedColors = List.of(colorGetDto);
 
-        when(colorService.getAllColors(page, size, sortBy)).thenReturn(expectedColors);
+        when(colorServiceI.getAllColors(page, size, sortBy)).thenReturn(expectedColors);
 
         ResponseEntity<List<ColorGetDto>> response = colorController.getAllColors(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedColors, response.getBody());
-        verify(colorService).getAllColors(page, size, sortBy);
+        verify(colorServiceI).getAllColors(page, size, sortBy);
     }
 
 
@@ -74,13 +74,13 @@ public class ColorControllerTest {
     @DisplayName("Test if get Color by id works correctly")
     void getColorByIdShouldReturnColor() throws ColorNotFoundException {
 
-        when(colorService.getColorById(testColor.getId())).thenReturn(colorGetDto);
+        when(colorServiceI.getColorById(testColor.getId())).thenReturn(colorGetDto);
 
         ResponseEntity<ColorGetDto> response = colorController.getColorById(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorService).getColorById(testColor.getId());
+        verify(colorServiceI).getColorById(testColor.getId());
 
     }
 
@@ -88,13 +88,13 @@ public class ColorControllerTest {
     @DisplayName("Test if add new Color works correctly")
     void createColorShouldReturnColor() throws ColorDuplicateException {
 
-        when(colorService.addNewColor(colorCreateDto)).thenReturn(colorGetDto);
+        when(colorServiceI.addNewColor(colorCreateDto)).thenReturn(colorGetDto);
 
         ResponseEntity<ColorGetDto> response = colorController.addNewColor(colorCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorService).addNewColor(colorCreateDto);
+        verify(colorServiceI).addNewColor(colorCreateDto);
     }
 
 
@@ -102,12 +102,12 @@ public class ColorControllerTest {
     @DisplayName("Test if delete Color works correctly")
     void deleteColorShouldReturnColor() throws ColorNotFoundException {
 
-        when(colorService.deleteColor(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
+        when(colorServiceI.deleteColor(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> response = colorController.deleteColor(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS, response.getBody());
-        verify(colorService).deleteColor(testColor.getId());
+        verify(colorServiceI).deleteColor(testColor.getId());
     }
 }

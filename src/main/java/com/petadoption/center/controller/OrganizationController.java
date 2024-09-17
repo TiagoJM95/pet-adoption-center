@@ -4,7 +4,7 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.service.OrganizationService;
+import com.petadoption.center.service.interfaces.OrganizationServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,33 +18,33 @@ import java.util.List;
 public class OrganizationController {
 
     @Autowired
-    private OrganizationService organizationService;
+    private OrganizationServiceI organizationServiceI;
 
     @GetMapping("/")
     public ResponseEntity<List<OrgGetDto>> getAllOrganizations(@RequestParam (defaultValue = "0", required = false) int page,
                                                                @RequestParam (defaultValue = "5", required = false) int size,
                                                                @RequestParam (defaultValue = "id", required = false) String sortBy){
-        return new ResponseEntity<>(organizationService.getAllOrganizations(page, size, sortBy), HttpStatus.OK);
+        return new ResponseEntity<>(organizationServiceI.getAllOrganizations(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<OrgGetDto> getOrganizationById(@PathVariable("id") String id) throws OrgNotFoundException {
-        return new ResponseEntity<>(organizationService.getOrganizationById(id), HttpStatus.OK);
+        return new ResponseEntity<>(organizationServiceI.getOrganizationById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
     public ResponseEntity<OrgGetDto> addNewOrganization(@Valid @RequestBody OrgCreateDto organization) {
-        return new ResponseEntity<>(organizationService.addNewOrganization(organization), HttpStatus.CREATED);
+        return new ResponseEntity<>(organizationServiceI.addNewOrganization(organization), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<OrgGetDto> updateOrganization(@PathVariable ("id") String id,
                                                         @Valid @RequestBody OrgUpdateDto organization) throws OrgNotFoundException {
-        return new ResponseEntity<>(organizationService.updateOrganization(id, organization), HttpStatus.OK);
+        return new ResponseEntity<>(organizationServiceI.updateOrganization(id, organization), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteOrganization(@PathVariable ("id") String id) throws OrgNotFoundException {
-        return new ResponseEntity<>(organizationService.deleteOrganization(id), HttpStatus.OK);
+        return new ResponseEntity<>(organizationServiceI.deleteOrganization(id), HttpStatus.OK);
     }
 }

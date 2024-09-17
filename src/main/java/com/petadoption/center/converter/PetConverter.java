@@ -3,8 +3,8 @@ package com.petadoption.center.converter;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.model.Pet;
-import com.petadoption.center.util.aggregator.PetCreateContext;
-import com.petadoption.center.util.aggregator.PetGetContext;
+import com.petadoption.center.service.aggregator.PetCreateContext;
+import com.petadoption.center.service.aggregator.PetGetContext;
 
 public class PetConverter {
 

@@ -1,4 +1,4 @@
-package com.petadoption.center.util;
+package com.petadoption.center.specifications;
 
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Color;

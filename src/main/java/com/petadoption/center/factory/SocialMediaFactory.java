@@ -1,4 +1,4 @@
-package com.petadoption.center.util.factory;
+package com.petadoption.center.factory;
 
 import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;

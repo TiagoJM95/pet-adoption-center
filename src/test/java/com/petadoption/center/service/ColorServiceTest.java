@@ -6,7 +6,6 @@ import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.repository.ColorRepository;
-import com.petadoption.center.service.implementation.ColorServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,10 +29,10 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class ColorServiceImplTest {
+public class ColorServiceTest {
 
     @InjectMocks
-    private ColorServiceImpl colorService;
+    private ColorService colorService;
 
     @Mock
     private ColorRepository colorRepository;

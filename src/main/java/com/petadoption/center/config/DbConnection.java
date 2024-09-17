@@ -1,4 +1,4 @@
-package com.petadoption.center.util;
+package com.petadoption.center.config;
 
 import com.petadoption.center.exception.db.DatabaseConnectionException;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.petadoption.center.util.aggregator;
+package com.petadoption.center.service.aggregator;
 
 import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Coats;

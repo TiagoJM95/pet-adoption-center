@@ -7,7 +7,6 @@ import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
-import com.petadoption.center.service.implementation.SpeciesServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,10 +30,10 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @ActiveProfiles("test")
-public class SpeciesServiceImplTest {
+public class SpeciesServiceTest {
 
     @InjectMocks
-    private SpeciesServiceImpl speciesService;
+    private SpeciesService speciesService;
 
     @Mock
     private SpeciesRepository speciesRepository;

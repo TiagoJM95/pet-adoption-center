@@ -4,8 +4,8 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.model.Organization;
 
-import static com.petadoption.center.util.factory.AddressFactory.createAddress;
-import static com.petadoption.center.util.factory.SocialMediaFactory.createSocialMedia;
+import static com.petadoption.center.factory.AddressFactory.createAddress;
+import static com.petadoption.center.factory.SocialMediaFactory.createSocialMedia;
 
 public class OrgConverter {
 

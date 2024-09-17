@@ -9,7 +9,7 @@ import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Species;
-import com.petadoption.center.service.BreedService;
+import com.petadoption.center.service.interfaces.BreedServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,7 +33,7 @@ import static org.mockito.Mockito.when;
 public class BreedControllerTest {
 
     @Mock
-    private BreedService breedService;
+    private BreedServiceI breedServiceI;
 
     @InjectMocks
     private BreedController breedController;
@@ -87,26 +87,26 @@ public class BreedControllerTest {
 
         List<BreedGetDto> expectedBreeds = List.of(breedGetDto);
 
-        when(breedService.getAllBreeds(page, size, sortBy)).thenReturn(expectedBreeds);
+        when(breedServiceI.getAllBreeds(page, size, sortBy)).thenReturn(expectedBreeds);
 
         ResponseEntity<List<BreedGetDto>> response = breedController.getAllBreeds(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBreeds, response.getBody());
-        verify(breedService).getAllBreeds(page, size, sortBy);
+        verify(breedServiceI).getAllBreeds(page, size, sortBy);
     }
 
     @Test
     @DisplayName("Test if get Breed by id works correctly")
     void getBreedByIdShouldReturnBreed() throws BreedNotFoundException {
 
-        when(breedService.getBreedById(testBreed.getId())).thenReturn(breedGetDto);
+        when(breedServiceI.getBreedById(testBreed.getId())).thenReturn(breedGetDto);
 
         ResponseEntity<BreedGetDto> response = breedController.getBreedById(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
-        verify(breedService).getBreedById(testBreed.getId());
+        verify(breedServiceI).getBreedById(testBreed.getId());
 
     }
 
@@ -114,26 +114,26 @@ public class BreedControllerTest {
     @DisplayName("Test if add new Breed works correctly")
     void addNewBreedShouldReturnBreed() throws BreedDuplicateException, SpeciesNotFoundException {
 
-        when(breedService.addNewBreed(breedCreateDto)).thenReturn(breedGetDto);
+        when(breedServiceI.addNewBreed(breedCreateDto)).thenReturn(breedGetDto);
 
         ResponseEntity<BreedGetDto> response = breedController.addNewBreed(breedCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
-        verify(breedService).addNewBreed(breedCreateDto);
+        verify(breedServiceI).addNewBreed(breedCreateDto);
     }
 
     @Test
     @DisplayName("Test if update Breed works correctly")
     void updateBreedShouldReturnBreed() throws BreedNotFoundException, BreedDuplicateException {
 
-        when(breedService.updateBreed(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
+        when(breedServiceI.updateBreed(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
 
         ResponseEntity<BreedGetDto> response = breedController.updateBreed(testBreed.getId(), breedUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
-        verify(breedService).updateBreed(testBreed.getId(), breedUpdateDto);
+        verify(breedServiceI).updateBreed(testBreed.getId(), breedUpdateDto);
     }
 
 
@@ -141,12 +141,12 @@ public class BreedControllerTest {
     @DisplayName("Test if delete Breed works correctly")
     void deleteBreedShouldReturnBreed() throws BreedNotFoundException {
 
-        when(breedService.deleteBreed(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
+        when(breedServiceI.deleteBreed(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> response = breedController.deleteBreed(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS, response.getBody());
-        verify(breedService).deleteBreed(testBreed.getId());
+        verify(breedServiceI).deleteBreed(testBreed.getId());
     }
 }

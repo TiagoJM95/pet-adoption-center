@@ -4,7 +4,7 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.service.UserService;
+import com.petadoption.center.service.interfaces.UserServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,33 +18,33 @@ import java.util.List;
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceI userServiceI;
 
     @GetMapping("/")
     public ResponseEntity<List<UserGetDto>> getAllUsers(@RequestParam (defaultValue = "0", required = false) int page,
                                                         @RequestParam (defaultValue = "5", required = false) int size,
                                                         @RequestParam (defaultValue = "id", required = false) String sortBy) {
-        return new ResponseEntity<>(userService.getAllUsers(page, size, sortBy), HttpStatus.OK);
+        return new ResponseEntity<>(userServiceI.getAllUsers(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") String id) throws UserNotFoundException {
-        return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+        return new ResponseEntity<>(userServiceI.getUserById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
     public ResponseEntity<UserGetDto> addNewUser(@Valid @RequestBody UserCreateDto dto) {
-        return new ResponseEntity<>(userService.addNewUser(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(userServiceI.addNewUser(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") String id, @Valid @RequestBody UserUpdateDto dto) throws UserNotFoundException {
-        return new ResponseEntity<>(userService.updateUser(id, dto), HttpStatus.OK);
+        return new ResponseEntity<>(userServiceI.updateUser(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable ("id") String id) throws UserNotFoundException {
-        return new ResponseEntity<>(userService.deleteUser(id), HttpStatus.OK);
+        return new ResponseEntity<>(userServiceI.deleteUser(id), HttpStatus.OK);
     }
 
 }
