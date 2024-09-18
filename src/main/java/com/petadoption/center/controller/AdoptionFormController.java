@@ -3,6 +3,7 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
+import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class AdoptionFormController {
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<AdoptionFormGetDto> getAdoptionFormById(@PathVariable("id") Long id){
+    public ResponseEntity<AdoptionFormGetDto> getAdoptionFormById(@PathVariable("id") String id) throws AdoptionFormNotFoundException {
         return new ResponseEntity<>(adoptionFormServiceI.getAdoptionFormById(id), HttpStatus.OK);
     }
 
@@ -38,7 +39,7 @@ public class AdoptionFormController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<AdoptionFormGetDto> updateAdoptionForm(@PathVariable ("id") Long id,
+    public ResponseEntity<AdoptionFormGetDto> updateAdoptionForm(@PathVariable ("id") String id,
                                                                  @RequestBody AdoptionFormUpdateDto adoptionForm){
         return new ResponseEntity<>(adoptionFormServiceI.updateAdoptionForm(id, adoptionForm), HttpStatus.OK);
     }
