@@ -7,6 +7,7 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.petadoption.center.util.Messages.*;
 
@@ -49,27 +52,20 @@ public class ExceptionsHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-/*    @ExceptionHandler(value = {SQLException.class})
-    public ResponseEntity<String> DbDuplicateHandler(Exception ex) {
-        logger.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }*/
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        String message = ex.getMostSpecificCause().getMessage();
+        String message = ex.getCause().getMessage();
 
-        System.out.println(message);
-        if (message.contains("(email)")) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This email is already registered.");
-        } else if (message.contains("(nif)")) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This NIF is already in use.");
-        } else if (message.contains("(phoneNumber)")) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("This phone number is already in use.");
+        int startIndex = message.lastIndexOf("unique") + 6;
+        int endIndex = message.indexOf("\"", startIndex);
+
+        if (message.contains("unique")) {
+                String key = message.substring(startIndex, endIndex);
+                return ResponseEntity.status(HttpStatus.CONFLICT).body( key + " is already in use.");
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving user in the database.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving data in the database.");
     }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
