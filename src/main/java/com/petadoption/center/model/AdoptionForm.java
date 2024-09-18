@@ -4,6 +4,7 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 @Entity
 @NoArgsConstructor
@@ -15,8 +16,8 @@ import lombok.*;
 public class AdoptionForm {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
     private User userId;

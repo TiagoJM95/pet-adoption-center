@@ -5,6 +5,7 @@ import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,13 +35,13 @@ public class AdoptionFormController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<AdoptionFormGetDto> addNewAdoptionForm(@RequestBody AdoptionFormCreateDto adoptionForm){
+    public ResponseEntity<AdoptionFormGetDto> addNewAdoptionForm(@RequestBody @Valid AdoptionFormCreateDto adoptionForm){
         return new ResponseEntity<>(adoptionFormServiceI.addNewAdoptionForm(adoptionForm), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<AdoptionFormGetDto> updateAdoptionForm(@PathVariable ("id") String id,
-                                                                 @RequestBody AdoptionFormUpdateDto adoptionForm){
+                                                                 @RequestBody @Valid AdoptionFormUpdateDto adoptionForm){
         return new ResponseEntity<>(adoptionFormServiceI.updateAdoptionForm(id, adoptionForm), HttpStatus.OK);
     }
 

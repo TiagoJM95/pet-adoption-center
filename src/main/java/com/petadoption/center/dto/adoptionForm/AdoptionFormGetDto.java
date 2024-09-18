@@ -6,7 +6,7 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 
 public record AdoptionFormGetDto(
-        Long id,
+        String id,
         UserGetDto user,
         PetGetDto pet,
         Family userFamily,

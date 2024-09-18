@@ -12,20 +12,24 @@ public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        Long userId,
+        String userId,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        Long petId,
+        String petId,
 
+        @NotBlank(message = BLANK_FIELD)
         Family userFamily,
 
+        @NotBlank(message = BLANK_FIELD)
         String petVacationHome,
 
+        @NotBlank(message = BLANK_FIELD)
         Boolean isResponsibleForPet,
 
         String otherNotes,
 
+        @NotBlank(message = BLANK_FIELD)
         Address petAddress
 ) {
 }
