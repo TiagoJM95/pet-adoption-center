@@ -14,7 +14,7 @@ public interface AdoptionFormServiceI {
 
     AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionForm);
 
-    AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionForm);
+    AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionForm) throws AdoptionFormNotFoundException;
 
-    String deleteAdoptionForm(Long id);
+    String deleteAdoptionForm(String id) throws AdoptionFormNotFoundException;
 }

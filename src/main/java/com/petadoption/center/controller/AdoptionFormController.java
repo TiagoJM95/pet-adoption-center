@@ -41,12 +41,12 @@ public class AdoptionFormController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<AdoptionFormGetDto> updateAdoptionForm(@PathVariable ("id") String id,
-                                                                 @RequestBody @Valid AdoptionFormUpdateDto adoptionForm){
+                                                                 @RequestBody @Valid AdoptionFormUpdateDto adoptionForm) throws AdoptionFormNotFoundException {
         return new ResponseEntity<>(adoptionFormServiceI.updateAdoptionForm(id, adoptionForm), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteAdoptionForm(@PathVariable ("id") Long id) {
+    public ResponseEntity<String> deleteAdoptionForm(@PathVariable ("id") String id) throws AdoptionFormNotFoundException {
         return new ResponseEntity<>(adoptionFormServiceI.deleteAdoptionForm(id), HttpStatus.OK);
     }
 }

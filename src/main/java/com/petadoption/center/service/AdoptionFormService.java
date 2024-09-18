@@ -1,5 +1,6 @@
 package com.petadoption.center.service;
 
+import com.petadoption.center.converter.AdoptionFormConverter;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
@@ -14,7 +15,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.converter.AdoptionFormConverter.toDto;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 
 
 @Service
@@ -26,7 +28,9 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     @Override
     public List<AdoptionFormGetDto> getAllAdoptionForms(int page, int size, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return List.of();
+        /*return adoptionFormRepository.findAll(pageRequest).stream().map((adoptionForm) -> AdoptionFormConverter.toDto(adoptionForm, )).toList();*/
+        return null;
+
     }
 
     @Override
@@ -40,13 +44,15 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     }
 
     @Override
-    public AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionForm) {
+    public AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionForm) throws AdoptionFormNotFoundException {
         return null;
     }
 
     @Override
-    public String deleteAdoptionForm(Long id) {
-        return "";
+    public String deleteAdoptionForm(String id) throws AdoptionFormNotFoundException {
+        findAdoptionFormById(id);
+        adoptionFormRepository.deleteById(id);
+        return ADOPTION_FORM_WITH_ID + id + DELETE_SUCCESS;
     }
 
     private AdoptionForm findAdoptionFormById(String id) throws AdoptionFormNotFoundException {
