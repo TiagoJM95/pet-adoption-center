@@ -1,5 +1,7 @@
 package com.petadoption.center.dto.adoptionForm;
 
+import com.petadoption.center.model.embeddable.Address;
+import com.petadoption.center.model.embeddable.Family;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
@@ -14,6 +16,16 @@ public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        Long petId
+        Long petId,
+
+        Family userFamily,
+
+        String petVacationHome,
+
+        Boolean isResponsibleForPet,
+
+        String otherNotes,
+
+        Address petAddress
 ) {
 }
