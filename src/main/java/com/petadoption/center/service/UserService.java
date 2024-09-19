@@ -49,7 +49,7 @@ public class UserService implements UserServiceI {
 
     @Override
     public UserGetDto addNewUser(UserCreateDto dto) {
-        emailService.sendEmail(new EmailDto(dto.email(), "Welcome!", "Welcome to Pet Adoption Center!"));
+        emailService.sendEmail(dto.email(), dto.firstName());
         return toDto(userRepository.save(toModel(dto)));
     }
 

@@ -11,6 +11,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Objects;
+
 @Service
 public class EmailService {
 
@@ -29,7 +33,18 @@ public class EmailService {
     private static final String EXCHANGE = "emailExchange";
     private static final String ROUTING_KEY = "emailRoutingKey";
 
-    public void sendEmail(EmailDto dto) {
+    public void sendEmail(String recipient, String userName) {
+        String welcomeEmail;
+
+        try {
+            String path = Objects.requireNonNull(getClass().getClassLoader().getResource("welcomeTemplate.html")).getPath();
+            welcomeEmail = new String(Files.readAllBytes(Paths.get(path)));
+        } catch (Exception e) {
+            throw new SendingEmailToMicroserviceException("Could not read the email template.");
+        }
+
+        welcomeEmail = welcomeEmail.replace("{{userName}}", userName);
+        EmailDto dto = new EmailDto(recipient, "Welcome!", welcomeEmail);
         try {
             String json = objectMapper.writeValueAsString(dto);
             rabbitTemplate.convertAndSend(EXCHANGE, ROUTING_KEY, json);
@@ -51,5 +66,4 @@ public class EmailService {
             System.out.println("Failed to send email to Express.js microservice: " + response.getStatusCode());
         }
     }
-
 }
