@@ -1,11 +1,17 @@
 package com.petadoption.center.service;
 
 import com.petadoption.center.converter.AdoptionFormConverter;
+import com.petadoption.center.converter.PetConverter;
+import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
+import com.petadoption.center.exception.pet.PetNotFoundException;
+import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
+import com.petadoption.center.model.Pet;
+import com.petadoption.center.model.User;
 import com.petadoption.center.repository.AdoptionFormRepository;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
 import com.petadoption.center.service.interfaces.PetServiceI;
@@ -49,9 +55,10 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     }
 
     @Override
-    public AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionForm) {
-        //TODO add logic to save user and pet
-        return toDto(adoptionFormRepository.save(toModel(adoptionForm)));
+    public AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionFormCreateDto) throws UserNotFoundException, PetNotFoundException {
+        AdoptionForm adoptionForm = buildAdoptionFormFromDto(adoptionFormCreateDto);
+        adoptionFormRepository.save(adoptionForm);
+        return AdoptionFormConverter.toDto(adoptionForm);
     }
 
     @Override
@@ -70,6 +77,16 @@ public class AdoptionFormService implements AdoptionFormServiceI {
 
     private AdoptionForm findAdoptionFormById(String id) throws AdoptionFormNotFoundException {
         return adoptionFormRepository.findById(id).orElseThrow(() -> new AdoptionFormNotFoundException(id));
+    }
+
+    private AdoptionForm buildAdoptionFormFromDto(AdoptionFormCreateDto adoptionFormCreateDto) throws UserNotFoundException, PetNotFoundException {
+       AdoptionForm adoptionForm = AdoptionFormConverter.toModel(adoptionFormCreateDto);
+       User user = UserConverter.toModel(userServiceI.getUserById(adoptionFormCreateDto.userId()));
+       Pet pet = PetConverter.toModel(petServiceI.getPetById(adoptionFormCreateDto.petId()));
+
+       adoptionForm.setUserId(user);
+       adoptionForm.setPetId(pet);
+       return adoptionForm;
     }
 
     private void updateAdoptionFormFields(AdoptionFormUpdateDto adoptionFormUpdateDto, AdoptionForm adoptionForm) {
