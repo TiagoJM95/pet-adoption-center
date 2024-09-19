@@ -16,9 +16,9 @@ public class OrgConverter {
                 email(dto.email()).
                 nif(dto.nif()).
                 phoneNumber(dto.phoneNumber()).
-                address(createAddress(dto)).
+                address(dto.address()).
                 websiteUrl(dto.websiteUrl()).
-                socialMedia(createSocialMedia(dto)).
+                socialMedia(dto.socialMedia()).
                 build();
     }
 

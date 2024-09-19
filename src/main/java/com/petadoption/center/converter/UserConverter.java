@@ -1,7 +1,6 @@
 package com.petadoption.center.converter;
 
 import com.petadoption.center.dto.user.UserCreateDto;
-import com.petadoption.center.dto.user.UserFavoritePetsDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.User;
 
@@ -17,7 +16,22 @@ public class UserConverter {
                 .email(dto.email())
                 .nif(dto.nif())
                 .dateOfBirth(dto.dateOfBirth())
-                .address(createAddress(dto))
+                .address(dto.address())
+                .phoneNumber(dto.phoneNumber())
+                .build();
+
+    }
+
+    public static User toModel(UserGetDto dto){
+        if (dto == null) return null;
+        return User.builder()
+                .id(dto.id())
+                .firstName(dto.firstName())
+                .lastName(dto.lastName())
+                .email(dto.email())
+                .nif(dto.nif())
+                .dateOfBirth(dto.dateOfBirth())
+                .address(dto.address())
                 .phoneNumber(dto.phoneNumber())
                 .build();
 
@@ -34,13 +48,6 @@ public class UserConverter {
                 .dateOfBirth(user.getDateOfBirth())
                 .address(user.getAddress())
                 .phoneNumber(user.getPhoneNumber())
-                .build();
-    }
-
-    public static UserFavoritePetsDto toFavoritePetsDto(User user){
-        if (user == null) return null;
-        return UserFavoritePetsDto.builder()
-                .favoritePets(user.getFavoritePets())
                 .build();
     }
 }
