@@ -1,6 +1,5 @@
 package com.petadoption.center.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.email.EmailDto;
 import com.petadoption.center.exception.email.SendingEmailToMicroserviceException;
@@ -37,7 +36,7 @@ public class EmailService {
         String welcomeEmail;
 
         try {
-            String path = Objects.requireNonNull(getClass().getClassLoader().getResource("welcomeTemplate.html")).getPath();
+            String path = Objects.requireNonNull(getClass().getClassLoader().getResource("emailTemplates/welcomeTemplate.html")).getPath();
             welcomeEmail = new String(Files.readAllBytes(Paths.get(path)));
         } catch (Exception e) {
             throw new SendingEmailToMicroserviceException("Could not read the email template.");
