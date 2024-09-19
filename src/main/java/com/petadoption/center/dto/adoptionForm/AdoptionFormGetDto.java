@@ -4,7 +4,9 @@ import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
+import lombok.Builder;
 
+@Builder
 public record AdoptionFormGetDto(
         String id,
         UserGetDto user,

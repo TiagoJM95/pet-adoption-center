@@ -8,6 +8,8 @@ import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundExcepti
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.repository.AdoptionFormRepository;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
+import com.petadoption.center.service.interfaces.PetServiceI;
+import com.petadoption.center.service.interfaces.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -15,37 +17,48 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.petadoption.center.converter.AdoptionFormConverter.*;
 import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Utils.updateFields;
 
 
 @Service
 public class AdoptionFormService implements AdoptionFormServiceI {
 
+    private final AdoptionFormRepository adoptionFormRepository;
+    private final UserServiceI userServiceI;
+    private final PetServiceI petServiceI;
+
     @Autowired
-    private AdoptionFormRepository adoptionFormRepository;
+    public AdoptionFormService(AdoptionFormRepository adoptionFormRepository, UserServiceI userServiceI, PetServiceI petServiceI) {
+        this.adoptionFormRepository = adoptionFormRepository;
+        this.userServiceI = userServiceI;
+        this.petServiceI = petServiceI;
+    }
 
     @Override
     public List<AdoptionFormGetDto> getAllAdoptionForms(int page, int size, String sortBy) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        /*return adoptionFormRepository.findAll(pageRequest).stream().map((adoptionForm) -> AdoptionFormConverter.toDto(adoptionForm, )).toList();*/
-        return null;
-
+        return adoptionFormRepository.findAll(pageRequest).stream().map(AdoptionFormConverter::toDto).toList();
     }
 
     @Override
     public AdoptionFormGetDto getAdoptionFormById(String id) throws AdoptionFormNotFoundException{
-        return null;
+        return toDto(findAdoptionFormById(id));
     }
 
     @Override
     public AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionForm) {
-        return null;
+        //TODO add logic to save user and pet
+        return toDto(adoptionFormRepository.save(toModel(adoptionForm)));
     }
 
     @Override
-    public AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionForm) throws AdoptionFormNotFoundException {
-        return null;
+    public AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionFormUpdateDto) throws AdoptionFormNotFoundException {
+        AdoptionForm adoptionForm = findAdoptionFormById(id);
+        updateAdoptionFormFields(adoptionFormUpdateDto, adoptionForm);
+        return toDto(adoptionFormRepository.save(adoptionForm));
     }
 
     @Override
@@ -57,5 +70,13 @@ public class AdoptionFormService implements AdoptionFormServiceI {
 
     private AdoptionForm findAdoptionFormById(String id) throws AdoptionFormNotFoundException {
         return adoptionFormRepository.findById(id).orElseThrow(() -> new AdoptionFormNotFoundException(id));
+    }
+
+    private void updateAdoptionFormFields(AdoptionFormUpdateDto adoptionFormUpdateDto, AdoptionForm adoptionForm) {
+        updateFields(adoptionFormUpdateDto.userFamily(), adoptionForm.getUserFamily(), adoptionForm::setUserFamily);
+        updateFields(adoptionFormUpdateDto.petVacationHome(), adoptionForm.getPetVacationHome(), adoptionForm::setPetVacationHome);
+        updateFields(adoptionFormUpdateDto.isResponsibleForPet(), adoptionForm.getIsResponsibleForPet(), adoptionForm::setIsResponsibleForPet);
+        updateFields(adoptionFormUpdateDto.otherNotes(), adoptionForm.getOtherNotes(), adoptionForm::setOtherNotes);
+        updateFields(adoptionFormUpdateDto.petAddress(), adoptionForm.getPetAddress(), adoptionForm::setPetAddress);
     }
 }
