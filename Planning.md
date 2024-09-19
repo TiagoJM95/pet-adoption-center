@@ -84,13 +84,13 @@ It will allow for these organizations to post their pets for adoption and users 
 - Remove owned pets from adoption
   - Status: [X] Testing;
 - View adoption interests for owned pets
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Review user information if they manifest interest in adopting an owned pet
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Create adoption forms for user interested in adopting a specific owned pet. The form is pre-filled with organization, pet and user information. Notify user.
   - Status: [ ] Not Started
 - Accept / reject adoption interest. Notify user.
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 
 ### What can a user do?
 - Add pet to favorites list
@@ -100,13 +100,13 @@ It will allow for these organizations to post their pets for adoption and users 
 - Remove pet from favorites list
   - Status: [X] Testing;
 - Manifest interest in adopting a specific pet. Notify organization.
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Fill out adoption form when requested. Notify organization.
   - Status: [ ] Not Started
 - View all adoption interest pending
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - View adoption interest history, accepted or rejected, with or without the respective adoption form.
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 
 ### Pet Search and Filters (For Users, Guests, Organizations and Admins)
 - Browse Pets by breed, age, etc.
