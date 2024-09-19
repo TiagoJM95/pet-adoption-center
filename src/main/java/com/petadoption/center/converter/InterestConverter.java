@@ -2,8 +2,6 @@ package com.petadoption.center.converter;
 
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.model.Interest;
-import com.petadoption.center.service.aggregator.InterestCreateContext;
-import com.petadoption.center.service.aggregator.InterestGetContext;
 
 public class InterestConverter {
 

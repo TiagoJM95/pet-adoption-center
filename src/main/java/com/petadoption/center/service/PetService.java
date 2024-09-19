@@ -15,7 +15,6 @@ import com.petadoption.center.model.*;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.interfaces.*;
 import com.petadoption.center.specifications.PetSearchCriteria;
-import com.petadoption.center.factory.AttributesFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -106,7 +105,7 @@ public class PetService implements PetServiceI {
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
 
         pet.setSpecies(species);
-        pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getBreedById(dto.primaryBreedId()), species));
+        pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getBreedById(dto.primaryBreedId())));
         pet.setSecondaryBreed(getBreedOrNull(dto.secondaryBreedId(), species));
         pet.setPrimaryColor(ColorConverter.toModel(colorServiceI.getColorById(dto.primaryColor())));
         pet.setSecondaryColor(getColorOrNull(dto.secondaryColor()));
@@ -151,8 +150,8 @@ public class PetService implements PetServiceI {
         updateFields(getAgeByDescription(dto.age()), pet.getAge(), pet::setAge);
         updateFields(dto.description(), pet.getDescription(), pet::setDescription);
         updateFields(dto.imageUrl(), pet.getImageUrl(), pet::setImageUrl);
-        updateFields(dto.isAdopted(), pet.getIsAdopted(), pet::setIsAdopted);
-        updateFields(AttributesFactory.create(dto), pet.getAttributes(), pet::setAttributes);
+        updateFields(dto.isAdopted(), pet.isAdopted(), pet::setAdopted);
+        updateFields(dto.attributes(), pet.getAttributes(), pet::setAttributes);
         updateFields(org, pet.getOrganization(), pet::setOrganization);
     }
 
@@ -161,6 +160,6 @@ public class PetService implements PetServiceI {
     }
 
     private Breed getBreedOrNull(String breedId, Species species) throws BreedNotFoundException {
-        return breedId == null ? null : BreedConverter.toModel(breedServiceI.getBreedById(breedId), species);
+        return breedId == null ? null : BreedConverter.toModel(breedServiceI.getBreedById(breedId));
     }
 }

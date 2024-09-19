@@ -7,7 +7,6 @@ import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
-import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.enums.Status;
 import com.petadoption.center.exception.InvalidStatusException;
 import com.petadoption.center.exception.interest.InterestNotFoundException;
@@ -16,7 +15,6 @@ import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.Interest;
 import com.petadoption.center.model.Organization;
-import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.User;
 import com.petadoption.center.repository.InterestRepository;
 import com.petadoption.center.service.interfaces.InterestServiceI;
@@ -27,14 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.petadoption.center.enums.Status.*;
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.INTEREST_WITH_ID;
 
 @Service
 public class InterestService implements InterestServiceI {

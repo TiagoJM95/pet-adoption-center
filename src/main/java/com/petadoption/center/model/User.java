@@ -7,7 +7,6 @@ import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
@@ -68,7 +67,7 @@ public class User {
     @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private Set<AdoptionForm> userAdoptionForms = new HashSet<>();
 
-    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @Column(name = "interests_in_pets")
     private Set<Interest> interests = new HashSet<>();
 }

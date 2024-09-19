@@ -65,7 +65,7 @@ public class Organization {
     @Column(name = "pets_owned")
     private List<Pet> petsOwned = new ArrayList<>();
 
-    @OneToMany(mappedBy = "organizationId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
     @Column(name = "interests_in_owned_pets")
     private Set<Interest> interests = new HashSet<>();
 }

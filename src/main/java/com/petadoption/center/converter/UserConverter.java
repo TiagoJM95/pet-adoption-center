@@ -4,7 +4,6 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.User;
 
-import static com.petadoption.center.factory.AddressFactory.createAddress;
 
 public class UserConverter {
 

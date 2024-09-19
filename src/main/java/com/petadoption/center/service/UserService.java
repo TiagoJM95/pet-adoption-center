@@ -26,7 +26,6 @@ import static com.petadoption.center.converter.UserConverter.toDto;
 import static com.petadoption.center.converter.UserConverter.toModel;
 import static com.petadoption.center.util.Messages.*;
 import static com.petadoption.center.util.Utils.updateFields;
-import static com.petadoption.center.factory.AddressFactory.createAddress;
 
 @Service
 public class UserService implements UserServiceI {
@@ -98,7 +97,7 @@ public class UserService implements UserServiceI {
         updateFields(dto.firstName(), user.getFirstName(), user::setFirstName);
         updateFields(dto.lastName(), user.getLastName(), user::setLastName);
         updateFields(dto.email(), user.getEmail(), user::setEmail);
-        updateFields(createAddress(dto), user.getAddress(), user::setAddress);
+        updateFields(dto.address(), user.getAddress(), user::setAddress);
         updateFields(dto.phoneNumber(), user.getPhoneNumber(), user::setPhoneNumber);
     }
 

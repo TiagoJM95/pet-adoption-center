@@ -3,7 +3,6 @@ package com.petadoption.center.converter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.model.Breed;
-import com.petadoption.center.model.Species;
 
 public class BreedConverter {
 

@@ -2,9 +2,7 @@ package com.petadoption.center.converter;
 
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
-import com.petadoption.center.factory.AttributesFactory;
 import com.petadoption.center.model.Pet;
-import com.petadoption.center.model.Species;
 
 public class PetConverter {
 

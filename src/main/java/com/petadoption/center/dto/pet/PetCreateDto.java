@@ -1,7 +1,5 @@
 package com.petadoption.center.dto.pet;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.petadoption.center.model.embeddable.Attributes;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
