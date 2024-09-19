@@ -67,4 +67,8 @@ public class User {
 
     @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
     private Set<AdoptionForm> userAdoptionForms = new HashSet<>();
+
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
+    @Column(name = "interests_in_pets")
+    private Set<Interest> interests = new HashSet<>();
 }
