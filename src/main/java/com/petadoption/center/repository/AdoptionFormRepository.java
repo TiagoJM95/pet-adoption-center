@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface AdoptionFormRepository extends JpaRepository<AdoptionForm, Long> {
+public interface AdoptionFormRepository extends JpaRepository<AdoptionForm, String> {
 
     List<AdoptionForm> findByUserId(User userId);
 
