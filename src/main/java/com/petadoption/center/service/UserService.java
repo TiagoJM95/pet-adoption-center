@@ -1,6 +1,7 @@
 package com.petadoption.center.service;
 
 import com.petadoption.center.converter.UserConverter;
+import com.petadoption.center.dto.email.EmailDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
@@ -27,9 +28,12 @@ public class UserService implements UserServiceI {
 
     private final UserRepository userRepository;
 
+    private final EmailService emailService;
+
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailService = emailService;
     }
 
     @Override
@@ -45,6 +49,7 @@ public class UserService implements UserServiceI {
 
     @Override
     public UserGetDto addNewUser(UserCreateDto dto) {
+        emailService.sendEmail(new EmailDto(dto.email(), "Welcome!", "Welcome to Pet Adoption Center!"));
         return toDto(userRepository.save(toModel(dto)));
     }
 
