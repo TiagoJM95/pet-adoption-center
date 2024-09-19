@@ -13,6 +13,8 @@ public class Messages {
 
     public static final String ORG_WITH_ID = "Organization with id: ";
 
+    public static final String INTEREST_WITH_ID = "Interest with id: ";
+
     public static final String BREED_WITH_ID = "Breed with id: ";
 
     public static final String BREED_WITH_NAME = "Breed with name: ";
@@ -62,6 +64,8 @@ public class Messages {
     public static final String INVALID_SIZE = "Invalid size description: ";
 
     public static final String INVALID_GENDER = "Invalid gender description: ";
+
+    public static final String INVALID_STATUS = "Invalid status description: ";
 
 
     // EMAIL MESSAGES
@@ -119,6 +123,12 @@ public class Messages {
     //SERVICE MESSAGES
 
     public static final String DELETE_SUCCESS = " deleted successfully";
+
+    public static final String ADDED_TO_FAVORITE_SUCCESS = "Pet added to favorites";
+
+    public static final String REMOVED_FROM_FAVORITE_SUCCESS = "Pet removed from favorites";
+
+    public static final String NONE = "NONE";
 
 }
 

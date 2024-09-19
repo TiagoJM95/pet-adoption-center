@@ -67,7 +67,7 @@ public class Pet {
 
     @Column(name = "image_url")
     private String imageUrl;
-    private Boolean isAdopted;
+    private boolean isAdopted;
 
     @Embedded
     @AttributeOverrides({

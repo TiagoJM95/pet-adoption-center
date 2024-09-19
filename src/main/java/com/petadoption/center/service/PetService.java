@@ -11,16 +11,10 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetDescriptionException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.model.Breed;
-import com.petadoption.center.model.Organization;
-import com.petadoption.center.model.Pet;
-import com.petadoption.center.model.Species;
+import com.petadoption.center.model.*;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.interfaces.*;
 import com.petadoption.center.specifications.PetSearchCriteria;
-import com.petadoption.center.service.aggregator.PetCreateContext;
-import com.petadoption.center.service.aggregator.PetGetContext;
-import com.petadoption.center.factory.AttributesFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -57,31 +51,32 @@ public class PetService implements PetServiceI {
 
     @Override
     public PetGetDto getPetById(String id) throws PetNotFoundException {
-        return PetConverter.toDto(findPetById(id), buildGetContext(findPetById(id)));
+        return PetConverter.toDto(findPetById(id));
     }
 
     @Override
     public List<PetGetDto> searchPets(PetSearchCriteria criteria, int page, int size, String sortBy) throws PetDescriptionException {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         Specification<Pet> filters = buildFilters(criteria);
-        return petRepository.findAll(filters, pageRequest).stream().map(pet -> PetConverter.toDto(pet, buildGetContext(pet))).toList();
+        return petRepository.findAll(filters, pageRequest).stream().map(PetConverter::toDto).toList();
     }
 
     @Override
-    public PetGetDto addNewPet(PetCreateDto dto) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, PetDescriptionException {
+    public PetGetDto addNewPet(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, OrgNotFoundException, PetDescriptionException {
         breedServiceI.verifyIfBreedsAndSpeciesMatch(dto);
-        Pet p = PetConverter.toModel(dto, buildCreateContext(dto));
-        Pet pet = petRepository.save(p);
-        return PetConverter.toDto(pet, buildGetContext(pet));
+        Pet pet = buildPetFromDto(dto);
+        petRepository.save(pet);
+        return PetConverter.toDto(pet);
     }
 
     @Override
-    public void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, PetDescriptionException {
+    public void addListOfNewPets(List<PetCreateDto> pets) throws BreedNotFoundException, BreedMismatchException, OrgNotFoundException, PetDescriptionException, ColorNotFoundException, SpeciesNotFoundException {
         for (PetCreateDto dto : pets) {
             breedServiceI.verifyIfBreedsAndSpeciesMatch(dto);
         }
         for (PetCreateDto dto : pets) {
-            petRepository.save(PetConverter.toModel(dto, buildCreateContext(dto)));
+            Pet pet = buildPetFromDto(dto);
+            petRepository.save(pet);
         }
     }
 
@@ -90,7 +85,7 @@ public class PetService implements PetServiceI {
         Pet pet = findPetById(id);
         updatePetFields(dto, pet);
         petRepository.save(pet);
-        return PetConverter.toDto(pet, buildGetContext(pet));
+        return PetConverter.toDto(pet);
     }
 
     @Override
@@ -105,51 +100,22 @@ public class PetService implements PetServiceI {
                 () -> new PetNotFoundException(PET_WITH_ID + id + NOT_FOUND));
     }
 
-    private PetGetContext buildGetContext(Pet pet){
-        return PetGetContext.builder()
-                .organization(OrgConverter.toDto(pet.getOrganization()))
-                .species(pet.getSpecies().getName())
-                .primaryBreed(pet.getPrimaryBreed().getName())
-                .secondaryBreed(pet.getSecondaryBreed() != null
-                        ? pet.getSecondaryBreed().getName()
-                        : "NONE")
-                .primaryColor(pet.getPrimaryColor().getName())
-                .secondaryColor(pet.getSecondaryColor() != null
-                        ? pet.getSecondaryColor().getName()
-                        : "NONE")
-                .tertiaryColor(pet.getTertiaryColor() != null
-                        ? pet.getTertiaryColor().getName()
-                        : "NONE")
-                .build();
-    }
+    private Pet buildPetFromDto(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException, PetDescriptionException {
+        Pet pet = PetConverter.toModel(dto);
+        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
 
-    private PetCreateContext buildCreateContext(PetCreateDto pet) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException, PetDescriptionException {
-
-        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(pet.petSpeciesId()));
-        Breed primaryBreed = BreedConverter.toModel(breedServiceI.getBreedById(pet.primaryBreedId()), species);
-        Breed secondaryBreed = pet.secondaryBreedId().equals("NONE")
-                ? null
-                :  BreedConverter.toModel(breedServiceI.getBreedById(pet.secondaryBreedId()), species);
-
-
-        return PetCreateContext.builder()
-                .species(species)
-                .primaryBreed(primaryBreed)
-                .secondaryBreed(secondaryBreed)
-                .primaryColor(ColorConverter.toModel(colorServiceI.getColorById(pet.primaryColor())))
-                .secondaryColor(pet.secondaryColor().equals("NONE")
-                        ? null
-                        : ColorConverter.toModel(colorServiceI.getColorById(pet.secondaryColor())))
-                .tertiaryColor(pet.tertiaryColor().equals("NONE")
-                        ? null
-                        : ColorConverter.toModel(colorServiceI.getColorById(pet.tertiaryColor())))
-                .organization(OrgConverter.toModel(organizationServiceI.getOrganizationById(pet.organizationId())))
-                .gender(getGenderByDescription(pet.gender()))
-                .coat(getCoatByDescription(pet.coat()))
-                .size(getSizeByDescription(pet.size()))
-                .age(getAgeByDescription(pet.age()))
-                .attributes(AttributesFactory.create(pet))
-                .build();
+        pet.setSpecies(species);
+        pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getBreedById(dto.primaryBreedId())));
+        pet.setSecondaryBreed(getBreedOrNull(dto.secondaryBreedId(), species));
+        pet.setPrimaryColor(ColorConverter.toModel(colorServiceI.getColorById(dto.primaryColor())));
+        pet.setSecondaryColor(getColorOrNull(dto.secondaryColor()));
+        pet.setTertiaryColor(getColorOrNull(dto.tertiaryColor()));
+        pet.setGender(getGenderByDescription(dto.gender()));
+        pet.setCoat(getCoatByDescription(dto.coat()));
+        pet.setSize(getSizeByDescription(dto.size()));
+        pet.setAge(getAgeByDescription(dto.age()));
+        pet.setOrganization(OrgConverter.toModel(organizationServiceI.getOrganizationById(dto.organizationId())));
+        return pet;
     }
 
     private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria) throws PetDescriptionException {
@@ -184,8 +150,16 @@ public class PetService implements PetServiceI {
         updateFields(getAgeByDescription(dto.age()), pet.getAge(), pet::setAge);
         updateFields(dto.description(), pet.getDescription(), pet::setDescription);
         updateFields(dto.imageUrl(), pet.getImageUrl(), pet::setImageUrl);
-        updateFields(dto.isAdopted(), pet.getIsAdopted(), pet::setIsAdopted);
-        updateFields(AttributesFactory.create(dto), pet.getAttributes(), pet::setAttributes);
+        updateFields(dto.isAdopted(), pet.isAdopted(), pet::setAdopted);
+        updateFields(dto.attributes(), pet.getAttributes(), pet::setAttributes);
         updateFields(org, pet.getOrganization(), pet::setOrganization);
+    }
+
+    private Color getColorOrNull(String colorId) throws ColorNotFoundException {
+        return colorId == null ? null : ColorConverter.toModel(colorServiceI.getColorById(colorId));
+    }
+
+    private Breed getBreedOrNull(String breedId, Species species) throws BreedNotFoundException {
+        return breedId == null ? null : BreedConverter.toModel(breedServiceI.getBreedById(breedId));
     }
 }

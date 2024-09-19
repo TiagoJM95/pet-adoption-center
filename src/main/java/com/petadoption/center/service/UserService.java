@@ -1,12 +1,17 @@
 package com.petadoption.center.service;
 
+import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.converter.UserConverter;
+import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.User;
 import com.petadoption.center.repository.UserRepository;
+import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -14,22 +19,24 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.petadoption.center.converter.UserConverter.toDto;
 import static com.petadoption.center.converter.UserConverter.toModel;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.*;
 import static com.petadoption.center.util.Utils.updateFields;
-import static com.petadoption.center.factory.AddressFactory.createAddress;
 
 @Service
 public class UserService implements UserServiceI {
 
     private final UserRepository userRepository;
+    private final PetServiceI petService;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PetServiceI petService) {
         this.userRepository = userRepository;
+        this.petService = petService;
     }
 
     @Override
@@ -62,11 +69,35 @@ public class UserService implements UserServiceI {
         return USER_WITH_ID + id + DELETE_SUCCESS;
     }
 
+    @Override
+    public String addPetToFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
+        User user = findUserById(userId);
+        Pet pet = PetConverter.toModel(petService.getPetById(petId));
+        user.getFavoritePets().add(pet);
+        userRepository.save(user);
+        return ADDED_TO_FAVORITE_SUCCESS;
+    }
+
+    @Override
+    public Set<PetGetDto> getFavoritePets(String userId) throws UserNotFoundException {
+        User user = findUserById(userId);
+        return user.getFavoritePets().stream().map(PetConverter::toDto).collect(Collectors.toSet());
+    }
+
+    @Override
+    public String removePetFromFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
+        User user = findUserById(userId);
+        Pet pet = PetConverter.toModel(petService.getPetById(petId));
+        user.getFavoritePets().remove(pet);
+        userRepository.save(user);
+        return REMOVED_FROM_FAVORITE_SUCCESS;
+    }
+
     private void updateUserFields(UserUpdateDto dto, User user) {
         updateFields(dto.firstName(), user.getFirstName(), user::setFirstName);
         updateFields(dto.lastName(), user.getLastName(), user::setLastName);
         updateFields(dto.email(), user.getEmail(), user::setEmail);
-        updateFields(createAddress(dto), user.getAddress(), user::setAddress);
+        updateFields(dto.address(), user.getAddress(), user::setAddress);
         updateFields(dto.phoneNumber(), user.getPhoneNumber(), user::setPhoneNumber);
     }
 

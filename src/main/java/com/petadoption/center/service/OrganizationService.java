@@ -18,8 +18,6 @@ import java.util.List;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 import static com.petadoption.center.util.Utils.updateFields;
-import static com.petadoption.center.factory.AddressFactory.createAddress;
-import static com.petadoption.center.factory.SocialMediaFactory.createSocialMedia;
 
 @Service
 public class OrganizationService implements OrganizationServiceI {
@@ -66,7 +64,7 @@ public class OrganizationService implements OrganizationServiceI {
         updateFields(dto.email(), org.getEmail(), org::setEmail);
         updateFields(dto.phoneNumber(), org.getPhoneNumber(), org::setPhoneNumber);
         updateFields(dto.websiteUrl(), org.getWebsiteUrl(), org::setWebsiteUrl);
-        updateFields(createSocialMedia(dto), org.getSocialMedia(), org::setSocialMedia);
-        updateFields(createAddress(dto), org.getAddress(), org::setAddress);
+        updateFields(dto.socialMedia(), org.getSocialMedia(), org::setSocialMedia);
+        updateFields(dto.address(), org.getAddress(), org::setAddress);
     }
 }

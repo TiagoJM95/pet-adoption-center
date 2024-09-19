@@ -10,12 +10,12 @@ import lombok.*;
 @Setter
 @Builder
 public class Attributes {
-    private Boolean sterilized;
-    private Boolean vaccinated;
-    private Boolean chipped;
-    private Boolean specialNeeds;
-    private Boolean houseTrained;
-    private Boolean goodWithKids;
-    private Boolean goodWithDogs;
-    private Boolean goodWithCats;
+    private boolean sterilized;
+    private boolean vaccinated;
+    private boolean chipped;
+    private boolean specialNeeds;
+    private boolean houseTrained;
+    private boolean goodWithKids;
+    private boolean goodWithDogs;
+    private boolean goodWithCats;
 }

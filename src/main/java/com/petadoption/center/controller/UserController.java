@@ -1,8 +1,10 @@
 package com.petadoption.center.controller;
 
+import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import jakarta.validation.Valid;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -47,4 +50,20 @@ public class UserController {
         return new ResponseEntity<>(userServiceI.deleteUser(id), HttpStatus.OK);
     }
 
+    @PostMapping("/addPetToFavorites/{userId}/{petId}")
+    public ResponseEntity<String> addPetToFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) throws UserNotFoundException,
+            PetNotFoundException {
+        return new ResponseEntity<>(userServiceI.addPetToFavorites(userId, petId), HttpStatus.ACCEPTED);
+    }
+
+    @PostMapping("/removePetFromFavorites/{userId}/{petId}")
+    public ResponseEntity<String> removePetFromFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) throws UserNotFoundException,
+            PetNotFoundException {
+        return new ResponseEntity<>(userServiceI.removePetFromFavorites(userId, petId), HttpStatus.ACCEPTED);
+    }
+
+    @GetMapping("/getFavoritePets/{userId}")
+    public ResponseEntity<Set<PetGetDto>> getFavoritePets(@PathVariable("userId") String userId) throws UserNotFoundException {
+        return new ResponseEntity<>(userServiceI.getFavoritePets(userId), HttpStatus.OK);
+    }
 }

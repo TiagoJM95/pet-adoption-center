@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -53,7 +54,7 @@ public class User {
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "pets_id")
     )
-    private Set<Pet> favoritePets;
+    private Set<Pet> favoritePets = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -61,8 +62,12 @@ public class User {
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "pets_id")
     )
-    private Set<Pet> adoptedPets;
+    private Set<Pet> adoptedPets = new HashSet<>();
 
     @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
-    private Set<AdoptionForm> userAdoptionForms;
+    private Set<AdoptionForm> userAdoptionForms = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @Column(name = "interests_in_pets")
+    private Set<Interest> interests = new HashSet<>();
 }

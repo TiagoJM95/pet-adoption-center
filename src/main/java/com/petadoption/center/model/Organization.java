@@ -6,7 +6,10 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor
@@ -60,5 +63,9 @@ public class Organization {
 
     @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
     @Column(name = "pets_owned")
-    private List<Pet> petsOwned;
+    private List<Pet> petsOwned = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
+    @Column(name = "interests_in_owned_pets")
+    private Set<Interest> interests = new HashSet<>();
 }

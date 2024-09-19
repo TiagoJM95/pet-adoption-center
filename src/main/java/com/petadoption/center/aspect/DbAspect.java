@@ -1,7 +1,7 @@
 package com.petadoption.center.aspect;
 
-import com.petadoption.center.exception.db.DatabaseConnectionException;
 import com.petadoption.center.config.DbConnection;
+import com.petadoption.center.exception.db.DatabaseConnectionException;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
