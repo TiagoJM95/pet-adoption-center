@@ -68,6 +68,5 @@ public class User {
     private Set<AdoptionForm> userAdoptionForms = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    @Column(name = "interests_in_pets")
     private Set<Interest> interests = new HashSet<>();
 }

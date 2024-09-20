@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.petadoption.center.model.embeddable.Address;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
 import static com.petadoption.center.util.Messages.*;
 
+@Builder
 public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)

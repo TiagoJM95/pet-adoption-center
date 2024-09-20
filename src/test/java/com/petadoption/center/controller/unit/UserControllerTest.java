@@ -40,9 +40,21 @@ public class UserControllerTest {
     private UserGetDto userGetDto;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
+    private Address createAddress;
+    private Address updateAddress;
 
     @BeforeEach
     void setUp() {
+        createAddress = new Address("Rua das Andorinhas, 123",
+                "Vila Nova de Gaia",
+                "Porto",
+                "4410-000");
+
+        updateAddress = new Address("Rua dos bandidos, 123",
+                "Rio Tinto",
+                "Porto",
+                "4100-001");
+
         userGetDto = new UserGetDto(
                 "1111-1111-2222",
                 "Manuel",
@@ -63,9 +75,7 @@ public class UserControllerTest {
                 "email@email.com",
                 "123456788",
                 LocalDate.of(1990, 10, 25),
-                "Rua dos animais, 123", "Gondomar",
-                "Porto",
-                "4400-000",
+                createAddress,
                 "912354678"
         );
 
@@ -73,10 +83,7 @@ public class UserControllerTest {
                 "Tiago",
                 "Moreira",
                 "tm@email.com",
-                "Rua dos bandidos, 123",
-                "Rio Tinto",
-                "Porto",
-                "4100-001",
+                updateAddress,
                 "934587967"
                 );
     }

@@ -2,6 +2,7 @@ package com.petadoption.center.converter;
 
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
+import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Species;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class BreedConverterTest {
 
     Species species = new Species("123123-12312312-3123", "Dog");
+    SpeciesGetDto speciesGetDto = new SpeciesGetDto("123123-12312312-3123", "Dog");
 
     @Test
     @DisplayName("Test BreedCreateDto to Breed model is working correctly")
@@ -27,10 +29,9 @@ public class BreedConverterTest {
                 "123123-12312312-3123"
         );
 
-        Breed breed = BreedConverter.toModel(breedCreateDto, species);
+        Breed breed = BreedConverter.toModel(breedCreateDto);
 
         assertEquals("Golden Retriever", breed.getName());
-        assertEquals("123123-12312312-3123", breed.getSpecies().getId());
     }
 
     @Test
@@ -40,10 +41,10 @@ public class BreedConverterTest {
         BreedGetDto breedGetDto = new BreedGetDto(
                 "123123-12312312-3333",
                 "Labrador Retriever",
-                "Dog"
+                speciesGetDto
         );
 
-        Breed breed = BreedConverter.toModel(breedGetDto, species);
+        Breed breed = BreedConverter.toModel(breedGetDto);
 
         assertEquals("123123-12312312-3333", breed.getId());
         assertEquals("Labrador Retriever", breed.getName());
@@ -61,7 +62,7 @@ public class BreedConverterTest {
 
         assertEquals("123123-12312312-3333", breedGetDto.id());
         assertEquals("Labrador Retriever", breedGetDto.name());
-        assertEquals("Dog", breedGetDto.species());
+        assertEquals("Dog", breedGetDto.speciesDto().name());
     }
 
 }

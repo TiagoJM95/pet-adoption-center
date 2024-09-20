@@ -12,7 +12,7 @@ import org.hibernate.annotations.UuidGenerator;
 @Getter
 @Setter
 @Builder
-@Table(name = "adoption_forms")
+@Table(name = "adoption_forms", uniqueConstraints = @UniqueConstraint(name = "UniqueUserAndPet",columnNames = {"user_id", "pet_id"}))
 public class AdoptionForm {
 
     @Id
@@ -20,9 +20,11 @@ public class AdoptionForm {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User userId;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pet_id")
     private Pet petId;
 
     @Embedded

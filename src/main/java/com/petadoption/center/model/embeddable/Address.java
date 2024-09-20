@@ -21,7 +21,7 @@ public class Address {
     private String street;
 
     @NotBlank(message = BLANK_FIELD)
-    @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+    @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
     private String city;
 
     @NotBlank(message = BLANK_FIELD)

@@ -19,6 +19,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
@@ -42,6 +44,7 @@ public class BreedControllerTest {
     private BreedUpdateDto breedUpdateDto;
     private String breedId;
     private Species species;
+    private SpeciesGetDto speciesCreated;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -52,11 +55,12 @@ public class BreedControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        SpeciesGetDto speciesCreated = objectMapper.readValue(speciesResult.getResponse().getContentAsString(), SpeciesGetDto.class);
+        speciesCreated = objectMapper.readValue(speciesResult.getResponse().getContentAsString(), SpeciesGetDto.class);
         species.setId(speciesCreated.id());
 
         breedCreateDto = new BreedCreateDto("Golden Retriever", species.getId());
         breedUpdateDto = new BreedUpdateDto("Weimaraner");
+
     }
 
     @Test
@@ -73,7 +77,7 @@ public class BreedControllerTest {
 
         BreedGetDto breedCreated = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
         breedId = breedCreated.id();
-        breedGetDto = new BreedGetDto(breedId, breedCreateDto.name(), species.getName());
+        breedGetDto = new BreedGetDto(breedId, breedCreateDto.name(), speciesCreated);
     }
 
 
@@ -84,6 +88,9 @@ public class BreedControllerTest {
 
         createBreed();
 
+        List<BreedGetDto> breedGetDtos = List.of(breedGetDto);
+        String expectedJson = objectMapper.writeValueAsString(breedGetDtos);
+
         mockMvc.perform(get("/api/v1/breed/")
                         .param("page", "0")
                         .param("size", "5")
@@ -91,8 +98,7 @@ public class BreedControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$[0].species", is(breedGetDto.species())));
+                .andExpect(content().json(expectedJson));
     }
 
 
@@ -103,12 +109,12 @@ public class BreedControllerTest {
 
         createBreed();
 
+        String expectedJson = objectMapper.writeValueAsString(breedGetDto);
+
         mockMvc.perform(get("/api/v1/breed/id/{id}", breedId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(breedGetDto.id())))
-                .andExpect(jsonPath("$.name", is(breedGetDto.name())))
-                .andExpect(jsonPath("$.species", is(breedGetDto.species())));
+                .andExpect(content().json(expectedJson));
     }
 
 

@@ -19,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class UserConverterTest {
 
 
+    private Address createAddress = new Address("Rua das Andorinhas, 123",
+                                        "Vila Nova de Gaia",
+                                        "Porto",
+                                        "4410-000");
 
     @Test
     @DisplayName("Test UserCreateDto to User model is working correctly")
@@ -30,10 +34,7 @@ public class UserConverterTest {
                 "teste@email.com",
                 "123456789",
                 LocalDate.of(1990, 10, 25),
-                "Rua das Andorinhas, 123",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000",
+                createAddress,
                 "912345678"
         );
 
@@ -95,7 +96,13 @@ public class UserConverterTest {
     @Test
     @DisplayName("Test if fromCreateDtoToModel return null if received null dto")
     void testIfFromCreateDtoToModelReturnNullIfReceivedNullDto() {
-        assertNull(UserConverter.toModel(null));
+        assertNull(UserConverter.toModel((UserCreateDto) null));
+    }
+
+    @Test
+    @DisplayName("Test if fromGetDtoToModel return null if received null dto")
+    void testIfFromGetDtoToModelReturnNullIfReceivedNullDto() {
+        assertNull(UserConverter.toModel((UserGetDto) null));
     }
 
 

@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @Table(name = "interests", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "pet_id", "org_id"})
+        @UniqueConstraint(name = "UniqueUserAndPetAndOrganization", columnNames = {"user_id", "pet_id", "organization_id"})
 })
 public class Interest {
 
@@ -23,12 +23,15 @@ public class Interest {
     private String id;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "pet_id")
     private Pet pet;
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "organization_id")
     private Organization organization;
 
     @Enumerated(EnumType.STRING)

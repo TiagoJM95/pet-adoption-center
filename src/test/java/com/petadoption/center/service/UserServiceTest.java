@@ -45,9 +45,22 @@ public class UserServiceTest {
     private User updatedUser;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
+    private Address createAddress;
+    private Address updateAddress;
 
     @BeforeEach
     void setUp() {
+
+        createAddress = new Address("Rua das Andorinhas, 123",
+                "Vila Nova de Gaia",
+                "4410-000",
+                "Porto");
+
+        updateAddress = new Address("Rua das Gaivotas, 456",
+                "Vila Nova de Gaia",
+                "4410-000",
+                "Porto");
+
         testUser = new User();
         testUser.setId("2132-1234-1234");
         testUser.setFirstName("Manuel");
@@ -63,18 +76,13 @@ public class UserServiceTest {
                 "email@email.com",
                 "123456789",
                 LocalDate.of(1990, 10, 25),
-                "Rua dos animais, 123", "Gondomar",
-                "Porto",
-                "4400-000",
+                  createAddress,
                 "912354678");
           userUpdateDto = new UserUpdateDto(
                   "Tiago",
                 "Moreira",
                 "tm@email.com",
-                "Rua dos bandidos, 123",
-                "Rio Tinto",
-                "Porto",
-                "4100-001",
+                  updateAddress,
                 "934587967");
 
         updatedUser = new User();

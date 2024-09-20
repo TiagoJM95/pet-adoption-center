@@ -4,6 +4,7 @@ import com.petadoption.center.controller.BreedController;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.exception.breed.BreedDuplicateException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
@@ -44,12 +45,14 @@ public class BreedControllerTest {
     private BreedCreateDto breedCreateDto;
     private BreedUpdateDto breedUpdateDto;
     private Species species;
+    private SpeciesGetDto speciesGetDto;
 
 
     @BeforeEach
     void setUp() {
 
         species = new Species("1111-1111-2222", "Dog");
+        speciesGetDto = new SpeciesGetDto("1111-1111-2222", "Dog");
 
         testBreed = new Breed();
         testBreed.setId("2222-2222-3333");
@@ -73,7 +76,7 @@ public class BreedControllerTest {
         breedGetDto = new BreedGetDto(
                 "2222-2222-3333",
                 "Golden Retriever",
-                "Dog"
+                speciesGetDto
         );
     }
 

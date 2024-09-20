@@ -43,32 +43,38 @@ public class UserControllerTest {
     private UserGetDto userGetDto;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
+    private Address createAddress;
+    private Address updateAddress;
 
     private String userId;
 
     @BeforeEach
     void setUp() {
-
-        userCreateDto = new UserCreateDto(
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456789",
-                LocalDate.of(1990, 10, 25),
-                "Rua das Andorinhas, 123",
+        createAddress = new Address("Rua das Andorinhas, 123",
                 "Vila Nova de Gaia",
                 "Porto",
-                "4410-000",
-                "123456789");
+                "4410-000");
+
+        updateAddress = new Address("Rua das Gaivotas, 456",
+                "Vila Nova de Gaia",
+                "Porto",
+                "4410-000");
+
+        userCreateDto = UserCreateDto.builder()
+                .firstName("Manuel")
+                .lastName("Silva")
+                .email("email@email.com")
+                .nif("123456789")
+                .dateOfBirth(LocalDate.of(1990, 10, 25))
+                .address(createAddress)
+                .phoneNumber("123456789")
+                .build();
 
         userUpdateDto = new UserUpdateDto(
                 "Tiago",
                 "Moreira",
                 "tm@email.com",
-                "Rua dos bandidos, 123",
-                "Rio Tinto",
-                "Porto",
-                "4100-001",
+                updateAddress,
                 "934587967");
 
     }
@@ -98,10 +104,7 @@ public class UserControllerTest {
                userCreateDto.email(),
                userCreateDto.nif(),
                userCreateDto.dateOfBirth(),
-               new Address( userCreateDto.street(),
-                       userCreateDto.city(),
-                       userCreateDto.postalCode(),
-                       userCreateDto.state()),
+               userCreateDto.address(),
                userCreateDto.phoneNumber()
        );
 
