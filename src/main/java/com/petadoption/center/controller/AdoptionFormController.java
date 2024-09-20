@@ -4,6 +4,8 @@ import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
+import com.petadoption.center.exception.pet.PetNotFoundException;
+import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class AdoptionFormController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<AdoptionFormGetDto> addNewAdoptionForm(@RequestBody @Valid AdoptionFormCreateDto adoptionForm){
+    public ResponseEntity<AdoptionFormGetDto> addNewAdoptionForm(@RequestBody @Valid AdoptionFormCreateDto adoptionForm) throws UserNotFoundException, PetNotFoundException {
         return new ResponseEntity<>(adoptionFormServiceI.addNewAdoptionForm(adoptionForm), HttpStatus.CREATED);
     }
 
