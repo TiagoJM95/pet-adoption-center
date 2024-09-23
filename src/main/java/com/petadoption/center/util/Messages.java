@@ -67,6 +67,11 @@ public class Messages {
 
     public static final String INVALID_STATUS = "Invalid status description: ";
 
+    public static final String INVALID_STATUS_CHANGE_SAME = "This status is already set: ";
+
+    public static final String INVALID_STATUS_CHANGE_FINAL = "Status change is no longer allowed.";
+
+    public static final String INVALID_STATUS_CHANGE = "Invalid status change.";
 
     // EMAIL MESSAGES
 

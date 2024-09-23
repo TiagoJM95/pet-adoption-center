@@ -21,11 +21,11 @@ public class AdoptionForm {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    private User userId;
+    private User user;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "pet_id")
-    private Pet petId;
+    private Pet pet;
 
     @Embedded
     @AttributeOverrides({

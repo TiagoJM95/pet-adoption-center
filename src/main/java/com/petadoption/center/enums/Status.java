@@ -1,6 +1,6 @@
 package com.petadoption.center.enums;
 
-import com.petadoption.center.exception.InvalidStatusException;
+import com.petadoption.center.exception.status.InvalidStatusException;
 import lombok.Getter;
 
 import static com.petadoption.center.util.Messages.INVALID_STATUS;

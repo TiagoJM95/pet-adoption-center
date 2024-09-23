@@ -40,4 +40,7 @@ public class Interest {
     private LocalDateTime timestamp;
 
     private LocalDateTime reviewTimestamp;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    private AdoptionForm adoptionForm;
 }

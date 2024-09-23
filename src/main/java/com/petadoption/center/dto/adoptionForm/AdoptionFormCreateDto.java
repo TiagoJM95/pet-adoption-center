@@ -4,10 +4,12 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.BLANK_FIELD;
 import static com.petadoption.center.util.Messages.ONLY_NUMBERS;
 
+@Builder
 public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
@@ -31,5 +33,4 @@ public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         Address petAddress
-) {
-}
+) {}

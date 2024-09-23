@@ -3,7 +3,8 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
-import com.petadoption.center.exception.InvalidStatusException;
+import com.petadoption.center.exception.status.InvalidStatusChangeException;
+import com.petadoption.center.exception.status.InvalidStatusException;
 import com.petadoption.center.exception.interest.InterestNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
@@ -69,7 +70,7 @@ public class InterestController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<InterestGetDto> updateInterest(@PathVariable("id") String id, @Valid @RequestBody InterestUpdateDto dto) throws InterestNotFoundException, InvalidStatusException {
+    public ResponseEntity<InterestGetDto> updateInterest(@PathVariable("id") String id, @Valid @RequestBody InterestUpdateDto dto) throws InterestNotFoundException, InvalidStatusException, InvalidStatusChangeException, UserNotFoundException, PetNotFoundException {
         return new ResponseEntity<>(interestService.updateInterest(id, dto), HttpStatus.OK);
     }
 

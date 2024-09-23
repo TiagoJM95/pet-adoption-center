@@ -84,8 +84,8 @@ public class AdoptionFormService implements AdoptionFormServiceI {
        User user = UserConverter.toModel(userServiceI.getUserById(adoptionFormCreateDto.userId()));
        Pet pet = PetConverter.toModel(petServiceI.getPetById(adoptionFormCreateDto.petId()));
 
-       adoptionForm.setUserId(user);
-       adoptionForm.setPetId(pet);
+       adoptionForm.setUser(user);
+       adoptionForm.setPet(pet);
        return adoptionForm;
     }
 
