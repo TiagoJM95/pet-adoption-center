@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @NoArgsConstructor
@@ -43,4 +44,17 @@ public class Interest {
 
     @OneToOne(fetch = FetchType.EAGER)
     private AdoptionForm adoptionForm;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Interest interest = (Interest) o;
+        return Objects.equals(id, interest.id) && Objects.equals(user, interest.user) && Objects.equals(pet, interest.pet) && Objects.equals(organization, interest.organization) && status == interest.status && Objects.equals(timestamp, interest.timestamp) && Objects.equals(reviewTimestamp, interest.reviewTimestamp) && Objects.equals(adoptionForm, interest.adoptionForm);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, pet, organization, status, timestamp, reviewTimestamp, adoptionForm);
+    }
 }

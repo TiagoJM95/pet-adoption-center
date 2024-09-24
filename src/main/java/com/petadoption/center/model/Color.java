@@ -7,6 +7,8 @@ import jakarta.persistence.UniqueConstraint;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Objects;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,4 +23,17 @@ public class Color {
     @UuidGenerator
     private String id;
     private String name;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Color color = (Color) o;
+        return Objects.equals(id, color.id) && Objects.equals(name, color.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
 }
