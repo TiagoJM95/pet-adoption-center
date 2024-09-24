@@ -28,8 +28,8 @@ public class SecurityConfig {
                         .requestMatchers(regexMatcher("/api/.*/public.*")).permitAll()
                         .requestMatchers(regexMatcher("/api/.*/private.*")).authenticated()
                         .requestMatchers(regexMatcher("/swagger.*|/v3/api-docs.*")).permitAll()
-                        .requestMatchers(regexMatcher("/api/.*/ADMIN.*")).hasAuthority("ADMIN")
-                        .requestMatchers(regexMatcher("/api/.*/ORG.*")).hasAuthority("ORGANIZATION")
+                        .requestMatchers(regexMatcher("/api/.*/ADMIN.*")).hasRole("ADMIN")
+                        .requestMatchers(regexMatcher("/api/.*/ORG.*")).hasRole("ORGANIZATION")
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .oauth2ResourceServer(oauth2 -> oauth2
