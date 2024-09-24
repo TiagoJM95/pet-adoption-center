@@ -7,7 +7,7 @@ import static com.petadoption.center.util.Messages.INVALID_AGE;
 
 @Getter
 public enum Ages {
-    PUPPY("Baby", "0-6 months"),
+    BABY("Baby", "0-6 months"),
     YOUNG("Young", "6 months - 2 years"),
     ADULT("Adult", "2-8 years"),
     SENIOR("Senior", "8+ years"),

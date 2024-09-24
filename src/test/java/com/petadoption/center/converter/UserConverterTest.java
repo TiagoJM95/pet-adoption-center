@@ -74,7 +74,6 @@ public class UserConverterTest {
             .phoneNumber("911111111")
             .favoritePets(null)
             .adoptedPets(null)
-            .userAdoptionForms(null)
             .build();
 
         UserGetDto userGetDto = UserConverter.toDto(user);
