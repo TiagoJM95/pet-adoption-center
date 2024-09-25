@@ -28,6 +28,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.petadoption.center.util.Messages.*;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -50,6 +51,8 @@ public class AdoptionFormControllerTest {
     private AdoptionFormCreateDto adoptionFormCreateDto;
     private AdoptionFormGetDto adoptionFormGetDto;
     private AdoptionFormUpdateDto adoptionFormUpdateDto;
+    private UserGetDto userGetDto;
+    private PetGetDto petGetDto;
     private Address address;
     private String userId;
     private String petId;
@@ -57,7 +60,7 @@ public class AdoptionFormControllerTest {
     private String speciesId;
     private String breedId;
     private String colorId;
-    private String id;
+    String adoptionFormId;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -92,9 +95,17 @@ public class AdoptionFormControllerTest {
                 "Notes",
                 address
         );
+
+        adoptionFormUpdateDto = new AdoptionFormUpdateDto(
+                family,
+                "Pet Hotel",
+                false,
+                "Only 2 weeks per year of vacation",
+                address
+        );
     }
 
-    void addUser() throws Exception {
+    private void addUser() throws Exception {
         UserCreateDto userCreateDto = UserCreateDto.builder()
                 .firstName("Manuel")
                 .lastName("Silva")
@@ -110,12 +121,12 @@ public class AdoptionFormControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andReturn();
 
-        UserGetDto userCreated = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+        userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
 
-        userId = userCreated.id();
+        userId = userGetDto.id();
     }
 
-    void addPet() throws Exception {
+    private void addPet() throws Exception {
         PetCreateDto petCreateDto = PetCreateDto.builder()
                 .name("Bobi")
                 .petSpeciesId(speciesId)
@@ -137,25 +148,12 @@ public class AdoptionFormControllerTest {
                 .andReturn();
 
 
-        PetGetDto petCreated = objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
+        petGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
 
-        petId = petCreated.id();
+        petId = petGetDto.id();
     }
 
-    @Test
-    @DisplayName("Test if create adoption form works correctly")
-    @DirtiesContext
-    void createAdoptionFormShouldWork() throws Exception {
-
-        MvcResult result = mockMvc.perform(post("/api/v1/adoption-form/")
-                .content(objectMapper.writeValueAsString(adoptionFormCreateDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        AdoptionFormGetDto adoptionFormCreated = objectMapper.readValue(result.getResponse().getContentAsString(), AdoptionFormGetDto.class);
-
-    }
+    //TESTS BEGIN
 
     @Test
     @DisplayName("Test get all adoption forms when empty returns empty")
@@ -170,14 +168,15 @@ public class AdoptionFormControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(0)))
                 .andReturn();
+
     }
 
     @Test
-    @DisplayName("Test get all adoption with 1 element returns size 1")
+    @DisplayName("Test get all adoption with 1 element returns 1 element")
     @DirtiesContext
     void testGetAllAdoptionFormsReturnsOne() throws Exception {
 
-        createAdoptionFormShouldWork();
+        testCreateAdoptionForm();
 
         mockMvc.perform(get("/api/v1/adoption-form/")
                         .param("page", "0")
@@ -186,6 +185,66 @@ public class AdoptionFormControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
+                .andExpect(jsonPath("$[0].id", is(adoptionFormGetDto.id())))
+                .andExpect(jsonPath("$[0].user.id", is(adoptionFormGetDto.user().id())))
+                .andExpect(jsonPath("$[0].pet.id", is(adoptionFormGetDto.pet().id())))
                 .andReturn();
+    }
+
+    @Test
+    @DisplayName("Test if create adoption form works correctly")
+    @DirtiesContext
+    void testCreateAdoptionForm() throws Exception {
+
+        MvcResult result = mockMvc.perform(post("/api/v1/adoption-form/")
+                        .content(objectMapper.writeValueAsString(adoptionFormCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        AdoptionFormGetDto adoptionFormCreated = objectMapper.readValue(result.getResponse().getContentAsString(), AdoptionFormGetDto.class);
+
+        adoptionFormId = adoptionFormCreated.id();
+
+        adoptionFormGetDto = new AdoptionFormGetDto(
+                adoptionFormId,
+                userGetDto,
+                petGetDto,
+                adoptionFormCreated.userFamily(),
+                adoptionFormCreated.petVacationHome(),
+                adoptionFormCreated.isResponsibleForPet(),
+                adoptionFormCreated.otherNotes(),
+                adoptionFormCreated.petAddress()
+        );
+    }
+
+    @Test
+    @DisplayName("Test if update an adoption form works correctly")
+    void testUpdateAdoptionForm() throws Exception {
+
+        testCreateAdoptionForm();
+
+        mockMvc.perform(put("/api/v1/adoption-form/update/{id}", adoptionFormId)
+                        .content(objectMapper.writeValueAsString(adoptionFormUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.petVacationHome", is(adoptionFormUpdateDto.petVacationHome())))
+                .andExpect(jsonPath("$.isResponsibleForPet", is(adoptionFormUpdateDto.isResponsibleForPet())))
+                .andExpect(jsonPath("$.otherNotes", is(adoptionFormUpdateDto.otherNotes())));
+
+
+    }
+
+    @Test
+    @DisplayName("Test if delete an adoption form works correctly")
+    @DirtiesContext
+    void testDeleteAdoptionForm() throws Exception {
+
+        testUpdateAdoptionForm();
+
+        mockMvc.perform(delete("/api/v1/adoption-form/delete/{id}", adoptionFormId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(ADOPTION_FORM_WITH_ID + adoptionFormId + DELETE_SUCCESS));
     }
 }
