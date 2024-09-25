@@ -187,40 +187,4 @@ public class TestDataFactory {
                 .build();
     }
 
-    public static PetGetDto createPetGetDto() {
-        Genders genders = null;
-        Coats coats = null;
-        Sizes sizes = null;
-        Ages ages = null;
-
-        try{
-            genders = Genders.getGenderByDescription("Male");
-            coats = Coats.getCoatByDescription("Short");
-            sizes = Sizes.getSizeByDescription("Medium");
-            ages = Ages.getAgeByDescription("Young");
-        } catch (PetDescriptionException e){
-            e.printStackTrace();
-        }
-
-        return PetGetDto.builder()
-                .id("88888-88888888-8888")
-                .name("Max")
-                .speciesDto(createSpeciesGetDto())
-                .primaryBreedDto(createPrimaryBreedDto(createSpeciesGetDto()))
-                .secondaryBreedDto(createSecondaryBreedDto(createSpeciesGetDto()))
-                .primaryColorDto(createPrimaryColorDto())
-                .secondaryColorDto(createSecondaryColorDto())
-                .tertiaryColorDto(createTertiaryColorDto())
-                .gender(genders)
-                .coat(coats)
-                .size(sizes)
-                .age(ages)
-                .description("Max is a very friendly dog")
-                .imageUrl("https://www.dogimages.com")
-                .isAdopted(false)
-                .attributes(createAttributes())
-                .organizationDto(createOrgGetDto())
-                .build();
-    }
-
 }

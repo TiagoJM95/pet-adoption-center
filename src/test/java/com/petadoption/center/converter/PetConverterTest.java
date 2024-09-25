@@ -21,6 +21,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
@@ -56,73 +58,17 @@ public class PetConverterTest {
 
     @BeforeEach
     void setUp(){
-        species = Species.builder()
-                .id("111111-11111111-1111")
-                .name("Dog")
-                .build();
 
-        primaryBreed = Breed.builder()
-                .id("222222-22222222-2222")
-                .name("Labrador")
-                .species(species)
-                .build();
-
-        secondaryBreed = Breed.builder()
-                .id("333333-33333333-3333")
-                .name("Golden Retriever")
-                .species(species)
-                .build();
-
-        primaryColor = Color.builder()
-                .id("444444-44444444-4444")
-                .name("Black")
-                .build();
-
-        secondaryColor = Color.builder()
-                .id("555555-55555555-5555")
-                .name("White")
-                .build();
-
-        tertiaryColor = Color.builder()
-                .id("666666-66666666-6666")
-                .name("Brown")
-                .build();
-
-        attributes = Attributes.builder()
-                .chipped(true)
-                .houseTrained(true)
-                .specialNeeds(false)
-                .vaccinated(true)
-                .goodWithCats(true)
-                .goodWithDogs(true)
-                .goodWithKids(true)
-                .sterilized(true)
-                .build();
-
-        address = Address.builder()
-                .street("Rua de Santo António, 123")
-                .city("Gondomar")
-                .state("Porto")
-                .postalCode("4444-444")
-                .build();
-
-        socialMedia = SocialMedia.builder()
-                .facebook("https://www.facebook.com")
-                .instagram("https://www.instagram.com")
-                .twitter("https://www.twitter.com")
-                .youtube("https://www.youtube.com")
-                .build();
-
-        organization = Organization.builder()
-                .id("777777-77777777-7777")
-                .name("Pet Adoption Center")
-                .email("org@email.com")
-                .nif("123456789")
-                .phoneNumber("123456789")
-                .address(address)
-                .websiteUrl("https://www.org.com")
-                .socialMedia(socialMedia)
-                .build();
+        species = createSpecies();
+        primaryBreed = createPrimaryBreed(species);
+        secondaryBreed = createSecondaryBreed(species);
+        primaryColor = createPrimaryColor();
+        secondaryColor = createSecondaryColor();
+        tertiaryColor = createTertiaryColor();
+        attributes = createAttributes();
+        address = createAddress();
+        socialMedia = createSocialMedia();
+        organization = createOrganization();
 
         name = "Max";
         gender = "Male";
@@ -133,48 +79,13 @@ public class PetConverterTest {
         imageUrl = "https://www.dogimages.com";
         petId = "88888-88888888-8888";
 
-        speciesGetDto = SpeciesGetDto.builder()
-                .id("111111-11111111-1111")
-                .name("Dog")
-                .build();
-
-        primaryBreedDto = BreedGetDto.builder()
-                .id("222222-22222222-2222")
-                .name("Labrador")
-                .speciesDto(speciesGetDto)
-                .build();
-
-        secondaryBreedDto = BreedGetDto.builder()
-                .id("333333-33333333-3333")
-                .name("Golden Retriever")
-                .speciesDto(speciesGetDto)
-                .build();
-
-        primaryColorDto = ColorGetDto.builder()
-                .id("444444-44444444-4444")
-                .name("Black")
-                .build();
-
-        secondaryColorDto = ColorGetDto.builder()
-                .id("555555-55555555-5555")
-                .name("White")
-                .build();
-
-        tertiaryColorDto = ColorGetDto.builder()
-                .id("666666-66666666-6666")
-                .name("Brown")
-                .build();
-
-        organizationDto = OrgGetDto.builder()
-                .id("777777-77777777-7777")
-                .name("Pet Adoption Center")
-                .email("org@email.com")
-                .nif("123456789")
-                .phoneNumber("123456789")
-                .address(address)
-                .websiteUrl("https://www.org.com")
-                .socialMedia(socialMedia)
-                .build();
+        speciesGetDto = createSpeciesGetDto();
+        primaryBreedDto = createPrimaryBreedDto(speciesGetDto);
+        secondaryBreedDto = createSecondaryBreedDto(speciesGetDto);
+        primaryColorDto = createPrimaryColorDto();
+        secondaryColorDto = createSecondaryColorDto();
+        tertiaryColorDto = createTertiaryColorDto();
+        organizationDto = createOrgGetDto();
     }
 
 
