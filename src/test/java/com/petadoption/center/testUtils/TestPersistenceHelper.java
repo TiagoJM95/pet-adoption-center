@@ -5,6 +5,8 @@ import com.petadoption.center.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import static com.petadoption.center.testUtils.TestEntityFactory.*;
+
 @Component
 public class TestPersistenceHelper {
 
@@ -16,6 +18,18 @@ public class TestPersistenceHelper {
     private final BreedRepository breedRepository;
     private final ColorRepository colorRepository;
     private final InterestRepository interestRepository;
+
+    private Species species;
+    private Breed primaryBreed;
+    private Breed secondaryBreed;
+    private Color primaryColor;
+    private Color secondaryColor;
+    private Color tertiaryColor;
+    private Pet pet;
+    private User user;
+    private Organization organization;
+    private AdoptionForm adoptionForm;
+    private Interest interest;
 
     @Autowired
     public TestPersistenceHelper(UserRepository userRepository, PetRepository petRepository, OrganizationRepository organizationRepository, AdoptionFormRepository adoptionFormRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, ColorRepository colorRepository, InterestRepository interestRepository) {
@@ -30,27 +44,34 @@ public class TestPersistenceHelper {
     }
 
     public String persistTestUser() {
-        User user = new User();
+        user = createUserWithoutId();
         userRepository.save(user);
         return user.getId();
     }
 
     public String persistTestPet() {
-        Pet pet = new Pet();
+        pet = createPetWithoutId();
+        pet.setSpecies(species);
+        pet.setPrimaryBreed(primaryBreed);
+        pet.setSecondaryBreed(secondaryBreed);
+        pet.setPrimaryColor(primaryColor);
+        pet.setSecondaryColor(secondaryColor);
+        pet.setTertiaryColor(tertiaryColor);
+        pet.setOrganization(organization);
         petRepository.save(pet);
         return pet.getId();
     }
 
     public String persistTestSpecies() {
-        Species species = new Species();
+        species = createSpeciesWithoutId();
         speciesRepository.save(species);
         return species.getId();
     }
 
     public String persistTestOrg() {
-        Organization org = new Organization();
-        organizationRepository.save(org);
-        return org.getId();
+        organization = createOrganizationWithoutId();
+        organizationRepository.save(organization);
+        return organization.getId();
     }
 
     public String persistTestAdoptionForm() {
@@ -59,29 +80,45 @@ public class TestPersistenceHelper {
         return adoptionForm.getId();
     }
 
-    public String persistTestBreed(Species species) {
-        Breed breed = Breed.builder()
+    public String persistTestPrimaryBreed() {
+        primaryBreed = Breed.builder()
                 .name("Shepperd Doge")
                 .species(species)
                 .build();
-        breedRepository.save(breed);
-        return breed.getId();
+        breedRepository.save(primaryBreed);
+        return primaryBreed.getId();
     }
 
-    public String persistTestColor() {
-        Color color = new Color();
-        colorRepository.save(color);
-        return color.getId();
+    public String persistTestSecondaryBreed() {
+        secondaryBreed = Breed.builder()
+                .name("Labrador")
+                .species(species)
+                .build();
+        breedRepository.save(secondaryBreed);
+        return secondaryBreed.getId();
+    }
+
+    public String persistTestPrimaryColor() {
+        primaryColor = createPrimaryColorWithoutId();
+        colorRepository.save(primaryColor);
+        return primaryColor.getId();
+    }
+
+    public String persistTestSecondaryColor() {
+        secondaryColor = createSecondaryColorWithoutId();
+        colorRepository.save(secondaryColor);
+        return secondaryColor.getId();
+    }
+
+    public String persistTestTertiaryColor() {
+        tertiaryColor = createTertiaryColorWithoutId();
+        colorRepository.save(tertiaryColor);
+        return tertiaryColor.getId();
     }
 
     public String persistTestInterest() {
         Interest interest = new Interest();
         interestRepository.save(interest);
         return interest.getId();
-    }
-  
-    public Species persistSpecies() {
-        Species species = new Species();
-        return speciesRepository.save(species);
     }
 }

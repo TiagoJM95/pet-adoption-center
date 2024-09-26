@@ -64,10 +64,9 @@ public class AdoptionFormControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        Species species = testPersistenceHelper.persistSpecies();
-        speciesId = species.getId();
-        breedId = testPersistenceHelper.persistTestBreed(species);
-        colorId = testPersistenceHelper.persistTestColor();
+        speciesId = testPersistenceHelper.persistTestSpecies();
+        breedId = testPersistenceHelper.persistTestPrimaryBreed();
+        colorId = testPersistenceHelper.persistTestPrimaryColor();
         orgId = testPersistenceHelper.persistTestOrg();
 
         Family family = new Family(

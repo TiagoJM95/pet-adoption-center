@@ -20,6 +20,12 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Species createSpeciesWithoutId() {
+        return Species.builder()
+                .name("Dog")
+                .build();
+    }
+
     public static Breed createPrimaryBreed(Species species) {
         return Breed.builder()
                 .id("222222-22222222-2222")
@@ -43,6 +49,12 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Color createPrimaryColorWithoutId() {
+        return Color.builder()
+                .name("Black")
+                .build();
+    }
+
     public static Color createSecondaryColor() {
         return Color.builder()
                 .id("555555-55555555-5555")
@@ -50,9 +62,21 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Color createSecondaryColorWithoutId() {
+        return Color.builder()
+                .name("White")
+                .build();
+    }
+
     public static Color createTertiaryColor() {
         return Color.builder()
                 .id("666666-66666666-6666")
+                .name("Brown")
+                .build();
+    }
+
+    public static Color createTertiaryColorWithoutId() {
+        return Color.builder()
                 .name("Brown")
                 .build();
     }
@@ -103,9 +127,33 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Organization createOrganizationWithoutId() {
+        return Organization.builder()
+                .name("Pet Adoption Center")
+                .email("org@email.com")
+                .nif("123456789")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
+                .build();
+    }
+
     public static User createUser() {
         return User.builder()
                 .id("999999-99999999-9999")
+                .firstName("John")
+                .lastName("Doe")
+                .email("user@email.com")
+                .nif("987654321")
+                .phoneNumber("987654321")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .address(createAddress())
+                .build();
+    }
+
+    public static User createUserWithoutId() {
+        return User.builder()
                 .firstName("John")
                 .lastName("Doe")
                 .email("user@email.com")
@@ -141,12 +189,6 @@ public class TestEntityFactory {
     public static Pet createPetWithoutId() {
         return Pet.builder()
                 .name("Max")
-                .species(createSpecies())
-                .primaryBreed(createPrimaryBreed(createSpecies()))
-                .secondaryBreed(createSecondaryBreed(createSpecies()))
-                .primaryColor(createPrimaryColor())
-                .secondaryColor(createSecondaryColor())
-                .tertiaryColor(createTertiaryColor())
                 .gender(Genders.MALE)
                 .coat(Coats.SHORT)
                 .size(Sizes.MEDIUM)
@@ -155,7 +197,6 @@ public class TestEntityFactory {
                 .imageUrl("https://www.dogimages.com")
                 .isAdopted(false)
                 .attributes(createAttributes())
-                .organization(createOrganization())
                 .build();
     }
 
