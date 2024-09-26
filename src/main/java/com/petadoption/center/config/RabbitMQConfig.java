@@ -7,12 +7,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
+import static com.petadoption.center.util.Messages.*;
+
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String QUEUE_NAME = "emailQueue";
-    public static final String EXCHANGE_NAME = "emailExchange";
-    public static final String ROUTING_KEY = "emailRoutingKey";
 
     @Bean
     public RestTemplate restTemplate() {

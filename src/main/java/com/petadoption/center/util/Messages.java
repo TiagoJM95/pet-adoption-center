@@ -120,5 +120,11 @@ public class Messages {
 
     public static final String DELETE_SUCCESS = " deleted successfully";
 
+    //CONFIG
+
+    public static final String QUEUE_NAME = "emailQueue";
+    public static final String EXCHANGE_NAME = "emailExchange";
+    public static final String ROUTING_KEY = "emailRoutingKey";
+
 }
 
