@@ -3,7 +3,7 @@ package com.petadoption.center.converter;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.pet.PetGetDto;
-import com.petadoption.center.enums.Sizes;
+import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
@@ -12,39 +12,46 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+<<<<<<< HEAD
 import org.springframework.boot.test.context.SpringBootTest;
+=======
+>>>>>>> 011762e (added updated AdoptionForm converter tests)
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
-import java.util.List;
-
-import static com.petadoption.center.enums.Ages.BABY;
-import static com.petadoption.center.enums.Sizes.LARGE;
+import static com.petadoption.center.testUtils.TestDtoFactory.createPetGetDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.createUserGetDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
+@ExtendWith(MockitoExtension.class)
 public class AdoptionFormConverterTest {
 
     private static Family family;
     private static Address address;
+    private static UserGetDto userGetDto;
+    private static PetGetDto petGetDto;
+    private static User user;
+    private static Pet pet;
 
     @BeforeAll
     static void setUp() {
-        family = new Family(
-                4,
-                true,
-                true,
-                2,
-                List.of("DOG", "PARROT")
-        );
+        family = createFamily();
+        address = createAddress();
+        userGetDto = createUserGetDto();
+        petGetDto = createPetGetDto();
+        user = createUser();
+        pet = createPet();
+    }
 
-        address = new Address(
-                "Rua das Andorinhas, 123",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000");
+    @Test
+    @DisplayName("Test if passing null to any of the AdoptionFormConverter methods returns null")
+    void testIfPassingNullToAnyAdoptionFormConverterMethodReturnsNull() {
 
+        assertNull(AdoptionFormConverter.toModel((AdoptionFormCreateDto) null));
+        assertNull(PetConverter.toModel((PetGetDto) null));
+        assertNull(PetConverter.toDto((Pet) null));
     }
 
     @Test
@@ -62,51 +69,56 @@ public class AdoptionFormConverterTest {
 
         );
 
-        AdoptionForm adoptionForm = AdoptionFormConverter.toModel(adoptionFormCreateDto);
+        AdoptionForm adoptionFormConverted = AdoptionFormConverter.toModel(adoptionFormCreateDto);
 
-        assertEquals(4, adoptionForm.getUserFamily().getFamilyCount());
-        assertEquals(true, adoptionForm.getUserFamily().getLikesPets());
-        assertEquals(true, adoptionForm.getUserFamily().getHasOtherPets());
-        assertEquals(2, adoptionForm.getUserFamily().getNumberOfPets());
-        assertEquals(List.of("DOG", "PARROT"), adoptionForm.getUserFamily().getFamilyPets());
-        assertEquals("Neighbour", adoptionForm.getPetVacationHome());
-        assertEquals(true, adoptionForm.getIsResponsibleForPet());
-        assertEquals("Notes", adoptionForm.getOtherNotes());
-        assertEquals("Rua das Andorinhas, 123", adoptionForm.getPetAddress().getStreet());
-        assertEquals("Vila Nova de Gaia", adoptionForm.getPetAddress().getCity());
-        assertEquals("Porto", adoptionForm.getPetAddress().getState());
-        assertEquals("4410-000", adoptionForm.getPetAddress().getPostalCode());
+        assertEquals(adoptionFormCreateDto.userFamily().getLikesPets(), adoptionFormConverted.getUserFamily().getLikesPets());
+        assertEquals(adoptionFormCreateDto.userFamily().getHasOtherPets(), adoptionFormConverted.getUserFamily().getHasOtherPets());
+        assertEquals(adoptionFormCreateDto.userFamily().getNumberOfPets(), adoptionFormConverted.getUserFamily().getNumberOfPets());
+        assertEquals(adoptionFormCreateDto.userFamily().getFamilyPets(), adoptionFormConverted.getUserFamily().getFamilyPets());
+        assertEquals(adoptionFormCreateDto.petVacationHome(), adoptionFormConverted.getPetVacationHome());
+        assertEquals(adoptionFormCreateDto.isResponsibleForPet(), adoptionFormConverted.getIsResponsibleForPet());
+        assertEquals(adoptionFormCreateDto.otherNotes(), adoptionFormConverted.getOtherNotes());
+        assertEquals(adoptionFormCreateDto.petAddress().getStreet(), adoptionFormConverted.getPetAddress().getStreet());
+        assertEquals(adoptionFormCreateDto.petAddress().getCity(), adoptionFormConverted.getPetAddress().getCity());
+        assertEquals(adoptionFormCreateDto.petAddress().getState(), adoptionFormConverted.getPetAddress().getState());
+        assertEquals(adoptionFormCreateDto.petAddress().getPostalCode(), adoptionFormConverted.getPetAddress().getPostalCode());
     }
 
-    /*@Test
+    @Test
     @DisplayName("Test convert from AdoptionFormGetDto to AdoptionForm Model")
     void testAdoptionFormGetDtoToModel() {
 
-        User user = User.builder()
-                .id("1234-5678")
-                .firstName("Manuel")
-                .lastName("Agrião")
-                .email("email@email.com")
-                .nif("999999990")
-                .phoneNumber("918948958")
-                .dateOfBirth(LocalDate.of(1990, 10, 25))
-                .address(address)
-                .build();
-
-        Species species = new Species("123123-12312312-3123", "Dog");
-        Breed breed = new Breed("1231-1231-1231", "Shepperd", species);
-        Color color = new Color("1234", "Black");
-
-        PetGetDto pet = PetGetDto.builder()
-                .id("1234-1234")
-                .speciesDto()
-                .primaryBreed(breed)
-                .primaryColor(color)
-                .size(LARGE)
-                .age(BABY)
-                .build();
-
         AdoptionFormGetDto adoptionFormGetDto = new AdoptionFormGetDto(
+                "1111-2222",
+                userGetDto,
+                petGetDto,
+                family,
+                "Neighbour",
+                true,
+                "Notes",
+                address
+        );
+
+        AdoptionForm adoptionFormConverted = AdoptionFormConverter.toModel(adoptionFormGetDto);
+
+        assertEquals(adoptionFormGetDto.userFamily().getLikesPets(), adoptionFormConverted.getUserFamily().getLikesPets());
+        assertEquals(adoptionFormGetDto.userFamily().getHasOtherPets(), adoptionFormConverted.getUserFamily().getHasOtherPets());
+        assertEquals(adoptionFormGetDto.userFamily().getNumberOfPets(), adoptionFormConverted.getUserFamily().getNumberOfPets());
+        assertEquals(adoptionFormGetDto.userFamily().getFamilyPets(), adoptionFormConverted.getUserFamily().getFamilyPets());
+        assertEquals(adoptionFormGetDto.petVacationHome(), adoptionFormConverted.getPetVacationHome());
+        assertEquals(adoptionFormGetDto.isResponsibleForPet(), adoptionFormConverted.getIsResponsibleForPet());
+        assertEquals(adoptionFormGetDto.otherNotes(), adoptionFormConverted.getOtherNotes());
+        assertEquals(adoptionFormGetDto.petAddress().getStreet(), adoptionFormConverted.getPetAddress().getStreet());
+        assertEquals(adoptionFormGetDto.petAddress().getCity(), adoptionFormConverted.getPetAddress().getCity());
+        assertEquals(adoptionFormGetDto.petAddress().getState(), adoptionFormConverted.getPetAddress().getState());
+        assertEquals(adoptionFormGetDto.petAddress().getPostalCode(), adoptionFormConverted.getPetAddress().getPostalCode());
+    }
+
+    @Test
+    @DisplayName("Test convert from AdoptionForm model to AdoptionFormGetDto")
+    void testAdoptionFormModelToGetDto() {
+
+        AdoptionForm adoptionForm = new AdoptionForm(
                 "1111-2222",
                 user,
                 pet,
@@ -116,6 +128,19 @@ public class AdoptionFormConverterTest {
                 "Notes",
                 address
         );
-    }*/
 
+        AdoptionFormGetDto adoptionFormConverted = AdoptionFormConverter.toDto(adoptionForm);
+
+        assertEquals(adoptionForm.getUserFamily().getLikesPets(), adoptionFormConverted.userFamily().getLikesPets());
+        assertEquals(adoptionForm.getUserFamily().getHasOtherPets(), adoptionFormConverted.userFamily().getHasOtherPets());
+        assertEquals(adoptionForm.getUserFamily().getNumberOfPets(), adoptionFormConverted.userFamily().getNumberOfPets());
+        assertEquals(adoptionForm.getUserFamily().getFamilyPets(), adoptionFormConverted.userFamily().getFamilyPets());
+        assertEquals(adoptionForm.getPetVacationHome(), adoptionFormConverted.petVacationHome());
+        assertEquals(adoptionForm.getIsResponsibleForPet(), adoptionFormConverted.isResponsibleForPet());
+        assertEquals(adoptionForm.getOtherNotes(), adoptionFormConverted.otherNotes());
+        assertEquals(adoptionForm.getPetAddress().getStreet(), adoptionFormConverted.petAddress().getStreet());
+        assertEquals(adoptionForm.getPetAddress().getCity(), adoptionFormConverted.petAddress().getCity());
+        assertEquals(adoptionForm.getPetAddress().getState(), adoptionFormConverted.petAddress().getState());
+        assertEquals(adoptionForm.getPetAddress().getPostalCode(), adoptionFormConverted.petAddress().getPostalCode());
+    }
 }
