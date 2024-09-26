@@ -57,7 +57,6 @@ public record PetCreateDto(
 
         Boolean isAdopted,
 
-        @Valid
         Attributes attributes,
 
         @NotBlank(message = BLANK_FIELD)

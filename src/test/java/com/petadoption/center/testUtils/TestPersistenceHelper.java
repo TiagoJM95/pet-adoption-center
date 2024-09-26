@@ -3,9 +3,9 @@ package com.petadoption.center.testUtils;
 import com.petadoption.center.model.*;
 import com.petadoption.center.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import static com.petadoption.center.testUtils.TestDataFactory.createSpecies;
-
+@Component
 public class TestPersistenceHelper {
 
     private final UserRepository userRepository;
@@ -59,8 +59,11 @@ public class TestPersistenceHelper {
         return adoptionForm.getId();
     }
 
-    public String persistTestBreed() {
-        Breed breed = new Breed();
+    public String persistTestBreed(Species species) {
+        Breed breed = Breed.builder()
+                .name("Shepperd Doge")
+                .species(species)
+                .build();
         breedRepository.save(breed);
         return breed.getId();
     }
@@ -75,5 +78,10 @@ public class TestPersistenceHelper {
         Interest interest = new Interest();
         interestRepository.save(interest);
         return interest.getId();
+    }
+  
+    public Species persistSpecies() {
+        Species species = new Species();
+        return speciesRepository.save(species);
     }
 }

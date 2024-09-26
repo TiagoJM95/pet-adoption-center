@@ -86,7 +86,7 @@ public class BreedService implements BreedServiceI {
             throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
         }
 
-        if(!dto.secondaryBreedId().equals("NONE")) {
+        if(dto.secondaryBreedId() != null) {
             secondaryBreed = findBreedById(dto.secondaryBreedId());
             if(!Objects.equals(secondaryBreed.getSpecies().getId(), dto.petSpeciesId())) {
                 throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
