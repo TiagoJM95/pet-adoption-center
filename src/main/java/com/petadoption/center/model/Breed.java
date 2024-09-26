@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Objects;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +24,17 @@ public class Breed {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "species_id")
     private Species species;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Breed breed = (Breed) o;
+        return Objects.equals(id, breed.id) && Objects.equals(name, breed.name) && Objects.equals(species, breed.species);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, species);
+    }
 }

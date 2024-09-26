@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.util.Objects;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -44,4 +46,17 @@ public class AdoptionForm {
     private String otherNotes;
 
     private Address petAddress;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdoptionForm that = (AdoptionForm) o;
+        return Objects.equals(id, that.id) && Objects.equals(user, that.user) && Objects.equals(pet, that.pet) && Objects.equals(userFamily, that.userFamily) && Objects.equals(petVacationHome, that.petVacationHome) && Objects.equals(isResponsibleForPet, that.isResponsibleForPet) && Objects.equals(otherNotes, that.otherNotes) && Objects.equals(petAddress, that.petAddress);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, user, pet, userFamily, petVacationHome, isResponsibleForPet, otherNotes, petAddress);
+    }
 }
