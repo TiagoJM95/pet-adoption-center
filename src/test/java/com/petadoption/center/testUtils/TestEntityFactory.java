@@ -1,5 +1,9 @@
 package com.petadoption.center.testUtils;
 
+import com.petadoption.center.enums.Ages;
+import com.petadoption.center.enums.Coats;
+import com.petadoption.center.enums.Genders;
+import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
@@ -109,6 +113,49 @@ public class TestEntityFactory {
                 .phoneNumber("987654321")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address(createAddress())
+                .build();
+    }
+
+    public static Pet createPet() {
+        return Pet.builder()
+                .id("888888-88888888-8888")
+                .name("Max")
+                .species(createSpecies())
+                .primaryBreed(createPrimaryBreed(createSpecies()))
+                .secondaryBreed(createSecondaryBreed(createSpecies()))
+                .primaryColor(createPrimaryColor())
+                .secondaryColor(createSecondaryColor())
+                .tertiaryColor(createTertiaryColor())
+                .gender(Genders.MALE)
+                .coat(Coats.SHORT)
+                .size(Sizes.MEDIUM)
+                .age(Ages.ADULT)
+                .description("Max is a very friendly dog")
+                .imageUrl("https://www.dogimages.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organization(createOrganization())
+                .build();
+    }
+
+    public static Pet createPetWithoutId() {
+        return Pet.builder()
+                .name("Max")
+                .species(createSpecies())
+                .primaryBreed(createPrimaryBreed(createSpecies()))
+                .secondaryBreed(createSecondaryBreed(createSpecies()))
+                .primaryColor(createPrimaryColor())
+                .secondaryColor(createSecondaryColor())
+                .tertiaryColor(createTertiaryColor())
+                .gender(Genders.MALE)
+                .coat(Coats.SHORT)
+                .size(Sizes.MEDIUM)
+                .age(Ages.ADULT)
+                .description("Max is a very friendly dog")
+                .imageUrl("https://www.dogimages.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organization(createOrganization())
                 .build();
     }
 
