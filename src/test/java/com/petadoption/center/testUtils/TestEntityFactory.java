@@ -7,9 +7,11 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
+import com.petadoption.center.model.embeddable.Family;
 import com.petadoption.center.model.embeddable.SocialMedia;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class TestEntityFactory {
 
@@ -215,4 +217,26 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Family createFamily() {
+        return Family.builder()
+                .familyCount(4)
+                .likesPets(true)
+                .hasOtherPets(true)
+                .numberOfPets(2)
+                .familyPets(List.of("DOG", "PARROT"))
+                .build();
+    }
+
+    public static AdoptionForm createAdoptionForm() {
+        return AdoptionForm.builder()
+                .id("101010-10101010-1010")
+                .user(createUser())
+                .pet(createPet())
+                .userFamily(createFamily())
+                .petVacationHome("Neighbour")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
+                .build();
+    }
 }

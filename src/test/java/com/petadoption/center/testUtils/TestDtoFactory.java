@@ -9,6 +9,7 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
+import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
@@ -18,6 +19,10 @@ import com.petadoption.center.dto.user.UserUpdateDto;
 
 import java.time.LocalDate;
 
+import static com.petadoption.center.enums.Ages.ADULT;
+import static com.petadoption.center.enums.Coats.SHORT;
+import static com.petadoption.center.enums.Genders.MALE;
+import static com.petadoption.center.enums.Sizes.MEDIUM;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 
 public class TestDtoFactory {
@@ -91,6 +96,28 @@ public class TestDtoFactory {
                 .phoneNumber("987654321")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address(createAddress())
+                .build();
+    }
+
+    public static PetGetDto createPetGetDto() {
+        return PetGetDto.builder()
+                .id("101010-10101010-1010")
+                .name("Bobi")
+                .speciesDto(createSpeciesGetDto())
+                .primaryBreedDto(createPrimaryBreedDto(createSpeciesGetDto()))
+                .secondaryBreedDto(createSecondaryBreedDto(createSpeciesGetDto()))
+                .primaryColorDto(createPrimaryColorDto())
+                .secondaryColorDto(createSecondaryColorDto())
+                .tertiaryColorDto(createTertiaryColorDto())
+                .gender(MALE)
+                .coat(SHORT)
+                .size(MEDIUM)
+                .age(ADULT)
+                .description("Max is a very friendly dog")
+                .imageUrl("https://www.dogimages.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organizationDto(createOrgGetDto())
                 .build();
     }
 
