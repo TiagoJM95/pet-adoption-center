@@ -13,8 +13,10 @@ import com.petadoption.center.repository.SpeciesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class BreedServiceTest {
 
@@ -203,8 +205,6 @@ public class BreedServiceTest {
     @DisplayName("Test if add new breed saves and returns BreedGetDto")
     void addNewBreedShouldReturnBreedGetDto() throws BreedDuplicateException, SpeciesNotFoundException {
 
-        when(breedRepository.findByName(breedCreateDto.name())).thenReturn(Optional.empty());
-
         when(speciesService.getSpeciesById(breedCreateDto.speciesId())).thenReturn(toDto(species));
 
         when(breedRepository.save(any(Breed.class))).thenReturn(testBreed);
@@ -216,20 +216,10 @@ public class BreedServiceTest {
     }
 
 
-   /* @Test
-    @DisplayName("Test if add new user throws exception if name is duplicated")
-    void addNewBreedShouldThrowBreedNameDuplicateException() {
-
-        when(breedRepository.findByName(breedCreateDto.name())).thenReturn(Optional.of(testBreed));
-
-        assertThrows(BreedDuplicateException.class, () -> breedService.addNewBreed(breedCreateDto));
-    }*/
 
     @Test
     @DisplayName("Test if add new breed throws exception if species is not found")
     void addNewBreedShouldThrowSpeciesNotFoundException() throws SpeciesNotFoundException {
-
-        when(breedRepository.save(any(Breed.class))).thenReturn(testBreed);
 
         when(speciesService.getSpeciesById(breedCreateDto.speciesId())).thenThrow(SpeciesNotFoundException.class);
 
@@ -257,18 +247,6 @@ public class BreedServiceTest {
 
         assertThrows(BreedNotFoundException.class, () -> breedService.updateBreed(testBreed.getId(), breedUpdateDto));
     }
-
-
-/*    @Test
-    @DisplayName("Test if update breed throws exception if name is duplicated")
-    void updateBreedShouldThrowBreedNameDuplicateException() {
-
-        when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.of(testBreed));
-
-        when(breedRepository.findByName(breedUpdateDto.name())).thenReturn(Optional.of(updatedBreed));
-
-        assertThrows(BreedDuplicateException.class, () -> breedService.updateBreed(testBreed.getId(), breedUpdateDto));
-    }*/
 
 
     @Test

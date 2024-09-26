@@ -10,8 +10,10 @@ import com.petadoption.center.repository.SpeciesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -28,7 +30,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class SpeciesServiceTest {
 
@@ -174,8 +176,6 @@ public class SpeciesServiceTest {
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
     void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
 
-        when(speciesRepository.findByName(testSpecies.getName())).thenReturn(Optional.empty());
-
         when(speciesRepository.save(any(Species.class))).thenReturn(testSpecies);
 
         SpeciesGetDto result = speciesService.addNewSpecies(speciesCreateDto);
@@ -184,20 +184,10 @@ public class SpeciesServiceTest {
         assertEquals(testSpecies.getName(), result.name());
     }
 
-/*    @Test
-    @DisplayName("Test if add new species throws SpeciesNameDuplicateException")
-    void addPetSpeciesShouldThrowException() {
-
-        when(speciesRepository.findByName(speciesCreateDto.name())).thenReturn(Optional.of(testSpecies));
-
-        assertThrows(SpeciesDuplicateException.class, () -> speciesService.addNewSpecies(speciesCreateDto));
-    }*/
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
     void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
-
-        when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.empty());
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
@@ -217,17 +207,6 @@ public class SpeciesServiceTest {
 
         assertThrows(SpeciesNotFoundException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
     }
-
-/*    @Test
-    @DisplayName("Test if update species throws SpeciesNameDuplicateException")
-    void updatePetSpeciesShouldThrowDuplicatedNameException(){
-
-        when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
-
-        when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.of(testSpecies));
-
-        assertThrows(SpeciesDuplicateException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
-    }*/
 
     @Test
     @DisplayName("Test if delete species removes and returns SpeciesGetDto")

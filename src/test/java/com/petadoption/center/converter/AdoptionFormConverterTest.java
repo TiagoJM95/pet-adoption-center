@@ -10,6 +10,8 @@ import com.petadoption.center.model.embeddable.Family;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -20,7 +22,7 @@ import static com.petadoption.center.enums.Ages.BABY;
 import static com.petadoption.center.enums.Sizes.LARGE;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class AdoptionFormConverterTest {
 
