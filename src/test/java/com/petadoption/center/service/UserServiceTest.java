@@ -26,6 +26,9 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.createUserCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.createUserUpdateDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createUser;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.USER_WITH_ID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,55 +50,27 @@ public class UserServiceTest {
     private User updatedUser;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
-    private Address createAddress;
-    private Address updateAddress;
 
     @BeforeEach
     void setUp() {
 
-        createAddress = new Address("Rua das Andorinhas, 123",
+        testUser = createUser();
+        userCreateDto = createUserCreateDto();
+        userUpdateDto = createUserUpdateDto();
+
+        Address updateAddress = new Address("Rua das Gaivotas, 456",
                 "Vila Nova de Gaia",
                 "4410-000",
                 "Porto");
 
-        updateAddress = new Address("Rua das Gaivotas, 456",
-                "Vila Nova de Gaia",
-                "4410-000",
-                "Porto");
-
-        testUser = new User();
-        testUser.setId("2132-1234-1234");
-        testUser.setFirstName("Manuel");
-        testUser.setLastName("Silva");
-        testUser.setEmail("email@email.com");
-        testUser.setDateOfBirth(LocalDate.of(1990, 10, 25));
-        testUser.setPhoneNumber("911234567");
-        testUser.setAddress(new Address("Rua dos animais, 123", "Gondomar", "Porto", "4400-000"));
-
-          userCreateDto = new UserCreateDto(
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456789",
-                LocalDate.of(1990, 10, 25),
-                  createAddress,
-                "912354678");
-          userUpdateDto = new UserUpdateDto(
-                  "Tiago",
-                "Moreira",
-                "tm@email.com",
-                  updateAddress,
-                "934587967");
-
-        updatedUser = new User();
+        updatedUser = createUser();
         updatedUser.setId("2132-1234-1234");
         updatedUser.setFirstName("Tiago");
         updatedUser.setLastName("Moreira");
         updatedUser.setEmail("tm@email.com");
         updatedUser.setDateOfBirth(LocalDate.of(1990, 10, 25));
         updatedUser.setPhoneNumber("934587967");
-        updatedUser.setAddress(new Address("Rua dos animais, 123", "Rio Tinto", "Porto", "4100-001"));
-
+        updatedUser.setAddress(updateAddress);
     }
 
     @Test
@@ -208,7 +183,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if add new user saves and returns UserGetDto")
-    void addNewUserShouldSaveAndReturnUserGetDto() throws UserDuplicateException {
+    void addNewUserShouldSaveAndReturnUserGetDto() {
 
         when(userRepository.save(any(User.class))).thenReturn(testUser);
         UserGetDto result = userService.addNewUser(userCreateDto);
@@ -220,7 +195,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if update user saves all fields and returns UserGetDto")
-    void updateUserShouldSaveAllFieldsAndReturnUserGetDto() throws UserNotFoundException, UserDuplicateException {
+    void updateUserShouldSaveAllFieldsAndReturnUserGetDto() throws UserNotFoundException {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);

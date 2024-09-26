@@ -24,6 +24,9 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesUpdateDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,17 +50,14 @@ public class SpeciesServiceTest {
 
     @BeforeEach
     void setUp() {
-        testSpecies = new Species();
-        testSpecies.setId("1111-1111-2222");
-        testSpecies.setName("Dog");
+        testSpecies = createSpecies();
 
-        updatedSpecies = new Species();
+        updatedSpecies = createSpecies();
         updatedSpecies.setId("1111-2222-2222");
         updatedSpecies.setName("Cat");
 
-        speciesCreateDto = new SpeciesCreateDto("Dog");
-
-        speciesUpdateDto = new SpeciesUpdateDto("Cat");
+        speciesCreateDto = createSpeciesCreateDto();
+        speciesUpdateDto = createSpeciesUpdateDto();
     }
 
     @Test

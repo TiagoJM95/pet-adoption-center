@@ -2,7 +2,6 @@ package com.petadoption.center.service;
 
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.color.ColorDuplicateException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.repository.ColorRepository;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.createColorCreateDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createPrimaryColor;
 import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,15 +45,13 @@ public class ColorServiceTest {
 
     @BeforeEach
     void setUp() {
-        testColor = new Color();
-        testColor.setId("1111-1111-2222");
-        testColor.setName("Black");
+        testColor = createPrimaryColor();
+        updatedColor = createPrimaryColor();
 
-        updatedColor = new Color();
         updatedColor.setId("1111-2222-2222");
         updatedColor.setName("White");
 
-        colorCreateDto = new ColorCreateDto("Black");
+        colorCreateDto = createColorCreateDto();
     }
 
     @Test
@@ -173,7 +171,7 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if add new color saves and returns ColorGetDto")
-    void addNewColorShouldReturnColorGetDto() throws ColorDuplicateException {
+    void addNewColorShouldReturnColorGetDto() {
 
         when(colorRepository.save(any(Color.class))).thenReturn(testColor);
 

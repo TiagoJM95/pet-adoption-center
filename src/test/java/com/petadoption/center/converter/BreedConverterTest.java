@@ -1,5 +1,6 @@
 package com.petadoption.center.converter;
 
+import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.Breed;
@@ -14,6 +15,7 @@ import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createBreed;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -53,6 +55,24 @@ public class BreedConverterTest {
         assertEquals("222222-22222222-2222", breedGetDto.id());
         assertEquals("Labrador", breedGetDto.name());
         assertEquals("Dog", breedGetDto.speciesDto().name());
+    }
+
+    @Test
+    @DisplayName("Test if BreedCreateDto to model returns null if received null dto")
+    void testIfFromBreedCreateDtoToModelReturnNullIfReceivedNullDto() {
+        assertNull(BreedConverter.toModel((BreedCreateDto) null));
+    }
+
+    @Test
+    @DisplayName("Test if BreedGetDto to model returns null if received null dto")
+    void testIfFromBreedGetDtoToModelReturnNullIfReceivedNullDto() {
+        assertNull(BreedConverter.toModel((BreedGetDto) null));
+    }
+
+    @Test
+    @DisplayName("Test if Breed model to BreedGetDto returns null if received null model")
+    void testIfFromModelToBreedGetDtoReturnNullIfReceivedNullModel() {
+        assertNull(BreedConverter.toDto(null));
     }
 
 }

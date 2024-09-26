@@ -5,6 +5,7 @@ import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
+import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
@@ -126,13 +127,13 @@ public class TestDtoFactory {
 
     public static UserCreateDto createUserCreateDto(){
         return UserCreateDto.builder()
-                .firstName("Manuel")
-                .lastName("Silva")
-                .email("email@email.com")
-                .nif("123456789")
-                .dateOfBirth(LocalDate.of(1990, 10, 25))
+                .firstName("John")
+                .lastName("Doe")
+                .email("user@email.com")
+                .nif("987654321")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address(createAddress())
-                .phoneNumber("123456789")
+                .phoneNumber("987654321")
                 .build();
     }
 
@@ -147,6 +148,18 @@ public class TestDtoFactory {
     public static ColorCreateDto colorCreateDto(){
         return ColorCreateDto.builder()
                 .name("Black")
+                .build();
+    }
+
+    public static OrgCreateDto orgCreateDto(){
+        return OrgCreateDto.builder()
+                .name("Pet Adoption Center")
+                .email("org@email.com")
+                .nif("123456789")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
                 .build();
     }
 
@@ -179,5 +192,7 @@ public class TestDtoFactory {
                 .name("Weimaraner")
                 .build();
     }
+
+
 
 }
