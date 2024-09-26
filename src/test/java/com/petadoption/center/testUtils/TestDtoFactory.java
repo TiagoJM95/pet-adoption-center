@@ -2,24 +2,37 @@ package com.petadoption.center.testUtils;
 
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
+import com.petadoption.center.dto.breed.BreedUpdateDto;
+import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
+import com.petadoption.center.dto.species.SpeciesUpdateDto;
+import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
-import com.petadoption.center.model.Color;
+import com.petadoption.center.dto.user.UserUpdateDto;
 
 import java.time.LocalDate;
 
-import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
-import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
+import static com.petadoption.center.testUtils.TestEntityFactory.*;
 
 public class TestDtoFactory {
+
+    // GET DTOs
 
     public static SpeciesGetDto createSpeciesGetDto() {
         return SpeciesGetDto.builder()
                 .id("111111-11111111-1111")
                 .name("Dog")
+                .build();
+    }
+
+    public static BreedGetDto createBreedGetDto(SpeciesGetDto speciesGetDto) {
+        return BreedGetDto.builder()
+                .id("2222-2222-3333")
+                .name("Golden Retriever")
+                .speciesDto(speciesGetDto)
                 .build();
     }
 
@@ -85,4 +98,86 @@ public class TestDtoFactory {
                 .address(createAddress())
                 .build();
     }
+
+
+    // CREATE DTOs
+
+    public static BreedCreateDto createBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Golden Retriever")
+                .speciesId(speciesId)
+                .build();
+    }
+
+
+    public static ColorCreateDto createColorCreateDto(){
+        return ColorCreateDto.builder()
+                .name("Black")
+                .build();
+    }
+
+
+
+    public static SpeciesCreateDto createSpeciesCreateDto(){
+        return SpeciesCreateDto.builder()
+                .name("Dog")
+                .build();
+    }
+
+    public static UserCreateDto createUserCreateDto(){
+        return UserCreateDto.builder()
+                .firstName("Manuel")
+                .lastName("Silva")
+                .email("email@email.com")
+                .nif("123456789")
+                .dateOfBirth(LocalDate.of(1990, 10, 25))
+                .address(createAddress())
+                .phoneNumber("123456789")
+                .build();
+    }
+
+
+    public static BreedCreateDto breedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Golden Retriever")
+                .speciesId(speciesId)
+                .build();
+    }
+
+    public static ColorCreateDto colorCreateDto(){
+        return ColorCreateDto.builder()
+                .name("Black")
+                .build();
+    }
+
+    // UPDATE DTOs
+
+    public static BreedUpdateDto createBreedUpdateDto(){
+        return BreedUpdateDto.builder()
+                .name("Weimaraner")
+                .build();
+    }
+
+    public static SpeciesUpdateDto createSpeciesUpdateDto(){
+        return SpeciesUpdateDto.builder()
+                .name("Cat")
+                .build();
+    }
+
+    public static UserUpdateDto createUserUpdateDto(){
+        return UserUpdateDto.builder()
+                .firstName("Tiago")
+                .lastName("Moreira")
+                .email("tm@email.com")
+                .address(updateAddress())
+                .phoneNumber("934587967")
+                .build();
+    }
+
+    public static BreedUpdateDto breedUpdateDto(){
+        return BreedUpdateDto.builder()
+                .name("Weimaraner")
+                .build();
+    }
+
 }

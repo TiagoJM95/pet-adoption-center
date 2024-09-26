@@ -10,6 +10,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.createPrimaryColorDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createPrimaryColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,9 +24,7 @@ public class ColorConverterTest {
     @DisplayName("Test ColorCreateDto to Color model is working correctly")
     void fromColorCreateDtoToModel() {
 
-        ColorCreateDto colorCreateDto = new ColorCreateDto("Black");
-
-        Color color = ColorConverter.toModel(colorCreateDto);
+        Color color = ColorConverter.toModel(colorCreateDto());
 
         assertEquals("Black", color.getName());
     }
@@ -32,13 +33,10 @@ public class ColorConverterTest {
     @DisplayName("Test if ColorGetDto to Color model is working correctly")
     void fromColorGetDtoToModel() {
 
-        ColorGetDto colorGetDto = new ColorGetDto(
-                "3213-3213-3213",
-                "Black");
 
-        Color color = ColorConverter.toModel(colorGetDto);
+        Color color = ColorConverter.toModel(createPrimaryColorDto());
 
-        assertEquals("3213-3213-3213", color.getId());
+        assertEquals("444444-44444444-4444", color.getId());
         assertEquals("Black", color.getName());
     }
 
@@ -46,13 +44,9 @@ public class ColorConverterTest {
     @DisplayName("Test Color model to ColorGetDto is working correctly")
     void fromModelToColorGetDto() {
 
-        Color color = new Color(
-                "3213-3213-3213",
-                "Black");
+        ColorGetDto colorGetDto = ColorConverter.toDto(createPrimaryColor());
 
-        ColorGetDto colorGetDto = ColorConverter.toDto(color);
-
-        assertEquals("3213-3213-3213", colorGetDto.id());
+        assertEquals("444444-44444444-4444", colorGetDto.id());
         assertEquals("Black", colorGetDto.name());
     }
 }

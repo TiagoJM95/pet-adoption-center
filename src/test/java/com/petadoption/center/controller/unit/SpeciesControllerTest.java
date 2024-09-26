@@ -22,6 +22,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,15 +47,10 @@ public class SpeciesControllerTest {
 
     @BeforeEach
     void setUp() {
-        testSpecies = new Species();
-        testSpecies.setId("1111-1111-2222");
-        testSpecies.setName("Dog");
-
-        speciesGetDto = new SpeciesGetDto("1111-1111-2222", "Dog");
-
-        speciesCreateDto = new SpeciesCreateDto("Dog");
-
-        speciesUpdateDto = new SpeciesUpdateDto("Cat");
+        testSpecies = createSpecies();
+        speciesGetDto = createSpeciesGetDto();
+        speciesCreateDto = createSpeciesCreateDto();
+        speciesUpdateDto = createSpeciesUpdateDto();
     }
 
     @Test
