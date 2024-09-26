@@ -79,7 +79,7 @@ public class TestPersistenceHelper {
         interestRepository.save(interest);
         return interest.getId();
     }
-
+  
     public Species persistSpecies() {
         Species species = new Species();
         return speciesRepository.save(species);

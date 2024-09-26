@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Objects;
 
 import static com.petadoption.center.util.Messages.BLANK_FIELD;
 import static com.petadoption.center.util.Messages.ONLY_NUMBERS;
@@ -33,4 +34,17 @@ public class Family {
     private Integer numberOfPets;
 
     private List<String> familyPets; //talvez fazer um enum com muitas espécies
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Family family = (Family) o;
+        return Objects.equals(familyCount, family.familyCount) && Objects.equals(likesPets, family.likesPets) && Objects.equals(hasOtherPets, family.hasOtherPets) && Objects.equals(numberOfPets, family.numberOfPets) && Objects.equals(familyPets, family.familyPets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(familyCount, likesPets, hasOtherPets, numberOfPets, familyPets);
+    }
 }
