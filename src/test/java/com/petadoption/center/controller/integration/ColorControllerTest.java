@@ -15,6 +15,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.createColorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
@@ -35,13 +36,10 @@ public class ColorControllerTest {
 
     private ColorGetDto colorGetDto;
     private ColorCreateDto colorCreateDto;
-    private String colorId;
 
     @BeforeEach
     void setUp() {
-
-        colorCreateDto = new ColorCreateDto("Black");
-
+        colorCreateDto = createColorCreateDto();
     }
 
     @Test
@@ -56,9 +54,7 @@ public class ColorControllerTest {
                 .andExpect(jsonPath("$.name", is(colorCreateDto.name())))
                 .andReturn();
 
-      ColorGetDto colorCreated = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-      colorId = colorCreated.id();
-      colorGetDto = new ColorGetDto(colorId, colorCreateDto.name());
+      colorGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
     }
 
     @Test
@@ -82,7 +78,7 @@ public class ColorControllerTest {
 
         createColor();
 
-        mockMvc.perform(get("/api/v1/color/id/{id}", colorId)
+        mockMvc.perform(get("/api/v1/color/id/{id}", colorGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(colorGetDto.id())))
@@ -96,9 +92,9 @@ public class ColorControllerTest {
 
         createColor();
 
-        mockMvc.perform(delete("/api/v1/color/delete/{id}", colorId)
+        mockMvc.perform(delete("/api/v1/color/delete/{id}", colorGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(COLOR_WITH_ID + colorId + DELETE_SUCCESS));
+                .andExpect(content().string(COLOR_WITH_ID + colorGetDto.id() + DELETE_SUCCESS));
     }
 }

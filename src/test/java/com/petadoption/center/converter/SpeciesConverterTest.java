@@ -6,12 +6,17 @@ import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.Species;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesGetDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class SpeciesConverterTest {
 
@@ -19,36 +24,46 @@ public class SpeciesConverterTest {
     @DisplayName("Test SpeciesCreateDto to Species model is working correctly")
     void fromSpeciesCreateDtoToModel() {
 
-        SpeciesCreateDto speciesCreateDto = new SpeciesCreateDto("Cat");
+        Species species = SpeciesConverter.toModel(createSpeciesCreateDto());
 
-        Species species = SpeciesConverter.toModel(speciesCreateDto);
-
-        assertEquals("Cat", species.getName());
+        assertEquals("Dog", species.getName());
     }
 
     @Test
     @DisplayName("Test if SpeciesGetDto to Species model is working correctly")
     void fromSpeciesGetDtoToModel() {
 
-        SpeciesGetDto speciesGetDto = new SpeciesGetDto(
-                "2313-21321-31231",
-                "Cat");
+        Species species = SpeciesConverter.toModel(createSpeciesGetDto());
 
-        Species species = SpeciesConverter.toModel(speciesGetDto);
-
-        assertEquals("2313-21321-31231", species.getId());
-        assertEquals("Cat", species.getName());
+        assertEquals("111111-11111111-1111", species.getId());
+        assertEquals("Dog", species.getName());
     }
 
     @Test
     @DisplayName("Test Species model to SpeciesGetDto is working correctly")
     void fromModelToSpeciesGetDto() {
 
-        Species species = new Species("2313-21321-31231", "Cat");
+        SpeciesGetDto speciesGetDto = SpeciesConverter.toDto(createSpecies());
 
-        SpeciesGetDto speciesGetDto = SpeciesConverter.toDto(species);
+        assertEquals("111111-11111111-1111", speciesGetDto.id());
+        assertEquals("Dog", speciesGetDto.name());
+    }
 
-        assertEquals("2313-21321-31231", speciesGetDto.id());
-        assertEquals("Cat", speciesGetDto.name());
+    @Test
+    @DisplayName("Test if SpeciesCreateDto to species returns null if received null dto")
+    void testIfFromSpeciesCreateDtoReturnNullIfReceivedNullDto() {
+        assertNull(SpeciesConverter.toModel((SpeciesCreateDto) null));
+    }
+
+    @Test
+    @DisplayName("Test if SpeciesGetDto to species returns null if received null dto")
+    void testIfFromSpeciesGetDtoReturnNullIfReceivedNullDto() {
+        assertNull(SpeciesConverter.toModel((SpeciesGetDto) null));
+    }
+
+    @Test
+    @DisplayName("Test if Species to SpeciesGetDto returns null if received null model")
+    void testIfFromModelReturnNullIfReceivedNullModel() {
+        assertNull(SpeciesConverter.toDto(null));
     }
 }

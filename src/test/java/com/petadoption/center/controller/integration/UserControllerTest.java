@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.model.embeddable.Address;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,8 +17,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.USER_WITH_ID;
 import static org.hamcrest.Matchers.is;
@@ -43,40 +42,11 @@ public class UserControllerTest {
     private UserGetDto userGetDto;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
-    private Address createAddress;
-    private Address updateAddress;
-
-    private String userId;
 
     @BeforeEach
     void setUp() {
-        createAddress = new Address("Rua das Andorinhas, 123",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000");
-
-        updateAddress = new Address("Rua das Gaivotas, 456",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000");
-
-        userCreateDto = UserCreateDto.builder()
-                .firstName("Manuel")
-                .lastName("Silva")
-                .email("email@email.com")
-                .nif("123456789")
-                .dateOfBirth(LocalDate.of(1990, 10, 25))
-                .address(createAddress)
-                .phoneNumber("123456789")
-                .build();
-
-        userUpdateDto = new UserUpdateDto(
-                "Tiago",
-                "Moreira",
-                "tm@email.com",
-                updateAddress,
-                "934587967");
-
+        userCreateDto = createUserCreateDto();
+        userUpdateDto = createUserUpdateDto();
     }
 
 
@@ -93,20 +63,7 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastName", is(userCreateDto.lastName())))
                 .andReturn();
 
-       UserGetDto userCreated = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-
-       userId = userCreated.id();
-
-       userGetDto = new UserGetDto(
-               userId,
-               userCreateDto.firstName(),
-               userCreateDto.lastName(),
-               userCreateDto.email(),
-               userCreateDto.nif(),
-               userCreateDto.dateOfBirth(),
-               userCreateDto.address(),
-               userCreateDto.phoneNumber()
-       );
+       userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
 
     }
 
@@ -137,7 +94,7 @@ public class UserControllerTest {
 
         createUserShouldReturnUser();
 
-        mockMvc.perform(get("/api/v1/user/id/{id}", userId)
+        mockMvc.perform(get("/api/v1/user/id/{id}", userGetDto.id())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(userGetDto.id())))
@@ -154,7 +111,7 @@ public class UserControllerTest {
 
         createUserShouldReturnUser();
 
-        mockMvc.perform(put("/api/v1/user/update/{id}", userId)
+        mockMvc.perform(put("/api/v1/user/update/{id}", userGetDto.id())
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -169,9 +126,9 @@ public class UserControllerTest {
 
         createUserShouldReturnUser();
 
-        mockMvc.perform(delete("/api/v1/user/delete/{id}", userId)
+        mockMvc.perform(delete("/api/v1/user/delete/{id}", userGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(USER_WITH_ID + userId + DELETE_SUCCESS));
+                .andExpect(content().string(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS));
     }
 }
