@@ -18,5 +18,5 @@ public interface BreedServiceI {
     BreedGetDto addNewBreed(BreedCreateDto breed) throws SpeciesNotFoundException;
     BreedGetDto updateBreed(String id, BreedUpdateDto breed) throws BreedNotFoundException;
     String deleteBreed(String id) throws BreedNotFoundException;
-    void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException;
+    void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException;
 }
