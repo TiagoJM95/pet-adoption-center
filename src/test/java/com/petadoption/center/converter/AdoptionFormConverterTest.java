@@ -12,11 +12,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-<<<<<<< HEAD
-import org.springframework.boot.test.context.SpringBootTest;
-=======
->>>>>>> 011762e (added updated AdoptionForm converter tests)
+
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDateTime;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.createPetGetDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.createUserGetDto;
@@ -126,7 +125,8 @@ public class AdoptionFormConverterTest {
                 "Neighbour",
                 true,
                 "Notes",
-                address
+                address,
+                LocalDateTime.of(2024, 1, 1, 1, 1)
         );
 
         AdoptionFormGetDto adoptionFormConverted = AdoptionFormConverter.toDto(adoptionForm);
