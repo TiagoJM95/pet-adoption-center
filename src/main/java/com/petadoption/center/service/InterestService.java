@@ -98,7 +98,6 @@ public class InterestService implements InterestServiceI {
         interest.setPet(PetConverter.toModel(petService.getPetById(dto.petId())));
         interest.setOrganization(OrgConverter.toModel(organizationService.getOrganizationById(dto.organizationId())));
         interest.setStatus(PENDING);
-        interest.setTimestamp(LocalDateTime.now());
         return InterestConverter.toDto(interestRepository.save(interest));
     }
 
@@ -111,6 +110,7 @@ public class InterestService implements InterestServiceI {
             createAndSaveAdoptionForm(interest);
         }
         interest.setStatus(status);
+        interest.setReviewTimestamp(LocalDateTime.now());
         return InterestConverter.toDto(interestRepository.save(interest));
     }
 

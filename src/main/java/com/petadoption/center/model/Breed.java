@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -25,6 +26,9 @@ public class Breed {
     @JoinColumn(name = "species_id")
     private Species species;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -36,5 +40,12 @@ public class Breed {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, species);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 }

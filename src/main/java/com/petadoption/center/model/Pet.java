@@ -10,6 +10,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Set;
 
@@ -83,8 +84,8 @@ public class Pet {
     })
     private Attributes attributes;
 
-    @Column(name = "date_added")
-    private LocalDate dateAdded;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "organization_id")
@@ -95,11 +96,19 @@ public class Pet {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Pet pet = (Pet) o;
-        return isAdopted == pet.isAdopted && Objects.equals(id, pet.id) && Objects.equals(name, pet.name) && Objects.equals(species, pet.species) && Objects.equals(primaryBreed, pet.primaryBreed) && Objects.equals(secondaryBreed, pet.secondaryBreed) && Objects.equals(primaryColor, pet.primaryColor) && Objects.equals(secondaryColor, pet.secondaryColor) && Objects.equals(tertiaryColor, pet.tertiaryColor) && gender == pet.gender && coat == pet.coat && size == pet.size && age == pet.age && Objects.equals(description, pet.description) && Objects.equals(imageUrl, pet.imageUrl) && Objects.equals(attributes, pet.attributes) && Objects.equals(dateAdded, pet.dateAdded) && Objects.equals(organization, pet.organization);
+        return isAdopted == pet.isAdopted && Objects.equals(id, pet.id) && Objects.equals(name, pet.name) && Objects.equals(species, pet.species) && Objects.equals(primaryBreed, pet.primaryBreed) && Objects.equals(secondaryBreed, pet.secondaryBreed) && Objects.equals(primaryColor, pet.primaryColor) && Objects.equals(secondaryColor, pet.secondaryColor) && Objects.equals(tertiaryColor, pet.tertiaryColor) && gender == pet.gender && coat == pet.coat && size == pet.size && age == pet.age && Objects.equals(description, pet.description) && Objects.equals(imageUrl, pet.imageUrl) && Objects.equals(attributes, pet.attributes) && Objects.equals(createdAt, pet.createdAt) && Objects.equals(organization, pet.organization);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, species, primaryBreed, secondaryBreed, primaryColor, secondaryColor, tertiaryColor, gender, coat, size, age, description, imageUrl, isAdopted, attributes, dateAdded, organization);
+        return Objects.hash(id, name, species, primaryBreed, secondaryBreed, primaryColor, secondaryColor, tertiaryColor, gender, coat, size, age, description, imageUrl, isAdopted, attributes, createdAt, organization);
     }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -47,6 +48,9 @@ public class AdoptionForm {
 
     private Address petAddress;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,5 +62,12 @@ public class AdoptionForm {
     @Override
     public int hashCode() {
         return Objects.hash(id, user, pet, userFamily, petVacationHome, isResponsibleForPet, otherNotes, petAddress);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 }
