@@ -5,6 +5,6 @@ import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 
 public class OrgNotFoundException extends OrgException {
     public OrgNotFoundException(String message) {
-        super(ORG_WITH_ID + message + NOT_FOUND);
+        super(message);
     }
 }

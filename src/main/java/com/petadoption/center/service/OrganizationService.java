@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.ORG_WITH_ID;
+import static com.petadoption.center.util.Messages.*;
 import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
@@ -56,7 +55,7 @@ public class OrganizationService implements OrganizationServiceI {
     }
 
     private Organization findOrgById(String id) throws OrgNotFoundException {
-        return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException(id));
+        return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException(ORG_WITH_ID + id + NOT_FOUND));
     }
 
     private void updateOrgFields(OrgUpdateDto dto, Organization org) {
