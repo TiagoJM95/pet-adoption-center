@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.models.examples.Example;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +40,8 @@ public class UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Return a list of user with the specified page (0 as default) and size of 5 elements as default, sorted by id as default",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGetDto.class))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserGetDto.class))
             ),
     })
     @Parameter(name = "firstName", description = "The user first name to search for", example = "Manuel")
@@ -60,7 +62,8 @@ public class UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Return a user with the specified id",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGetDto.class))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserGetDto.class))
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -81,7 +84,8 @@ public class UserController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Return the user created with the specified id and information",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGetDto.class))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserGetDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -94,10 +98,14 @@ public class UserController {
             @ApiResponse(
                     responseCode = "403",
                     description = "unauthorized"
+
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "User already exists"
+                    description = "Conflict: Field duplicated",
+                    content = @Content(mediaType = "text/plain",
+                        schema = @Schema(type = "string",
+                            example = "email is already in use."))
             ),
     })
     @PostMapping("/")
@@ -113,7 +121,8 @@ public class UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Return the user updated with the specified id and information",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserGetDto.class))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = UserGetDto.class))
             ),
             @ApiResponse(
                     responseCode = "400",
@@ -129,11 +138,17 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "User not found"
+                    description = "User not found",
+                    content = @Content(mediaType = "text/plain",
+                        schema = @Schema(type = "string",
+                            example = "User with id 123124-12313-321312-3123 not found"))
             ),
             @ApiResponse(
                     responseCode = "409",
-                    description = "User already exists"
+                    description = "User already exists",
+                    content = @Content(mediaType = "text/plain",
+                        schema = @Schema(type = "string",
+                            example = "email is already in use."))
             ),
     })
     @Parameter(name = "id", description = "The user id to update", example = "123124-12313-321312-3123", required = true)
@@ -149,7 +164,10 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Return a message of successful operation"
+                    description = "Return a message of successful operation",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "string",
+                                    example = "User with id: 123124-12313-321312-3123 deleted successfully"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -161,7 +179,10 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "User not found"
+                    description = "User not found",
+                    content = @Content(mediaType = "text/plain",
+                        schema = @Schema(type = "string",
+                                    example = "User with id 123124-12313-321312-3123 not found"))
             ),
             })
     @Parameter(name = "id", description = "The user id to delete", example = "123124-12313-321312-3123", required = true)
@@ -177,7 +198,10 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Return a message of successful operation"
+                    description = "Return a message of successful operation",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "string",
+                                    example = "Pet added to favorites"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -189,7 +213,10 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "User or pet not found"
+                    description = "User or pet not found",
+                    content = @Content(mediaType = "text/plain",
+                        schema = @Schema(type = "string",
+                                    example = "User with id: 123124-12313-321312-3123 or pet with id: 123124-12313-321312-3123 not found"))
             ),
     })
     @Parameter(name = "userId", description = "The user id to add pet", example = "123124-12313-321312-3123", required = true)
@@ -207,7 +234,10 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Return a message of successful operation"
+                    description = "Return a message of successful operation",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "string",
+                                    example = "Pet removed from favorites"))
             ),
             @ApiResponse(
                     responseCode = "401",
@@ -219,7 +249,10 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "404",
-                    description = "User or pet not found"
+                    description = "User or pet not found",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "string",
+                                    example = "User with id: 123124-12313-321312-3123 or pet with id: 123124-12313-321312-3123 not found"))
             ),
     })
     @Parameter(name = "userId", description = "The user id to remove pet", example = "123124-12313-321312-3123", required = true)
@@ -238,7 +271,8 @@ public class UserController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Return a list of pets",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PetGetDto.class))
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PetGetDto.class))
             ),
             @ApiResponse(
                     responseCode = "401",
