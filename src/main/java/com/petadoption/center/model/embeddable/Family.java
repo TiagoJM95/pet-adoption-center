@@ -1,5 +1,6 @@
 package com.petadoption.center.model.embeddable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -22,15 +23,19 @@ import static com.petadoption.center.util.Messages.ONLY_NUMBERS;
 public class Family {
 
     @Min(value = 0, message = ONLY_NUMBERS)
+    @Schema(description = "Number of family members", example = "2")
     private Integer familyCount;
 
     @NotBlank(message = BLANK_FIELD)
+    @Schema(description = "Is the family likes pets?", example = "true")
     private Boolean likesPets;
 
     @NotBlank(message = BLANK_FIELD)
+    @Schema(description = "Does the family have other pets?", example = "true")
     private Boolean hasOtherPets;
 
     @Min(value = 0, message = ONLY_NUMBERS)
+    @Schema(description = "How many pets does the family have", example = "2")
     private Integer numberOfPets;
 
     private List<String> familyPets; //talvez fazer um enum com muitas espécies

@@ -1,5 +1,6 @@
 package com.petadoption.center.model.embeddable;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
@@ -12,13 +13,28 @@ import java.util.Objects;
 @Setter
 @Builder
 public class Attributes {
+    @Schema(description = "Is the animal sterilized?", example = "true")
     private boolean sterilized;
+
+    @Schema(description = "Is the animal vaccinated?", example = "true")
     private boolean vaccinated;
+
+    @Schema(description = "Is the animal chipped?", example = "true")
     private boolean chipped;
+
+    @Schema(description = "Is the animal special needs?", example = "true")
     private boolean specialNeeds;
+
+    @Schema(description = "Is the animal house trained?", example = "true")
     private boolean houseTrained;
+
+    @Schema(description = "Is the animal good with kids?", example = "true")
     private boolean goodWithKids;
+
+    @Schema(description = "Is the animal good with dogs?", example = "true")
     private boolean goodWithDogs;
+
+    @Schema(description = "Is the animal good with cats?", example = "true")
     private boolean goodWithCats;
 
     @Override
