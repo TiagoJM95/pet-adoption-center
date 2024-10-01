@@ -11,6 +11,7 @@ import com.petadoption.center.model.embeddable.Family;
 import com.petadoption.center.model.embeddable.SocialMedia;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TestEntityFactory {
@@ -237,6 +238,7 @@ public class TestEntityFactory {
                 .isResponsibleForPet(true)
                 .otherNotes("Notes")
                 .petAddress(createAddress())
+                .createdAt(LocalDateTime.of(2024, 1, 1, 1, 1))
                 .build();
     }
 }

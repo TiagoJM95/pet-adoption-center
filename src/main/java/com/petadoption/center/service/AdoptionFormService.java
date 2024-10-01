@@ -21,7 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.petadoption.center.converter.AdoptionFormConverter.*;
@@ -46,7 +45,7 @@ public class AdoptionFormService implements AdoptionFormServiceI {
 
     @Override
     public List<AdoptionFormGetDto> getAllAdoptionForms(int page, int size, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.DESC, sortBy);
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
         return adoptionFormRepository.findAll(pageRequest).stream().map(AdoptionFormConverter::toDto).toList();
     }
 
