@@ -26,6 +26,14 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Breed createBreed(Species species) {
+        return Breed.builder()
+                .id("222222-22222222-2222")
+                .name("Labrador")
+                .species(species)
+                .build();
+    }
+
     public static Breed createPrimaryBreed(Species species) {
         return Breed.builder()
                 .id("222222-22222222-2222")
@@ -83,10 +91,19 @@ public class TestEntityFactory {
 
     public static Address createAddress() {
         return Address.builder()
-                .street("Rua de Santo António, 123")
+                .street("Rua de Santo Antonio, 123")
                 .city("Gondomar")
                 .state("Porto")
                 .postalCode("4444-444")
+                .build();
+    }
+
+    public static Address updateAddress() {
+        return Address.builder()
+                .street("Rua das Gaivotas, 456")
+                .city("Vila Nova de Gaia")
+                .state("Porto")
+                .postalCode("4410-000")
                 .build();
     }
 

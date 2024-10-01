@@ -59,7 +59,7 @@ public class PetConverter {
                 .imageUrl(pet.getImageUrl())
                 .isAdopted(pet.isAdopted())
                 .attributes(pet.getAttributes())
-                .dateAdded(pet.getDateAdded())
+                .dateAdded(pet.getCreatedAt().toLocalDate())
                 .organizationDto(OrgConverter.toDto(pet.getOrganization()))
                 .build();
     }

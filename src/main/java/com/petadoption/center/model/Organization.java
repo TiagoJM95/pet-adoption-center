@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity
@@ -66,6 +67,9 @@ public class Organization {
     @Column(name = "interests_in_owned_pets")
     private Set<Interest> interests = new HashSet<>();
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -77,5 +81,12 @@ public class Organization {
     @Override
     public int hashCode() {
         return Objects.hash(id, name, email, nif, phoneNumber, address, websiteUrl, socialMedia, petsOwned, interests);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 }

@@ -4,9 +4,11 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
 
+@Builder
 public record OrgCreateDto(
 
         @NotBlank(message = BLANK_FIELD)

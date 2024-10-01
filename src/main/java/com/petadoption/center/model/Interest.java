@@ -38,7 +38,8 @@ public class Interest {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    private LocalDateTime timestamp;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
 
     private LocalDateTime reviewTimestamp;
 
@@ -50,11 +51,18 @@ public class Interest {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Interest interest = (Interest) o;
-        return Objects.equals(id, interest.id) && Objects.equals(user, interest.user) && Objects.equals(pet, interest.pet) && Objects.equals(organization, interest.organization) && status == interest.status && Objects.equals(timestamp, interest.timestamp) && Objects.equals(reviewTimestamp, interest.reviewTimestamp) && Objects.equals(adoptionForm, interest.adoptionForm);
+        return Objects.equals(id, interest.id) && Objects.equals(user, interest.user) && Objects.equals(pet, interest.pet) && Objects.equals(organization, interest.organization) && status == interest.status && Objects.equals(createdAt, interest.createdAt) && Objects.equals(reviewTimestamp, interest.reviewTimestamp) && Objects.equals(adoptionForm, interest.adoptionForm);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user, pet, organization, status, timestamp, reviewTimestamp, adoptionForm);
+        return Objects.hash(id, user, pet, organization, status, createdAt, reviewTimestamp, adoptionForm);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
     }
 }

@@ -6,14 +6,14 @@ import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -21,13 +21,14 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.USER_WITH_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class UserControllerTest {
 
@@ -40,52 +41,13 @@ public class UserControllerTest {
     private UserGetDto userGetDto;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
-    private Address createAddress;
-    private Address updateAddress;
+
 
     @BeforeEach
     void setUp() {
-        createAddress = new Address("Rua das Andorinhas, 123",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000");
-
-        updateAddress = new Address("Rua dos bandidos, 123",
-                "Rio Tinto",
-                "Porto",
-                "4100-001");
-
-        userGetDto = new UserGetDto(
-                "1111-1111-2222",
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456789",
-                LocalDate.of(1990, 10, 25),
-                new Address("Rua das Andorinhas, 123",
-                        "Vila Nova de Gaia",
-                        "Porto",
-                        "4410-000"),
-                "123456789"
-        );
-
-        userCreateDto = new UserCreateDto(
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456788",
-                LocalDate.of(1990, 10, 25),
-                createAddress,
-                "912354678"
-        );
-
-        userUpdateDto = new UserUpdateDto(
-                "Tiago",
-                "Moreira",
-                "tm@email.com",
-                updateAddress,
-                "934587967"
-                );
+        userGetDto = createUserGetDto();
+        userCreateDto = createUserCreateDto();
+        userUpdateDto = createUserUpdateDto();
     }
 
     @Test

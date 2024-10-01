@@ -6,9 +6,10 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
-
+@Builder
 public record UserUpdateDto(
 
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)

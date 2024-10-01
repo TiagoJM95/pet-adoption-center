@@ -11,8 +11,10 @@ import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,13 +22,15 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class SpeciesControllerTest {
 
@@ -43,15 +47,10 @@ public class SpeciesControllerTest {
 
     @BeforeEach
     void setUp() {
-        testSpecies = new Species();
-        testSpecies.setId("1111-1111-2222");
-        testSpecies.setName("Dog");
-
-        speciesGetDto = new SpeciesGetDto("1111-1111-2222", "Dog");
-
-        speciesCreateDto = new SpeciesCreateDto("Dog");
-
-        speciesUpdateDto = new SpeciesUpdateDto("Cat");
+        testSpecies = createSpecies();
+        speciesGetDto = createSpeciesGetDto();
+        speciesCreateDto = createSpeciesCreateDto();
+        speciesUpdateDto = createSpeciesUpdateDto();
     }
 
     @Test

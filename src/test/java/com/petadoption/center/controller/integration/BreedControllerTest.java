@@ -1,12 +1,10 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.dto.species.SpeciesGetDto;
-import com.petadoption.center.model.Species;
+import com.petadoption.center.testUtils.TestPersistenceHelper;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,6 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.createBreedCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.createBreedUpdateDto;
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
@@ -39,28 +39,18 @@ public class BreedControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private TestPersistenceHelper testPersistenceHelper;
+
     private BreedGetDto breedGetDto;
     private BreedCreateDto breedCreateDto;
     private BreedUpdateDto breedUpdateDto;
-    private String breedId;
-    private Species species;
-    private SpeciesGetDto speciesCreated;
 
     @BeforeEach
-    void setUp() throws Exception {
-        species = new Species("123123-12312312-3123", "Dog");
-
-        var speciesResult =mockMvc.perform(post("/api/v1/pet-species/")
-                        .content(objectMapper.writeValueAsString(species))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        speciesCreated = objectMapper.readValue(speciesResult.getResponse().getContentAsString(), SpeciesGetDto.class);
-        species.setId(speciesCreated.id());
-
-        breedCreateDto = new BreedCreateDto("Golden Retriever", species.getId());
-        breedUpdateDto = new BreedUpdateDto("Weimaraner");
-
+    void setUp() {
+        String SpeciesId = testPersistenceHelper.persistTestSpecies();
+        breedCreateDto = createBreedCreateDto(SpeciesId);
+        breedUpdateDto = createBreedUpdateDto();
     }
 
     @Test
@@ -75,9 +65,7 @@ public class BreedControllerTest {
                 .andExpect(jsonPath("$.name", is(breedCreateDto.name())))
                 .andReturn();
 
-        BreedGetDto breedCreated = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
-        breedId = breedCreated.id();
-        breedGetDto = new BreedGetDto(breedId, breedCreateDto.name(), speciesCreated);
+        breedGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
     }
 
 
@@ -111,7 +99,7 @@ public class BreedControllerTest {
 
         String expectedJson = objectMapper.writeValueAsString(breedGetDto);
 
-        mockMvc.perform(get("/api/v1/breed/id/{id}", breedId)
+        mockMvc.perform(get("/api/v1/breed/id/{id}", breedGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(expectedJson));
@@ -125,7 +113,7 @@ public class BreedControllerTest {
 
         createBreed();
 
-        mockMvc.perform(put("/api/v1/breed/update/{id}",breedId)
+        mockMvc.perform(put("/api/v1/breed/update/{id}",breedGetDto.id())
                         .content(objectMapper.writeValueAsString(breedUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -139,9 +127,9 @@ public class BreedControllerTest {
 
         createBreed();
 
-        mockMvc.perform(delete("/api/v1/breed/delete/{id}",breedId)
+        mockMvc.perform(delete("/api/v1/breed/delete/{id}",breedGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(BREED_WITH_ID + breedId + DELETE_SUCCESS));
+                .andExpect(content().string(BREED_WITH_ID + breedGetDto.id() + DELETE_SUCCESS));
     }
 }
