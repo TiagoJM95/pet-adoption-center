@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 public record PetGetDto(
@@ -102,7 +103,7 @@ public record PetGetDto(
         @Schema(
                 description = "Pet date added",
                 example = "2022-01-01")
-        LocalDate dateAdded,
+        LocalDateTime createdAt,
 
         @Schema(
                 description = "Pet organization details",

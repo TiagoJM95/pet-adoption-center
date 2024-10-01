@@ -5,8 +5,13 @@ import lombok.Builder;
 
 @Builder
 public record ColorGetDto(
-        @Schema(description = "Color id", example = "12345678-1234-123456")
+        @Schema(
+                description = "Color id",
+                example = "12345678-1234-123456")
         String id,
-        @Schema(description = "Color name", example = "Black")
+
+        @Schema(
+                description = "Color name",
+                example = "Black")
         String name
 ) {}

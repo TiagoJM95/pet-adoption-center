@@ -13,6 +13,8 @@ public record SpeciesCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
-        @Schema(description = "Specie name", example = "Dog")
+        @Schema(
+                description = "Specie name",
+                example = "Dog")
         String name
 ) {}

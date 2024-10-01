@@ -17,28 +17,38 @@ public record UserCreateDto(
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
         @NotNull
-        @Schema(description = "User first name", example = "Manuel")
+        @Schema(
+                description = "User first name",
+                example = "Manuel")
         String firstName,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
-        @Schema(description = "User last name", example = "Silva")
+        @Schema(
+                description = "User last name",
+                example = "Silva")
         String lastName,
 
         @NotBlank(message = BLANK_FIELD)
         @Email
         @Size(max = 100, message = CHARACTERS_LIMIT)
-        @Schema(description = "User email", example = "email@email.com")
+        @Schema(
+                description = "User email",
+                example = "email@email.com")
         String email,
 
         @NotBlank(message = BLANK_FIELD)
         @Size(min = 9, max = 9, message = PHONE_NUMBER_SIZE)
         @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        @Schema(description = "User tax identification number", example = "123456789")
+        @Schema(
+                description = "User tax identification number",
+                example = "123456789")
         String nif,
 
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
-        @Schema(description = "User date of birth", example = "1990-01-01")
+        @Schema(
+                description = "User date of birth",
+                example = "1990-01-01")
         LocalDate dateOfBirth,
 
         @Valid
@@ -46,6 +56,8 @@ public record UserCreateDto(
         Address address,
 
         @NotNull(message = BLANK_FIELD)
-        @Schema(description = "User phone number", example = "918765432")
+        @Schema(
+                description = "User phone number",
+                example = "918765432")
         String phoneNumber
 ) {}

@@ -8,6 +8,8 @@ import static com.petadoption.center.util.Messages.ONLY_LETTERS;
 @Builder
 public record SpeciesUpdateDto(
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
-        @Schema(description = "Specie name", example = "Cat")
+        @Schema(
+                description = "Specie name",
+                example = "Cat")
         String name
 ) {}

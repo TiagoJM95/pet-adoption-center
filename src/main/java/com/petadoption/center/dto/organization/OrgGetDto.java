@@ -7,18 +7,37 @@ import lombok.Builder;
 
 @Builder
 public record OrgGetDto(
-        @Schema(description = "Organization id", example = "12345678-1234-123456")
+        @Schema(
+                description = "Organization id",
+                example = "12345678-1234-123456")
         String id,
-        @Schema(description = "Organization name", example = "Animal Rescue")
+
+        @Schema(
+                description = "Organization name",
+                example = "Animal Rescue")
         String name,
-        @Schema(description = "Organization email", example = "email@email.com")
+
+        @Schema(
+                description = "Organization email",
+                example = "email@email.com")
         String email,
-        @Schema(description = "Organization tax identification number", example = "123456789")
+
+        @Schema(
+                description = "Organization tax identification number",
+                example = "123456789")
         String nif,
-        @Schema(description = "Organization phone number", example = "227628976")
+
+        @Schema(
+                description = "Organization phone number",
+                example = "227628976")
         String phoneNumber,
+
         Address address,
-        @Schema(description = "Organization website url", example = "https://www.example.com")
+
+        @Schema(
+                description = "Organization website url",
+                example = "https://www.example.com")
         String websiteUrl,
+
         SocialMedia socialMedia
 ) {}

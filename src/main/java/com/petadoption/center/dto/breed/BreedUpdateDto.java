@@ -9,6 +9,8 @@ import static com.petadoption.center.util.Messages.ONLY_LETTERS;
 @Builder
 public record BreedUpdateDto(
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
-        @Schema(description = "Breed name", example = "Poodle")
+        @Schema(
+                description = "Breed name",
+                example = "Poodle")
         String name
 ) {}

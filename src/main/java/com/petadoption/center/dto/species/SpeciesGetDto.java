@@ -5,9 +5,13 @@ import lombok.Builder;
 
 @Builder
 public record SpeciesGetDto(
-        @Schema(description = "Species id", example = "12789-1234-1234-12345")
+        @Schema(
+                description = "Species id",
+                example = "12789-1234-1234-12345")
         String id,
 
-        @Schema(description = "Specie name", example = "Dog")
+        @Schema(
+                description = "Specie name",
+                example = "Dog")
         String name
 ) {}
