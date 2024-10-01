@@ -11,7 +11,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createUserCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -25,7 +25,7 @@ public class UserConverterTest {
     @DisplayName("Test UserCreateDto to User model is working correctly")
     void fromUserCreateDtoToModel() {
 
-        User user = UserConverter.toModel(createUserCreateDto());
+        User user = UserConverter.toModel(userCreateDto());
 
         assertEquals("John", user.getFirstName());
         assertEquals("Doe", user.getLastName());

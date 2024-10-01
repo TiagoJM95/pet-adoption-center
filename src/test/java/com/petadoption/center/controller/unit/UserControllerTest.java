@@ -18,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
@@ -45,9 +44,9 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userGetDto = createUserGetDto();
-        userCreateDto = createUserCreateDto();
-        userUpdateDto = createUserUpdateDto();
+        userGetDto = userGetDto();
+        userCreateDto = userCreateDto();
+        userUpdateDto = userUpdateDto();
     }
 
     @Test

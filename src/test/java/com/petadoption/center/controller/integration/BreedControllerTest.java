@@ -19,8 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createBreedCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createBreedUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
@@ -49,8 +48,8 @@ public class BreedControllerTest {
     @BeforeEach
     void setUp() {
         String SpeciesId = testPersistenceHelper.persistTestSpecies();
-        breedCreateDto = createBreedCreateDto(SpeciesId);
-        breedUpdateDto = createBreedUpdateDto();
+        breedCreateDto = breedCreateDto(SpeciesId);
+        breedUpdateDto = breedUpdateDto();
     }
 
     @Test

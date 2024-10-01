@@ -3,7 +3,6 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
@@ -15,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,8 +24,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createUserCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createUserUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createUser;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.USER_WITH_ID;
@@ -55,8 +53,8 @@ public class UserServiceTest {
     void setUp() {
 
         testUser = createUser();
-        userCreateDto = createUserCreateDto();
-        userUpdateDto = createUserUpdateDto();
+        userCreateDto = userCreateDto();
+        userUpdateDto = userUpdateDto();
 
         Address updateAddress = new Address("Rua das Gaivotas, 456",
                 "Vila Nova de Gaia",

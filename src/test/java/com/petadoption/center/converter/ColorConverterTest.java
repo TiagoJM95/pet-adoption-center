@@ -7,11 +7,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createPrimaryColorDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createPrimaryColor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -35,7 +33,7 @@ public class ColorConverterTest {
     void fromColorGetDtoToModel() {
 
 
-        Color color = ColorConverter.toModel(createPrimaryColorDto());
+        Color color = ColorConverter.toModel(primaryColorGetDto());
 
         assertEquals("444444-44444444-4444", color.getId());
         assertEquals("Black", color.getName());

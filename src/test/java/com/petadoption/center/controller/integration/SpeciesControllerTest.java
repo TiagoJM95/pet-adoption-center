@@ -16,8 +16,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
 import static org.hamcrest.Matchers.is;
@@ -44,8 +44,8 @@ public class SpeciesControllerTest {
 
     @BeforeEach
     void setUp() {
-        speciesCreateDto = createSpeciesCreateDto();
-        speciesUpdateDto = createSpeciesUpdateDto();
+        speciesCreateDto = speciesCreateDto();
+        speciesUpdateDto = speciesUpdateDto();
     }
 
     @Test

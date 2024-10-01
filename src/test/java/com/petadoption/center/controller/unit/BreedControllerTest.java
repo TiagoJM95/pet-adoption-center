@@ -52,7 +52,7 @@ public class BreedControllerTest {
     void setUp() {
 
         Species species = createSpecies();
-        SpeciesGetDto speciesGetDto = createSpeciesGetDto();
+        SpeciesGetDto speciesGetDto = speciesGetDto();
         testBreed = createBreed(species);
 
         Breed updatedBreed = createBreed(species);
@@ -61,7 +61,7 @@ public class BreedControllerTest {
 
         breedCreateDto = breedCreateDto(species.getId());
         breedUpdateDto = breedUpdateDto();
-        breedGetDto = createBreedGetDto(speciesGetDto);
+        breedGetDto = primaryBreedGetDto(speciesGetDto);
     }
 
     @Test

@@ -27,7 +27,7 @@ public class OrgConverterTest {
     @BeforeEach
     void setUp() {
         orgCreateDto = orgCreateDto();
-        orgGetDto = createOrgGetDto();
+        orgGetDto = orgGetDto();
         org = createOrganization();
     }
 

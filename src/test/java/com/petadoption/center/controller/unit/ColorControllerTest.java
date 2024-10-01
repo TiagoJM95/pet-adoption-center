@@ -19,8 +19,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createPrimaryColorDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createPrimaryColor;
 import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
@@ -46,7 +45,7 @@ public class ColorControllerTest {
     void setUp() {
 
         testColor = createPrimaryColor();
-        colorGetDto =  createPrimaryColorDto();
+        colorGetDto =  primaryColorGetDto();
         colorCreateDto = colorCreateDto();
     }
 

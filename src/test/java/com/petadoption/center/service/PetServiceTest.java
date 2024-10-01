@@ -7,7 +7,6 @@ import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.enums.Ages;
-import com.petadoption.center.enums.Genders;
 import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
@@ -40,9 +39,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.petadoption.center.enums.Genders.getGenderByDescription;
-import static com.petadoption.center.testUtils.TestDtoFactory.createPetCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createPetUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.petCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.petUpdateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
 import static com.petadoption.center.testUtils.TestEntityFactory.createPet;
 import static com.petadoption.center.util.Messages.*;
@@ -83,8 +81,8 @@ public class PetServiceTest {
         updatedPet.setAge(Ages.SENIOR);
         updatedPet.setDescription("Max is an updated dog");
         updatedPet.setImageUrl("https://www.updatedimages.com");
-        petCreateDto = createPetCreateDto("Max");
-        petUpdateDto = createPetUpdateDto();
+        petCreateDto = petCreateDto("Max");
+        petUpdateDto = petUpdateDto();
         invalidId = "invalidId";
         pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
     }
@@ -109,9 +107,9 @@ public class PetServiceTest {
                 .organizationId("777AAA-7777AAAA-77AA")
                 .build();
                return Stream.of(
-                List.of(createPetCreateDto("Jim"), createPetCreateDto("Bobby"), createPetCreateDto("Spike"), problematicDto),
-                List.of(createPetCreateDto("Jim"), problematicDto, createPetCreateDto("Bobby"), createPetCreateDto("Spike")),
-                List.of(problematicDto, createPetCreateDto("Jim"), createPetCreateDto("Bobby"), createPetCreateDto("Spike"))
+                List.of(petCreateDto("Jim"), petCreateDto("Bobby"), petCreateDto("Spike"), problematicDto),
+                List.of(petCreateDto("Jim"), problematicDto, petCreateDto("Bobby"), petCreateDto("Spike")),
+                List.of(problematicDto, petCreateDto("Jim"), petCreateDto("Bobby"), petCreateDto("Spike"))
         );
     }
 
@@ -261,7 +259,7 @@ public class PetServiceTest {
     @DisplayName("Nothing is thrown when adding a valid list of new pets")
     void shouldRunWithNoThrowsWhenAddingAValidListOfNewPets() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrgNotFoundException, PetDescriptionException, ColorNotFoundException {
 
-        List<PetCreateDto> pets = List.of(petCreateDto, createPetCreateDto("Bobby"), createPetCreateDto("Spike"));
+        List<PetCreateDto> pets = List.of(petCreateDto, petCreateDto("Bobby"), petCreateDto("Spike"));
 
         doNothing().when(breedServiceI).verifyIfBreedsAndSpeciesMatch(any());
         when(petRepository.save(any(Pet.class))).thenReturn(any(Pet.class));

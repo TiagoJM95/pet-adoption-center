@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 public class BreedConverterTest {
 
     Species species = createSpecies() ;
-    SpeciesGetDto speciesGetDto = createSpeciesGetDto();
+    SpeciesGetDto speciesGetDto = speciesGetDto();
 
 
     @Test
@@ -38,10 +38,10 @@ public class BreedConverterTest {
     @DisplayName("Test if BreedGetDto to Breed model is working correctly")
     void fromBreedGetDtoToModel() {
 
-        Breed breed = BreedConverter.toModel(createBreedGetDto(speciesGetDto));
+        Breed breed = BreedConverter.toModel(primaryBreedGetDto(speciesGetDto));
 
-        assertEquals("2222-2222-3333", breed.getId());
-        assertEquals("Golden Retriever", breed.getName());
+        assertEquals("222222-22222222-2222", breed.getId());
+        assertEquals("Labrador", breed.getName());
         assertEquals("Dog", breed.getSpecies().getName());
     }
 

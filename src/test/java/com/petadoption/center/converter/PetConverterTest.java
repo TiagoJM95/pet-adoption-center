@@ -10,7 +10,6 @@ import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Coats;
 import com.petadoption.center.enums.Genders;
 import com.petadoption.center.enums.Sizes;
-import com.petadoption.center.exception.pet.PetDescriptionException;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
@@ -20,8 +19,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDateTime;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
@@ -50,6 +50,7 @@ public class PetConverterTest {
     String description;
     String imageUrl;
     String petId;
+    LocalDateTime createAt;
     SpeciesGetDto speciesGetDto;
     BreedGetDto primaryBreedDto;
     BreedGetDto secondaryBreedDto;
@@ -80,14 +81,16 @@ public class PetConverterTest {
         description = "Max is a very friendly dog";
         imageUrl = "https://www.dogimages.com";
         petId = "88888-88888888-8888";
+        createAt = LocalDateTime.now();
 
-        speciesGetDto = createSpeciesGetDto();
-        primaryBreedDto = createPrimaryBreedDto(speciesGetDto);
-        secondaryBreedDto = createSecondaryBreedDto(speciesGetDto);
-        primaryColorDto = createPrimaryColorDto();
-        secondaryColorDto = createSecondaryColorDto();
-        tertiaryColorDto = createTertiaryColorDto();
-        organizationDto = createOrgGetDto();
+        speciesGetDto = speciesGetDto();
+        primaryBreedDto = primaryBreedGetDto(speciesGetDto);
+        secondaryBreedDto = secondaryBreedGetDto(speciesGetDto);
+        primaryColorDto = primaryColorGetDto();
+        secondaryColorDto = secondaryColorGetDto();
+        tertiaryColorDto = tertiaryColorGetDto();
+
+        organizationDto = orgGetDto();
     }
 
 
@@ -186,6 +189,7 @@ public class PetConverterTest {
                 .imageUrl(imageUrl)
                 .isAdopted(false)
                 .attributes(attributes)
+                .createdAt(createAt)
                 .organization(organization)
                 .build();
 
@@ -207,6 +211,7 @@ public class PetConverterTest {
         assertEquals(imageUrl, petGetDto.imageUrl());
         assertFalse(petGetDto.isAdopted());
         assertEquals(attributes, petGetDto.attributes());
+        assertEquals(createAt, petGetDto.createdAt());
         assertEquals(organizationDto, petGetDto.organizationDto());
     }
 

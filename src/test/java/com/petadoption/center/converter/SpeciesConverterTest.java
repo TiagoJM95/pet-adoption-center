@@ -10,8 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createSpeciesGetDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.speciesGetDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -24,7 +24,7 @@ public class SpeciesConverterTest {
     @DisplayName("Test SpeciesCreateDto to Species model is working correctly")
     void fromSpeciesCreateDtoToModel() {
 
-        Species species = SpeciesConverter.toModel(createSpeciesCreateDto());
+        Species species = SpeciesConverter.toModel(speciesCreateDto());
 
         assertEquals("Dog", species.getName());
     }
@@ -33,7 +33,7 @@ public class SpeciesConverterTest {
     @DisplayName("Test if SpeciesGetDto to Species model is working correctly")
     void fromSpeciesGetDtoToModel() {
 
-        Species species = SpeciesConverter.toModel(createSpeciesGetDto());
+        Species species = SpeciesConverter.toModel(speciesGetDto());
 
         assertEquals("111111-11111111-1111", species.getId());
         assertEquals("Dog", species.getName());

@@ -45,8 +45,8 @@ public class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userCreateDto = createUserCreateDto();
-        userUpdateDto = createUserUpdateDto();
+        userCreateDto = userCreateDto();
+        userUpdateDto = userUpdateDto();
     }
 
 

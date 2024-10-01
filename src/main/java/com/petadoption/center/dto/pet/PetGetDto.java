@@ -12,6 +12,7 @@ import com.petadoption.center.model.embeddable.Attributes;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
 public record PetGetDto(
@@ -31,6 +32,6 @@ public record PetGetDto(
         String imageUrl,
         Boolean isAdopted,
         Attributes attributes,
-        LocalDate dateAdded,
+        LocalDateTime createdAt,
         OrgGetDto organizationDto
 ) {}
