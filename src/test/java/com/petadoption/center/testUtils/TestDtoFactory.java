@@ -7,6 +7,8 @@ import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.pet.PetCreateDto;
+import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
@@ -15,6 +17,8 @@ import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 
@@ -100,6 +104,38 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static PetCreateDto createPetCreateDto(String name) {
+        return PetCreateDto.builder()
+                .name(name)
+                .petSpeciesId("111111-11111111-1111")
+                .primaryBreedId("222222-22222222-2222")
+                .secondaryBreedId("333333-33333333-3333")
+                .primaryColor("444444-44444444-4444")
+                .secondaryColor("555555-55555555-5555")
+                .tertiaryColor("666666-66666666-6666")
+                .gender("Male")
+                .coat("Short")
+                .size("Medium")
+                .age("Adult")
+                .description("Max is a very friendly dog")
+                .imageUrl("https://www.dogimages.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organizationId("777777-77777777-7777")
+                .build();
+    }
+
+    public static PetUpdateDto createPetUpdateDto(){
+        return PetUpdateDto.builder()
+                .size("Large")
+                .age("Senior")
+                .description("Max is an updated dog")
+                .imageUrl("https://www.updatedimages.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organizationId("777777-77777777-7777")
+                .build();
+    }
 
     // CREATE DTOs
 
@@ -192,7 +228,6 @@ public class TestDtoFactory {
                 .name("Weimaraner")
                 .build();
     }
-
 
 
 }

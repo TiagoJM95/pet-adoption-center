@@ -78,17 +78,19 @@ public class BreedService implements BreedServiceI {
     }
 
     @Override
-    public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException {
+    public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException {
+
+        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
         Breed primaryBreed = findBreedById(dto.primaryBreedId());
         Breed secondaryBreed;
 
-        if(!Objects.equals(primaryBreed.getSpecies().getId(), dto.petSpeciesId())) {
+        if(!Objects.equals(primaryBreed.getSpecies(), species)) {
             throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
         }
 
         if(dto.secondaryBreedId() != null) {
             secondaryBreed = findBreedById(dto.secondaryBreedId());
-            if(!Objects.equals(secondaryBreed.getSpecies().getId(), dto.petSpeciesId())) {
+            if(!Objects.equals(secondaryBreed.getSpecies(), species)) {
                 throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
             }
         }

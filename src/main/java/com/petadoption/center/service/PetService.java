@@ -15,6 +15,7 @@ import com.petadoption.center.model.*;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.interfaces.*;
 import com.petadoption.center.specifications.PetSearchCriteria;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -41,7 +42,7 @@ public class PetService implements PetServiceI {
     private final OrganizationServiceI organizationServiceI;
 
     @Autowired
-    public PetService(PetRepository petRepository, SpeciesService speciesService, BreedService breedService, ColorService colorService, OrganizationService organizationService) {
+    public PetService(PetRepository petRepository, SpeciesServiceI speciesService, BreedServiceI breedService, ColorServiceI colorService, OrganizationServiceI organizationService) {
         this.petRepository = petRepository;
         this.speciesServiceI = speciesService;
         this.breedServiceI = breedService;
@@ -65,16 +66,14 @@ public class PetService implements PetServiceI {
     public PetGetDto addNewPet(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, OrgNotFoundException, PetDescriptionException {
         breedServiceI.verifyIfBreedsAndSpeciesMatch(dto);
         Pet pet = buildPetFromDto(dto);
-        petRepository.save(pet);
-        return PetConverter.toDto(pet);
+        return PetConverter.toDto(petRepository.save(pet));
     }
 
+    @Transactional
     @Override
     public void addListOfNewPets(List<PetCreateDto> pets) throws BreedNotFoundException, BreedMismatchException, OrgNotFoundException, PetDescriptionException, ColorNotFoundException, SpeciesNotFoundException {
         for (PetCreateDto dto : pets) {
             breedServiceI.verifyIfBreedsAndSpeciesMatch(dto);
-        }
-        for (PetCreateDto dto : pets) {
             Pet pet = buildPetFromDto(dto);
             petRepository.save(pet);
         }

@@ -116,8 +116,6 @@ public class TestEntityFactory {
                 .build();
     }
 
-
-
     public static Attributes createAttributes(){
         return Attributes.builder()
                 .chipped(true)
