@@ -1,5 +1,6 @@
 package com.petadoption.center.testUtils;
 
+import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
@@ -220,6 +221,16 @@ public class TestDtoFactory {
                 .isAdopted(false)
                 .attributes(createAttributes())
                 .organizationId("777777-77777777-7777")
+                .build();
+    }
+
+    public static AdoptionFormUpdateDto createAdoptionFormUpdateDto() {
+        return AdoptionFormUpdateDto.builder()
+                .userFamily(createFamily())
+                .petVacationHome("Pet Hotel")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
                 .build();
     }
 }
