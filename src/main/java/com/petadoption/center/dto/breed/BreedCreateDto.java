@@ -13,10 +13,14 @@ import static com.petadoption.center.util.Messages.ONLY_LETTERS;
 public record BreedCreateDto(
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
-        @Schema(description = "Breed name", example = "Husky")
+        @Schema(
+                description = "Breed name",
+                example = "Husky")
         String name,
 
         @NotNull
-        @Schema(description = "Species id", example = "12789-1234-1234-12345")
+        @Schema(
+                description = "Species id",
+                example = "12789-1234-1234-12345")
         String speciesId
 ) {}

@@ -10,6 +10,7 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.model.embeddable.Address;
+import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.model.embeddable.Family;
 import com.petadoption.center.testUtils.TestPersistenceHelper;
 import jakarta.transaction.Transactional;
@@ -28,6 +29,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
 import static com.petadoption.center.util.Messages.*;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -139,6 +141,7 @@ public class AdoptionFormControllerTest {
                 .imageUrl("http://aeer.com")
                 .isAdopted(false)
                 .organizationId(orgId)
+                .attributes(createAttributes())
                 .build();
 
         MvcResult result = mockMvc.perform(post("/api/v1/pet/addSingle")

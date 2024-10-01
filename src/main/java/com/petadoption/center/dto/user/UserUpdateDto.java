@@ -14,16 +14,22 @@ import static com.petadoption.center.util.Messages.*;
 public record UserUpdateDto(
 
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
-        @Schema(description = "User first name", example = "Manuel")
+        @Schema(
+                description = "User first name",
+                example = "Manuel")
         String firstName,
 
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
-        @Schema(description = "User last name", example = "Silva")
+        @Schema(
+                description = "User last name",
+                example = "Silva")
         String lastName,
 
         @Email
         @Size(max = 100, message = CHARACTERS_LIMIT)
-        @Schema(description = "User email", example = "email@email.com")
+        @Schema(
+                description = "User email",
+                example = "email@email.com")
         String email,
 
         @Valid
@@ -31,6 +37,8 @@ public record UserUpdateDto(
         Address address,
 
         @NotNull(message = BLANK_FIELD)
-        @Schema(description = "User phone number", example = "918765432")
+        @Schema(
+                description = "User phone number",
+                example = "918765432")
         String phoneNumber
 ) {}

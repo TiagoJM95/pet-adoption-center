@@ -104,7 +104,7 @@ public record PetGetDto(
                 example = "2022-01-01T00:00:00" 
         )
         LocalDateTime createdAt,
-        
+
         @Schema(
                 description = "Pet organization details",
                 example = "{ \"organizationId\": \"12789-1234-1234-12345\", \"name\": \"Animal Rescue\", \"email\": \"email@email.com\", \"nif\": \"123456789\", \"phoneNumber\": \"918765432\", \"websiteUrl\": \"https://www.example.com\", \"address\": { \"street\": \"Rua dos gatos, 132\", \"city\": \"Gondomar\", \"postalCode\": \"4400-111\", \"state\": \"Porto\" }, \"socialMedia\": { \"facebook\": \"https://www.facebook.com\", \"instagram\": \"animalRescue\", \"twitter\": \"animalRescue\", \"youtube\": \"https://www.youtube.com\" } }",

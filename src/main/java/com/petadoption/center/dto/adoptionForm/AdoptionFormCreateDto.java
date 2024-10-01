@@ -15,26 +15,36 @@ public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
-        @Schema(description = "User id", example = "12789-1234-1234-12345")
+        @Schema(
+                description = "User id",
+                example = "12789-1234-1234-12345")
         String userId,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
-        @Schema(description = "Pet id", example = "12789-1234-1234-12345")
+        @Schema(
+                description = "Pet id",
+                example = "12789-1234-1234-12345")
         String petId,
 
         @NotNull(message = BLANK_FIELD)
         Family userFamily,
 
         @NotBlank(message = BLANK_FIELD)
-        @Schema(description = "Pet vacation home", example = "Neighbour home")
+        @Schema(
+                description = "Pet vacation home",
+                example = "Neighbour home")
         String petVacationHome,
 
         @NotNull(message = BLANK_FIELD)
-        @Schema(description = "Is responsible for pet", example = "true")
+        @Schema(
+                description = "Is responsible for pet",
+                example = "true")
         Boolean isResponsibleForPet,
 
-        @Schema(description = "Other notes", example = "More additional information")
+        @Schema(
+                description = "Other notes",
+                example = "More additional information")
         String otherNotes,
 
         @NotNull(message = BLANK_FIELD)

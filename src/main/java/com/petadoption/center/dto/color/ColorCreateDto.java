@@ -12,6 +12,8 @@ import static com.petadoption.center.util.Messages.ONLY_LETTERS;
 public record ColorCreateDto(
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
-        @Schema(description = "Color name", example = "Black")
+        @Schema(
+                description = "Color name",
+                example = "Black")
         String name
 ) {}
