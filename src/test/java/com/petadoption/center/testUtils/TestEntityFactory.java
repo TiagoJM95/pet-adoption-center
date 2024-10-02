@@ -9,6 +9,7 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.model.embeddable.Family;
 import com.petadoption.center.model.embeddable.SocialMedia;
+import com.petadoption.center.specifications.PetSearchCriteria;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -239,6 +240,30 @@ public class TestEntityFactory {
                 .otherNotes("Notes")
                 .petAddress(createAddress())
                 .createdAt(LocalDateTime.of(2024, 1, 1, 1, 1))
+                .build();
+    }
+
+    public static PetSearchCriteria petSearchCriteria(){
+        return PetSearchCriteria.builder()
+                .nameLike("M")
+                .species(createSpecies())
+                .breed(createBreed(createSpecies()))
+                .color(createPrimaryColor())
+                .gender("Male")
+                .size("Medium")
+                .coat("Short")
+                .age("Adult")
+                .isAdopted(false)
+                .isSterilized(false)
+                .isVaccinated(false)
+                .isChipped(false)
+                .isSpecialNeeds(false)
+                .isHouseTrained(false)
+                .goodWithCats(false)
+                .goodWithDogs(false)
+                .goodWithKids(false)
+                .state("Porto")
+                .city("Gondomar")
                 .build();
     }
 }
