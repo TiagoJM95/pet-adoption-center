@@ -3,10 +3,7 @@ package com.petadoption.center.model.embeddable;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,8 +12,9 @@ import static com.petadoption.center.util.Messages.BLANK_FIELD;
 import static com.petadoption.center.util.Messages.ONLY_NUMBERS;
 
 @Embeddable
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Setter
 public class Family {

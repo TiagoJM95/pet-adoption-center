@@ -1,5 +1,8 @@
 package com.petadoption.center.testUtils;
 
+import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
+import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
+import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
@@ -9,6 +12,7 @@ import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
+import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
@@ -18,6 +22,10 @@ import com.petadoption.center.dto.user.UserUpdateDto;
 
 import java.time.LocalDate;
 
+import static com.petadoption.center.enums.Ages.ADULT;
+import static com.petadoption.center.enums.Coats.SHORT;
+import static com.petadoption.center.enums.Genders.MALE;
+import static com.petadoption.center.enums.Sizes.MEDIUM;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 
 public class TestDtoFactory {
@@ -94,6 +102,41 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static PetGetDto petGetDto() {
+        return PetGetDto.builder()
+                .id("888888-88888888-8888")
+                .name("Max")
+                .speciesDto(speciesGetDto())
+                .primaryBreedDto(primaryBreedGetDto(speciesGetDto()))
+                .secondaryBreedDto(secondaryBreedGetDto(speciesGetDto()))
+                .primaryColorDto(primaryColorGetDto())
+                .secondaryColorDto(secondaryColorGetDto())
+                .tertiaryColorDto(tertiaryColorGetDto())
+                .gender(MALE)
+                .coat(SHORT)
+                .size(MEDIUM)
+                .age(ADULT)
+                .description("Max is a very friendly dog")
+                .imageUrl("https://www.dogimages.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organizationDto(orgGetDto())
+                .build();
+    }
+
+    public static AdoptionFormGetDto adoptionFormGetDto() {
+        return AdoptionFormGetDto.builder()
+                .id("101010-10101010-1010")
+                .user(userGetDto())
+                .pet(petGetDto())
+                .userFamily(createFamily())
+                .petVacationHome("Neighbour")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
+                .build();
+    }
+
     // CREATE DTOs
 
     public static ColorCreateDto colorCreateDto(){
@@ -160,6 +203,18 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static AdoptionFormCreateDto adoptionFormCreateDto() {
+        return AdoptionFormCreateDto.builder()
+                .userId("999999-99999999-9999")
+                .petId("101010-10101010-1010")
+                .userFamily(createFamily())
+                .petVacationHome("Neighbour")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
+                .build();
+    }
+
     // UPDATE DTOs
 
     public static BreedUpdateDto breedUpdateDto(){
@@ -193,6 +248,16 @@ public class TestDtoFactory {
                 .isAdopted(false)
                 .attributes(createAttributes())
                 .organizationId("777777-77777777-7777")
+                .build();
+    }
+
+    public static AdoptionFormUpdateDto adoptionFormUpdateDto() {
+        return AdoptionFormUpdateDto.builder()
+                .userFamily(createFamily())
+                .petVacationHome("Pet Hotel")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
                 .build();
     }
 }
