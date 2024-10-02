@@ -8,6 +8,7 @@ import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.model.embeddable.SocialMedia;
+import com.petadoption.center.specifications.PetSearchCriteria;
 
 import java.time.LocalDate;
 
@@ -212,6 +213,30 @@ public class TestEntityFactory {
                 .imageUrl("https://www.dogimages.com")
                 .isAdopted(false)
                 .attributes(createAttributes())
+                .build();
+    }
+
+    public static PetSearchCriteria petSearchCriteria(){
+        return PetSearchCriteria.builder()
+                .nameLike("M")
+                .species(createSpecies())
+                .breed(createBreed(createSpecies()))
+                .color(createPrimaryColor())
+                .gender("Male")
+                .size("Medium")
+                .coat("Short")
+                .age("Adult")
+                .isAdopted(false)
+                .isSterilized(false)
+                .isVaccinated(false)
+                .isChipped(false)
+                .isSpecialNeeds(false)
+                .isHouseTrained(false)
+                .goodWithCats(false)
+                .goodWithDogs(false)
+                .goodWithKids(false)
+                .state("Porto")
+                .city("Gondomar")
                 .build();
     }
 
