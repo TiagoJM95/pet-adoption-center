@@ -1,5 +1,7 @@
 package com.petadoption.center.testUtils;
 
+import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
+import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
@@ -100,16 +102,16 @@ public class TestDtoFactory {
                 .build();
     }
 
-    public static PetGetDto createPetGetDto() {
+    public static PetGetDto petGetDto() {
         return PetGetDto.builder()
                 .id("101010-10101010-1010")
                 .name("Bobi")
-                .speciesDto(createSpeciesGetDto())
-                .primaryBreedDto(createPrimaryBreedDto(createSpeciesGetDto()))
-                .secondaryBreedDto(createSecondaryBreedDto(createSpeciesGetDto()))
-                .primaryColorDto(createPrimaryColorDto())
-                .secondaryColorDto(createSecondaryColorDto())
-                .tertiaryColorDto(createTertiaryColorDto())
+                .speciesDto(speciesGetDto())
+                .primaryBreedDto(primaryBreedGetDto(speciesGetDto()))
+                .secondaryBreedDto(secondaryBreedGetDto(speciesGetDto()))
+                .primaryColorDto(primaryColorGetDto())
+                .secondaryColorDto(secondaryColorGetDto())
+                .tertiaryColorDto(tertiaryColorGetDto())
                 .gender(MALE)
                 .coat(SHORT)
                 .size(MEDIUM)
@@ -118,7 +120,20 @@ public class TestDtoFactory {
                 .imageUrl("https://www.dogimages.com")
                 .isAdopted(false)
                 .attributes(createAttributes())
-                .organizationDto(createOrgGetDto())
+                .organizationDto(orgGetDto())
+                .build();
+    }
+
+    public static AdoptionFormGetDto adoptionFormGetDto() {
+        return AdoptionFormGetDto.builder()
+                .id("121212-121212-1212")
+                .user(userGetDto())
+                .pet(petGetDto())
+                .userFamily(createFamily())
+                .petVacationHome("Neighbour")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
                 .build();
     }
 
@@ -188,6 +203,18 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static AdoptionFormCreateDto adoptionFormCreateDto() {
+        return AdoptionFormCreateDto.builder()
+                .userId("999999-99999999-9999")
+                .petId("101010-10101010-1010")
+                .userFamily(createFamily())
+                .petVacationHome("Neighbour")
+                .isResponsibleForPet(true)
+                .otherNotes("Notes")
+                .petAddress(createAddress())
+                .build();
+    }
+
     // UPDATE DTOs
 
     public static BreedUpdateDto breedUpdateDto(){
@@ -224,7 +251,7 @@ public class TestDtoFactory {
                 .build();
     }
 
-    public static AdoptionFormUpdateDto createAdoptionFormUpdateDto() {
+    public static AdoptionFormUpdateDto adoptionFormUpdateDto() {
         return AdoptionFormUpdateDto.builder()
                 .userFamily(createFamily())
                 .petVacationHome("Pet Hotel")

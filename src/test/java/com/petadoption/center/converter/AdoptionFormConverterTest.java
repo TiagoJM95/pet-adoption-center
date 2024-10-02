@@ -17,8 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createPetGetDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.createUserGetDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -38,8 +37,8 @@ public class AdoptionFormConverterTest {
     static void setUp() {
         family = createFamily();
         address = createAddress();
-        userGetDto = createUserGetDto();
-        petGetDto = createPetGetDto();
+        userGetDto = userGetDto();
+        petGetDto = petGetDto();
         user = createUser();
         pet = createPet();
     }

@@ -1,10 +1,17 @@
 package com.petadoption.center.service;
 
+import com.petadoption.center.converter.AdoptionFormConverter;
+import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
+import com.petadoption.center.exception.pet.PetNotFoundException;
+import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
+import com.petadoption.center.model.Pet;
 import com.petadoption.center.repository.AdoptionFormRepository;
+import com.petadoption.center.service.interfaces.PetServiceI;
+import com.petadoption.center.service.interfaces.UserServiceI;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +28,12 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.createAdoptionFormUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAdoptionForm;
 import static com.petadoption.center.util.Messages.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @ExtendWith(MockitoExtension.class)
@@ -38,14 +45,24 @@ public class AdoptionFormServiceTest {
     @Mock
     private AdoptionFormRepository adoptionFormRepository;
 
+    @Mock
+    private UserServiceI userServiceI;
+
+    @Mock
+    private PetServiceI petServiceI;
+
     private static AdoptionForm testAdoptionForm;
+    private static AdoptionFormGetDto adoptionFormGetDto;
+    private static AdoptionFormCreateDto adoptionFormCreateDto;
     private static AdoptionFormUpdateDto adoptionFormUpdateDto;
 
 
     @BeforeAll
     static void setUp() {
         testAdoptionForm = createAdoptionForm();
-        adoptionFormUpdateDto = createAdoptionFormUpdateDto();
+        adoptionFormGetDto = adoptionFormGetDto();
+        adoptionFormCreateDto = adoptionFormCreateDto();
+        adoptionFormUpdateDto = adoptionFormUpdateDto();
     }
 
     @Test
@@ -142,6 +159,45 @@ public class AdoptionFormServiceTest {
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.empty());
 
         assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.getAdoptionFormById(testAdoptionForm.getId()));
+    }
+
+    @Test
+    @DisplayName("Test if create AdoptionForm works correctly and returns AdoptionFormGetDto")
+    void testCreateAdoptionFormWorksAndReturnsAdoptionFormGetDto() throws UserNotFoundException, PetNotFoundException {
+
+        when(adoptionFormRepository.save(any(AdoptionForm.class))).thenReturn(testAdoptionForm);
+
+        AdoptionFormGetDto result = adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto);
+
+        assertEquals(testAdoptionForm.getOtherNotes(), result.otherNotes());
+    }
+
+    @Test
+    @DisplayName("Test throw UserNotFoundException when creating AdoptionForm when user Id is invalid")
+    void testThrowUserNotFoundWhenCreatingAdoptionFormWithInvalidUserId() throws UserNotFoundException {
+
+        String exceptionMessage = adoptionFormCreateDto.userId();
+
+        when(userServiceI.getUserById(anyString())).thenThrow(new UserNotFoundException(exceptionMessage));
+
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto));
+
+        assertEquals(exceptionMessage, exception.getMessage());
+        verify(adoptionFormRepository, never()).save(any(AdoptionForm.class));
+    }
+
+    @Test
+    @DisplayName("Test throw UserNotFoundException when creating AdoptionForm when user Id is invalid")
+    void testThrowPetNotFoundWhenCreatingAdoptionFormWithInvalidUserId() throws PetNotFoundException {
+
+        String exceptionMessage = PET_WITH_ID + adoptionFormCreateDto.petId() + NOT_FOUND;
+
+        when(petServiceI.getPetById(anyString())).thenThrow(new PetNotFoundException(exceptionMessage));
+
+        PetNotFoundException exception = assertThrows(PetNotFoundException.class, () -> adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto));
+
+        assertEquals(exceptionMessage, exception.getMessage());
+        verify(adoptionFormRepository, never()).save(any(AdoptionForm.class));
     }
 
     @Test
