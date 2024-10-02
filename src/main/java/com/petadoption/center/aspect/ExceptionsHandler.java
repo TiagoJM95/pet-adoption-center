@@ -62,7 +62,7 @@ public class ExceptionsHandler {
 
         if (message.contains("unique")) {
                 String key = message.substring(startIndex, endIndex);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body( key + " is already in use.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body( key + " already in use.");
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving data in the database.");
     }

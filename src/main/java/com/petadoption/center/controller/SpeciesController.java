@@ -50,22 +50,139 @@ public class SpeciesController {
         return new ResponseEntity<>(speciesServiceI.getAllSpecies(page, size, sortBy), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Get pet species by id",
+            description = "Get pet species with the specified id from database"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return a species with the specified id",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SpeciesGetDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Species not found",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "String",
+                                    example = "Species with id: 12789-1234-1234-12345 not found"))
+            ),
+    })
+    @Parameter(name = "id", description = "The species id to search for", example = "12789-1234-1234-12345", required = true)
     @GetMapping("/id/{id}")
     public ResponseEntity<SpeciesGetDto> getPetSpeciesById(@PathVariable("id") String id) throws SpeciesNotFoundException {
         return new ResponseEntity<>(speciesServiceI.getSpeciesById(id), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Add new pet species",
+            description = "Add new species to database"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "201",
+                    description = "Return the created species",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SpeciesGetDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "unauthenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "unauthorized"
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflict: Field duplicated",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "String",
+                                    example = "species name Dog already exists."))
+            )
+    })
     @PostMapping("/")
     public ResponseEntity<SpeciesGetDto> addNewPetSpecies(@Valid @RequestBody SpeciesCreateDto dto) {
         return new ResponseEntity<>(speciesServiceI.addNewSpecies(dto), HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Update pet species",
+            description = "Update species from database by id"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return the species updated with the specified id and information",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = SpeciesGetDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Bad request"
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "unauthenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "unauthorized"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Species not found",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "String",
+                                    example = "Species with id: 12789-1234-1234-12345 not found"))
+            ),
+            @ApiResponse(
+                    responseCode = "409",
+                    description = "Conflict: Field duplicated",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "String",
+                                    example = "species name Dog already exists."))
+            )})
+    @Parameter(name = "id", description = "The species id to update", example = "12789-1234-1234-12345", required = true)
     @PutMapping("/update/{id}")
     public ResponseEntity<SpeciesGetDto> updatePetSpecies(@PathVariable ("id") String id, @Valid @RequestBody SpeciesUpdateDto dto)
             throws SpeciesNotFoundException {
         return new ResponseEntity<>(speciesServiceI.updateSpecies(id, dto), HttpStatus.OK);
     }
 
+    @Operation(
+            summary = "Delete pet species",
+            description = "Delete species from database by id"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Return a message of successful operation",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "String",
+                                    example = "Species with id: 12789-1234-1234-12345 deleted successfully"))
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "unauthenticated"
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "unauthorized"
+                    ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Species not found",
+                    content = @Content(mediaType = "text/plain",
+                            schema = @Schema(type = "String",
+                                    example = "Species with id: 12789-1234-1234-12345 not found"))
+            ),
+    })
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteSpecies(@PathVariable ("id") String id) throws SpeciesNotFoundException {
         return new ResponseEntity<>(speciesServiceI.deleteSpecies(id), HttpStatus.OK);
