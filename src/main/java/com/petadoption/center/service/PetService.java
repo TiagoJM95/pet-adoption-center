@@ -118,28 +118,26 @@ public class PetService implements PetServiceI {
     }
 
     private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria) throws PetDescriptionException {
-        return Specification.where(
-                         nameLike(searchCriteria.nameLike().toLowerCase())
-                        .and(findBySpecies(searchCriteria.species()))
-                        .and(findByState(searchCriteria.state()))
-                        .and(findByCity(searchCriteria.city()))
-                        .and(findByBreed((searchCriteria.breed())))
-                        .and(findByColor(searchCriteria.color()))
-                        .and(findByGender(getGenderByDescription(searchCriteria.gender())))
-                        .and(findByCoat(getCoatByDescription(searchCriteria.coat())))
-                        .and(findBySize(getSizeByDescription(searchCriteria.size())))
-                        .and(findByAge(getAgeByDescription(searchCriteria.age())))
-                        .and(isAdopted(searchCriteria.isAdopted()))
-                        .and(isSterilized(searchCriteria.isSterilized()))
-                        .and(isVaccinated(searchCriteria.isVaccinated()))
-                        .and(isChipped(searchCriteria.isChipped()))
-                        .and(isSpecialNeeds(searchCriteria.isSpecialNeeds()))
-                        .and(isHouseTrained(searchCriteria.isHouseTrained()))
-                        .and(isGoodWithKids(searchCriteria.goodWithKids()))
-                        .and(isGoodWithDogs(searchCriteria.goodWithDogs()))
-                        .and(isGoodWithCats(searchCriteria.goodWithCats()))
-                        .and(findByPureBreed(searchCriteria.isPureBreed()))
-                );
+        return Specification.where(searchCriteria.nameLike() != null && !searchCriteria.nameLike().isEmpty() ? nameLike(searchCriteria.nameLike()) : null)
+                .and(searchCriteria.species() != null ? findBySpecies(searchCriteria.species()) : null)
+                .and(searchCriteria.state() != null ? findByState(searchCriteria.state()) : null)
+                .and(searchCriteria.city() != null ? findByCity(searchCriteria.city()) : null)
+                .and(searchCriteria.breed() != null ? findByBreed(searchCriteria.breed()) : null)
+                .and(searchCriteria.color() != null ? findByColor(searchCriteria.color()) : null)
+                .and(searchCriteria.gender() != null ? findByGender(getGenderByDescription(searchCriteria.gender())) : null)
+                .and(searchCriteria.coat() != null ? findByCoat(getCoatByDescription(searchCriteria.coat())) : null)
+                .and(searchCriteria.size() != null ? findBySize(getSizeByDescription(searchCriteria.size())) : null)
+                .and(searchCriteria.age() != null ? findByAge(getAgeByDescription(searchCriteria.age())) : null)
+                .and(searchCriteria.isAdopted() != null ? isAdopted(searchCriteria.isAdopted()) : null)
+                .and(searchCriteria.isSterilized() != null ? isSterilized(searchCriteria.isSterilized()) : null)
+                .and(searchCriteria.isVaccinated() != null ? isVaccinated(searchCriteria.isVaccinated()) : null)
+                .and(searchCriteria.isChipped() != null ? isChipped(searchCriteria.isChipped()) : null)
+                .and(searchCriteria.isSpecialNeeds() != null ? isSpecialNeeds(searchCriteria.isSpecialNeeds()) : null)
+                .and(searchCriteria.isHouseTrained() != null ? isHouseTrained(searchCriteria.isHouseTrained()) : null)
+                .and(searchCriteria.goodWithKids() != null ? isGoodWithKids(searchCriteria.goodWithKids()) : null)
+                .and(searchCriteria.goodWithDogs() != null ? isGoodWithDogs(searchCriteria.goodWithDogs()) : null)
+                .and(searchCriteria.goodWithCats() != null ? isGoodWithCats(searchCriteria.goodWithCats()) : null)
+                .and(searchCriteria.isPureBreed() != null ? findByPureBreed(searchCriteria.isPureBreed()) : null);
     }
 
     private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrgNotFoundException, PetDescriptionException {
