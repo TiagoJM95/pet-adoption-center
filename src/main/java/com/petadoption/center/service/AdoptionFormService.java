@@ -57,8 +57,7 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     @Override
     public AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionFormCreateDto) throws UserNotFoundException, PetNotFoundException {
         AdoptionForm adoptionForm = buildAdoptionFormFromDto(adoptionFormCreateDto);
-        adoptionFormRepository.save(adoptionForm);
-        return AdoptionFormConverter.toDto(adoptionForm);
+        return AdoptionFormConverter.toDto(adoptionFormRepository.save(adoptionForm));
     }
 
     @Override

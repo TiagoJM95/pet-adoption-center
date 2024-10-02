@@ -104,8 +104,8 @@ public class TestDtoFactory {
 
     public static PetGetDto petGetDto() {
         return PetGetDto.builder()
-                .id("101010-10101010-1010")
-                .name("Bobi")
+                .id("888888-88888888-8888")
+                .name("Max")
                 .speciesDto(speciesGetDto())
                 .primaryBreedDto(primaryBreedGetDto(speciesGetDto()))
                 .secondaryBreedDto(secondaryBreedGetDto(speciesGetDto()))
@@ -126,7 +126,7 @@ public class TestDtoFactory {
 
     public static AdoptionFormGetDto adoptionFormGetDto() {
         return AdoptionFormGetDto.builder()
-                .id("121212-121212-1212")
+                .id("101010-10101010-1010")
                 .user(userGetDto())
                 .pet(petGetDto())
                 .userFamily(createFamily())

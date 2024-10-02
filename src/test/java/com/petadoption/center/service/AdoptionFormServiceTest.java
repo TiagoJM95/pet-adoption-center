@@ -169,7 +169,7 @@ public class AdoptionFormServiceTest {
 
         AdoptionFormGetDto result = adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto);
 
-        assertEquals(testAdoptionForm.getOtherNotes(), result.otherNotes());
+        assertEquals(adoptionFormGetDto, result);
     }
 
     @Test
