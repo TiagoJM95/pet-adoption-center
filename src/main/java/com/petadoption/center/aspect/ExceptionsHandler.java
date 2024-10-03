@@ -60,18 +60,42 @@ public class ExceptionsHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        String message = ex.getCause().getMessage();
+        Throwable cause = ex.getCause();
+        String message = (cause != null) ? cause.getMessage() : "Unknown error";
 
-        System.out.println(message);
-        int startIndex = message.lastIndexOf("unique") + 6;
-        int endIndex = message.indexOf("\"", startIndex);
+        Matcher keyValueMatcher = Pattern.compile("Key \\(([^)]+)\\)=\\(([^)]+)\\)").matcher(message); // regex key values
+        Matcher tableNameMatcher = Pattern.compile("insert into ([^\\s]+)").matcher(message); // regex table name
 
-        if (message.contains("unique")) {
-                String key = message.substring(startIndex, endIndex);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body( key + " already in use.");
+        String tableName = null;
+
+        if (tableNameMatcher.find()) {
+            tableName = tableNameMatcher.group(1);
+            if (!tableName.isEmpty()) {
+                tableName = tableName.substring(0, tableName.length() - 1); // remove last letter of table name
+            }
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving data in the database.");
+
+        if (keyValueMatcher.find()) {
+            String[] keys = keyValueMatcher.group(1).split(",\\s*");
+            String[] values = keyValueMatcher.group(2).split(",\\s*");
+
+            StringBuilder output = new StringBuilder(); // build error message
+            if (tableName != null) {
+                output.append(tableName).append(" with ");
+            }
+            for (int i = 0; i < keys.length; i++) {
+                if(i == keys.length - 1) {
+                    output.append(keys[i]).append(" ").append(values[i]).append(" already exists.");
+                    break;
+                }
+                output.append(keys[i]).append(" ").append(values[i]).append(" ").append("and ");
+            }
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(output.toString());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("You have entered an invalid data. Please try again.");
+        }
     }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
