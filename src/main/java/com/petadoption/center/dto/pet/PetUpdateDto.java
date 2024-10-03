@@ -14,10 +14,10 @@ import static com.petadoption.center.util.Messages.INVALID_AGE;
 @Builder
 public record PetUpdateDto(
 
-        @EnumValidator(enumClass = Sizes.class, message = INVALID_SIZE)
+        @EnumValidator(enumClass = Sizes.class, message = SIZE_INVALID)
         String size,
 
-        @EnumValidator(enumClass = Ages.class, message = INVALID_AGE)
+        @EnumValidator(enumClass = Ages.class, message = AGE_INVALID)
         String age,
 
         @NotBlank(message = BLANK_FIELD)

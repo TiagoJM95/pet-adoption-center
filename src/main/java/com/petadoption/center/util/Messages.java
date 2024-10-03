@@ -57,15 +57,15 @@ public class Messages {
 
     public static final String BREED_SPECIES_MISMATCH = "The breed and species do not match";
 
-    public static final String INVALID_AGE = "Invalid age description: {0}";
+    public static final String INVALID_AGE = "Invalid age description: ";
 
-    public static final String INVALID_COAT = "Invalid coat description: {0}";
+    public static final String INVALID_COAT = "Invalid coat description: ";
 
-    public static final String INVALID_SIZE = "Invalid size description: {0}";
+    public static final String INVALID_SIZE = "Invalid size description: ";
 
-    public static final String INVALID_GENDER = "Invalid gender description: {0}";
+    public static final String INVALID_GENDER = "Invalid gender description: ";
 
-    public static final String INVALID_STATUS = "Invalid status description: {0}";
+    public static final String INVALID_STATUS = "Invalid status description: ";
 
     public static final String INVALID_STATUS_CHANGE_SAME = "This status is already set: ";
 
@@ -125,6 +125,16 @@ public class Messages {
     public static final String YOUTUBE_VALID = "Special characters allowed are  . - / ";
 
     public static final String REQUIRED_FIELD = "This field is required.";
+
+    public static final String AGE_INVALID = "Invalid age description: {0}";
+
+    public static final String COAT_INVALID = "Invalid coat description: {0}";
+
+    public static final String SIZE_INVALID = "Invalid size description: {0}";
+
+    public static final String GENDER_INVALID = "Invalid gender description: {0}";
+
+    public static final String STATUS_INVALID = "Invalid status description: {0}";
 
 
     //SERVICE MESSAGES

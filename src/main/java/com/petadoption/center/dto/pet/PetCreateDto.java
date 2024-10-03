@@ -42,16 +42,16 @@ public record PetCreateDto(
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
         String tertiaryColor,
 
-        @EnumValidator(enumClass = Genders.class, message = INVALID_GENDER)
+        @EnumValidator(enumClass = Genders.class, message = GENDER_INVALID)
         String gender,
 
-        @EnumValidator(enumClass = Coats.class, message = INVALID_COAT)
+        @EnumValidator(enumClass = Coats.class, message = COAT_INVALID)
         String coat,
 
-        @EnumValidator(enumClass = Sizes.class, message = INVALID_SIZE)
+        @EnumValidator(enumClass = Sizes.class, message = SIZE_INVALID)
         String size,
 
-        @EnumValidator(enumClass = Ages.class, message = INVALID_AGE)
+        @EnumValidator(enumClass = Ages.class, message = AGE_INVALID)
         String age,
 
         @NotBlank(message = BLANK_FIELD)
