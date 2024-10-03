@@ -17,7 +17,7 @@ import java.util.List;
 public interface PetServiceI {
     PetGetDto getPetById(String id) throws PetNotFoundException;
 
-    List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy) throws SpeciesNotFoundException, PetDescriptionException;
+    List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy) throws PetDescriptionException;
 
     PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException, PetDescriptionException;
 

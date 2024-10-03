@@ -37,7 +37,7 @@ public class PetController {
                                                       @RequestParam (defaultValue = "0", required = false) int page,
                                                       @RequestParam (defaultValue = "5", required = false) int size,
                                                       @RequestParam (defaultValue = "id", required = false) String sortBy)
-            throws SpeciesNotFoundException, PetDescriptionException {
+            throws PetDescriptionException {
         return new ResponseEntity<>(petServiceI.searchPets(searchCriteria, page, size, sortBy), HttpStatus.OK);
     }
 
