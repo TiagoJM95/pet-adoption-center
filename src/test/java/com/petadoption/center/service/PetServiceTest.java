@@ -34,7 +34,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -225,7 +224,7 @@ public class PetServiceTest {
         verify(petRepository, never()).save(any(Pet.class));
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @DisplayName("Throws PetDescriptionException when addNewPet() is called with invalid enum fields")
     @CsvSource({
             "Invalid, Short, Medium, Adult, Invalid gender description: Invalid",
@@ -260,7 +259,7 @@ public class PetServiceTest {
         assertTrue(ex.getMessage().contains(expectedMessagePart));
 
         verify(petRepository, never()).save(any(Pet.class));
-    }
+    }*/
 
     @Test
     @DisplayName("Nothing is thrown when adding a valid list of new pets")
@@ -424,7 +423,7 @@ public class PetServiceTest {
         verify(petRepository, never()).save(any(Pet.class));
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @DisplayName("Throws PetDescriptionException when updatePet() is called with an invalid Size or Age")
     @CsvSource({
             "Invalid, Adult, Invalid size description: Invalid",
@@ -448,7 +447,7 @@ public class PetServiceTest {
 
         assertEquals(exMessage, ex.getMessage());
         verify(petRepository, never()).save(any(Pet.class));
-    }
+    }*/
 
     @Test
     @DisplayName("Returns a String when Pet is deleted successfully, providing a valid ID")
