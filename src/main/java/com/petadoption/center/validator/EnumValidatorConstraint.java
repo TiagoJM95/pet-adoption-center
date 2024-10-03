@@ -1,12 +1,14 @@
 package com.petadoption.center.validator;
 
 import com.petadoption.center.util.Messages;
+import com.petadoption.center.util.Utils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.text.MessageFormat;
 
 import static com.petadoption.center.util.Messages.REQUIRED_FIELD;
+import static com.petadoption.center.util.Utils.formatStringForEnum;
 
 public class EnumValidatorConstraint implements ConstraintValidator<EnumValidator, String> {
 
@@ -28,7 +30,7 @@ public class EnumValidatorConstraint implements ConstraintValidator<EnumValidato
             return false;
         }
 
-        String editedValue = value.trim().replace(" ", "_").toUpperCase();
+        String editedValue = formatStringForEnum(value);
         Object[] enumValues = enumClass.getEnumConstants();
         for (Object enumValue : enumValues) {
             if (editedValue.equals(enumValue.toString())) return true;

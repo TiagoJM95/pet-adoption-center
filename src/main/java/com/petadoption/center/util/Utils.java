@@ -9,4 +9,8 @@ public class Utils {
             setterField.accept(newValue);
         }
     }
+
+    public static String formatStringForEnum(String value) {
+        return value.trim().replace(" ", "_").toUpperCase();
+    }
 }
