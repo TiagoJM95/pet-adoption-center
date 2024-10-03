@@ -1,13 +1,18 @@
 package com.petadoption.center.dto.pet;
 
+import com.petadoption.center.enums.Ages;
+import com.petadoption.center.enums.Coats;
+import com.petadoption.center.enums.Genders;
+import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.embeddable.Attributes;
+import com.petadoption.center.validator.EnumValidator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
-import static com.petadoption.center.util.Messages.BLANK_FIELD;
-import static com.petadoption.center.util.Messages.ONLY_LETTERS;
+import static com.petadoption.center.util.Messages.*;
 
 @Builder
 public record PetCreateDto(
@@ -37,16 +42,16 @@ public record PetCreateDto(
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
         String tertiaryColor,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Genders.class, message = INVALID_GENDER)
         String gender,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Coats.class, message = INVALID_COAT)
         String coat,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Sizes.class, message = INVALID_SIZE)
         String size,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Ages.class, message = INVALID_AGE)
         String age,
 
         @NotBlank(message = BLANK_FIELD)
