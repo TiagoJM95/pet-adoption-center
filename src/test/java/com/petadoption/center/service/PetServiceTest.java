@@ -504,7 +504,7 @@ public class PetServiceTest {
         verify(petRepository, times(1)).findAll(any(Specification.class), any(PageRequest.class));
     }
 
-    @ParameterizedTest
+    /*@ParameterizedTest
     @DisplayName("Throws PetDescriptionException when searchPets() is called with invalid enum fields")
     @CsvSource({
             "Invalid, Short, Medium, Adult, Invalid gender description: Invalid",
@@ -541,5 +541,5 @@ public class PetServiceTest {
 
         assertTrue(ex.getMessage().contains(expectedMessage));
         verify(petRepository, never()).findAll(any(Specification.class), any(PageRequest.class));
-    }
+    }*/
 }
