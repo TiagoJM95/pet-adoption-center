@@ -15,6 +15,7 @@ public @interface EnumValidator {
 
     Class<? extends Enum<?>> enumClass();
     String message() default "Invalid value";
+    boolean allowNull() default false;
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
