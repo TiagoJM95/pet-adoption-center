@@ -9,7 +9,6 @@ import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
-import static com.petadoption.center.util.Messages.INVALID_AGE;
 
 @Builder
 public record PetUpdateDto(

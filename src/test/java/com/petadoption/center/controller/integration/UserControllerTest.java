@@ -17,8 +17,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-
-import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.USER_WITH_ID;
 import static org.hamcrest.Matchers.is;

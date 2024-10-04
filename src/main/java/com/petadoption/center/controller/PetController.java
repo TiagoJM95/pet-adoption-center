@@ -7,7 +7,6 @@ import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.pet.PetDescriptionException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.interfaces.PetServiceI;
@@ -36,24 +35,23 @@ public class PetController {
     public ResponseEntity<List<PetGetDto>> searchPets(@Valid @RequestBody PetSearchCriteria searchCriteria,
                                                       @RequestParam (defaultValue = "0", required = false) int page,
                                                       @RequestParam (defaultValue = "5", required = false) int size,
-                                                      @RequestParam (defaultValue = "id", required = false) String sortBy)
-            throws PetDescriptionException {
+                                                      @RequestParam (defaultValue = "id", required = false) String sortBy) {
         return new ResponseEntity<>(petServiceI.searchPets(searchCriteria, page, size, sortBy), HttpStatus.OK);
     }
 
     @PostMapping("/addSingle")
-    public ResponseEntity<PetGetDto> addNewPet(@Valid @RequestBody PetCreateDto pet) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, BreedMismatchException, PetDescriptionException {
+    public ResponseEntity<PetGetDto> addNewPet(@Valid @RequestBody PetCreateDto pet) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, BreedMismatchException {
         return new ResponseEntity<>(petServiceI.addNewPet(pet), HttpStatus.CREATED);
     }
 
     @PostMapping("/addList")
-    public ResponseEntity<String> addListOfNewPets(@Valid @RequestBody List<PetCreateDto> pets) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, BreedMismatchException, PetDescriptionException {
+    public ResponseEntity<String> addListOfNewPets(@Valid @RequestBody List<PetCreateDto> pets) throws OrgNotFoundException, BreedNotFoundException, ColorNotFoundException, SpeciesNotFoundException, BreedMismatchException {
         petServiceI.addListOfNewPets(pets);
         return new ResponseEntity<>("Added", HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") String id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetNotFoundException, PetDescriptionException {
+    public ResponseEntity<PetGetDto> updatePet(@Valid @PathVariable ("id") String id, @RequestBody PetUpdateDto pet) throws OrgNotFoundException, PetNotFoundException {
         return new ResponseEntity<>(petServiceI.updatePet(id, pet), HttpStatus.OK);
     }
 

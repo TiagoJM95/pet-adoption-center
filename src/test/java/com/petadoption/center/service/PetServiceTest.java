@@ -12,7 +12,6 @@ import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.pet.PetDescriptionException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Pet;
@@ -27,7 +26,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -145,7 +143,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Saves Pet in DB and returns PetGetDto when addNewPet() is called with valid data")
-    void shouldReturnPetGetDtoWhenPetIsSavedInDb() throws BreedNotFoundException, BreedMismatchException, OrgNotFoundException, PetDescriptionException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldReturnPetGetDtoWhenPetIsSavedInDb() throws BreedNotFoundException, BreedMismatchException, OrgNotFoundException, ColorNotFoundException, SpeciesNotFoundException {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
@@ -224,46 +222,9 @@ public class PetServiceTest {
         verify(petRepository, never()).save(any(Pet.class));
     }
 
-    /*@ParameterizedTest
-    @DisplayName("Throws PetDescriptionException when addNewPet() is called with invalid enum fields")
-    @CsvSource({
-            "Invalid, Short, Medium, Adult, Invalid gender description: Invalid",
-            "Male, Invalid, Medium, Adult, Invalid coat description: Invalid",
-            "Male, Short, Invalid, Adult, Invalid size description: Invalid",
-            "Male, Short, Medium, Invalid, Invalid age description: Invalid"
-    })
-    void shouldThrowPetDescriptionExceptionWhenInvalidFields(String gender, String coat, String size, String age, String expectedMessagePart) {
-        PetCreateDto invalidDto = PetCreateDto.builder()
-                .name("Max")
-                .petSpeciesId("111111-11111111-1111")
-                .primaryBreedId("222222-22222222-2222")
-                .secondaryBreedId("333333-33333333-3333")
-                .primaryColor("444444-44444444-4444")
-                .secondaryColor("555555-55555555-5555")
-                .tertiaryColor("666666-66666666-6666")
-                .gender(gender)
-                .coat(coat)
-                .size(size)
-                .age(age)
-                .description("Max is a very friendly dog")
-                .imageUrl("https://www.dogimages.com")
-                .isAdopted(false)
-                .attributes(createAttributes())
-                .organizationId("777777-77777777-7777")
-                .build();
-
-        PetDescriptionException ex = assertThrows(PetDescriptionException.class, () -> {
-            petService.addNewPet(invalidDto);
-        });
-
-        assertTrue(ex.getMessage().contains(expectedMessagePart));
-
-        verify(petRepository, never()).save(any(Pet.class));
-    }*/
-
     @Test
     @DisplayName("Nothing is thrown when adding a valid list of new pets")
-    void shouldRunWithNoThrowsWhenAddingAValidListOfNewPets() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrgNotFoundException, PetDescriptionException, ColorNotFoundException {
+    void shouldRunWithNoThrowsWhenAddingAValidListOfNewPets() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrgNotFoundException, ColorNotFoundException {
 
         List<PetCreateDto> pets = List.of(petCreateDto, petCreateDto("Bobby"), petCreateDto("Spike"));
 
@@ -386,7 +347,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Returns a PetGetDto when updatePet() is called with a valid ID and dto")
-    void shouldReturnPetGetDtoWhenPetIsUpdatedSuccessfully() throws OrgNotFoundException, PetDescriptionException, PetNotFoundException {
+    void shouldReturnPetGetDtoWhenPetIsUpdatedSuccessfully() throws OrgNotFoundException, PetNotFoundException {
 
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
         when(petRepository.save(any(Pet.class))).thenReturn(updatedPet);
@@ -423,32 +384,6 @@ public class PetServiceTest {
         verify(petRepository, never()).save(any(Pet.class));
     }
 
-    /*@ParameterizedTest
-    @DisplayName("Throws PetDescriptionException when updatePet() is called with an invalid Size or Age")
-    @CsvSource({
-            "Invalid, Adult, Invalid size description: Invalid",
-            "Medium, Invalid, Invalid age description: Invalid"
-    })
-    void shouldThrowPetDescriptionExceptionWhenSizeOrAgeIsInvalid(String size, String age, String exMessage) {
-
-        PetUpdateDto invalidDto = PetUpdateDto.builder()
-                .size(size)
-                .age(age)
-                .description("Max is an updated dog")
-                .imageUrl("https://www.updatedimages.com")
-                .isAdopted(false)
-                .attributes(createAttributes())
-                .organizationId("777777-77777777-7777")
-                .build();
-
-        when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
-
-        PetDescriptionException ex = assertThrows(PetDescriptionException.class, () -> petService.updatePet(petId, invalidDto));
-
-        assertEquals(exMessage, ex.getMessage());
-        verify(petRepository, never()).save(any(Pet.class));
-    }*/
-
     @Test
     @DisplayName("Returns a String when Pet is deleted successfully, providing a valid ID")
     void shouldReturnStringWhenPetIsDeletedSuccessfully() throws PetNotFoundException {
@@ -476,7 +411,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Returns a List of PetGetDto when data is valid")
-    void shouldReturnPetGetDtoListWhenDataIsValid() throws PetDescriptionException {
+    void shouldReturnPetGetDtoListWhenDataIsValid() {
 
         List<Pet> mockPets = List.of(pet);
         when(petRepository.findAll(any(Specification.class), any(PageRequest.class)))
@@ -492,7 +427,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Returns empty list if data is valid but no filter matches")
-    void shouldReturnEmptyListValidDataNoMatches() throws PetDescriptionException {
+    void shouldReturnEmptyListValidDataNoMatches() {
 
         when(petRepository.findAll(any(Specification.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(Collections.emptyList()));
@@ -503,43 +438,4 @@ public class PetServiceTest {
         assertTrue(result.isEmpty());
         verify(petRepository, times(1)).findAll(any(Specification.class), any(PageRequest.class));
     }
-
-    /*@ParameterizedTest
-    @DisplayName("Throws PetDescriptionException when searchPets() is called with invalid enum fields")
-    @CsvSource({
-            "Invalid, Short, Medium, Adult, Invalid gender description: Invalid",
-            "Male, Invalid, Medium, Adult, Invalid coat description: Invalid",
-            "Male, Short, Invalid, Adult, Invalid size description: Invalid",
-            "Male, Short, Medium, Invalid, Invalid age description: Invalid"
-    })
-    void shouldThrowPetDescriptionExceptionWhenEnumsInvalid(String gender, String coat, String sizes, String age, String expectedMessage) {
-
-        PetSearchCriteria invalidCriteria = PetSearchCriteria.builder()
-                .nameLike(null)
-                .species(null)
-                .breed(null)
-                .color(null)
-                .gender(gender)
-                .coat(coat)
-                .size(sizes)
-                .age(age)
-                .isAdopted(null)
-                .isSterilized(null)
-                .isVaccinated(null)
-                .isChipped(null)
-                .isSpecialNeeds(null)
-                .isHouseTrained(null)
-                .goodWithKids(null)
-                .goodWithDogs(null)
-                .goodWithCats(null)
-                .isPureBreed(null)
-                .state(null)
-                .city(null)
-                .build();
-
-        PetDescriptionException ex = assertThrows(PetDescriptionException.class, () -> petService.searchPets(invalidCriteria, page, size, sortBy));
-
-        assertTrue(ex.getMessage().contains(expectedMessage));
-        verify(petRepository, never()).findAll(any(Specification.class), any(PageRequest.class));
-    }*/
 }

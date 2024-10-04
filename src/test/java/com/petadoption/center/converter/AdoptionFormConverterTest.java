@@ -4,7 +4,9 @@ import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
-import com.petadoption.center.model.*;
+import com.petadoption.center.model.AdoptionForm;
+import com.petadoption.center.model.Pet;
+import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,12 +14,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.petGetDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.userGetDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;

@@ -1,7 +1,5 @@
 package com.petadoption.center.validator;
 
-import com.petadoption.center.util.Messages;
-import com.petadoption.center.util.Utils;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

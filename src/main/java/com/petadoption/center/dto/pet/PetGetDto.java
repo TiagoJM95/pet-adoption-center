@@ -11,7 +11,6 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.embeddable.Attributes;
 import lombok.Builder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Builder

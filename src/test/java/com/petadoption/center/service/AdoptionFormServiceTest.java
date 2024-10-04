@@ -1,6 +1,5 @@
 package com.petadoption.center.service;
 
-import com.petadoption.center.converter.AdoptionFormConverter;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
@@ -8,7 +7,6 @@ import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundExcepti
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
-import com.petadoption.center.model.Pet;
 import com.petadoption.center.repository.AdoptionFormRepository;
 import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
@@ -32,7 +30,8 @@ import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAdoptionForm;
 import static com.petadoption.center.util.Messages.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")

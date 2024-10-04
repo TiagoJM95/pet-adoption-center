@@ -28,7 +28,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;

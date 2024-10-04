@@ -19,7 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.breedCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.breedUpdateDto;
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;

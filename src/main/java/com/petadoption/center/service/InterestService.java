@@ -7,11 +7,11 @@ import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.enums.Status;
-import com.petadoption.center.exception.status.InvalidStatusChangeException;
-import com.petadoption.center.exception.status.InvalidStatusException;
 import com.petadoption.center.exception.interest.InterestNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
+import com.petadoption.center.exception.status.InvalidStatusChangeException;
+import com.petadoption.center.exception.status.InvalidStatusException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Interest;
@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.petadoption.center.converter.EnumConverter.convertStringToEnum;
 import static com.petadoption.center.enums.Status.*;
 import static com.petadoption.center.util.Messages.*;
 
@@ -104,7 +105,7 @@ public class InterestService implements InterestServiceI {
     @Override
     public InterestGetDto updateInterest(String id, InterestUpdateDto dto) throws InterestNotFoundException, InvalidStatusException, InvalidStatusChangeException, UserNotFoundException, PetNotFoundException {
         Interest interest = findById(id);
-        Status status = getStatusByDescription(dto.status());
+        Status status = convertStringToEnum(dto.status(), Status.class);
         verifyIfStatusChangeIsValid(interest.getStatus(), status);
         if (status == FORM_REQUESTED){
             createAndSaveAdoptionForm(interest);

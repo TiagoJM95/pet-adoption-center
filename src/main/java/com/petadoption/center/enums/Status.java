@@ -1,9 +1,6 @@
 package com.petadoption.center.enums;
 
-import com.petadoption.center.exception.status.InvalidStatusException;
 import lombok.Getter;
-
-import static com.petadoption.center.util.Messages.INVALID_STATUS;
 
 @Getter
 public enum Status {
@@ -17,14 +14,5 @@ public enum Status {
 
     Status(String description) {
         this.description = description;
-    }
-
-    public static Status getStatusByDescription(String description) throws InvalidStatusException {
-        for(Status status : values()) {
-            if(status.getDescription().equalsIgnoreCase(description)) {
-                return status;
-            }
-        }
-        throw new InvalidStatusException(INVALID_STATUS + description);
     }
 }

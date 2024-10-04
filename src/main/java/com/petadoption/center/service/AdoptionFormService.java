@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.converter.AdoptionFormConverter.*;
+import static com.petadoption.center.converter.AdoptionFormConverter.toDto;
 import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Utils.updateFields;

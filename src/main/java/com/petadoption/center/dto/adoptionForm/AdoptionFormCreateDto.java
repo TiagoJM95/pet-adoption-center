@@ -7,7 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.BLANK_FIELD;
+import static com.petadoption.center.util.Messages.ONLY_LETTERS;
 
 @Builder
 public record AdoptionFormCreateDto(

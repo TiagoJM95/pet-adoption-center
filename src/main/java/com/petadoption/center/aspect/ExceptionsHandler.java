@@ -7,7 +7,6 @@ import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
-import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +20,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.LOGGER_DB_CONNECTION;
+import static com.petadoption.center.util.Messages.LOGGER_NOT_FOUND;
 
 
 @Aspect
