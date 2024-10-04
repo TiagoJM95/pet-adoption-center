@@ -43,8 +43,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.petCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.petUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static com.petadoption.center.util.Messages.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +68,7 @@ public class PetServiceTest {
 
     private Pet pet;
     private Pet updatedPet;
+    private PetGetDto petGetDto;
     private PetCreateDto petCreateDto;
     private PetUpdateDto petUpdateDto;
     private String petId;
@@ -82,11 +82,12 @@ public class PetServiceTest {
     void setup() {
         pet = createPet();
         petId = pet.getId();
-        updatedPet = pet;
+        updatedPet = createPet();
         updatedPet.setSize(Sizes.LARGE);
         updatedPet.setAge(Ages.SENIOR);
         updatedPet.setDescription("Max is an updated dog");
         updatedPet.setImageUrl("https://www.updatedimages.com");
+        petGetDto = petGetDto();
         petCreateDto = petCreateDto("Max");
         petUpdateDto = petUpdateDto();
         invalidId = "invalidId";
@@ -126,11 +127,10 @@ public class PetServiceTest {
     @DisplayName("Returns PetGetDto when getPetById() is called with an valid ID")
     void shouldReturnPetGetDtoWhenPetExistsById() throws PetNotFoundException {
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
-        PetGetDto expected = PetConverter.toDto(pet);
 
         PetGetDto actual = petService.getPetById(petId);
 
-        assertEquals(expected, actual);
+        assertEquals(petGetDto, actual);
         verify(petRepository, times(1)).findById(petId);
     }
 
@@ -150,11 +150,10 @@ public class PetServiceTest {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
-        PetGetDto expected = PetConverter.toDto(pet);
 
         PetGetDto actual = petService.addNewPet(petCreateDto);
 
-        assertEquals(expected, actual);
+        assertEquals(petGetDto, actual);
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         verify(petRepository, times(1)).save(any(Pet.class));
     }
@@ -166,7 +165,6 @@ public class PetServiceTest {
         doThrow(new BreedMismatchException("Breed mismatch")).when(breedService).verifyIfBreedsAndSpeciesMatch(any(PetCreateDto.class));
 
         BreedMismatchException ex = assertThrows(BreedMismatchException.class, () -> petService.addNewPet(petCreateDto));
-
 
         assertEquals("Breed mismatch", ex.getMessage());
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
