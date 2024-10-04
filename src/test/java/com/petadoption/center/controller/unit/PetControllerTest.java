@@ -29,6 +29,8 @@ import java.util.List;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.petSearchCriteria;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.PET_WITH_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -211,35 +213,120 @@ public class PetControllerTest {
     void shouldThrowOrgNotFoundExceptionWhenOrgIsNotFoundInAListElement() throws OrgNotFoundException, PetDescriptionException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         doThrow(new OrgNotFoundException("Org not found")).when(petService).addListOfNewPets(anyList());
+
+        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
+
+        assertEquals("Org not found", ex.getMessage());
+        verify(petService, times(1)).addListOfNewPets(anyList());
     }
 
     @Test
     @DisplayName("Throws BreedNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid breed ")
-    void shouldThrowBreedNotFoundExceptionWhenBreedIsNotFoundInAListElement(){
+    void shouldThrowBreedNotFoundExceptionWhenBreedIsNotFoundInAListElement() throws OrgNotFoundException, PetDescriptionException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
+        doThrow(new BreedNotFoundException("Breed not found")).when(petService).addListOfNewPets(anyList());
+
+        BreedNotFoundException ex = assertThrows(BreedNotFoundException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
+
+        assertEquals("Breed not found", ex.getMessage());
+        verify(petService, times(1)).addListOfNewPets(anyList());
     }
 
     @Test
     @DisplayName("Throws ColorNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid color ")
-    void shouldThrowColorNotFoundExceptionWhenColorIsNotFoundInAListElement(){
+    void shouldThrowColorNotFoundExceptionWhenColorIsNotFoundInAListElement() throws OrgNotFoundException, PetDescriptionException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
+        doThrow(new ColorNotFoundException("Color not found")).when(petService).addListOfNewPets(anyList());
+
+        ColorNotFoundException ex = assertThrows(ColorNotFoundException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
+
+        assertEquals("Color not found", ex.getMessage());
+        verify(petService, times(1)).addListOfNewPets(anyList());
     }
 
     @Test
     @DisplayName("Throws SpeciesNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid species ")
-    void shouldThrowSpeciesNotFoundExceptionWhenSpeciesIsNotFoundInAListElement(){
+    void shouldThrowSpeciesNotFoundExceptionWhenSpeciesIsNotFoundInAListElement() throws OrgNotFoundException, PetDescriptionException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
+        doThrow(new SpeciesNotFoundException("Species not found")).when(petService).addListOfNewPets(anyList());
+
+        SpeciesNotFoundException ex = assertThrows(SpeciesNotFoundException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
+
+        assertEquals("Species not found", ex.getMessage());
+        verify(petService, times(1)).addListOfNewPets(anyList());
     }
 
     @Test
     @DisplayName("Throws BreedMismatchException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid breed/species ")
-    void shouldThrowBreedMismatchExceptionWhenBreedAndSpeciesDoNotMatchInAListElement(){
+    void shouldThrowBreedMismatchExceptionWhenBreedAndSpeciesDoNotMatchInAListElement() throws OrgNotFoundException, PetDescriptionException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
+        doThrow(new BreedMismatchException("Breed mismatch")).when(petService).addListOfNewPets(anyList());
+
+        BreedMismatchException ex = assertThrows(BreedMismatchException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
+
+        assertEquals("Breed mismatch", ex.getMessage());
+        verify(petService, times(1)).addListOfNewPets(anyList());
     }
 
     @Test
-    @DisplayName("Throws PetDescriptionException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid enum field ")
-    void shouldThrowPetDescriptionExceptionWhenEnumFieldInvalidInAListElement(){
+    @DisplayName("Returns a PetGetDto when updatePet() with a valid ID and PetUpdateDto")
+    void shouldReturnPetGetDtoWithValidIdAndUpdateDto() throws OrgNotFoundException, PetDescriptionException, PetNotFoundException {
 
+        when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenReturn(petGetDto);
+
+        ResponseEntity<PetGetDto> actual = petController.updatePet(petGetDto.id(), petUpdateDto);
+
+        assertEquals(petGetDto, actual.getBody());
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        verify(petService, times(1)).updatePet(anyString(), any(PetUpdateDto.class));
+    }
+
+    @Test
+    @DisplayName("Throws OrgNotFoundException when updatePet() with an invalid OrgID in PetUpdateDto")
+    void shouldThrowOrgNotFoundExceptionIfOrgIdNotFound() throws OrgNotFoundException, PetDescriptionException, PetNotFoundException {
+
+        when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenThrow(new OrgNotFoundException("Org not found"));
+
+        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petController.updatePet(petGetDto.id(), petUpdateDto));
+
+        assertEquals("Org not found", ex.getMessage());
+        verify(petService, times(1)).updatePet(anyString(), any(PetUpdateDto.class));
+    }
+
+    @Test
+    @DisplayName("Throws PetNotFoundException when updatePet() with an invalid ID")
+    void shouldThrowPetNotFoundExceptionIfIdNotFound() throws OrgNotFoundException, PetDescriptionException, PetNotFoundException {
+
+        when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenThrow(new PetNotFoundException("Pet not found"));
+
+        PetNotFoundException ex = assertThrows(PetNotFoundException.class, () -> petController.updatePet(petGetDto.id(), petUpdateDto));
+
+        assertEquals("Pet not found", ex.getMessage());
+        verify(petService, times(1)).updatePet(anyString(), any(PetUpdateDto.class));
+    }
+
+    @Test
+    @DisplayName("Returns a String when deletePet() is called with valid ID")
+    void shouldReturnStringWhenIdIsValid() throws PetNotFoundException {
+
+        when(petService.deletePet(anyString())).thenReturn(PET_WITH_ID + petGetDto.id() + DELETE_SUCCESS);
+
+        ResponseEntity<String> actual = petController.deletePet(petGetDto.id());
+
+        assertEquals(HttpStatus.OK, actual.getStatusCode());
+        assertEquals(PET_WITH_ID + petGetDto.id() + DELETE_SUCCESS, actual.getBody());
+        verify(petService, times(1)).deletePet(anyString());
+    }
+
+    @Test
+    @DisplayName("Returns a String when deletePet() is called with valid ID")
+    void shouldThrowPetNotFoundException() throws PetNotFoundException {
+
+        when(petService.deletePet(anyString())).thenThrow(new PetNotFoundException("Not found"));
+
+        PetNotFoundException ex = assertThrows(PetNotFoundException.class, () -> petController.deletePet(petGetDto.id()));
+
+        assertEquals("Not found", ex.getMessage());
+        verify(petService, times(1)).deletePet(anyString());
     }
 }
