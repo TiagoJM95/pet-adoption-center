@@ -124,6 +124,18 @@ public class Messages {
 
     public static final String YOUTUBE_VALID = "Special characters allowed are  . - / ";
 
+    public static final String REQUIRED_FIELD = "This field is required.";
+
+    public static final String AGE_INVALID = "Invalid age description: {0}";
+
+    public static final String COAT_INVALID = "Invalid coat description: {0}";
+
+    public static final String SIZE_INVALID = "Invalid size description: {0}";
+
+    public static final String GENDER_INVALID = "Invalid gender description: {0}";
+
+    public static final String STATUS_INVALID = "Invalid status description: {0}";
+
 
     //SERVICE MESSAGES
 

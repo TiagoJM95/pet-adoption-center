@@ -33,7 +33,7 @@ public class PetController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<List<PetGetDto>> searchPets(@RequestBody PetSearchCriteria searchCriteria,
+    public ResponseEntity<List<PetGetDto>> searchPets(@Valid @RequestBody PetSearchCriteria searchCriteria,
                                                       @RequestParam (defaultValue = "0", required = false) int page,
                                                       @RequestParam (defaultValue = "5", required = false) int size,
                                                       @RequestParam (defaultValue = "id", required = false) String sortBy)
