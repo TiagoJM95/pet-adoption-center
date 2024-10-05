@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
@@ -60,7 +61,7 @@ public class ColorControllerTest {
     @Test
     @DisplayName("Test if get all colors works correctly")
     @DirtiesContext
-    void getAllColors() throws Exception {
+    void getAll() throws Exception {
 
         createColor();
 
@@ -74,7 +75,7 @@ public class ColorControllerTest {
     @Test
     @DisplayName("Test if get color by id works correctly")
     @DirtiesContext
-    void getColorById() throws Exception {
+    void getById() throws Exception {
 
         createColor();
 
@@ -88,11 +89,11 @@ public class ColorControllerTest {
     @Test
     @DisplayName("Test if delete color works correctly")
     @DirtiesContext
-    void deleteColor() throws Exception {
+    void delete() throws Exception {
 
         createColor();
 
-        mockMvc.perform(delete("/api/v1/color/delete/{id}", colorGetDto.id())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", colorGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(COLOR_WITH_ID + colorGetDto.id() + DELETE_SUCCESS));

@@ -26,37 +26,39 @@ import java.util.Map;
 import static com.petadoption.center.util.Messages.LOGGER_DB_CONNECTION;
 import static com.petadoption.center.util.Messages.LOGGER_NOT_FOUND;
 
-
 @Aspect
 @ControllerAdvice
 public class ExceptionsHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
 
-    @ExceptionHandler(value = {UserNotFoundException.class, BreedNotFoundException.class, ColorNotFoundException.class, OrgNotFoundException.class, PetNotFoundException.class, SpeciesNotFoundException.class})
-    public ResponseEntity<String> NotFoundHandler(Exception ex) {
+    @ExceptionHandler(value = {
+            UserNotFoundException.class,
+            BreedNotFoundException.class,
+            ColorNotFoundException.class,
+            OrgNotFoundException.class,
+            PetNotFoundException.class,
+            SpeciesNotFoundException.class
+    })
+    public ResponseEntity<String> notFoundHandler(Exception ex) {
         logger.error(LOGGER_NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-
     }
 
-
-    @ExceptionHandler(value = {DatabaseConnectionException.class})
-    public ResponseEntity<String> DbConnectionHandler(Exception ex) {
+    @ExceptionHandler(DatabaseConnectionException.class)
+    public ResponseEntity<String> dbConnectionHandler(Exception ex) {
         logger.error(LOGGER_DB_CONNECTION, ex.getMessage());
         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(ex.getMessage());
-
     }
 
-    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
-    public ResponseEntity<String> RequestBodyHandler(Exception ex) {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> requestBodyHandler(Exception ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+    public ResponseEntity<String> dataIntegrityHandler(DataIntegrityViolationException ex) {
         String message = ex.getCause().getMessage();
 
         int startIndex = message.lastIndexOf("unique") + 6;
@@ -64,7 +66,7 @@ public class ExceptionsHandler {
 
         if (message.contains("unique")) {
                 String key = message.substring(startIndex, endIndex);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body( key + " is already in use.");
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(key + " is already in use.");
         }
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving data in the database.");
     }

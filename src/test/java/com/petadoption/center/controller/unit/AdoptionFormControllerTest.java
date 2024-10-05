@@ -50,7 +50,7 @@ public class AdoptionFormControllerTest {
 
     @Test
     @DisplayName("Test if get all adoption forms works correctly")
-    void testGetAllAdoptionForms() {
+    void testGetAll() {
 
         adoptionFormGetDto = new AdoptionFormGetDto(
                 "1111-1111-2222",
@@ -71,7 +71,7 @@ public class AdoptionFormControllerTest {
 
         when(adoptionFormServiceI.getAllAdoptionForms(page, size, sortBy)).thenReturn(listOfAdoptionForms);
 
-        ResponseEntity<List<AdoptionFormGetDto>> response = adoptionFormController.getAllAdoptionForms(page, size, sortBy);
+        ResponseEntity<List<AdoptionFormGetDto>> response = adoptionFormController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(listOfAdoptionForms, response.getBody());
@@ -81,13 +81,13 @@ public class AdoptionFormControllerTest {
 
     @Test
     @DisplayName("Test if get adoption form by id works correctly")
-    void testGetAdoptionFormById() throws AdoptionFormNotFoundException {
+    void testGetById() throws AdoptionFormNotFoundException {
 
         String id = "1111-1111-2222";
 
         when(adoptionFormServiceI.getAdoptionFormById(id)).thenReturn(adoptionFormGetDto);
 
-        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.getAdoptionFormById(id);
+        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.getById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(adoptionFormGetDto, response.getBody());
@@ -101,7 +101,7 @@ public class AdoptionFormControllerTest {
 
        when(adoptionFormServiceI.addNewAdoptionForm(adoptionFormCreateDto)).thenReturn(adoptionFormGetDto);
 
-       ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.addNewAdoptionForm(adoptionFormCreateDto);
+       ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.create(adoptionFormCreateDto);
 
        assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertEquals(adoptionFormGetDto, response.getBody());
@@ -111,13 +111,13 @@ public class AdoptionFormControllerTest {
 
     @Test
     @DisplayName("Test if update adoption form works correctly")
-    void testUpdateAdoptionForm() throws AdoptionFormNotFoundException {
+    void testUpdate() throws AdoptionFormNotFoundException {
 
         String id = "1111-1111-2222";
 
         when(adoptionFormServiceI.updateAdoptionForm(id, adoptionFormUpdateDto)).thenReturn(adoptionFormGetDto);
 
-        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.updateAdoptionForm(id, adoptionFormUpdateDto);
+        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.update(id, adoptionFormUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(adoptionFormGetDto, response.getBody());
@@ -127,13 +127,13 @@ public class AdoptionFormControllerTest {
 
     @Test
     @DisplayName("Test if delete adoption form works correctly")
-    void testDeleteAdoptionForm() throws AdoptionFormNotFoundException {
+    void testDelete() throws AdoptionFormNotFoundException {
 
         String id = "1111-1111-2222";
 
         when(adoptionFormServiceI.deleteAdoptionForm(id)).thenReturn(USER_WITH_ID + id + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = adoptionFormController.deleteAdoptionForm(id);
+        ResponseEntity<String> response = adoptionFormController.delete(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(USER_WITH_ID + id + DELETE_SUCCESS, response.getBody());

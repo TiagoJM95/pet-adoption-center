@@ -52,7 +52,7 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get All Colors works correctly")
-    void getAllColorsShouldReturnColors() {
+    void getAllColorsShouldReturn() {
 
         int page = 0;
         int size = 5;
@@ -62,7 +62,7 @@ public class ColorControllerTest {
 
         when(colorServiceI.getAllColors(page, size, sortBy)).thenReturn(expectedColors);
 
-        ResponseEntity<List<ColorGetDto>> response = colorController.getAllColors(page, size, sortBy);
+        ResponseEntity<List<ColorGetDto>> response = colorController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedColors, response.getBody());
@@ -72,11 +72,11 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get Color by id works correctly")
-    void getColorByIdShouldReturnColor() throws ColorNotFoundException {
+    void getColorByIdShouldReturn() throws ColorNotFoundException {
 
         when(colorServiceI.getColorById(testColor.getId())).thenReturn(colorGetDto);
 
-        ResponseEntity<ColorGetDto> response = colorController.getColorById(testColor.getId());
+        ResponseEntity<ColorGetDto> response = colorController.getById(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
@@ -90,7 +90,7 @@ public class ColorControllerTest {
 
         when(colorServiceI.addNewColor(colorCreateDto)).thenReturn(colorGetDto);
 
-        ResponseEntity<ColorGetDto> response = colorController.addNewColor(colorCreateDto);
+        ResponseEntity<ColorGetDto> response = colorController.create(colorCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
@@ -100,11 +100,11 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if delete Color works correctly")
-    void deleteColorShouldReturnColor() throws ColorNotFoundException {
+    void deleteColorShouldReturn() throws ColorNotFoundException {
 
         when(colorServiceI.deleteColor(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = colorController.deleteColor(testColor.getId());
+        ResponseEntity<String> response = colorController.delete(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS, response.getBody());

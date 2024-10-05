@@ -66,7 +66,7 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if get all Breeds works correctly")
-    void getAllBreedsShouldReturnBreeds() {
+    void getAllBreedsShouldReturn() {
 
         int page = 0;
         int size = 5;
@@ -76,7 +76,7 @@ public class BreedControllerTest {
 
         when(breedServiceI.getAllBreeds(page, size, sortBy)).thenReturn(expectedBreeds);
 
-        ResponseEntity<List<BreedGetDto>> response = breedController.getAllBreeds(page, size, sortBy);
+        ResponseEntity<List<BreedGetDto>> response = breedController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBreeds, response.getBody());
@@ -85,11 +85,11 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if get Breed by id works correctly")
-    void getBreedByIdShouldReturnBreed() throws BreedNotFoundException {
+    void getBreedByIdShouldReturn() throws BreedNotFoundException {
 
         when(breedServiceI.getBreedById(testBreed.getId())).thenReturn(breedGetDto);
 
-        ResponseEntity<BreedGetDto> response = breedController.getBreedById(testBreed.getId());
+        ResponseEntity<BreedGetDto> response = breedController.getById(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
@@ -99,11 +99,11 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if add new Breed works correctly")
-    void addNewBreedShouldReturnBreed() throws BreedDuplicateException, SpeciesNotFoundException {
+    void create() throws BreedDuplicateException, SpeciesNotFoundException {
 
         when(breedServiceI.addNewBreed(breedCreateDto)).thenReturn(breedGetDto);
 
-        ResponseEntity<BreedGetDto> response = breedController.addNewBreed(breedCreateDto);
+        ResponseEntity<BreedGetDto> response = breedController.create(breedCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
@@ -112,11 +112,11 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if update Breed works correctly")
-    void updateBreedShouldReturnBreed() throws BreedNotFoundException, BreedDuplicateException {
+    void updateBreedShouldReturn() throws BreedNotFoundException, BreedDuplicateException {
 
         when(breedServiceI.updateBreed(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
 
-        ResponseEntity<BreedGetDto> response = breedController.updateBreed(testBreed.getId(), breedUpdateDto);
+        ResponseEntity<BreedGetDto> response = breedController.update(testBreed.getId(), breedUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
@@ -126,11 +126,11 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if delete Breed works correctly")
-    void deleteBreedShouldReturnBreed() throws BreedNotFoundException {
+    void deleteBreedShouldReturn() throws BreedNotFoundException {
 
         when(breedServiceI.deleteBreed(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = breedController.deleteBreed(testBreed.getId());
+        ResponseEntity<String> response = breedController.delete(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS, response.getBody());

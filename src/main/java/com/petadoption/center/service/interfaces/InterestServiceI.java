@@ -7,7 +7,6 @@ import com.petadoption.center.exception.interest.InterestNotFoundException;
 import com.petadoption.center.exception.organization.OrgNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.status.InvalidStatusChangeException;
-import com.petadoption.center.exception.status.InvalidStatusException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 
 import java.util.List;
@@ -25,7 +24,7 @@ public interface InterestServiceI {
 
     InterestGetDto addNewInterest(InterestCreateDto dto) throws UserNotFoundException, PetNotFoundException, OrgNotFoundException;
 
-    InterestGetDto updateInterest(String id, InterestUpdateDto dto) throws InterestNotFoundException, InvalidStatusException, InvalidStatusChangeException, UserNotFoundException, PetNotFoundException;
+    InterestGetDto updateInterest(String id, InterestUpdateDto dto) throws InterestNotFoundException, InvalidStatusChangeException, UserNotFoundException, PetNotFoundException;
 
     String deleteInterest(String id) throws InterestNotFoundException;
 }

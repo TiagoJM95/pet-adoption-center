@@ -27,5 +27,4 @@ public class ValidationHandler {
         });
         return ResponseEntity.badRequest().body(errors);
     }
-
 }

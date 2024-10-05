@@ -175,7 +175,7 @@ public class AdoptionFormControllerTest {
     @Test
     @DisplayName("Test get all adoption with 1 element returns 1 element")
     @DirtiesContext
-    void testGetAllAdoptionFormsReturnsOne() throws Exception {
+    void testGetAllReturnsOne() throws Exception {
 
         testCreateAdoptionForm();
 
@@ -221,7 +221,7 @@ public class AdoptionFormControllerTest {
 
     @Test
     @DisplayName("Test if update an adoption form works correctly")
-    void testUpdateAdoptionForm() throws Exception {
+    void testUpdate() throws Exception {
 
         testCreateAdoptionForm();
 
@@ -239,9 +239,9 @@ public class AdoptionFormControllerTest {
     @Test
     @DisplayName("Test if delete an adoption form works correctly")
     @DirtiesContext
-    void testDeleteAdoptionForm() throws Exception {
+    void testDelete() throws Exception {
 
-        testUpdateAdoptionForm();
+        testUpdate();
 
         mockMvc.perform(delete("/api/v1/adoption-form/delete/{id}", adoptionFormId)
                         .contentType(MediaType.APPLICATION_JSON))

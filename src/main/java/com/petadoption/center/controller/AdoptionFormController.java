@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/v1/adoption-form")
 public class AdoptionFormController {
@@ -23,32 +22,34 @@ public class AdoptionFormController {
     @Autowired
     private AdoptionFormServiceI adoptionFormServiceI;
 
-
     @GetMapping("/")
-    public ResponseEntity<List<AdoptionFormGetDto>> getAllAdoptionForms(@RequestParam (defaultValue = "0", required = false) int page,
-                                                                        @RequestParam (defaultValue = "5", required = false) int size,
-                                                                        @RequestParam (defaultValue = "id", required = false) String sortBy){
+    public ResponseEntity<List<AdoptionFormGetDto>> getAll(@RequestParam (defaultValue = "0", required = false) int page,
+                                                           @RequestParam (defaultValue = "5", required = false) int size,
+                                                           @RequestParam (defaultValue = "id", required = false) String sortBy){
         return new ResponseEntity<>(adoptionFormServiceI.getAllAdoptionForms(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<AdoptionFormGetDto> getAdoptionFormById(@PathVariable("id") String id) throws AdoptionFormNotFoundException {
+    public ResponseEntity<AdoptionFormGetDto> getById(@PathVariable("id") String id)
+            throws AdoptionFormNotFoundException {
         return new ResponseEntity<>(adoptionFormServiceI.getAdoptionFormById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<AdoptionFormGetDto> addNewAdoptionForm(@RequestBody @Valid AdoptionFormCreateDto adoptionForm) throws UserNotFoundException, PetNotFoundException {
-        return new ResponseEntity<>(adoptionFormServiceI.addNewAdoptionForm(adoptionForm), HttpStatus.CREATED);
+    public ResponseEntity<AdoptionFormGetDto> create(@RequestBody @Valid AdoptionFormCreateDto dto)
+            throws UserNotFoundException, PetNotFoundException {
+        return new ResponseEntity<>(adoptionFormServiceI.addNewAdoptionForm(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<AdoptionFormGetDto> updateAdoptionForm(@PathVariable ("id") String id,
-                                                                 @RequestBody @Valid AdoptionFormUpdateDto adoptionForm) throws AdoptionFormNotFoundException {
-        return new ResponseEntity<>(adoptionFormServiceI.updateAdoptionForm(id, adoptionForm), HttpStatus.OK);
+    public ResponseEntity<AdoptionFormGetDto> update(@PathVariable ("id") String id, @RequestBody @Valid AdoptionFormUpdateDto dto)
+            throws AdoptionFormNotFoundException {
+        return new ResponseEntity<>(adoptionFormServiceI.updateAdoptionForm(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteAdoptionForm(@PathVariable ("id") String id) throws AdoptionFormNotFoundException {
+    public ResponseEntity<String> delete(@PathVariable ("id") String id)
+            throws AdoptionFormNotFoundException {
         return new ResponseEntity<>(adoptionFormServiceI.deleteAdoptionForm(id), HttpStatus.OK);
     }
 }

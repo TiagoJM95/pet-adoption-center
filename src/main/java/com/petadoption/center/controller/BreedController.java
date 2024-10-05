@@ -22,37 +22,39 @@ public class BreedController {
     private BreedServiceI breedServiceI;
 
     @GetMapping("/")
-    public ResponseEntity<List<BreedGetDto>> getAllBreeds(@RequestParam (defaultValue = "0", required = false) int page,
-                                                          @RequestParam (defaultValue = "5", required = false) int size,
-                                                          @RequestParam (defaultValue = "id", required = false) String sortBy){
+    public ResponseEntity<List<BreedGetDto>> getAll(@RequestParam (defaultValue = "0", required = false) int page,
+                                                    @RequestParam (defaultValue = "5", required = false) int size,
+                                                    @RequestParam (defaultValue = "id", required = false) String sortBy){
         return new ResponseEntity<>(breedServiceI.getAllBreeds(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<BreedGetDto> getBreedById(@PathVariable("id") String id) throws BreedNotFoundException {
+    public ResponseEntity<BreedGetDto> getById(@PathVariable("id") String id)
+            throws BreedNotFoundException {
         return new ResponseEntity<>(breedServiceI.getBreedById(id), HttpStatus.OK);
     }
 
     @GetMapping("/species/{species}")
-    public ResponseEntity<List<BreedGetDto>> getBreedsBySpecies(@PathVariable("species") String species)
+    public ResponseEntity<List<BreedGetDto>> getBySpecies(@PathVariable("species") String speciesName)
             throws SpeciesNotFoundException {
-        return new ResponseEntity<>(breedServiceI.getBreedsBySpecies(species), HttpStatus.OK);
+        return new ResponseEntity<>(breedServiceI.getBreedsBySpecies(speciesName), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<BreedGetDto> addNewBreed(@Valid @RequestBody BreedCreateDto dto)
+    public ResponseEntity<BreedGetDto> create(@Valid @RequestBody BreedCreateDto dto)
             throws SpeciesNotFoundException {
         return new ResponseEntity<>(breedServiceI.addNewBreed(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") String id, @Valid @RequestBody BreedUpdateDto dto)
+    public ResponseEntity<BreedGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody BreedUpdateDto dto)
             throws BreedNotFoundException {
         return new ResponseEntity<>(breedServiceI.updateBreed(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteBreed(@PathVariable ("id") String id) throws BreedNotFoundException {
+    public ResponseEntity<String> delete(@PathVariable ("id") String id)
+            throws BreedNotFoundException {
         return new ResponseEntity<>(breedServiceI.deleteBreed(id), HttpStatus.OK);
     }
 }

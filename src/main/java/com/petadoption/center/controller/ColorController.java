@@ -20,25 +20,25 @@ public class ColorController {
     private ColorServiceI colorServiceI;
 
     @GetMapping("/")
-    public ResponseEntity<List<ColorGetDto>> getAllColors(@RequestParam (defaultValue = "0", required = false) int page,
-                                                          @RequestParam (defaultValue = "5", required = false) int size,
-                                                          @RequestParam (defaultValue = "id", required = false) String sortBy){
+    public ResponseEntity<List<ColorGetDto>> getAll(@RequestParam (defaultValue = "0", required = false) int page,
+                                                    @RequestParam (defaultValue = "5", required = false) int size,
+                                                    @RequestParam (defaultValue = "id", required = false) String sortBy){
         return new ResponseEntity<>(colorServiceI.getAllColors(page, size, sortBy), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<ColorGetDto> getColorById(@PathVariable("id") String id)
+    public ResponseEntity<ColorGetDto> getById(@PathVariable("id") String id)
             throws ColorNotFoundException {
         return new ResponseEntity<>(colorServiceI.getColorById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<ColorGetDto> addNewColor(@Valid @RequestBody ColorCreateDto dto) {
+    public ResponseEntity<ColorGetDto> create(@Valid @RequestBody ColorCreateDto dto) {
         return new ResponseEntity<>(colorServiceI.addNewColor(dto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteColor(@PathVariable ("id") String id)
+    public ResponseEntity<String> delete(@PathVariable ("id") String id)
             throws ColorNotFoundException {
         return new ResponseEntity<>(colorServiceI.deleteColor(id), HttpStatus.OK);
     }
