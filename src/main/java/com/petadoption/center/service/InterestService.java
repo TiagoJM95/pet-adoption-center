@@ -8,7 +8,7 @@ import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.enums.Status;
 import com.petadoption.center.exception.not_found.InterestNotFoundException;
-import com.petadoption.center.exception.not_found.InvalidStatusChangeException;
+import com.petadoption.center.exception.InvalidStatusChangeException;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Interest;
 import com.petadoption.center.model.Organization;
