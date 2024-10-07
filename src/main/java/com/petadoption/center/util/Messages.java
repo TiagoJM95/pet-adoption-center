@@ -147,5 +147,7 @@ public class Messages {
 
     public static final String NONE = "NONE";
 
+    public static final String PET_LIST_ADDED_SUCCESS = "All Pets in list have been successfully saved";
+
 }
 

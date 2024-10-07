@@ -72,7 +72,7 @@ public class UserService implements UserServiceI {
     @Override
     public String addPetToFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
         User user = findUserById(userId);
-        Pet pet = PetConverter.toModel(petService.getPetById(petId));
+        Pet pet = PetConverter.toModel(petService.getById(petId));
         user.getFavoritePets().add(pet);
         userRepository.save(user);
         return ADDED_TO_FAVORITE_SUCCESS;
@@ -87,7 +87,7 @@ public class UserService implements UserServiceI {
     @Override
     public String removePetFromFavorites(String userId, String petId) throws UserNotFoundException, PetNotFoundException {
         User user = findUserById(userId);
-        Pet pet = PetConverter.toModel(petService.getPetById(petId));
+        Pet pet = PetConverter.toModel(petService.getById(petId));
         user.getFavoritePets().remove(pet);
         userRepository.save(user);
         return REMOVED_FROM_FAVORITE_SUCCESS;

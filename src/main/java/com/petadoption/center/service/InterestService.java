@@ -87,7 +87,7 @@ public class InterestService implements InterestServiceI {
     public InterestGetDto create(InterestCreateDto dto) {
         Interest interest = new Interest();
         interest.setUser(UserConverter.toModel(userService.getUserById(dto.userId())));
-        interest.setPet(PetConverter.toModel(petService.getPetById(dto.petId())));
+        interest.setPet(PetConverter.toModel(petService.getById(dto.petId())));
         interest.setOrganization(OrganizationConverter.toModel(organizationService.getById(dto.organizationId())));
         interest.setStatus(PENDING);
         return InterestConverter.toDto(interestRepository.save(interest));

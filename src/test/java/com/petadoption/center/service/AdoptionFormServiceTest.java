@@ -191,7 +191,7 @@ public class AdoptionFormServiceTest {
 
         String exceptionMessage = PET_WITH_ID + adoptionFormCreateDto.petId() + NOT_FOUND;
 
-        when(petServiceI.getPetById(anyString())).thenThrow(new PetNotFoundException(exceptionMessage));
+        when(petServiceI.getById(anyString())).thenThrow(new PetNotFoundException(exceptionMessage));
 
         PetNotFoundException exception = assertThrows(PetNotFoundException.class, () -> adoptionFormService.create(adoptionFormCreateDto));
 
