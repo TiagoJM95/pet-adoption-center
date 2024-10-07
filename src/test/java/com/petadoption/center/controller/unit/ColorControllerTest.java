@@ -60,13 +60,13 @@ public class ColorControllerTest {
 
         List<ColorGetDto> expectedColors = List.of(colorGetDto);
 
-        when(colorServiceI.getAllColors(page, size, sortBy)).thenReturn(expectedColors);
+        when(colorServiceI.getAll(page, size, sortBy)).thenReturn(expectedColors);
 
         ResponseEntity<List<ColorGetDto>> response = colorController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedColors, response.getBody());
-        verify(colorServiceI).getAllColors(page, size, sortBy);
+        verify(colorServiceI).getAll(page, size, sortBy);
     }
 
 
@@ -74,13 +74,13 @@ public class ColorControllerTest {
     @DisplayName("Test if get Color by id works correctly")
     void getColorByIdShouldReturn() throws ColorNotFoundException {
 
-        when(colorServiceI.getColorById(testColor.getId())).thenReturn(colorGetDto);
+        when(colorServiceI.getById(testColor.getId())).thenReturn(colorGetDto);
 
         ResponseEntity<ColorGetDto> response = colorController.getById(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorServiceI).getColorById(testColor.getId());
+        verify(colorServiceI).getById(testColor.getId());
 
     }
 
@@ -88,13 +88,13 @@ public class ColorControllerTest {
     @DisplayName("Test if add new Color works correctly")
     void createColorShouldReturnColor() {
 
-        when(colorServiceI.addNewColor(colorCreateDto)).thenReturn(colorGetDto);
+        when(colorServiceI.create(colorCreateDto)).thenReturn(colorGetDto);
 
         ResponseEntity<ColorGetDto> response = colorController.create(colorCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorServiceI).addNewColor(colorCreateDto);
+        verify(colorServiceI).create(colorCreateDto);
     }
 
 
@@ -102,12 +102,12 @@ public class ColorControllerTest {
     @DisplayName("Test if delete Color works correctly")
     void deleteColorShouldReturn() throws ColorNotFoundException {
 
-        when(colorServiceI.deleteColor(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
+        when(colorServiceI.delete(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> response = colorController.delete(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS, response.getBody());
-        verify(colorServiceI).deleteColor(testColor.getId());
+        verify(colorServiceI).delete(testColor.getId());
     }
 }

@@ -23,22 +23,21 @@ public class ColorController {
 
     @GetMapping("/")
     public ResponseEntity<List<ColorGetDto>> getAll(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable){
-        return new ResponseEntity<>(colorServiceI.getAllColors(pageable), HttpStatus.OK);
+        return new ResponseEntity<>(colorServiceI.getAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<ColorGetDto> getById(@PathVariable("id") String id) {
-        return new ResponseEntity<>(colorServiceI.getColorById(id), HttpStatus.OK);
+        return new ResponseEntity<>(colorServiceI.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
     public ResponseEntity<ColorGetDto> create(@Valid @RequestBody ColorCreateDto dto) {
-        return new ResponseEntity<>(colorServiceI.addNewColor(dto), HttpStatus.CREATED);
+        return new ResponseEntity<>(colorServiceI.create(dto), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable ("id") String id)
-            throws ColorNotFoundException {
-        return new ResponseEntity<>(colorServiceI.deleteColor(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@PathVariable ("id") String id) {
+        return new ResponseEntity<>(colorServiceI.delete(id), HttpStatus.OK);
     }
 }

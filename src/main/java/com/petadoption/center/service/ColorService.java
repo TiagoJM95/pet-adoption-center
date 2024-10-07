@@ -26,28 +26,28 @@ public class ColorService implements ColorServiceI {
     }
 
     @Override
-    public List<ColorGetDto> getAllColors(Pageable pageable) {
+    public List<ColorGetDto> getAll(Pageable pageable) {
         return colorRepository.findAll(pageable).stream().map(ColorConverter::toDto).toList();
     }
 
     @Override
-    public ColorGetDto getColorById(String id) throws ColorNotFoundException {
+    public ColorGetDto getById(String id) {
         return ColorConverter.toDto(findColorById(id));
     }
 
     @Override
-    public ColorGetDto addNewColor(ColorCreateDto dto) {
+    public ColorGetDto create(ColorCreateDto dto) {
         return ColorConverter.toDto(colorRepository.save(ColorConverter.toModel(dto)));
     }
 
     @Override
-    public String deleteColor(String id) throws ColorNotFoundException {
+    public String delete(String id) {
         findColorById(id);
         colorRepository.deleteById(id);
         return COLOR_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Color findColorById(String id) throws ColorNotFoundException {
+    private Color findColorById(String id) {
         return colorRepository.findById(id).orElseThrow(
                 () -> new ColorNotFoundException(COLOR_WITH_ID + id + NOT_FOUND));
     }

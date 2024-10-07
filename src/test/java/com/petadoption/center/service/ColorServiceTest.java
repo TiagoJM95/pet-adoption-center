@@ -56,28 +56,28 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if get all colors return empty list if no colors")
-    void getAllColorsShouldReturnEmpty() {
+    void getAllShouldReturnEmpty() {
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Color> pagedColors = new PageImpl<>(List.of());
 
         when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
 
         assertEquals(0, result.size());
     }
 
     @Test
     @DisplayName("Test if get all colors is working correctly")
-    void getAllColorsShouldReturnColors() {
+    void getAllColorsShouldReturn() {
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Color> pagedColors = new PageImpl<>(List.of(testColor));
 
         when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
 
         assertEquals(1, result.size());
         assertEquals(testColor.getName(), result.getFirst().name());
@@ -86,7 +86,7 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if get all colors return number of elements of page size")
-    void getAllColorsShouldReturnNumberOfElementsOfPageSize() {
+    void getAllShouldReturnNumberOfElementsOfPageSize() {
 
         Color colorToAdd = new Color();
         List<Color> allColors = List.of(testColor, updatedColor, colorToAdd);
@@ -95,7 +95,7 @@ public class ColorServiceTest {
 
         when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
 
         assertEquals(2, result.size());
         assertEquals(testColor.getName(), result.get(0).name());
@@ -104,7 +104,7 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if get all colors return with Descending Order")
-    void getAllColorsShouldReturnColorsInDescendingOrder() {
+    void getAllColorsShouldReturnInDescendingOrder() {
 
         Color colorToAdd = new Color();
         colorToAdd.setId("0000-0000-0000");
@@ -116,7 +116,7 @@ public class ColorServiceTest {
 
         when(colorRepository.findAll(any(PageRequest.class))).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 3, "name");
+        List<ColorGetDto> result = colorService.getAll(0, 3, "name");
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -127,7 +127,7 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if get all colors return with Ascending Order")
-    void getAllColorsShouldReturnColorsInAscendingOrder() {
+    void getAllColorsShouldReturnInAscendingOrder() {
 
         Color colorToAdd = new Color();
         colorToAdd.setId("0000-0000-0000");
@@ -139,7 +139,7 @@ public class ColorServiceTest {
 
         when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAllColors(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -151,31 +151,31 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if get color by id is working correctly")
-    void getColorByIdShouldReturnColor() throws ColorNotFoundException {
+    void getColorByIdShouldReturn() throws ColorNotFoundException {
 
         when(colorRepository.findById(testColor.getId())).thenReturn(Optional.of(testColor));
 
-        ColorGetDto result = colorService.getColorById(testColor.getId());
+        ColorGetDto result = colorService.getById(testColor.getId());
 
         assertEquals(testColor.getName(), result.name());
     }
 
     @Test
     @DisplayName("Test if get color by id return ColorNotFoundException")
-    void getColorByIdShouldReturnColorNotFoundException() {
+    void getColorByIdShouldReturnNotFoundException() {
 
         when(colorRepository.findById(testColor.getId())).thenReturn(Optional.empty());
 
-        assertThrows(ColorNotFoundException.class, () -> colorService.getColorById(testColor.getId()));
+        assertThrows(ColorNotFoundException.class, () -> colorService.getById(testColor.getId()));
     }
 
     @Test
     @DisplayName("Test if add new color saves and returns ColorGetDto")
-    void addNewColorShouldReturnColorGetDto() {
+    void createGetDto() {
 
         when(colorRepository.save(any(Color.class))).thenReturn(testColor);
 
-        ColorGetDto result = colorService.addNewColor(colorCreateDto);
+        ColorGetDto result = colorService.create(colorCreateDto);
 
         assertNotNull(result);
         assertEquals(testColor.getName(), result.name());
@@ -184,21 +184,21 @@ public class ColorServiceTest {
 
     @Test
     @DisplayName("Test if delete color works correctly")
-    void deleteColorShouldWorkCorrectly() throws ColorNotFoundException {
+    void deleteShouldWorkCorrectly() throws ColorNotFoundException {
 
         when(colorRepository.findById(testColor.getId())).thenReturn(Optional.of(testColor));
 
-        assertEquals(colorService.deleteColor(testColor.getId()), COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
+        assertEquals(colorService.delete(testColor.getId()), COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
     }
 
 
     @Test
     @DisplayName("Test if delete color throws ColorNotFoundException")
-    void deleteColorShouldThrowColorNotFoundException() {
+    void deleteColorShouldThrowNotFoundException() {
 
         when(colorRepository.findById(testColor.getId())).thenReturn(Optional.empty());
 
-        assertThrows(ColorNotFoundException.class, () -> colorService.deleteColor(testColor.getId()));
+        assertThrows(ColorNotFoundException.class, () -> colorService.delete(testColor.getId()));
     }
 }
 
