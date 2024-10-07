@@ -3,7 +3,7 @@ package com.petadoption.center.aspect;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
 import com.petadoption.center.exception.db.DatabaseConnectionException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.exception.user.UserNotFoundException;
@@ -36,7 +36,7 @@ public class ExceptionsHandler {
             UserNotFoundException.class,
             BreedNotFoundException.class,
             ColorNotFoundException.class,
-            OrgNotFoundException.class,
+            OrganizationNotFoundException.class,
             PetNotFoundException.class,
             SpeciesNotFoundException.class
     })

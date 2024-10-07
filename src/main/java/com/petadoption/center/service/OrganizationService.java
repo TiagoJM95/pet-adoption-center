@@ -4,7 +4,7 @@ import com.petadoption.center.converter.OrgConverter;
 import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.model.Organization;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
@@ -31,7 +31,7 @@ public class OrganizationService implements OrganizationServiceI {
     }
 
     @Override
-    public OrgGetDto getOrganizationById(String id) throws OrgNotFoundException {
+    public OrgGetDto getOrganizationById(String id) throws OrganizationNotFoundException {
         return OrgConverter.toDto(findOrgById(id));
     }
 
@@ -41,21 +41,21 @@ public class OrganizationService implements OrganizationServiceI {
     }
 
     @Override
-    public OrgGetDto updateOrganization(String id, OrgUpdateDto dto) throws OrgNotFoundException {
+    public OrgGetDto updateOrganization(String id, OrgUpdateDto dto) throws OrganizationNotFoundException {
         Organization org = findOrgById(id);
         updateOrgFields(dto, org);
         return OrgConverter.toDto(orgRepository.save(org));
     }
 
     @Override
-    public String deleteOrganization(String id) throws OrgNotFoundException {
+    public String deleteOrganization(String id) throws OrganizationNotFoundException {
         findOrgById(id);
         orgRepository.deleteById(id);
         return ORG_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Organization findOrgById(String id) throws OrgNotFoundException {
-        return orgRepository.findById(id).orElseThrow(() -> new OrgNotFoundException(ORG_WITH_ID + id + NOT_FOUND));
+    private Organization findOrgById(String id) throws OrganizationNotFoundException {
+        return orgRepository.findById(id).orElseThrow(() -> new OrganizationNotFoundException(ORG_WITH_ID + id + NOT_FOUND));
     }
 
     private void updateOrgFields(OrgUpdateDto dto, Organization org) {

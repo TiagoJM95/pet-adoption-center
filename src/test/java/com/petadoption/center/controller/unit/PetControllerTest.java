@@ -7,7 +7,7 @@ import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.interfaces.PetServiceI;
@@ -96,7 +96,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Returns a PetGetDto when addNewPet() is called with a valid PetCreateDto")
-    void shouldReturnPetGetDtoWhenPetCreateDtoIsValid() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldReturnPetGetDtoWhenPetCreateDtoIsValid() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         when(petService.addNewPet(any(PetCreateDto.class))).thenReturn(petGetDto);
 
@@ -108,12 +108,12 @@ public class PetControllerTest {
     }
 
     @Test
-    @DisplayName("Throws OrgNotFoundException when addNewPet() is called with an invalid organization")
-    void shouldThrowOrgNotFoundExceptionWhenOrganizationIsNotFound() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    @DisplayName("Throws OrganizationNotFoundException when addNewPet() is called with an invalid organization")
+    void shouldThrowOrgNotFoundExceptionWhenOrganizationIsNotFound() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
-        when(petService.addNewPet(any(PetCreateDto.class))).thenThrow(new OrgNotFoundException("Org not Found"));
+        when(petService.addNewPet(any(PetCreateDto.class))).thenThrow(new OrganizationNotFoundException("Org not Found"));
 
-        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petController.addNewPet(petCreateDto));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petController.addNewPet(petCreateDto));
 
         assertEquals("Org not Found", ex.getMessage());
         verify(petService, times(1)).addNewPet(any(PetCreateDto.class));
@@ -121,7 +121,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws BreedNotFoundException when addNewPet() is called with an invalid breed")
-    void shouldThrowBreedNotFoundExceptionWhenBreedIsNotFound() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowBreedNotFoundExceptionWhenBreedIsNotFound() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         when(petService.addNewPet(any(PetCreateDto.class))).thenThrow(new BreedNotFoundException("Breed not Found"));
 
@@ -133,7 +133,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws ColorNotFoundException when addNewPet() is called with an invalid color")
-    void shouldThrowColorNotFoundExceptionWhenColorIsNotFound() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowColorNotFoundExceptionWhenColorIsNotFound() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         when(petService.addNewPet(any(PetCreateDto.class))).thenThrow(new ColorNotFoundException("Color not Found"));
 
@@ -145,7 +145,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws SpeciesNotFoundException when addNewPet() is called with an invalid species")
-    void shouldThrowSpeciesNotFoundExceptionWhenSpeciesIsNotFound() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowSpeciesNotFoundExceptionWhenSpeciesIsNotFound() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         when(petService.addNewPet(any(PetCreateDto.class))).thenThrow(new SpeciesNotFoundException("Species not Found"));
 
@@ -157,7 +157,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws BreedMismatchException when addNewPet() is called with an invalid breed/species")
-    void shouldThrowBreedMismatchExceptionWhenBreedAndSpeciesDoNotMatch() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowBreedMismatchExceptionWhenBreedAndSpeciesDoNotMatch() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         when(petService.addNewPet(any(PetCreateDto.class))).thenThrow(new BreedMismatchException("Breed no match"));
 
@@ -169,7 +169,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Returns the string Added when addListOfNewPets() is called with a list of valid PetCreateDto")
-    void shouldReturnStringWhenAllPetCreateDtoInListAreValid() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldReturnStringWhenAllPetCreateDtoInListAreValid() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         List<PetCreateDto> createDtos = List.of(petCreateDto);
 
@@ -183,12 +183,12 @@ public class PetControllerTest {
     }
 
     @Test
-    @DisplayName("Throws OrgNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid organization ")
-    void shouldThrowOrgNotFoundExceptionWhenOrgIsNotFoundInAListElement() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    @DisplayName("Throws OrganizationNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid organization ")
+    void shouldThrowOrgNotFoundExceptionWhenOrgIsNotFoundInAListElement() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
-        doThrow(new OrgNotFoundException("Org not found")).when(petService).addListOfNewPets(anyList());
+        doThrow(new OrganizationNotFoundException("Org not found")).when(petService).addListOfNewPets(anyList());
 
-        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petController.addListOfNewPets(List.of(petCreateDto)));
 
         assertEquals("Org not found", ex.getMessage());
         verify(petService, times(1)).addListOfNewPets(anyList());
@@ -196,7 +196,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws BreedNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid breed ")
-    void shouldThrowBreedNotFoundExceptionWhenBreedIsNotFoundInAListElement() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowBreedNotFoundExceptionWhenBreedIsNotFoundInAListElement() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         doThrow(new BreedNotFoundException("Breed not found")).when(petService).addListOfNewPets(anyList());
 
@@ -208,7 +208,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws ColorNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid color ")
-    void shouldThrowColorNotFoundExceptionWhenColorIsNotFoundInAListElement() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowColorNotFoundExceptionWhenColorIsNotFoundInAListElement() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         doThrow(new ColorNotFoundException("Color not found")).when(petService).addListOfNewPets(anyList());
 
@@ -220,7 +220,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws SpeciesNotFoundException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid species ")
-    void shouldThrowSpeciesNotFoundExceptionWhenSpeciesIsNotFoundInAListElement() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowSpeciesNotFoundExceptionWhenSpeciesIsNotFoundInAListElement() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         doThrow(new SpeciesNotFoundException("Species not found")).when(petService).addListOfNewPets(anyList());
 
@@ -232,7 +232,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws BreedMismatchException when addListOfNewPets() is called with a list of PetCreateDto, with at least one element with an invalid breed/species ")
-    void shouldThrowBreedMismatchExceptionWhenBreedAndSpeciesDoNotMatchInAListElement() throws OrgNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldThrowBreedMismatchExceptionWhenBreedAndSpeciesDoNotMatchInAListElement() throws OrganizationNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, SpeciesNotFoundException {
 
         doThrow(new BreedMismatchException("Breed mismatch")).when(petService).addListOfNewPets(anyList());
 
@@ -244,7 +244,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Returns a PetGetDto when updatePet() with a valid ID and PetUpdateDto")
-    void shouldReturnPetGetDtoWithValidIdAndUpdateDto() throws OrgNotFoundException, PetNotFoundException {
+    void shouldReturnPetGetDtoWithValidIdAndUpdateDto() throws OrganizationNotFoundException, PetNotFoundException {
 
         when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenReturn(petGetDto);
 
@@ -256,12 +256,12 @@ public class PetControllerTest {
     }
 
     @Test
-    @DisplayName("Throws OrgNotFoundException when updatePet() with an invalid OrgID in PetUpdateDto")
-    void shouldThrowOrgNotFoundExceptionIfOrgIdNotFound() throws OrgNotFoundException, PetNotFoundException {
+    @DisplayName("Throws OrganizationNotFoundException when updatePet() with an invalid OrgID in PetUpdateDto")
+    void shouldThrowOrgNotFoundExceptionIfOrgIdNotFound() throws OrganizationNotFoundException, PetNotFoundException {
 
-        when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenThrow(new OrgNotFoundException("Org not found"));
+        when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenThrow(new OrganizationNotFoundException("Org not found"));
 
-        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petController.updatePet(petGetDto.id(), petUpdateDto));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petController.updatePet(petGetDto.id(), petUpdateDto));
 
         assertEquals("Org not found", ex.getMessage());
         verify(petService, times(1)).updatePet(anyString(), any(PetUpdateDto.class));
@@ -269,7 +269,7 @@ public class PetControllerTest {
 
     @Test
     @DisplayName("Throws PetNotFoundException when updatePet() with an invalid ID")
-    void shouldThrowPetNotFoundExceptionIfIdNotFound() throws OrgNotFoundException, PetNotFoundException {
+    void shouldThrowPetNotFoundExceptionIfIdNotFound() throws OrganizationNotFoundException, PetNotFoundException {
 
         when(petService.updatePet(anyString(), any(PetUpdateDto.class))).thenThrow(new PetNotFoundException("Pet not found"));
 

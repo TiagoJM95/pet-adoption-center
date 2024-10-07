@@ -11,7 +11,7 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.*;
@@ -63,7 +63,7 @@ public class PetService implements PetServiceI {
     }
 
     @Override
-    public PetGetDto addNewPet(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, OrgNotFoundException {
+    public PetGetDto addNewPet(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, BreedMismatchException, ColorNotFoundException, OrganizationNotFoundException {
         breedServiceI.verifyIfBreedsAndSpeciesMatch(dto);
         Pet pet = buildPetFromDto(dto);
         return PetConverter.toDto(petRepository.save(pet));
@@ -71,7 +71,7 @@ public class PetService implements PetServiceI {
 
     @Transactional
     @Override
-    public void addListOfNewPets(List<PetCreateDto> pets) throws BreedNotFoundException, BreedMismatchException, OrgNotFoundException, ColorNotFoundException, SpeciesNotFoundException {
+    public void addListOfNewPets(List<PetCreateDto> pets) throws BreedNotFoundException, BreedMismatchException, OrganizationNotFoundException, ColorNotFoundException, SpeciesNotFoundException {
         for (PetCreateDto dto : pets) {
             breedServiceI.verifyIfBreedsAndSpeciesMatch(dto);
             Pet pet = buildPetFromDto(dto);
@@ -80,7 +80,7 @@ public class PetService implements PetServiceI {
     }
 
     @Override
-    public PetGetDto updatePet(String id, PetUpdateDto dto) throws PetNotFoundException, OrgNotFoundException {
+    public PetGetDto updatePet(String id, PetUpdateDto dto) throws PetNotFoundException, OrganizationNotFoundException {
         Pet pet = findPetById(id);
         updatePetFields(dto, pet);
         petRepository.save(pet);
@@ -99,7 +99,7 @@ public class PetService implements PetServiceI {
                 () -> new PetNotFoundException(PET_WITH_ID + id + NOT_FOUND));
     }
 
-    private Pet buildPetFromDto(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrgNotFoundException {
+    private Pet buildPetFromDto(PetCreateDto dto) throws SpeciesNotFoundException, BreedNotFoundException, ColorNotFoundException, OrganizationNotFoundException {
         Pet pet = PetConverter.toModel(dto);
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
 
@@ -140,7 +140,7 @@ public class PetService implements PetServiceI {
                 .and(searchCriteria.isPureBreed() != null ? findByPureBreed(searchCriteria.isPureBreed()) : null);
     }
 
-    private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrgNotFoundException {
+    private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrganizationNotFoundException {
         Organization org = OrgConverter.toModel(organizationServiceI.getOrganizationById(dto.organizationId()));
 
         updateFields(convertStringToEnum(dto.size(), Sizes.class), pet.getSize(), pet::setSize);

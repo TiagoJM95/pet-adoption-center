@@ -4,7 +4,6 @@ import com.petadoption.center.controller.UserController;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserDuplicateException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.junit.jupiter.api.BeforeEach;
@@ -86,7 +85,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if add new user works correctly")
-    void addNewUserShouldReturnUser() throws UserDuplicateException {
+    void addNewUserShouldReturnUser() {
 
         when(userServiceI.addNewUser(userCreateDto)).thenReturn(userGetDto);
 
@@ -99,7 +98,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if update user works correctly")
-    void updateUserShouldReturnUser() throws UserNotFoundException, UserDuplicateException {
+    void updateUserShouldReturnUser() throws UserNotFoundException {
 
         when(userServiceI.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
 

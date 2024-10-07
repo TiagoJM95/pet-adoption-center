@@ -8,7 +8,7 @@ import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.enums.Status;
 import com.petadoption.center.exception.interest.InterestNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.status.InvalidStatusChangeException;
 import com.petadoption.center.exception.user.UserNotFoundException;
@@ -22,6 +22,7 @@ import com.petadoption.center.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -51,16 +52,15 @@ public class InterestService implements InterestServiceI {
     }
 
     @Override
-    public List<InterestGetDto> getCurrentInterestsInOrganizationPets(int page, int size, String sortBy, String organizationId) throws OrgNotFoundException {
+    public List<InterestGetDto> getCurrentInterestsInOrganizationPets(Pageable pageable, String organizationId) throws OrganizationNotFoundException {
         Organization org = OrgConverter.toModel(organizationService.getOrganizationById(organizationId));
         List<Status> statusList = List.of(PENDING, FORM_REQUESTED, FORM_FILLED);
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));
-        Page<Interest> interests = interestRepository.findByOrganizationAndStatusIn(org, statusList, pageRequest);
+        Page<Interest> interests = interestRepository.findByOrganizationAndStatusIn(org, statusList, pageable);
         return interests.stream().map(InterestConverter::toDto).toList();
     }
 
     @Override
-    public List<InterestGetDto> getInterestHistoryInOrganizationPets(int page, int size, String sortBy, String organizationId) throws OrgNotFoundException {
+    public List<InterestGetDto> getInterestHistoryInOrganizationPets(int page, int size, String sortBy, String organizationId) throws OrganizationNotFoundException {
         Organization org = OrgConverter.toModel(organizationService.getOrganizationById(organizationId));
         List<Status> statusList = List.of(ACCEPTED, REJECTED);
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(sortBy));
@@ -92,7 +92,7 @@ public class InterestService implements InterestServiceI {
     }
 
     @Override
-    public InterestGetDto addNewInterest(InterestCreateDto dto) throws UserNotFoundException, PetNotFoundException, OrgNotFoundException {
+    public InterestGetDto addNewInterest(InterestCreateDto dto) throws UserNotFoundException, PetNotFoundException, OrganizationNotFoundException {
         Interest interest = new Interest();
         interest.setUser(UserConverter.toModel(userService.getUserById(dto.userId())));
         interest.setPet(PetConverter.toModel(petService.getPetById(dto.petId())));
@@ -166,6 +166,6 @@ public class InterestService implements InterestServiceI {
 
     private Interest findById(String interestId) throws InterestNotFoundException {
         return interestRepository.findById(interestId).orElseThrow(
-                () -> new InterestNotFoundException(interestId));
+                () -> new InterestNotFoundException(INTEREST_WITH_ID + interestId + NOT_FOUND));
     }
 }

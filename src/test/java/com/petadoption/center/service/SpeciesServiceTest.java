@@ -3,7 +3,6 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
@@ -173,7 +172,7 @@ public class SpeciesServiceTest {
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
-    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
+    void addPetSpeciesShouldSaveAndReturnSpecies() {
 
         when(speciesRepository.save(any(Species.class))).thenReturn(testSpecies);
 
@@ -186,7 +185,7 @@ public class SpeciesServiceTest {
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
-    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
+    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 

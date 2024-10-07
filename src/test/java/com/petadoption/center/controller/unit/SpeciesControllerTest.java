@@ -4,7 +4,6 @@ import com.petadoption.center.controller.SpeciesController;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesDuplicateException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
@@ -86,7 +85,7 @@ public class SpeciesControllerTest {
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
-    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
+    void addPetSpeciesShouldSaveAndReturnSpecies() {
 
         when(speciesServiceI.addNewSpecies(speciesCreateDto)).thenReturn(speciesGetDto);
 
@@ -99,7 +98,7 @@ public class SpeciesControllerTest {
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
-    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
+    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException {
 
         when(speciesServiceI.updateSpecies(testSpecies.getId(), speciesUpdateDto)).thenReturn(speciesGetDto);
 

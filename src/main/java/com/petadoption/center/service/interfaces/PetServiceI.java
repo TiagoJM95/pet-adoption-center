@@ -6,7 +6,7 @@ import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.specifications.PetSearchCriteria;
@@ -18,11 +18,11 @@ public interface PetServiceI {
 
     List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy);
 
-    PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException;
+    PetGetDto addNewPet(PetCreateDto pet) throws OrganizationNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException;
 
-    void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException;
+    void addListOfNewPets(List<PetCreateDto> pets) throws OrganizationNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException;
 
-    PetGetDto updatePet(String id, PetUpdateDto pet) throws PetNotFoundException, OrgNotFoundException;
+    PetGetDto updatePet(String id, PetUpdateDto pet) throws PetNotFoundException, OrganizationNotFoundException;
 
     String deletePet(String id) throws PetNotFoundException;
 }

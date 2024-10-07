@@ -1,6 +1,6 @@
 package com.petadoption.center.exception.user;
 
-public class UserException extends Exception {
+public class UserException extends RuntimeException {
     public UserException(String message) {
         super(message);
     }

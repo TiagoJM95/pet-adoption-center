@@ -11,7 +11,7 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.exception.breed.BreedMismatchException;
 import com.petadoption.center.exception.breed.BreedNotFoundException;
 import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.model.Pet;
@@ -143,7 +143,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Saves Pet in DB and returns PetGetDto when addNewPet() is called with valid data")
-    void shouldReturnPetGetDtoWhenPetIsSavedInDb() throws BreedNotFoundException, BreedMismatchException, OrgNotFoundException, ColorNotFoundException, SpeciesNotFoundException {
+    void shouldReturnPetGetDtoWhenPetIsSavedInDb() throws BreedNotFoundException, BreedMismatchException, OrganizationNotFoundException, ColorNotFoundException, SpeciesNotFoundException {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         when(petRepository.save(any(Pet.class))).thenReturn(pet);
@@ -209,13 +209,13 @@ public class PetServiceTest {
     }
 
     @Test
-    @DisplayName("Throws OrgNotFoundException when addNewPet() is called with invalid org")
-    void shouldThrowOrgNotFoundExceptionWhenOrgIsNotFound() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrgNotFoundException {
+    @DisplayName("Throws OrganizationNotFoundException when addNewPet() is called with invalid org")
+    void shouldThrowOrgNotFoundExceptionWhenOrgIsNotFound() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrganizationNotFoundException {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
-        when(organizationService.getOrganizationById(anyString())).thenThrow(new OrgNotFoundException("InvalidOrganization"));
+        when(organizationService.getOrganizationById(anyString())).thenThrow(new OrganizationNotFoundException("InvalidOrganization"));
 
-        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petService.addNewPet(petCreateDto));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.addNewPet(petCreateDto));
 
         assertEquals("InvalidOrganization", ex.getMessage());
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
@@ -224,7 +224,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Nothing is thrown when adding a valid list of new pets")
-    void shouldRunWithNoThrowsWhenAddingAValidListOfNewPets() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrgNotFoundException, ColorNotFoundException {
+    void shouldRunWithNoThrowsWhenAddingAValidListOfNewPets() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrganizationNotFoundException, ColorNotFoundException {
 
         List<PetCreateDto> pets = List.of(petCreateDto, petCreateDto("Bobby"), petCreateDto("Spike"));
 
@@ -322,9 +322,9 @@ public class PetServiceTest {
     }
 
     @ParameterizedTest
-    @DisplayName("Throws OrgNotFoundException when addListOfNewPets() is called with an invalid org in any position of the List")
+    @DisplayName("Throws OrganizationNotFoundException when addListOfNewPets() is called with an invalid org in any position of the List")
     @MethodSource("petCreateDtoListProvider")
-    void shouldThrowOrgNotFoundExceptionWhenOrgNotFound(List<PetCreateDto> pets) throws OrgNotFoundException {
+    void shouldThrowOrgNotFoundExceptionWhenOrgNotFound(List<PetCreateDto> pets) throws OrganizationNotFoundException {
 
         PetCreateDto problematicDto = pets.stream()
                 .filter(p -> p.name().equals("Max"))
@@ -334,12 +334,12 @@ public class PetServiceTest {
         when(organizationService.getOrganizationById(anyString())).thenAnswer(invocation -> {
             String orgId = invocation.getArgument(0);
             if (orgId.equals(problematicDto.organizationId())) {
-                throw new OrgNotFoundException("InvalidOrg");
+                throw new OrganizationNotFoundException("InvalidOrg");
             }
             return any(OrgGetDto.class);
         });
 
-        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petService.addListOfNewPets(pets));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.addListOfNewPets(pets));
 
         assertEquals("InvalidOrg", ex.getMessage());
         verify(petRepository, times(pets.indexOf(problematicDto))).save(any(Pet.class));
@@ -347,7 +347,7 @@ public class PetServiceTest {
 
     @Test
     @DisplayName("Returns a PetGetDto when updatePet() is called with a valid ID and dto")
-    void shouldReturnPetGetDtoWhenPetIsUpdatedSuccessfully() throws OrgNotFoundException, PetNotFoundException {
+    void shouldReturnPetGetDtoWhenPetIsUpdatedSuccessfully() throws OrganizationNotFoundException, PetNotFoundException {
 
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
         when(petRepository.save(any(Pet.class))).thenReturn(updatedPet);
@@ -372,13 +372,13 @@ public class PetServiceTest {
     }
 
     @Test
-    @DisplayName("Throws OrgNotFoundException when updatePet() is called with an invalid orgID in the DTO")
-    void shouldThrowOrgNotFoundExceptionWhenOrgIdIsInvalid() throws OrgNotFoundException {
+    @DisplayName("Throws OrganizationNotFoundException when updatePet() is called with an invalid orgID in the DTO")
+    void shouldThrowOrgNotFoundExceptionWhenOrgIdIsInvalid() throws OrganizationNotFoundException {
 
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
-        when(organizationService.getOrganizationById(anyString())).thenThrow(new OrgNotFoundException("Org not found"));
+        when(organizationService.getOrganizationById(anyString())).thenThrow(new OrganizationNotFoundException("Org not found"));
 
-        OrgNotFoundException ex = assertThrows(OrgNotFoundException.class, () -> petService.updatePet(petId, petUpdateDto));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.updatePet(petId, petUpdateDto));
 
         assertEquals("Org not found", ex.getMessage());
         verify(petRepository, never()).save(any(Pet.class));

@@ -4,12 +4,14 @@ import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.exception.interest.InterestNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
+import com.petadoption.center.exception.organization.OrganizationNotFoundException;
 import com.petadoption.center.exception.pet.PetNotFoundException;
 import com.petadoption.center.exception.status.InvalidStatusChangeException;
 import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.interfaces.InterestServiceI;
 import jakarta.validation.Valid;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,37 +29,35 @@ public class InterestController {
     }
 
     @GetMapping("/organization/{organizationId}/current")
-    public ResponseEntity<List<InterestGetDto>> getCurrentInterestsInOrganizationPets(@RequestParam (defaultValue = "0", required = false) int page,
-                                                                                      @RequestParam (defaultValue = "5", required = false) int size,
-                                                                                      @RequestParam (defaultValue = "id", required = false) String sortBy,
-                                                                                      @PathVariable("organizationId") String organizationId)
-            throws OrgNotFoundException {
-        return new ResponseEntity<>(interestService.getCurrentInterestsInOrganizationPets(page, size, sortBy, organizationId), HttpStatus.OK);
+    public ResponseEntity<List<InterestGetDto>> getCurrentByOrganizationId(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable,
+                                                                           @PathVariable("organizationId") String organizationId)
+            throws OrganizationNotFoundException {
+        return new ResponseEntity<>(interestService.getCurrentInterestsInOrganizationPets(pageable, organizationId), HttpStatus.OK);
     }
 
     @GetMapping("/organization/{organizationId}/history")
-    public ResponseEntity<List<InterestGetDto>> getInterestHistoryInOrganizationPets(@RequestParam (defaultValue = "0", required = false) int page,
-                                                                                     @RequestParam (defaultValue = "5", required = false) int size,
-                                                                                     @RequestParam (defaultValue = "id", required = false) String sortBy,
-                                                                                     @PathVariable("organizationId") String organizationId)
-            throws OrgNotFoundException {
+    public ResponseEntity<List<InterestGetDto>> getHistoryByOrganizationId(@RequestParam (defaultValue = "0", required = false) int page,
+                                                                           @RequestParam (defaultValue = "5", required = false) int size,
+                                                                           @RequestParam (defaultValue = "id", required = false) String sortBy,
+                                                                           @PathVariable("organizationId") String organizationId)
+            throws OrganizationNotFoundException {
         return new ResponseEntity<>(interestService.getInterestHistoryInOrganizationPets(page, size, sortBy, organizationId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}/current")
-    public ResponseEntity<List<InterestGetDto>> getCurrentUserInterests(@RequestParam (defaultValue = "0", required = false) int page,
-                                                                        @RequestParam (defaultValue = "5", required = false) int size,
-                                                                        @RequestParam (defaultValue = "id", required = false) String sortBy,
-                                                                        @PathVariable("userId") String userId)
+    public ResponseEntity<List<InterestGetDto>> getCurrentByUserId(@RequestParam (defaultValue = "0", required = false) int page,
+                                                                   @RequestParam (defaultValue = "5", required = false) int size,
+                                                                   @RequestParam (defaultValue = "id", required = false) String sortBy,
+                                                                   @PathVariable("userId") String userId)
             throws UserNotFoundException {
         return new ResponseEntity<>(interestService.getCurrentUserInterests(page, size, sortBy, userId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}/history")
-    public ResponseEntity<List<InterestGetDto>> getUserInterestHistory(@RequestParam (defaultValue = "0", required = false) int page,
-                                                                       @RequestParam (defaultValue = "5", required = false) int size,
-                                                                       @RequestParam (defaultValue = "id", required = false) String sortBy,
-                                                                       @PathVariable("userId") String userId)
+    public ResponseEntity<List<InterestGetDto>> getHistoryByUserIda(@RequestParam (defaultValue = "0", required = false) int page,
+                                                                   @RequestParam (defaultValue = "5", required = false) int size,
+                                                                   @RequestParam (defaultValue = "id", required = false) String sortBy,
+                                                                   @PathVariable("userId") String userId)
             throws UserNotFoundException {
         return new ResponseEntity<>(interestService.getUserInterestHistory(page, size, sortBy, userId), HttpStatus.OK);
     }
@@ -70,7 +70,7 @@ public class InterestController {
 
     @PostMapping("/")
     public ResponseEntity<InterestGetDto> create(@Valid @RequestBody InterestCreateDto dto)
-            throws UserNotFoundException, PetNotFoundException, OrgNotFoundException {
+            throws UserNotFoundException, PetNotFoundException, OrganizationNotFoundException {
         return new ResponseEntity<>(interestService.addNewInterest(dto), HttpStatus.CREATED);
     }
 
