@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -68,18 +71,19 @@ public class BreedControllerTest {
     void getAllBreedsShouldReturn() {
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<BreedGetDto> expectedBreeds = List.of(breedGetDto);
 
-        when(breedServiceI.getAll(page, size, sortBy)).thenReturn(expectedBreeds);
+        when(breedServiceI.getAll(pageable)).thenReturn(expectedBreeds);
 
-        ResponseEntity<List<BreedGetDto>> response = breedController.getAll(page, size, sortBy);
+        ResponseEntity<List<BreedGetDto>> response = breedController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBreeds, response.getBody());
-        verify(breedServiceI).getAll(page, size, sortBy);
+        verify(breedServiceI).getAll(pageable);
     }
 
     @Test
@@ -111,7 +115,7 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if update Breed works correctly")
-    void updateBreedShouldReturn() throws BreedNotFoundException, BreedDuplicateException {
+    void updateBreedShouldReturn() throws BreedNotFoundException {
 
         when(breedServiceI.update(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
 

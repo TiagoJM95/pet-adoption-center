@@ -26,7 +26,7 @@ public class AdoptionFormController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<AdoptionFormGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable) {
+    public ResponseEntity<List<AdoptionFormGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
         return new ResponseEntity<>(adoptionFormServiceI.getAll(pageable), HttpStatus.OK);
     }
 

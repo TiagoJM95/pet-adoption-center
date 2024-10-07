@@ -14,10 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -48,6 +45,8 @@ public class UserServiceTest {
     private User updatedUser;
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
+    private Pageable pageable;
+
 
     @BeforeEach
     void setUp() {
@@ -69,18 +68,22 @@ public class UserServiceTest {
         updatedUser.setDateOfBirth(LocalDate.of(1990, 10, 25));
         updatedUser.setPhoneNumber("934587967");
         updatedUser.setAddress(updateAddress);
+
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test if get all users works correctly")
     void getAllUsersShouldReturnListOf() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<User> pagedUsers = new PageImpl<>(List.of(testUser));
 
-        when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
+        when(userRepository.findAll(pageable)).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAll(0, 10, "id");
+        List<UserGetDto> result = userService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testUser.getEmail(), result.getFirst().email());
@@ -90,12 +93,11 @@ public class UserServiceTest {
     @DisplayName("Test if get all users return empty list if no users")
     void getAllShouldReturnEmpty(){
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<User> pagedUsers = new PageImpl<>(List.of());
 
-        when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
+        when(userRepository.findAll(pageable)).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAll(0,10,"id");
+        List<UserGetDto> result = userService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
@@ -106,12 +108,11 @@ public class UserServiceTest {
 
         User userToAdd = new User();
         List<User> allUsers = List.of(testUser, updatedUser, userToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "id");
-        Page<User> pagedUsers = new PageImpl<>(List.of(testUser, updatedUser), pageRequest, allUsers.size());
+        Page<User> pagedUsers = new PageImpl<>(List.of(testUser, updatedUser), pageable, allUsers.size());
 
-        when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
+        when(userRepository.findAll(pageable)).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAll(0,2,"id");
+        List<UserGetDto> result = userService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertFalse(result.size() > 2);
@@ -124,12 +125,11 @@ public class UserServiceTest {
         User userToAdd = new User();
         userToAdd.setFirstName("Fabio");
         List<User> allUsers = List.of(updatedUser, testUser, userToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "firstName");
-        Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
+        Page<User> pagedUsers = new PageImpl<>(allUsers, pageable, allUsers.size());
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAll(0,3,"firstName");
+        List<UserGetDto> result = userService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -145,12 +145,11 @@ public class UserServiceTest {
         User userToAdd = new User();
         userToAdd.setFirstName("Fabio");
         List<User> allUsers = List.of(userToAdd, testUser, updatedUser);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "firstName");
-        Page<User> pagedUsers = new PageImpl<>(allUsers, pageRequest, allUsers.size());
+        Page<User> pagedUsers = new PageImpl<>(allUsers, pageable, allUsers.size());
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAll(0,3,"firstName");
+        List<UserGetDto> result = userService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3,result.size());

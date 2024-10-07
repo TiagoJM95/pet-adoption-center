@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -55,18 +58,19 @@ public class ColorControllerTest {
     void getAllColorsShouldReturn() {
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<ColorGetDto> expectedColors = List.of(colorGetDto);
 
-        when(colorServiceI.getAll(page, size, sortBy)).thenReturn(expectedColors);
+        when(colorServiceI.getAll(pageable)).thenReturn(expectedColors);
 
-        ResponseEntity<List<ColorGetDto>> response = colorController.getAll(page, size, sortBy);
+        ResponseEntity<List<ColorGetDto>> response = colorController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedColors, response.getBody());
-        verify(colorServiceI).getAll(page, size, sortBy);
+        verify(colorServiceI).getAll(pageable);
     }
 
 

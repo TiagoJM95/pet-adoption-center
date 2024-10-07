@@ -26,7 +26,7 @@ public class BreedController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<BreedGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable) {
+    public ResponseEntity<List<BreedGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
         return new ResponseEntity<>(breedServiceI.getAll(pageable), HttpStatus.OK);
     }
 

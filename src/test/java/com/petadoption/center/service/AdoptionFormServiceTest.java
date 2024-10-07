@@ -17,10 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -54,6 +51,7 @@ public class AdoptionFormServiceTest {
     private static AdoptionFormGetDto adoptionFormGetDto;
     private static AdoptionFormCreateDto adoptionFormCreateDto;
     private static AdoptionFormUpdateDto adoptionFormUpdateDto;
+    private static Pageable pageable;
 
 
     @BeforeAll
@@ -62,19 +60,21 @@ public class AdoptionFormServiceTest {
         adoptionFormGetDto = adoptionFormGetDto();
         adoptionFormCreateDto = adoptionFormCreateDto();
         adoptionFormUpdateDto = adoptionFormUpdateDto();
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test it getAllAdoptionForms works correctly")
     void testGetAllAdoptionFormsReturnsListOf() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "createdAt");
-
         Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of(testAdoptionForm));
 
-        when(adoptionFormRepository.findAll(pageRequest)).thenReturn(adoptionFormPage);
+        when(adoptionFormRepository.findAll(pageable)).thenReturn(adoptionFormPage);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAll(0, 10, "createdAt");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testAdoptionForm.getId(), result.getFirst().id());
@@ -84,12 +84,11 @@ public class AdoptionFormServiceTest {
     @DisplayName("Test if get all adoption forms return an empty list when repository has no entries")
     void testGetAllReturnsEmpty(){
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of());
 
-        when(adoptionFormRepository.findAll(pageRequest)).thenReturn(adoptionFormPage);
+        when(adoptionFormRepository.findAll(pageable)).thenReturn(adoptionFormPage);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAll(0,10,"id");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
@@ -103,12 +102,11 @@ public class AdoptionFormServiceTest {
         AdoptionForm adoptionForm3 = new AdoptionForm();
 
         List<AdoptionForm> adoptionFormList = List.of(adoptionForm1, adoptionForm2, adoptionForm3);
-        PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "createdAt");
-        Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of(adoptionForm1, adoptionForm2), pageRequest, adoptionFormList.size());
+        Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of(adoptionForm1, adoptionForm2), pageable, adoptionFormList.size());
 
-        when(adoptionFormRepository.findAll(pageRequest)).thenReturn(adoptionFormPage);
+        when(adoptionFormRepository.findAll(pageable)).thenReturn(adoptionFormPage);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAll(0,2,"createdAt");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertFalse(result.size() > 2);
@@ -126,12 +124,11 @@ public class AdoptionFormServiceTest {
         adoptionForm3.setOtherNotes("3");
 
         List<AdoptionForm> adoptionFormList = List.of(adoptionForm1, adoptionForm2, adoptionForm3);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "otherNotes"));
-        Page<AdoptionForm> pagedUsers = new PageImpl<>(adoptionFormList.reversed(), pageRequest, adoptionFormList.size());
+        Page<AdoptionForm> pagedUsers = new PageImpl<>(adoptionFormList.reversed(), pageable, adoptionFormList.size());
 
         when(adoptionFormRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAll(0,3,"otherNotes");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3, result.size());

@@ -26,25 +26,25 @@ public class InterestController {
     }
 
     @GetMapping("/organization/{organizationId}/current")
-    public ResponseEntity<List<InterestGetDto>> getCurrentByOrganizationId(@PageableDefault(sort = "created_at") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getCurrentByOrganizationId(@PageableDefault(sort = "createdAt") Pageable pageable,
                                                                            @PathVariable("organizationId") String organizationId) {
         return new ResponseEntity<>(interestService.getCurrentByOrganizationId(pageable, organizationId), HttpStatus.OK);
     }
 
     @GetMapping("/organization/{organizationId}/history")
-    public ResponseEntity<List<InterestGetDto>> getHistoryByOrganizationId(@PageableDefault(sort = "created_at") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getHistoryByOrganizationId(@PageableDefault(sort = "createdAt") Pageable pageable,
                                                                            @PathVariable("organizationId") String organizationId) {
         return new ResponseEntity<>(interestService.getHistoryByOrganizationId(pageable, organizationId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}/current")
-    public ResponseEntity<List<InterestGetDto>> getCurrentByUserId(@PageableDefault(sort = "created_at") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getCurrentByUserId(@PageableDefault(sort = "createdAt") Pageable pageable,
                                                                    @PathVariable("userId") String userId) {
         return new ResponseEntity<>(interestService.getCurrentByUserId(pageable, userId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}/history")
-    public ResponseEntity<List<InterestGetDto>> getHistoryByUserId(@PageableDefault(sort = "created_at") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getHistoryByUserId(@PageableDefault(sort = "createdAt") Pageable pageable,
                                                                    @PathVariable("userId") String userId) {
         return new ResponseEntity<>(interestService.getHistoryByUserId(pageable, userId), HttpStatus.OK);
     }

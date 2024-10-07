@@ -41,6 +41,7 @@ public class OrganizationConverter {
                 .name(org.getName())
                 .email(org.getEmail())
                 .nif(org.getNif())
+                .phoneNumber(org.getPhoneNumber())
                 .address(org.getAddress())
                 .websiteUrl(org.getWebsiteUrl())
                 .socialMedia(org.getSocialMedia())

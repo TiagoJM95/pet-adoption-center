@@ -25,7 +25,7 @@ public class ColorController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<ColorGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable){
+    public ResponseEntity<List<ColorGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable){
         return new ResponseEntity<>(colorServiceI.getAll(pageable), HttpStatus.OK);
     }
 

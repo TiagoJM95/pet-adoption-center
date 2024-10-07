@@ -18,10 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
@@ -60,23 +64,25 @@ public class AdoptionFormControllerTest {
                 "Neighbour",
                 true,
                 "Other Notes",
-                address
+                address,
+                LocalDateTime.now()
         );
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<AdoptionFormGetDto> listOfAdoptionForms = List.of(adoptionFormGetDto);
 
-        when(adoptionFormServiceI.getAll(page, size, sortBy)).thenReturn(listOfAdoptionForms);
+        when(adoptionFormServiceI.getAll(pageable)).thenReturn(listOfAdoptionForms);
 
-        ResponseEntity<List<AdoptionFormGetDto>> response = adoptionFormController.getAll(page, size, sortBy);
+        ResponseEntity<List<AdoptionFormGetDto>> response = adoptionFormController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(listOfAdoptionForms, response.getBody());
 
-        verify(adoptionFormServiceI).getAll(page, size, sortBy);
+        verify(adoptionFormServiceI).getAll(pageable);
     }
 
     @Test

@@ -26,7 +26,7 @@ public class SpeciesController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<SpeciesGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable){
+    public ResponseEntity<List<SpeciesGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable){
         return new ResponseEntity<>(speciesServiceI.getAll(pageable), HttpStatus.OK);
     }
 

@@ -12,10 +12,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -42,6 +39,7 @@ public class ColorServiceTest {
     private Color testColor;
     private Color updatedColor;
     private ColorCreateDto colorCreateDto;
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
@@ -52,18 +50,22 @@ public class ColorServiceTest {
         updatedColor.setName("White");
 
         colorCreateDto = colorCreateDto();
+
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test if get all colors return empty list if no colors")
     void getAllShouldReturnEmpty() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Color> pagedColors = new PageImpl<>(List.of());
 
-        when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
+        when(colorRepository.findAll(pageable)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
@@ -72,12 +74,11 @@ public class ColorServiceTest {
     @DisplayName("Test if get all colors is working correctly")
     void getAllColorsShouldReturn() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Color> pagedColors = new PageImpl<>(List.of(testColor));
 
-        when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
+        when(colorRepository.findAll(pageable)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testColor.getName(), result.getFirst().name());
@@ -90,12 +91,11 @@ public class ColorServiceTest {
 
         Color colorToAdd = new Color();
         List<Color> allColors = List.of(testColor, updatedColor, colorToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
-        Page<Color> pagedColors = new PageImpl<>(List.of(testColor, updatedColor), pageRequest, allColors.size());
+        Page<Color> pagedColors = new PageImpl<>(List.of(testColor, updatedColor), pageable, allColors.size());
 
-        when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
+        when(colorRepository.findAll(pageable)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertEquals(testColor.getName(), result.get(0).name());
@@ -111,12 +111,11 @@ public class ColorServiceTest {
         colorToAdd.setName("Blue");
 
         List<Color> allColors = List.of(updatedColor, colorToAdd, testColor);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
-        Page<Color> pagedColors = new PageImpl<>(allColors, pageRequest, allColors.size());
+        Page<Color> pagedColors = new PageImpl<>(allColors, pageable, allColors.size());
 
         when(colorRepository.findAll(any(PageRequest.class))).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAll(0, 3, "name");
+        List<ColorGetDto> result = colorService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -134,12 +133,11 @@ public class ColorServiceTest {
         colorToAdd.setName("Blue");
 
         List<Color> allColors = List.of(testColor, colorToAdd, updatedColor);
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
-        Page<Color> pagedColors = new PageImpl<>(allColors, pageRequest, allColors.size());
+        Page<Color> pagedColors = new PageImpl<>(allColors, pageable, allColors.size());
 
-        when(colorRepository.findAll(pageRequest)).thenReturn(pagedColors);
+        when(colorRepository.findAll(pageable)).thenReturn(pagedColors);
 
-        List<ColorGetDto> result = colorService.getAll(0, 10, "id");
+        List<ColorGetDto> result = colorService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3,result.size());

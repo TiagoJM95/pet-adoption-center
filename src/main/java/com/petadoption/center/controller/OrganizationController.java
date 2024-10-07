@@ -26,7 +26,7 @@ public class OrganizationController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<OrganizationGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable) {
+    public ResponseEntity<List<OrganizationGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
         return new ResponseEntity<>(organizationServiceI.getAll(pageable), HttpStatus.OK);
     }
 

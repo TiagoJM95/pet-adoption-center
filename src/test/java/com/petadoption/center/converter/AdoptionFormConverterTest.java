@@ -95,7 +95,8 @@ public class AdoptionFormConverterTest {
                 "Neighbour",
                 true,
                 "Notes",
-                address
+                address,
+                LocalDateTime.now()
         );
 
         AdoptionForm adoptionFormConverted = AdoptionFormConverter.toModel(adoptionFormGetDto);

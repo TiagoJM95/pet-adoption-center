@@ -16,10 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -58,6 +55,7 @@ public class BreedServiceTest {
     private Breed updatedBreed;
     private BreedCreateDto breedCreateDto;
     private BreedUpdateDto breedUpdateDto;
+    Pageable pageable;
 
 
 
@@ -73,18 +71,21 @@ public class BreedServiceTest {
         updatedBreed.setId("1234-1234-5678");
         updatedBreed.setName("Weimaraner");
         updatedBreed.setSpecies(species);
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test if get all breeds works correctly")
     void getAllBreedsShouldReturnBreeds() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Breed> pagedBreeds = new PageImpl<>(List.of(testBreed));
 
-        when(breedRepository.findAll(pageRequest)).thenReturn(pagedBreeds);
+        when(breedRepository.findAll(pageable)).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,10,"id");
+        List<BreedGetDto> result = breedService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testBreed.getName(), result.getFirst().name());
@@ -94,12 +95,11 @@ public class BreedServiceTest {
     @DisplayName("Test if get all breeds return empty list if no Breeds")
     void getAllBreedsShouldReturnEmpty(){
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Breed> pagedBreeds = new PageImpl<>(List.of());
 
-        when(breedRepository.findAll(pageRequest)).thenReturn(pagedBreeds);
+        when(breedRepository.findAll(pageable)).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,10,"id");
+        List<BreedGetDto> result = breedService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
@@ -110,12 +110,11 @@ public class BreedServiceTest {
 
         Breed breedToAdd = new Breed();
         List<Breed> allBreeds = List.of(testBreed, updatedBreed, breedToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "id");
-        Page<Breed> pagedBreeds = new PageImpl<>(List.of(testBreed, updatedBreed), pageRequest, allBreeds.size());
+        Page<Breed> pagedBreeds = new PageImpl<>(List.of(testBreed, updatedBreed), pageable, allBreeds.size());
 
-        when(breedRepository.findAll(pageRequest)).thenReturn(pagedBreeds);
+        when(breedRepository.findAll(pageable)).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,2,"id");
+        List<BreedGetDto> result = breedService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertEquals(testBreed.getName(), result.getFirst().name());
@@ -132,12 +131,11 @@ public class BreedServiceTest {
         breedToAdd.setId("2313-2313-2313");
 
         List<Breed> allBreeds = List.of(updatedBreed,breedToAdd, testBreed);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
-        Page<Breed> pagedBreeds = new PageImpl<>(allBreeds, pageRequest, allBreeds.size());
+        Page<Breed> pagedBreeds = new PageImpl<>(allBreeds, pageable, allBreeds.size());
 
         when(breedRepository.findAll(any(PageRequest.class))).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,3,"name");
+        List<BreedGetDto> result = breedService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -157,12 +155,11 @@ public class BreedServiceTest {
         breedToAdd.setId("2313-2313-2313");
 
         List<Breed> allBreeds = List.of(testBreed, breedToAdd, updatedBreed);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "name");
-        Page<Breed> pagedBreeds = new PageImpl<>(allBreeds, pageRequest, allBreeds.size());
+        Page<Breed> pagedBreeds = new PageImpl<>(allBreeds, pageable, allBreeds.size());
 
         when(breedRepository.findAll(any(PageRequest.class))).thenReturn(pagedBreeds);
 
-        List<BreedGetDto> result = breedService.getAllBreeds(0,3,"name");
+        List<BreedGetDto> result = breedService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3,result.size());

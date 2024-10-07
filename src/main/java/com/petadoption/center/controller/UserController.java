@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable) {
+    public ResponseEntity<List<UserGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
         return new ResponseEntity<>(userServiceI.getAll(pageable), HttpStatus.OK);
     }
 

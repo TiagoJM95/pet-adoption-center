@@ -77,7 +77,7 @@ public class UserControllerTest {
         mockMvc.perform(get("/api/v1/user/")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sortBy", "id")
+                        .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))

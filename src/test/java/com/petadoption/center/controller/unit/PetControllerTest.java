@@ -15,6 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -79,15 +82,20 @@ public class PetControllerTest {
     @DisplayName("Returns a list of PetGetDto when searchPets() is called with a valid PetSearchCriteria, page, size and sortBy parameters")
     void shouldReturnPetGetDtoListIfAllDataIsValid() {
 
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
+
         List<PetGetDto> expected = List.of(petGetDto);
 
-        when(petService.searchPets(any(PetSearchCriteria.class), anyInt(), anyInt(), anyString())).thenReturn(expected);
+        when(petService.searchPets(any(PetSearchCriteria.class), any(Pageable.class))).thenReturn(expected);
 
-        ResponseEntity<List<PetGetDto>> actual = petController.searchPets(petSearchCriteria(), 0, 0, "id");
+        ResponseEntity<List<PetGetDto>> actual = petController.searchPets(petSearchCriteria(), pageable);
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         assertEquals(expected, actual.getBody());
-        verify(petService, times(1)).searchPets(any(PetSearchCriteria.class), anyInt(), anyInt(), anyString());
+        verify(petService, times(1)).searchPets(any(PetSearchCriteria.class), any(Pageable.class));
     }
 
     @Test
@@ -169,7 +177,7 @@ public class PetControllerTest {
 
         List<PetCreateDto> createDtos = List.of(petCreateDto);
 
-        doNothing().when(petService).createFromList(anyList());
+        when(petService.createFromList(anyList())).thenReturn("Added");
 
         ResponseEntity<String> actual = petController.createFromList(createDtos);
 

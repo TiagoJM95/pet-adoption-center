@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -53,18 +56,19 @@ public class UserControllerTest {
     void getAllUsersShouldReturn() {
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<UserGetDto> expectedUsers = List.of(userGetDto);
 
-        when(userServiceI.getAll(page, size, sortBy)).thenReturn(expectedUsers);
+        when(userServiceI.getAll(pageable)).thenReturn(expectedUsers);
 
-        ResponseEntity<List<UserGetDto>> response = userController.getAll(page, size, sortBy);
+        ResponseEntity<List<UserGetDto>> response = userController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedUsers, response.getBody());
-        verify(userServiceI).getAll(page, size, sortBy);
+        verify(userServiceI).getAll(pageable);
     }
 
     @Test

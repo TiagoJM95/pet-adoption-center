@@ -28,6 +28,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -69,7 +71,8 @@ public class PetServiceTest {
     private PetSearchCriteria criteria;
     private int page;
     private int size;
-    private String sortBy;
+    private String sort;
+    private Pageable pageable;
 
     @BeforeEach
     void setup() {
@@ -87,7 +90,8 @@ public class PetServiceTest {
         criteria = petSearchCriteria();
         page = 0;
         size = 10;
-        sortBy = "name";
+        sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     static Stream<List<PetCreateDto>> petCreateDtoListProvider() {
@@ -413,7 +417,7 @@ public class PetServiceTest {
         when(petRepository.findAll(any(Specification.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(mockPets));
 
-        List<PetGetDto> result = petService.searchPets(criteria, page, size, sortBy);
+        List<PetGetDto> result = petService.searchPets(criteria, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.size());
@@ -428,7 +432,7 @@ public class PetServiceTest {
         when(petRepository.findAll(any(Specification.class), any(PageRequest.class)))
                 .thenReturn(new PageImpl<>(Collections.emptyList()));
 
-        List<PetGetDto> result = petService.searchPets(criteria, page, size, sortBy);
+        List<PetGetDto> result = petService.searchPets(criteria, pageable);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

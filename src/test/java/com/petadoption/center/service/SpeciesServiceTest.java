@@ -13,10 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -45,6 +42,7 @@ public class SpeciesServiceTest {
     private Species updatedSpecies;
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
@@ -56,18 +54,22 @@ public class SpeciesServiceTest {
 
         speciesCreateDto = speciesCreateDto();
         speciesUpdateDto = speciesUpdateDto();
+
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test if get all species return empty list if no species")
     void getAllPetSpeciesShouldReturnEmpty() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Species> pagedSpecies = new PageImpl<>(List.of());
 
-        when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
+        when(speciesRepository.findAll(pageable)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAll(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
@@ -77,12 +79,11 @@ public class SpeciesServiceTest {
     @DisplayName("Test if get all species is working correctly")
     void getAllPetSpeciesShouldReturnSpecies() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Species> pagedSpecies = new PageImpl<>(List.of(testSpecies));
 
-        when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
+        when(speciesRepository.findAll(pageable)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAll(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testSpecies.getName(), result.getFirst().name());
@@ -94,12 +95,11 @@ public class SpeciesServiceTest {
 
         Species speciesToAdd = new Species();
         List<Species> allSpecies = List.of(testSpecies, updatedSpecies, speciesToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
-        Page<Species> pagedSpecies = new PageImpl<>(List.of(testSpecies, updatedSpecies), pageRequest, allSpecies.size());
+        Page<Species> pagedSpecies = new PageImpl<>(List.of(testSpecies, updatedSpecies), pageable, allSpecies.size());
 
-        when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
+        when(speciesRepository.findAll(pageable)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAll(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertEquals(testSpecies.getName(), result.get(0).name());
@@ -115,12 +115,11 @@ public class SpeciesServiceTest {
         speciesToAdd.setName("Bird");
 
         List<Species> allSpecies = List.of(testSpecies, updatedSpecies, speciesToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
-        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageRequest, allSpecies.size());
+        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageable, allSpecies.size());
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAll(0, 3, "name");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(3,result.size());
         assertEquals(result.get(0).name(), testSpecies.getName());
@@ -137,12 +136,11 @@ public class SpeciesServiceTest {
         speciesToAdd.setName("Bird");
 
         List<Species> allSpecies = List.of( speciesToAdd, updatedSpecies, testSpecies);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "name");
-        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageRequest, allSpecies.size());
+        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageable, allSpecies.size());
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAll(0, 3, "name");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(3, result.size());
         assertEquals(result.get(0).name(), speciesToAdd.getName());

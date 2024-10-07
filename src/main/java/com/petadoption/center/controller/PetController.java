@@ -33,7 +33,7 @@ public class PetController {
 
     @PostMapping("/search")
     public ResponseEntity<List<PetGetDto>> searchPets(@Valid @RequestBody PetSearchCriteria searchCriteria,
-                                                      @PageableDefault(sort = "created_at") Pageable pageable) {
+                                                      @PageableDefault(sort = "createdAt") Pageable pageable) {
         return new ResponseEntity<>(petServiceI.searchPets(searchCriteria, pageable), HttpStatus.OK);
     }
 

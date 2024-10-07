@@ -164,7 +164,7 @@ public class AdoptionFormControllerTest {
         mockMvc.perform(get("/api/v1/adoption-form/")
                 .param("page", "0")
                 .param("size", "5")
-                .param("sortBy", "id")
+                .param("sort", "id")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(0)))
@@ -182,7 +182,7 @@ public class AdoptionFormControllerTest {
         mockMvc.perform(get("/api/v1/adoption-form/")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sortBy", "id")
+                        .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
@@ -215,7 +215,8 @@ public class AdoptionFormControllerTest {
                 adoptionFormCreated.petVacationHome(),
                 adoptionFormCreated.isResponsibleForPet(),
                 adoptionFormCreated.otherNotes(),
-                adoptionFormCreated.petAddress()
+                adoptionFormCreated.petAddress(),
+                adoptionFormCreated.createdAt()
         );
     }
 

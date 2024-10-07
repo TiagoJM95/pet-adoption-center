@@ -17,6 +17,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.time.LocalDateTime;
+
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
@@ -64,7 +66,7 @@ public class SpeciesControllerTest {
         SpeciesGetDto specieCreated = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
 
         speciesId = specieCreated.id();
-        speciesGetDto = new SpeciesGetDto(speciesId, speciesCreateDto.name());
+        speciesGetDto = new SpeciesGetDto(speciesId, speciesCreateDto.name(), LocalDateTime.now());
     }
 
     @Test
@@ -77,7 +79,7 @@ public class SpeciesControllerTest {
         mockMvc.perform(get("/api/v1/pet-species/")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sortBy", "id")
+                        .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].name", is(speciesGetDto.name())));
