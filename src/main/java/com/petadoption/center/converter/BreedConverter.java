@@ -19,6 +19,7 @@ public class BreedConverter {
                 .id(dto.id())
                 .name(dto.name())
                 .species(SpeciesConverter.toModel(dto.speciesDto()))
+                .createdAt(dto.createdAt())
                 .build();
     }
 
@@ -28,6 +29,7 @@ public class BreedConverter {
                 .id(breed.getId())
                 .name(breed.getName())
                 .speciesDto(SpeciesConverter.toDto(breed.getSpecies()))
+                .createdAt(breed.getCreatedAt())
                 .build();
     }
 }

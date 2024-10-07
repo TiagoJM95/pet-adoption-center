@@ -37,6 +37,7 @@ public class PetConverter {
                 .isAdopted(dto.isAdopted())
                 .attributes(dto.attributes())
                 .organization(OrganizationConverter.toModel(dto.organizationDto()))
+                .createdAt(dto.createdAt())
                 .build();
     }
     

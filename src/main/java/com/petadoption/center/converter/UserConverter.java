@@ -4,7 +4,6 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.User;
 
-
 public class UserConverter {
 
     public static User toModel(UserCreateDto dto){
@@ -32,6 +31,7 @@ public class UserConverter {
                 .dateOfBirth(dto.dateOfBirth())
                 .address(dto.address())
                 .phoneNumber(dto.phoneNumber())
+                .createdAt(dto.createdAt())
                 .build();
 
     }
@@ -47,6 +47,7 @@ public class UserConverter {
                 .dateOfBirth(user.getDateOfBirth())
                 .address(user.getAddress())
                 .phoneNumber(user.getPhoneNumber())
+                .createdAt(user.getCreatedAt())
                 .build();
     }
 }

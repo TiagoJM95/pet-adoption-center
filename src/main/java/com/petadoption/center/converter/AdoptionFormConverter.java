@@ -28,6 +28,7 @@ public class AdoptionFormConverter {
                 .isResponsibleForPet(dto.isResponsibleForPet())
                 .otherNotes(dto.otherNotes())
                 .petAddress(dto.petAddress())
+                .createdAt(dto.createdAt())
                 .build();
     }
 
@@ -42,6 +43,7 @@ public class AdoptionFormConverter {
                 .isResponsibleForPet(adoptionForm.getIsResponsibleForPet())
                 .otherNotes(adoptionForm.getOtherNotes())
                 .petAddress(adoptionForm.getPetAddress())
+                .createdAt(adoptionForm.getCreatedAt())
                 .build();
     }
 }

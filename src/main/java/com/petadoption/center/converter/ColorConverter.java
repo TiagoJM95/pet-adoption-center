@@ -18,13 +18,16 @@ public class ColorConverter {
         return Color.builder()
                 .id(dto.id())
                 .name(dto.name())
+                .createdAt(dto.createdAt())
                 .build();
     }
 
     public static ColorGetDto toDto(Color color) {
         if (color == null) return null;
-        return new ColorGetDto(
-                color.getId(),
-                color.getName());
+        return ColorGetDto.builder()
+                .id(color.getId())
+                .name(color.getName())
+                .createdAt(color.getCreatedAt())
+                .build();
     }
 }
