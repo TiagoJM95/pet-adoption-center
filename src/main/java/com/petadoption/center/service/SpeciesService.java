@@ -9,8 +9,7 @@ import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,46 +28,45 @@ public class SpeciesService implements SpeciesServiceI {
     }
 
     @Override
-    public List<SpeciesGetDto> getAllSpecies(int page, int size, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return speciesRepository.findAll(pageRequest).stream().map(SpeciesConverter::toDto).toList();
+    public List<SpeciesGetDto> getAll(Pageable pageable) {
+        return speciesRepository.findAll(pageable).stream().map(SpeciesConverter::toDto).toList();
     }
 
     @Override
-    public SpeciesGetDto getSpeciesById(String id) throws SpeciesNotFoundException {
-        return SpeciesConverter.toDto(findSpeciesById(id));
+    public SpeciesGetDto getById(String id) {
+        return SpeciesConverter.toDto(findById(id));
     }
 
     @Override
-    public SpeciesGetDto getSpeciesByName(String name) throws SpeciesNotFoundException {
-        return SpeciesConverter.toDto(findSpeciesByName(name));
+    public SpeciesGetDto getByName(String speciesName) {
+        return SpeciesConverter.toDto(findByName(speciesName));
     }
 
     @Override
-    public SpeciesGetDto addNewSpecies(SpeciesCreateDto dto) {
+    public SpeciesGetDto create(SpeciesCreateDto dto) {
         return SpeciesConverter.toDto(speciesRepository.save(SpeciesConverter.toModel(dto)));
     }
 
     @Override
-    public SpeciesGetDto updateSpecies(String id, SpeciesUpdateDto dto) throws SpeciesNotFoundException {
-        Species species = findSpeciesById(id);
+    public SpeciesGetDto update(String id, SpeciesUpdateDto dto) {
+        Species species = findById(id);
         updateFields(dto.name(), species.getName(), species::setName);
         return SpeciesConverter.toDto(speciesRepository.save(species));
     }
 
     @Override
-    public String deleteSpecies(String id) throws SpeciesNotFoundException {
-        findSpeciesById(id);
+    public String delete(String id) {
+        findById(id);
         speciesRepository.deleteById(id);
         return SPECIES_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Species findSpeciesById(String id) throws SpeciesNotFoundException {
+    private Species findById(String id) {
         return speciesRepository.findById(id).orElseThrow(
                 () -> new SpeciesNotFoundException(SPECIES_WITH_ID + id + NOT_FOUND));
     }
 
-    private Species findSpeciesByName(String name) throws SpeciesNotFoundException {
+    private Species findByName(String name) {
         return speciesRepository.findByName(name).orElseThrow(
                 () -> new SpeciesNotFoundException(SPECIES_WITH_NAME + name + NOT_FOUND));
     }

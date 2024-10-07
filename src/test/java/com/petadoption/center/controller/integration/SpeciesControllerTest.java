@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
@@ -113,11 +114,11 @@ public class SpeciesControllerTest {
     @Test
     @DisplayName("Test if delete species works correctly")
     @DirtiesContext
-    void deleteSpecies() throws Exception {
+    void delete() throws Exception {
 
         createSpecies();
 
-        mockMvc.perform(delete("/api/v1/pet-species/delete/{id}", speciesId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/pet-species/delete/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SPECIES_WITH_ID + speciesId + DELETE_SUCCESS));

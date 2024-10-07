@@ -2,7 +2,6 @@ package com.petadoption.center.controller;
 
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.not_found.ColorNotFoundException;
 import com.petadoption.center.service.interfaces.ColorServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +17,15 @@ import java.util.List;
 @RequestMapping("/api/v1/color")
 public class ColorController {
 
+    private final ColorServiceI colorServiceI;
+
     @Autowired
-    private ColorServiceI colorServiceI;
+    public ColorController(ColorServiceI colorServiceI) {
+        this.colorServiceI = colorServiceI;
+    }
 
     @GetMapping("/")
-    public ResponseEntity<List<ColorGetDto>> getAll(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable){
+    public ResponseEntity<List<ColorGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable){
         return new ResponseEntity<>(colorServiceI.getAll(pageable), HttpStatus.OK);
     }
 

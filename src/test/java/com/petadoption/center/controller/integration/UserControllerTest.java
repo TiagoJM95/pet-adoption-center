@@ -70,7 +70,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Test if get all users works correctly")
     @DirtiesContext
-    void getAllUsersAfterCreatingUser() throws Exception {
+    void getAllAfterCreatingUser() throws Exception {
 
         createUserShouldReturnUser();
 
@@ -90,7 +90,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Test if get user by id works correctly")
     @DirtiesContext
-    void getUserByIdShouldReturnUser() throws Exception {
+    void getUserByIdShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
 
@@ -107,7 +107,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Test if update user works correctly")
     @DirtiesContext
-    void updateUserShouldReturnUser() throws Exception {
+    void updateUserShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
 
@@ -122,7 +122,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Test if delete user works correctly")
     @DirtiesContext
-    void deleteUserShouldReturnUser() throws Exception {
+    void deleteUserShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
 

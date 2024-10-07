@@ -50,7 +50,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get all users works correctly")
-    void getAllUsersShouldReturnUsers() {
+    void getAllUsersShouldReturn() {
 
         int page = 0;
         int size = 5;
@@ -58,68 +58,68 @@ public class UserControllerTest {
 
         List<UserGetDto> expectedUsers = List.of(userGetDto);
 
-        when(userServiceI.getAllUsers(page, size, sortBy)).thenReturn(expectedUsers);
+        when(userServiceI.getAll(page, size, sortBy)).thenReturn(expectedUsers);
 
-        ResponseEntity<List<UserGetDto>> response = userController.getAllUsers(page, size, sortBy);
+        ResponseEntity<List<UserGetDto>> response = userController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedUsers, response.getBody());
-        verify(userServiceI).getAllUsers(page, size, sortBy);
+        verify(userServiceI).getAll(page, size, sortBy);
     }
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    void getUserByIdShouldReturnUser() throws UserNotFoundException {
+    void getUserByIdShouldReturn() throws UserNotFoundException {
 
         String id = "1111-1111-2222";
 
-        when(userServiceI.getUserById(id)).thenReturn(userGetDto);
+        when(userServiceI.getById(id)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.getUserById(id);
+        ResponseEntity<UserGetDto> response = userController.getById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userServiceI).getUserById(id);
+        verify(userServiceI).getById(id);
 
     }
 
     @Test
     @DisplayName("Test if add new user works correctly")
-    void addNewUserShouldReturnUser() {
+    void create() {
 
-        when(userServiceI.addNewUser(userCreateDto)).thenReturn(userGetDto);
+        when(userServiceI.create(userCreateDto)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.addNewUser(userCreateDto);
+        ResponseEntity<UserGetDto> response = userController.create(userCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userServiceI).addNewUser(userCreateDto);
+        verify(userServiceI).create(userCreateDto);
     }
 
     @Test
     @DisplayName("Test if update user works correctly")
-    void updateUserShouldReturnUser() throws UserNotFoundException {
+    void updateUserShouldReturn() throws UserNotFoundException {
 
-        when(userServiceI.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
+        when(userServiceI.update(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.updateUser(userGetDto.id(), userUpdateDto);
+        ResponseEntity<UserGetDto> response = userController.update(userGetDto.id(), userUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userServiceI).updateUser(userGetDto.id(), userUpdateDto);
+        verify(userServiceI).update(userGetDto.id(), userUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete user works correctly")
-    void deleteUserShouldReturnUser() throws UserNotFoundException {
+    void deleteUserShouldReturn() throws UserNotFoundException {
 
-        when(userServiceI.deleteUser(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
+        when(userServiceI.delete(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = userController.deleteUser(userGetDto.id());
+        ResponseEntity<String> response = userController.delete(userGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS, response.getBody());
-        verify(userServiceI).deleteUser(userGetDto.id());
+        verify(userServiceI).delete(userGetDto.id());
     }
 
 }

@@ -18,11 +18,15 @@ import java.util.List;
 @RequestMapping("/api/v1/organization")
 public class OrganizationController {
 
+    private final OrganizationServiceI organizationServiceI;
+
     @Autowired
-    private OrganizationServiceI organizationServiceI;
+    public OrganizationController(OrganizationServiceI organizationServiceI) {
+        this.organizationServiceI = organizationServiceI;
+    }
 
     @GetMapping("/")
-    public ResponseEntity<List<OrganizationGetDto>> getAll(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
+    public ResponseEntity<List<OrganizationGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable) {
         return new ResponseEntity<>(organizationServiceI.getAll(pageable), HttpStatus.OK);
     }
 

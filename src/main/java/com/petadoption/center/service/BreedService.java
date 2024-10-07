@@ -47,7 +47,7 @@ public class BreedService implements BreedServiceI {
 
     @Override
     public List<BreedGetDto> getBySpecies(String speciesName) {
-        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesByName(speciesName));
+        Species species = SpeciesConverter.toModel(speciesServiceI.getByName(speciesName));
         return breedRepository.findBySpecies(species).stream()
                 .map(BreedConverter::toDto).toList();
     }
@@ -55,7 +55,7 @@ public class BreedService implements BreedServiceI {
     @Override
     public BreedGetDto create(BreedCreateDto dto) {
         Breed breed = BreedConverter.toModel(dto);
-        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.speciesId()));
+        Species species = SpeciesConverter.toModel(speciesServiceI.getById(dto.speciesId()));
         breed.setSpecies(species);
         return BreedConverter.toDto(breedRepository.save(breed));
     }
@@ -77,7 +77,7 @@ public class BreedService implements BreedServiceI {
     @Override
     public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) {
 
-        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
+        Species species = SpeciesConverter.toModel(speciesServiceI.getById(dto.petSpeciesId()));
         Breed primaryBreed = findById(dto.primaryBreedId());
         Breed secondaryBreed;
 

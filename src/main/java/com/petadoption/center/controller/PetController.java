@@ -19,8 +19,12 @@ import java.util.List;
 @RequestMapping("/api/v1/pet")
 public class PetController {
 
+    private final PetServiceI petServiceI;
+
     @Autowired
-    private PetServiceI petServiceI;
+    public PetController(PetServiceI petServiceI) {
+        this.petServiceI = petServiceI;
+    }
 
     @GetMapping("/id/{id}")
     public ResponseEntity<PetGetDto> getById(@PathVariable("id") String id) {
@@ -29,7 +33,7 @@ public class PetController {
 
     @PostMapping("/search")
     public ResponseEntity<List<PetGetDto>> searchPets(@Valid @RequestBody PetSearchCriteria searchCriteria,
-                                                      @PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
+                                                      @PageableDefault(sort = "created_at") Pageable pageable) {
         return new ResponseEntity<>(petServiceI.searchPets(searchCriteria, pageable), HttpStatus.OK);
     }
 

@@ -8,11 +8,11 @@ import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Coats;
 import com.petadoption.center.enums.Genders;
 import com.petadoption.center.enums.Sizes;
-import com.petadoption.center.exception.not_found.BreedNotFoundException;
-import com.petadoption.center.exception.not_found.ColorNotFoundException;
-import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
 import com.petadoption.center.exception.not_found.PetNotFoundException;
-import com.petadoption.center.model.*;
+import com.petadoption.center.model.Breed;
+import com.petadoption.center.model.Color;
+import com.petadoption.center.model.Organization;
+import com.petadoption.center.model.Pet;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.interfaces.*;
 import com.petadoption.center.specifications.PetSearchCriteria;
@@ -99,7 +99,7 @@ public class PetService implements PetServiceI {
     private Pet buildPetFromDto(PetCreateDto dto) {
         Pet pet = PetConverter.toModel(dto);
 
-        pet.setSpecies(SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId())));
+        pet.setSpecies(SpeciesConverter.toModel(speciesServiceI.getById(dto.petSpeciesId())));
         pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getById(dto.primaryBreedId())));
         pet.setSecondaryBreed(getBreedOrNull(dto.secondaryBreedId()));
         pet.setPrimaryColor(ColorConverter.toModel(colorServiceI.getById(dto.primaryColor())));

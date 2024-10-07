@@ -64,7 +64,7 @@ public class InterestService implements InterestServiceI {
 
     @Override
     public List<InterestGetDto> getCurrentByUserId(Pageable pageable, String userId) {
-        User user = UserConverter.toModel(userService.getUserById(userId));
+        User user = UserConverter.toModel(userService.getById(userId));
         List<Status> statusList = List.of(PENDING, FORM_REQUESTED, FORM_FILLED);
         Page<Interest> interests = interestRepository.findByUserAndStatusIn(user, statusList, pageable);
         return interests.stream().map(InterestConverter::toDto).toList();
@@ -72,7 +72,7 @@ public class InterestService implements InterestServiceI {
 
     @Override
     public List<InterestGetDto> getHistoryByUserId(Pageable pageable, String userId) {
-        User user = UserConverter.toModel(userService.getUserById(userId));
+        User user = UserConverter.toModel(userService.getById(userId));
         List<Status> statusList = List.of(ACCEPTED, REJECTED);
         Page<Interest> interests = interestRepository.findByUserAndStatusIn(user, statusList, pageable);
         return interests.stream().map(InterestConverter::toDto).toList();
@@ -86,7 +86,7 @@ public class InterestService implements InterestServiceI {
     @Override
     public InterestGetDto create(InterestCreateDto dto) {
         Interest interest = new Interest();
-        interest.setUser(UserConverter.toModel(userService.getUserById(dto.userId())));
+        interest.setUser(UserConverter.toModel(userService.getById(dto.userId())));
         interest.setPet(PetConverter.toModel(petService.getById(dto.petId())));
         interest.setOrganization(OrganizationConverter.toModel(organizationService.getById(dto.organizationId())));
         interest.setStatus(PENDING);

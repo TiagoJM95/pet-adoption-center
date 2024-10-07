@@ -73,14 +73,14 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if get all users works correctly")
-    void getAllUsersShouldReturnListOfUsers() {
+    void getAllUsersShouldReturnListOf() {
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<User> pagedUsers = new PageImpl<>(List.of(testUser));
 
         when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0, 10, "id");
+        List<UserGetDto> result = userService.getAll(0, 10, "id");
 
         assertEquals(1, result.size());
         assertEquals(testUser.getEmail(), result.getFirst().email());
@@ -88,21 +88,21 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if get all users return empty list if no users")
-    void getAllUsersShouldReturnEmpty(){
+    void getAllShouldReturnEmpty(){
 
         PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<User> pagedUsers = new PageImpl<>(List.of());
 
         when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0,10,"id");
+        List<UserGetDto> result = userService.getAll(0,10,"id");
 
         assertEquals(0, result.size());
     }
 
     @Test
     @DisplayName("Test if get all users return number of elements of page size")
-    void getAllUsersShouldReturnNumberOfElementsOfPageSize(){
+    void getAllShouldReturnNumberOfElementsOfPageSize(){
 
         User userToAdd = new User();
         List<User> allUsers = List.of(testUser, updatedUser, userToAdd);
@@ -111,7 +111,7 @@ public class UserServiceTest {
 
         when(userRepository.findAll(pageRequest)).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0,2,"id");
+        List<UserGetDto> result = userService.getAll(0,2,"id");
 
         assertEquals(2, result.size());
         assertFalse(result.size() > 2);
@@ -119,7 +119,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if get all users return with Descending Order")
-    void getAllUsersShouldReturnUsersInDescendingOrder(){
+    void getAllUsersShouldReturnInDescendingOrder(){
 
         User userToAdd = new User();
         userToAdd.setFirstName("Fabio");
@@ -129,7 +129,7 @@ public class UserServiceTest {
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0,3,"firstName");
+        List<UserGetDto> result = userService.getAll(0,3,"firstName");
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -140,7 +140,7 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if get all users return with Ascending Order")
-    void getAllUsersShouldReturnUsersInAscendingOrder(){
+    void getAllUsersShouldReturnInAscendingOrder(){
 
         User userToAdd = new User();
         userToAdd.setFirstName("Fabio");
@@ -150,7 +150,7 @@ public class UserServiceTest {
 
         when(userRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<UserGetDto> result = userService.getAllUsers(0,3,"firstName");
+        List<UserGetDto> result = userService.getAll(0,3,"firstName");
 
         assertNotNull(result);
         assertEquals(3,result.size());
@@ -162,29 +162,29 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    void getUserByIdShouldReturnUser() throws UserNotFoundException {
+    void getUserByIdShouldReturn() throws UserNotFoundException {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
 
-            UserGetDto result = userService.getUserById(testUser.getId());
+            UserGetDto result = userService.getById(testUser.getId());
             assertEquals(testUser.getEmail(), result.email());
     }
 
     @Test
     @DisplayName("Test if get user by id throws UserNotFoundException")
-    void getUserByIdShouldThrowUserNotFoundException() {
+    void getUserByIdShouldThrowNotFoundException() {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.getUserById(testUser.getId()));
+        assertThrows(UserNotFoundException.class, () -> userService.getById(testUser.getId()));
     }
 
     @Test
     @DisplayName("Test if add new user saves and returns UserGetDto")
-    void addNewUserShouldSaveAndReturnUserGetDto() {
+    void createGetDto() {
 
         when(userRepository.save(any(User.class))).thenReturn(testUser);
-        UserGetDto result = userService.addNewUser(userCreateDto);
+        UserGetDto result = userService.create(userCreateDto);
 
         assertNotNull(userCreateDto);
         assertEquals(userCreateDto.email(), result.email());
@@ -193,11 +193,11 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if update user saves all fields and returns UserGetDto")
-    void updateUserShouldSaveAllFieldsAndReturnUserGetDto() throws UserNotFoundException {
+    void updateUserShouldSaveAllFieldsAndReturnGetDto() throws UserNotFoundException {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenReturn(updatedUser);
-        UserGetDto result = userService.updateUser(testUser.getId(), userUpdateDto);
+        UserGetDto result = userService.update(testUser.getId(), userUpdateDto);
 
         assertNotNull(userUpdateDto);
         assertEquals(userUpdateDto.email(), result.email());
@@ -205,30 +205,30 @@ public class UserServiceTest {
 
     @Test
     @DisplayName("Test if update user throws exception user not found")
-    void updateUserShouldThrowExceptionUserNotFound(){
+    void updateUserShouldThrowExceptionNotFound(){
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.updateUser(testUser.getId(), userUpdateDto));
+        assertThrows(UserNotFoundException.class, () -> userService.update(testUser.getId(), userUpdateDto));
     }
 
 
     @Test
     @DisplayName("Test if delete user erase user and return message")
-    void deleteUserShouldEraseAndDisplayMessage() throws UserNotFoundException {
+    void deleteShouldEraseAndDisplayMessage() throws UserNotFoundException {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
 
-        assertEquals(userService.deleteUser(testUser.getId()),USER_WITH_ID + testUser.getId() + DELETE_SUCCESS);
+        assertEquals(userService.delete(testUser.getId()),USER_WITH_ID + testUser.getId() + DELETE_SUCCESS);
     }
 
     @Test
     @DisplayName("Test if delete user throw exception user not found")
-    void deleteUserShouldThrowExceptionUserNotFound(){
+    void deleteUserShouldThrowExceptionNotFound(){
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> userService.deleteUser(testUser.getId()));
+        assertThrows(UserNotFoundException.class, () -> userService.delete(testUser.getId()));
     }
 
 

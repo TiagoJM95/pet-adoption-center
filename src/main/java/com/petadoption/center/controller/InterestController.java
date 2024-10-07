@@ -5,6 +5,7 @@ import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.service.interfaces.InterestServiceI;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -19,30 +20,31 @@ public class InterestController {
 
     private final InterestServiceI interestService;
 
+    @Autowired
     public InterestController(InterestServiceI interestService) {
         this.interestService = interestService;
     }
 
     @GetMapping("/organization/{organizationId}/current")
-    public ResponseEntity<List<InterestGetDto>> getCurrentByOrganizationId(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getCurrentByOrganizationId(@PageableDefault(sort = "created_at") Pageable pageable,
                                                                            @PathVariable("organizationId") String organizationId) {
         return new ResponseEntity<>(interestService.getCurrentByOrganizationId(pageable, organizationId), HttpStatus.OK);
     }
 
     @GetMapping("/organization/{organizationId}/history")
-    public ResponseEntity<List<InterestGetDto>> getHistoryByOrganizationId(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getHistoryByOrganizationId(@PageableDefault(sort = "created_at") Pageable pageable,
                                                                            @PathVariable("organizationId") String organizationId) {
         return new ResponseEntity<>(interestService.getHistoryByOrganizationId(pageable, organizationId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}/current")
-    public ResponseEntity<List<InterestGetDto>> getCurrentByUserId(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getCurrentByUserId(@PageableDefault(sort = "created_at") Pageable pageable,
                                                                    @PathVariable("userId") String userId) {
         return new ResponseEntity<>(interestService.getCurrentByUserId(pageable, userId), HttpStatus.OK);
     }
 
     @GetMapping("/user/{userId}/history")
-    public ResponseEntity<List<InterestGetDto>> getHistoryByUserId(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable,
+    public ResponseEntity<List<InterestGetDto>> getHistoryByUserId(@PageableDefault(sort = "created_at") Pageable pageable,
                                                                    @PathVariable("userId") String userId) {
         return new ResponseEntity<>(interestService.getHistoryByUserId(pageable, userId), HttpStatus.OK);
     }

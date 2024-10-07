@@ -75,7 +75,7 @@ public class AdoptionFormService implements AdoptionFormServiceI {
 
     private AdoptionForm buildAdoptionFormFromDto(AdoptionFormCreateDto dto) {
        AdoptionForm adoptionForm = AdoptionFormConverter.toModel(dto);
-       User user = UserConverter.toModel(userServiceI.getUserById(dto.userId()));
+       User user = UserConverter.toModel(userServiceI.getById(dto.userId()));
        Pet pet = PetConverter.toModel(petServiceI.getById(dto.petId()));
 
        adoptionForm.setUser(user);

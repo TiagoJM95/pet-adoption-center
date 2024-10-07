@@ -3,11 +3,6 @@ package com.petadoption.center.service.interfaces;
 import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
-import com.petadoption.center.exception.not_found.InterestNotFoundException;
-import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
-import com.petadoption.center.exception.not_found.PetNotFoundException;
-import com.petadoption.center.exception.not_found.InvalidStatusChangeException;
-import com.petadoption.center.exception.not_found.UserNotFoundException;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;

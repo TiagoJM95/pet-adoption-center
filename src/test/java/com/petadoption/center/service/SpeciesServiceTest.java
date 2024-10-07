@@ -67,7 +67,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(0, 10, "id");
 
         assertEquals(0, result.size());
     }
@@ -82,7 +82,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(0, 10, "id");
 
         assertEquals(1, result.size());
         assertEquals(testSpecies.getName(), result.getFirst().name());
@@ -99,7 +99,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(0, 10, "id");
 
         assertEquals(2, result.size());
         assertEquals(testSpecies.getName(), result.get(0).name());
@@ -120,7 +120,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "name");
+        List<SpeciesGetDto> result = speciesService.getAll(0, 3, "name");
 
         assertEquals(3,result.size());
         assertEquals(result.get(0).name(), testSpecies.getName());
@@ -142,7 +142,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "name");
+        List<SpeciesGetDto> result = speciesService.getAll(0, 3, "name");
 
         assertEquals(3, result.size());
         assertEquals(result.get(0).name(), speciesToAdd.getName());
@@ -156,7 +156,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
-        SpeciesGetDto result = speciesService.getSpeciesById(testSpecies.getId());
+        SpeciesGetDto result = speciesService.getById(testSpecies.getId());
 
         assertEquals(testSpecies.getName(), result.name());
     }
@@ -167,7 +167,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getSpeciesById(testSpecies.getId()));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getById(testSpecies.getId()));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.save(any(Species.class))).thenReturn(testSpecies);
 
-        SpeciesGetDto result = speciesService.addNewSpecies(speciesCreateDto);
+        SpeciesGetDto result = speciesService.create(speciesCreateDto);
 
         assertNotNull(result);
         assertEquals(testSpecies.getName(), result.name());
@@ -191,7 +191,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.save(any(Species.class))).thenReturn(updatedSpecies);
 
-        SpeciesGetDto result = speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto);
+        SpeciesGetDto result = speciesService.update(testSpecies.getId(), speciesUpdateDto);
 
         assertNotNull(speciesUpdateDto);
         assertEquals(speciesUpdateDto.name(), result.name());
@@ -203,7 +203,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.update(testSpecies.getId(), speciesUpdateDto));
     }
 
     @Test
@@ -212,7 +212,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
-        assertEquals(speciesService.deleteSpecies(testSpecies.getId()), SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
+        assertEquals(speciesService.delete(testSpecies.getId()), SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
     }
 
     @Test
@@ -221,6 +221,6 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.deleteSpecies(testSpecies.getId()));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.delete(testSpecies.getId()));
     }
 }

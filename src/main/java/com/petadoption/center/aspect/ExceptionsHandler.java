@@ -1,7 +1,7 @@
 package com.petadoption.center.aspect;
 
-import com.petadoption.center.exception.not_found.ModelNotFoundException;
 import com.petadoption.center.exception.DatabaseConnectionException;
+import com.petadoption.center.exception.not_found.ModelNotFoundException;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

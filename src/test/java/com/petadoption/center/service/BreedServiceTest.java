@@ -196,7 +196,7 @@ public class BreedServiceTest {
     @DisplayName("Test if add new breed saves and returns BreedGetDto")
     void createGetDto() throws SpeciesNotFoundException {
 
-        when(speciesService.getSpeciesById(breedCreateDto.speciesId())).thenReturn(toDto(species));
+        when(speciesService.getById(breedCreateDto.speciesId())).thenReturn(toDto(species));
 
         when(breedRepository.save(any(Breed.class))).thenReturn(testBreed);
 
@@ -212,7 +212,7 @@ public class BreedServiceTest {
     @DisplayName("Test if add new breed throws exception if species is not found")
     void createShouldThrowSpeciesNotFoundException() throws SpeciesNotFoundException {
 
-        when(speciesService.getSpeciesById(breedCreateDto.speciesId())).thenThrow(SpeciesNotFoundException.class);
+        when(speciesService.getById(breedCreateDto.speciesId())).thenThrow(SpeciesNotFoundException.class);
 
         assertThrows(SpeciesNotFoundException.class, () -> breedService.create(breedCreateDto));
     }

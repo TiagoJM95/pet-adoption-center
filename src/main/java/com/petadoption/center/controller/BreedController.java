@@ -3,8 +3,6 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.exception.not_found.BreedNotFoundException;
-import com.petadoption.center.exception.not_found.SpeciesNotFoundException;
 import com.petadoption.center.service.interfaces.BreedServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +18,15 @@ import java.util.List;
 @RequestMapping("/api/v1/breed")
 public class BreedController {
 
+    private final BreedServiceI breedServiceI;
+
     @Autowired
-    private BreedServiceI breedServiceI;
+    public BreedController(BreedServiceI breedServiceI) {
+        this.breedServiceI = breedServiceI;
+    }
 
     @GetMapping("/")
-    public ResponseEntity<List<BreedGetDto>> getAll(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
+    public ResponseEntity<List<BreedGetDto>> getAll(@PageableDefault(sort = "created_at") Pageable pageable) {
         return new ResponseEntity<>(breedServiceI.getAll(pageable), HttpStatus.OK);
     }
 

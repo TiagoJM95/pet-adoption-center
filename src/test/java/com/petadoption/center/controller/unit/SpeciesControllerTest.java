@@ -61,64 +61,64 @@ public class SpeciesControllerTest {
 
         List<SpeciesGetDto> expectedSpecies = List.of(speciesGetDto);
 
-        when(speciesServiceI.getAllSpecies(page, size, sortBy)).thenReturn(expectedSpecies);
+        when(speciesServiceI.getAll(page, size, sortBy)).thenReturn(expectedSpecies);
 
-        ResponseEntity<List<SpeciesGetDto>> result = speciesController.getAllPetSpecies(page, size, sortBy);
+        ResponseEntity<List<SpeciesGetDto>> result = speciesController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(List.of(speciesGetDto), result.getBody());
-        verify(speciesServiceI).getAllSpecies(page, size, sortBy);
+        verify(speciesServiceI).getAll(page, size, sortBy);
     }
 
     @Test
     @DisplayName("Test if get Species by id works correctly")
     void getSpeciesByIdShouldReturnSpecies() throws SpeciesNotFoundException {
 
-        when(speciesServiceI.getSpeciesById(testSpecies.getId())).thenReturn(speciesGetDto);
+        when(speciesServiceI.getById(testSpecies.getId())).thenReturn(speciesGetDto);
 
-        ResponseEntity<SpeciesGetDto> result = speciesController.getPetSpeciesById(testSpecies.getId());
+        ResponseEntity<SpeciesGetDto> result = speciesController.getById(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesServiceI).getSpeciesById(testSpecies.getId());
+        verify(speciesServiceI).getById(testSpecies.getId());
     }
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
     void addPetSpeciesShouldSaveAndReturnSpecies() {
 
-        when(speciesServiceI.addNewSpecies(speciesCreateDto)).thenReturn(speciesGetDto);
+        when(speciesServiceI.create(speciesCreateDto)).thenReturn(speciesGetDto);
 
-        ResponseEntity<SpeciesGetDto> result = speciesController.addNewPetSpecies(speciesCreateDto);
+        ResponseEntity<SpeciesGetDto> result = speciesController.create(speciesCreateDto);
 
         assertEquals(HttpStatus.CREATED, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesServiceI).addNewSpecies(speciesCreateDto);
+        verify(speciesServiceI).create(speciesCreateDto);
     }
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
-    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException {
+    void update() throws SpeciesNotFoundException {
 
-        when(speciesServiceI.updateSpecies(testSpecies.getId(), speciesUpdateDto)).thenReturn(speciesGetDto);
+        when(speciesServiceI.update(testSpecies.getId(), speciesUpdateDto)).thenReturn(speciesGetDto);
 
-        ResponseEntity<SpeciesGetDto> result = speciesController.updatePetSpecies(testSpecies.getId(), speciesUpdateDto);
+        ResponseEntity<SpeciesGetDto> result = speciesController.update(testSpecies.getId(), speciesUpdateDto);
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(speciesGetDto, result.getBody());
-        verify(speciesServiceI).updateSpecies(testSpecies.getId(), speciesUpdateDto);
+        verify(speciesServiceI).update(testSpecies.getId(), speciesUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete species works correctly")
-    void deleteSpeciesShouldReturnMessage() throws SpeciesNotFoundException {
+    void deleteShouldReturnMessage() throws SpeciesNotFoundException {
 
-        when(speciesServiceI.deleteSpecies(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
+        when(speciesServiceI.delete(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
 
-        ResponseEntity<String> result = speciesController.deleteSpecies(testSpecies.getId());
+        ResponseEntity<String> result = speciesController.delete(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
         assertEquals(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS, result.getBody());
-        verify(speciesServiceI).deleteSpecies(testSpecies.getId());
+        verify(speciesServiceI).delete(testSpecies.getId());
     }
 }

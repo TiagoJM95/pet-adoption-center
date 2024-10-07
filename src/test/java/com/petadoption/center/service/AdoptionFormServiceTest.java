@@ -177,7 +177,7 @@ public class AdoptionFormServiceTest {
 
         String exceptionMessage = adoptionFormCreateDto.userId();
 
-        when(userServiceI.getUserById(anyString())).thenThrow(new UserNotFoundException(exceptionMessage));
+        when(userServiceI.getById(anyString())).thenThrow(new UserNotFoundException(exceptionMessage));
 
         UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> adoptionFormService.create(adoptionFormCreateDto));
 
