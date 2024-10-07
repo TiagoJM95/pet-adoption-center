@@ -13,19 +13,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface InterestServiceI {
-    List<InterestGetDto> getCurrentInterestsInOrganizationPets(Pageable pageable, String organizationId) throws OrganizationNotFoundException;
-
-    List<InterestGetDto> getInterestHistoryInOrganizationPets(int page, int size, String sortBy, String organizationId) throws OrganizationNotFoundException;
-
-    List<InterestGetDto> getCurrentUserInterests(int page, int size, String sortBy, String userId) throws UserNotFoundException;
-
-    List<InterestGetDto> getUserInterestHistory(int page, int size, String sortBy, String userId) throws UserNotFoundException;
-
-    InterestGetDto getInterestById(String id) throws InterestNotFoundException;
-
-    InterestGetDto addNewInterest(InterestCreateDto dto) throws UserNotFoundException, PetNotFoundException, OrganizationNotFoundException;
-
-    InterestGetDto updateInterest(String id, InterestUpdateDto dto) throws InterestNotFoundException, InvalidStatusChangeException, UserNotFoundException, PetNotFoundException;
-
-    String deleteInterest(String id) throws InterestNotFoundException;
+    List<InterestGetDto> getCurrentByOrganizationId(Pageable pageable, String organizationId);
+    List<InterestGetDto> getHistoryByOrganizationId(Pageable pageable, String organizationId);
+    List<InterestGetDto> getCurrentByUserId(Pageable pageable, String userId);
+    List<InterestGetDto> getHistoryByUserId(Pageable pageable, String userId);
+    InterestGetDto getById(String id);
+    InterestGetDto create(InterestCreateDto dto);
+    InterestGetDto update(String id, InterestUpdateDto dto);
+    String delete(String id);
 }
