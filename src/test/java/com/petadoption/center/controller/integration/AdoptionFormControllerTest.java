@@ -164,7 +164,7 @@ public class AdoptionFormControllerTest {
         mockMvc.perform(get("/api/v1/adoption-form/")
                 .param("page", "0")
                 .param("size", "5")
-                .param("sortBy", "id")
+                .param("sort", "id")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(0)))
@@ -175,14 +175,14 @@ public class AdoptionFormControllerTest {
     @Test
     @DisplayName("Test get all adoption with 1 element returns 1 element")
     @DirtiesContext
-    void testGetAllAdoptionFormsReturnsOne() throws Exception {
+    void testGetAllReturnsOne() throws Exception {
 
         testCreateAdoptionForm();
 
         mockMvc.perform(get("/api/v1/adoption-form/")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sortBy", "id")
+                        .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
@@ -215,13 +215,14 @@ public class AdoptionFormControllerTest {
                 adoptionFormCreated.petVacationHome(),
                 adoptionFormCreated.isResponsibleForPet(),
                 adoptionFormCreated.otherNotes(),
-                adoptionFormCreated.petAddress()
+                adoptionFormCreated.petAddress(),
+                adoptionFormCreated.createdAt()
         );
     }
 
     @Test
     @DisplayName("Test if update an adoption form works correctly")
-    void testUpdateAdoptionForm() throws Exception {
+    void testUpdate() throws Exception {
 
         testCreateAdoptionForm();
 
@@ -239,9 +240,9 @@ public class AdoptionFormControllerTest {
     @Test
     @DisplayName("Test if delete an adoption form works correctly")
     @DirtiesContext
-    void testDeleteAdoptionForm() throws Exception {
+    void testDelete() throws Exception {
 
-        testUpdateAdoptionForm();
+        testUpdate();
 
         mockMvc.perform(delete("/api/v1/adoption-form/delete/{id}", adoptionFormId)
                         .contentType(MediaType.APPLICATION_JSON))

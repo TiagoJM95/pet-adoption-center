@@ -21,12 +21,14 @@ public class TestEntityFactory {
         return Species.builder()
                 .id("111111-11111111-1111")
                 .name("Dog")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
     public static Species createSpeciesWithoutId() {
         return Species.builder()
                 .name("Dog")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -35,6 +37,7 @@ public class TestEntityFactory {
                 .id("222222-22222222-2222")
                 .name("Labrador")
                 .species(species)
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -43,6 +46,7 @@ public class TestEntityFactory {
                 .id("222222-22222222-2222")
                 .name("Labrador")
                 .species(species)
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -51,6 +55,7 @@ public class TestEntityFactory {
                 .id("333333-33333333-3333")
                 .name("Golden Retriever")
                 .species(species)
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -58,12 +63,14 @@ public class TestEntityFactory {
         return Color.builder()
                 .id("444444-44444444-4444")
                 .name("Black")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
     public static Color createPrimaryColorWithoutId() {
         return Color.builder()
                 .name("Black")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -71,12 +78,14 @@ public class TestEntityFactory {
         return Color.builder()
                 .id("555555-55555555-5555")
                 .name("White")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
     public static Color createSecondaryColorWithoutId() {
         return Color.builder()
                 .name("White")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -84,12 +93,14 @@ public class TestEntityFactory {
         return Color.builder()
                 .id("666666-66666666-6666")
                 .name("Brown")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
     public static Color createTertiaryColorWithoutId() {
         return Color.builder()
                 .name("Brown")
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -143,6 +154,7 @@ public class TestEntityFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -155,6 +167,7 @@ public class TestEntityFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -168,6 +181,7 @@ public class TestEntityFactory {
                 .phoneNumber("987654321")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address(createAddress())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -180,6 +194,7 @@ public class TestEntityFactory {
                 .phoneNumber("987654321")
                 .dateOfBirth(LocalDate.of(1990, 1, 1))
                 .address(createAddress())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -202,6 +217,7 @@ public class TestEntityFactory {
                 .isAdopted(false)
                 .attributes(createAttributes())
                 .organization(createOrganization())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -216,6 +232,7 @@ public class TestEntityFactory {
                 .imageUrl("https://www.dogimages.com")
                 .isAdopted(false)
                 .attributes(createAttributes())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -240,6 +257,7 @@ public class TestEntityFactory {
                 .otherNotes("Notes")
                 .petAddress(createAddress())
                 .createdAt(LocalDateTime.of(2024, 1, 1, 1, 1))
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 

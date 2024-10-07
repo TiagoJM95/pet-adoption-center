@@ -3,7 +3,7 @@ package com.petadoption.center.controller.unit;
 import com.petadoption.center.controller.ColorController;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.color.ColorNotFoundException;
+import com.petadoption.center.exception.not_found.ColorNotFoundException;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.service.interfaces.ColorServiceI;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +13,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
@@ -52,35 +55,36 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get All Colors works correctly")
-    void getAllColorsShouldReturnColors() {
+    void getAllColorsShouldReturn() {
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<ColorGetDto> expectedColors = List.of(colorGetDto);
 
-        when(colorServiceI.getAllColors(page, size, sortBy)).thenReturn(expectedColors);
+        when(colorServiceI.getAll(pageable)).thenReturn(expectedColors);
 
-        ResponseEntity<List<ColorGetDto>> response = colorController.getAllColors(page, size, sortBy);
+        ResponseEntity<List<ColorGetDto>> response = colorController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedColors, response.getBody());
-        verify(colorServiceI).getAllColors(page, size, sortBy);
+        verify(colorServiceI).getAll(pageable);
     }
 
 
     @Test
     @DisplayName("Test if get Color by id works correctly")
-    void getColorByIdShouldReturnColor() throws ColorNotFoundException {
+    void getColorByIdShouldReturn() throws ColorNotFoundException {
 
-        when(colorServiceI.getColorById(testColor.getId())).thenReturn(colorGetDto);
+        when(colorServiceI.getById(testColor.getId())).thenReturn(colorGetDto);
 
-        ResponseEntity<ColorGetDto> response = colorController.getColorById(testColor.getId());
+        ResponseEntity<ColorGetDto> response = colorController.getById(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorServiceI).getColorById(testColor.getId());
+        verify(colorServiceI).getById(testColor.getId());
 
     }
 
@@ -88,26 +92,26 @@ public class ColorControllerTest {
     @DisplayName("Test if add new Color works correctly")
     void createColorShouldReturnColor() {
 
-        when(colorServiceI.addNewColor(colorCreateDto)).thenReturn(colorGetDto);
+        when(colorServiceI.create(colorCreateDto)).thenReturn(colorGetDto);
 
-        ResponseEntity<ColorGetDto> response = colorController.addNewColor(colorCreateDto);
+        ResponseEntity<ColorGetDto> response = colorController.create(colorCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(colorGetDto, response.getBody());
-        verify(colorServiceI).addNewColor(colorCreateDto);
+        verify(colorServiceI).create(colorCreateDto);
     }
 
 
     @Test
     @DisplayName("Test if delete Color works correctly")
-    void deleteColorShouldReturnColor() throws ColorNotFoundException {
+    void deleteColorShouldReturn() throws ColorNotFoundException {
 
-        when(colorServiceI.deleteColor(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
+        when(colorServiceI.delete(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = colorController.deleteColor(testColor.getId());
+        ResponseEntity<String> response = colorController.delete(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS, response.getBody());
-        verify(colorServiceI).deleteColor(testColor.getId());
+        verify(colorServiceI).delete(testColor.getId());
     }
 }

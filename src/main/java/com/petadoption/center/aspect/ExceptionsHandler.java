@@ -1,12 +1,7 @@
 package com.petadoption.center.aspect;
 
-import com.petadoption.center.exception.breed.BreedNotFoundException;
-import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.exception.db.DatabaseConnectionException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.species.SpeciesNotFoundException;
-import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.DatabaseConnectionException;
+import com.petadoption.center.exception.not_found.ModelNotFoundException;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,10 +17,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.petadoption.center.util.Messages.LOGGER_DB_CONNECTION;
 import static com.petadoption.center.util.Messages.LOGGER_NOT_FOUND;
-
 
 @Aspect
 @ControllerAdvice
@@ -33,40 +29,60 @@ public class ExceptionsHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
 
-    @ExceptionHandler(value = {UserNotFoundException.class, BreedNotFoundException.class, ColorNotFoundException.class, OrgNotFoundException.class, PetNotFoundException.class, SpeciesNotFoundException.class})
-    public ResponseEntity<String> NotFoundHandler(Exception ex) {
+    @ExceptionHandler(ModelNotFoundException.class)
+    public ResponseEntity<String> notFoundHandler(Exception ex) {
         logger.error(LOGGER_NOT_FOUND, ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
-
     }
 
-
-    @ExceptionHandler(value = {DatabaseConnectionException.class})
-    public ResponseEntity<String> DbConnectionHandler(Exception ex) {
+    @ExceptionHandler(DatabaseConnectionException.class)
+    public ResponseEntity<String> dbConnectionHandler(Exception ex) {
         logger.error(LOGGER_DB_CONNECTION, ex.getMessage());
         return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(ex.getMessage());
-
     }
 
-    @ExceptionHandler(value = {HttpMessageNotReadableException.class})
-    public ResponseEntity<String> RequestBodyHandler(Exception ex) {
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> requestBodyHandler(Exception ex) {
         logger.error(ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        String message = ex.getCause().getMessage();
+        Throwable cause = ex.getCause();
+        String message = (cause != null) ? cause.getMessage() : "Unknown error";
 
-        int startIndex = message.lastIndexOf("unique") + 6;
-        int endIndex = message.indexOf("\"", startIndex);
+        Matcher keyValueMatcher = Pattern.compile("Key \\(([^)]+)\\)=\\(([^)]+)\\)").matcher(message); // regex key values
+        Matcher tableNameMatcher = Pattern.compile("insert into ([^\\s]+)").matcher(message); // regex table name
 
-        if (message.contains("unique")) {
-                String key = message.substring(startIndex, endIndex);
-                return ResponseEntity.status(HttpStatus.CONFLICT).body( key + " is already in use.");
+        String tableName = null;
+
+        if (tableNameMatcher.find()) {
+            tableName = tableNameMatcher.group(1);
+            if (!tableName.isEmpty()) {
+                tableName = tableName.substring(0, tableName.length() - 1); // remove last letter of table name
+            }
         }
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Something went wrong saving data in the database.");
+
+        if (keyValueMatcher.find()) {
+            String[] keys = keyValueMatcher.group(1).split(",\\s");
+            String[] values = keyValueMatcher.group(2).split(",\\s");
+
+            StringBuilder output = new StringBuilder(); // build error message
+            if (tableName != null) {
+                output.append(tableName).append(" with ");
+            }
+            for (int i = 0; i < keys.length; i++) {
+                if(i == keys.length - 1) {
+                    output.append(keys[i]).append(" ").append(values[i]).append(" already exists.");
+                    break;
+                }
+                output.append(keys[i]).append(" ").append(values[i]).append(" ").append("and ");
+            }
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(output.toString());
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("You have entered an invalid data. Please try again.");
+        }
     }
 
     @ExceptionHandler(Exception.class)

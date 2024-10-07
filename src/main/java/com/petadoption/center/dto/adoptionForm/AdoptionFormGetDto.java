@@ -6,6 +6,8 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
 public record AdoptionFormGetDto(
         String id,
@@ -15,6 +17,6 @@ public record AdoptionFormGetDto(
         String petVacationHome,
         Boolean isResponsibleForPet,
         String otherNotes,
-        Address petAddress
-) {
-}
+        Address petAddress,
+        LocalDateTime createdAt
+) {}

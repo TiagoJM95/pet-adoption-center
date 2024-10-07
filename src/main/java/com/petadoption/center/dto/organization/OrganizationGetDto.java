@@ -4,8 +4,10 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import lombok.Builder;
 
+import java.time.LocalDateTime;
+
 @Builder
-public record OrgGetDto(
+public record OrganizationGetDto(
         String id,
         String name,
         String email,
@@ -13,5 +15,6 @@ public record OrgGetDto(
         String phoneNumber,
         Address address,
         String websiteUrl,
-        SocialMedia socialMedia
+        SocialMedia socialMedia,
+        LocalDateTime createdAt
 ) {}

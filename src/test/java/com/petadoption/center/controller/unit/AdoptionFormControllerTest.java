@@ -6,9 +6,9 @@ import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
-import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
-import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.not_found.AdoptionFormNotFoundException;
+import com.petadoption.center.exception.not_found.PetNotFoundException;
+import com.petadoption.center.exception.not_found.UserNotFoundException;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
@@ -18,10 +18,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
@@ -50,7 +54,7 @@ public class AdoptionFormControllerTest {
 
     @Test
     @DisplayName("Test if get all adoption forms works correctly")
-    void testGetAllAdoptionForms() {
+    void testGetAll() {
 
         adoptionFormGetDto = new AdoptionFormGetDto(
                 "1111-1111-2222",
@@ -60,84 +64,86 @@ public class AdoptionFormControllerTest {
                 "Neighbour",
                 true,
                 "Other Notes",
-                address
+                address,
+                LocalDateTime.now()
         );
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<AdoptionFormGetDto> listOfAdoptionForms = List.of(adoptionFormGetDto);
 
-        when(adoptionFormServiceI.getAllAdoptionForms(page, size, sortBy)).thenReturn(listOfAdoptionForms);
+        when(adoptionFormServiceI.getAll(pageable)).thenReturn(listOfAdoptionForms);
 
-        ResponseEntity<List<AdoptionFormGetDto>> response = adoptionFormController.getAllAdoptionForms(page, size, sortBy);
+        ResponseEntity<List<AdoptionFormGetDto>> response = adoptionFormController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(listOfAdoptionForms, response.getBody());
 
-        verify(adoptionFormServiceI).getAllAdoptionForms(page, size, sortBy);
+        verify(adoptionFormServiceI).getAll(pageable);
     }
 
     @Test
     @DisplayName("Test if get adoption form by id works correctly")
-    void testGetAdoptionFormById() throws AdoptionFormNotFoundException {
+    void testGetById() throws AdoptionFormNotFoundException {
 
         String id = "1111-1111-2222";
 
-        when(adoptionFormServiceI.getAdoptionFormById(id)).thenReturn(adoptionFormGetDto);
+        when(adoptionFormServiceI.getById(id)).thenReturn(adoptionFormGetDto);
 
-        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.getAdoptionFormById(id);
+        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.getById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(adoptionFormGetDto, response.getBody());
 
-        verify(adoptionFormServiceI).getAdoptionFormById(id);
+        verify(adoptionFormServiceI).getById(id);
     }
 
     @Test
     @DisplayName("Test if add new adoption form works correctly")
     void testAddAdoptionForm() throws UserNotFoundException, PetNotFoundException {
 
-       when(adoptionFormServiceI.addNewAdoptionForm(adoptionFormCreateDto)).thenReturn(adoptionFormGetDto);
+       when(adoptionFormServiceI.create(adoptionFormCreateDto)).thenReturn(adoptionFormGetDto);
 
-       ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.addNewAdoptionForm(adoptionFormCreateDto);
+       ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.create(adoptionFormCreateDto);
 
        assertEquals(HttpStatus.CREATED, response.getStatusCode());
        assertEquals(adoptionFormGetDto, response.getBody());
 
-       verify(adoptionFormServiceI).addNewAdoptionForm(adoptionFormCreateDto);
+       verify(adoptionFormServiceI).create(adoptionFormCreateDto);
     }
 
     @Test
     @DisplayName("Test if update adoption form works correctly")
-    void testUpdateAdoptionForm() throws AdoptionFormNotFoundException {
+    void testUpdate() throws AdoptionFormNotFoundException {
 
         String id = "1111-1111-2222";
 
-        when(adoptionFormServiceI.updateAdoptionForm(id, adoptionFormUpdateDto)).thenReturn(adoptionFormGetDto);
+        when(adoptionFormServiceI.update(id, adoptionFormUpdateDto)).thenReturn(adoptionFormGetDto);
 
-        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.updateAdoptionForm(id, adoptionFormUpdateDto);
+        ResponseEntity<AdoptionFormGetDto> response = adoptionFormController.update(id, adoptionFormUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(adoptionFormGetDto, response.getBody());
 
-        verify(adoptionFormServiceI).updateAdoptionForm(id, adoptionFormUpdateDto);
+        verify(adoptionFormServiceI).update(id, adoptionFormUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete adoption form works correctly")
-    void testDeleteAdoptionForm() throws AdoptionFormNotFoundException {
+    void testDelete() throws AdoptionFormNotFoundException {
 
         String id = "1111-1111-2222";
 
-        when(adoptionFormServiceI.deleteAdoptionForm(id)).thenReturn(USER_WITH_ID + id + DELETE_SUCCESS);
+        when(adoptionFormServiceI.delete(id)).thenReturn(USER_WITH_ID + id + DELETE_SUCCESS);
 
-        ResponseEntity<String> response = adoptionFormController.deleteAdoptionForm(id);
+        ResponseEntity<String> response = adoptionFormController.delete(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(USER_WITH_ID + id + DELETE_SUCCESS, response.getBody());
 
-        verify(adoptionFormServiceI).deleteAdoptionForm(id);
+        verify(adoptionFormServiceI).delete(id);
     }
 }

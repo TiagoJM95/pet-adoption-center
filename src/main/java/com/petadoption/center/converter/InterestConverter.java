@@ -10,7 +10,7 @@ public class InterestConverter {
                 .id(interest.getId())
                 .userDto(UserConverter.toDto(interest.getUser()))
                 .petDto(PetConverter.toDto(interest.getPet()))
-                .organizationDto(OrgConverter.toDto(interest.getOrganization()))
+                .organizationDto(OrganizationConverter.toDto(interest.getOrganization()))
                 .status(interest.getStatus())
                 .timestamp(interest.getCreatedAt())
                 .reviewTimestamp(interest.getReviewTimestamp())

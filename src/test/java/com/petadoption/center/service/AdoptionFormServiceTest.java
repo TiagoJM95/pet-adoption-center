@@ -3,9 +3,9 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
-import com.petadoption.center.exception.adoptionform.AdoptionFormNotFoundException;
-import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.not_found.AdoptionFormNotFoundException;
+import com.petadoption.center.exception.not_found.PetNotFoundException;
+import com.petadoption.center.exception.not_found.UserNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.repository.AdoptionFormRepository;
 import com.petadoption.center.service.interfaces.PetServiceI;
@@ -17,10 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -54,6 +51,7 @@ public class AdoptionFormServiceTest {
     private static AdoptionFormGetDto adoptionFormGetDto;
     private static AdoptionFormCreateDto adoptionFormCreateDto;
     private static AdoptionFormUpdateDto adoptionFormUpdateDto;
+    private static Pageable pageable;
 
 
     @BeforeAll
@@ -62,19 +60,21 @@ public class AdoptionFormServiceTest {
         adoptionFormGetDto = adoptionFormGetDto();
         adoptionFormCreateDto = adoptionFormCreateDto();
         adoptionFormUpdateDto = adoptionFormUpdateDto();
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test it getAllAdoptionForms works correctly")
-    void testGetAllAdoptionFormsReturnsListOfAdoptionForms() {
-
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "createdAt");
+    void testGetAllAdoptionFormsReturnsListOf() {
 
         Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of(testAdoptionForm));
 
-        when(adoptionFormRepository.findAll(pageRequest)).thenReturn(adoptionFormPage);
+        when(adoptionFormRepository.findAll(pageable)).thenReturn(adoptionFormPage);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAllAdoptionForms(0, 10, "createdAt");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testAdoptionForm.getId(), result.getFirst().id());
@@ -82,33 +82,31 @@ public class AdoptionFormServiceTest {
 
     @Test
     @DisplayName("Test if get all adoption forms return an empty list when repository has no entries")
-    void testGetAllAdoptionFormsReturnsEmpty(){
+    void testGetAllReturnsEmpty(){
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of());
 
-        when(adoptionFormRepository.findAll(pageRequest)).thenReturn(adoptionFormPage);
+        when(adoptionFormRepository.findAll(pageable)).thenReturn(adoptionFormPage);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAllAdoptionForms(0,10,"id");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
 
     @Test
     @DisplayName("Test if get all adoption forms with page size 2 returns 2 entries")
-    void testGetAllAdoptionFormsWithPageSize2Returns2Entries(){
+    void testGetAllWithPageSize2Returns2Entries(){
 
         AdoptionForm adoptionForm1 = new AdoptionForm();
         AdoptionForm adoptionForm2 = new AdoptionForm();
         AdoptionForm adoptionForm3 = new AdoptionForm();
 
         List<AdoptionForm> adoptionFormList = List.of(adoptionForm1, adoptionForm2, adoptionForm3);
-        PageRequest pageRequest = PageRequest.of(0, 2, Sort.Direction.ASC, "createdAt");
-        Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of(adoptionForm1, adoptionForm2), pageRequest, adoptionFormList.size());
+        Page<AdoptionForm> adoptionFormPage = new PageImpl<>(List.of(adoptionForm1, adoptionForm2), pageable, adoptionFormList.size());
 
-        when(adoptionFormRepository.findAll(pageRequest)).thenReturn(adoptionFormPage);
+        when(adoptionFormRepository.findAll(pageable)).thenReturn(adoptionFormPage);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAllAdoptionForms(0,2,"createdAt");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertFalse(result.size() > 2);
@@ -116,7 +114,7 @@ public class AdoptionFormServiceTest {
 
     @Test
     @DisplayName("Test if get all adoption forms return with descending order")
-    void getAllAdoptionFormsShouldReturnAdoptionFormsInDescendingOrder(){
+    void getAllAdoptionFormsShouldReturnInDescendingOrder(){
 
         AdoptionForm adoptionForm1 = new AdoptionForm();
         adoptionForm1.setOtherNotes("1");
@@ -126,12 +124,11 @@ public class AdoptionFormServiceTest {
         adoptionForm3.setOtherNotes("3");
 
         List<AdoptionForm> adoptionFormList = List.of(adoptionForm1, adoptionForm2, adoptionForm3);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "otherNotes"));
-        Page<AdoptionForm> pagedUsers = new PageImpl<>(adoptionFormList.reversed(), pageRequest, adoptionFormList.size());
+        Page<AdoptionForm> pagedUsers = new PageImpl<>(adoptionFormList.reversed(), pageable, adoptionFormList.size());
 
         when(adoptionFormRepository.findAll(any(PageRequest.class))).thenReturn(pagedUsers);
 
-        List<AdoptionFormGetDto> result = adoptionFormService.getAllAdoptionForms(0,3,"otherNotes");
+        List<AdoptionFormGetDto> result = adoptionFormService.getAll(pageable);
 
         assertNotNull(result);
         assertEquals(3, result.size());
@@ -142,11 +139,11 @@ public class AdoptionFormServiceTest {
 
     @Test
     @DisplayName("Test if get AdoptionForm by id works correctly")
-    void testGetAdoptionFormById() throws AdoptionFormNotFoundException {
+    void testGetById() throws AdoptionFormNotFoundException {
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.of(testAdoptionForm));
 
-        AdoptionFormGetDto result = adoptionFormService.getAdoptionFormById(testAdoptionForm.getId());
+        AdoptionFormGetDto result = adoptionFormService.getById(testAdoptionForm.getId());
 
         assertEquals(testAdoptionForm.getId(), result.id());
     }
@@ -157,7 +154,7 @@ public class AdoptionFormServiceTest {
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.empty());
 
-        assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.getAdoptionFormById(testAdoptionForm.getId()));
+        assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.getById(testAdoptionForm.getId()));
     }
 
     @Test
@@ -166,7 +163,7 @@ public class AdoptionFormServiceTest {
 
         when(adoptionFormRepository.save(any(AdoptionForm.class))).thenReturn(testAdoptionForm);
 
-        AdoptionFormGetDto result = adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto);
+        AdoptionFormGetDto result = adoptionFormService.create(adoptionFormCreateDto);
 
         assertEquals(adoptionFormGetDto, result);
     }
@@ -177,9 +174,9 @@ public class AdoptionFormServiceTest {
 
         String exceptionMessage = adoptionFormCreateDto.userId();
 
-        when(userServiceI.getUserById(anyString())).thenThrow(new UserNotFoundException(exceptionMessage));
+        when(userServiceI.getById(anyString())).thenThrow(new UserNotFoundException(exceptionMessage));
 
-        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto));
+        UserNotFoundException exception = assertThrows(UserNotFoundException.class, () -> adoptionFormService.create(adoptionFormCreateDto));
 
         assertEquals(exceptionMessage, exception.getMessage());
         verify(adoptionFormRepository, never()).save(any(AdoptionForm.class));
@@ -191,9 +188,9 @@ public class AdoptionFormServiceTest {
 
         String exceptionMessage = PET_WITH_ID + adoptionFormCreateDto.petId() + NOT_FOUND;
 
-        when(petServiceI.getPetById(anyString())).thenThrow(new PetNotFoundException(exceptionMessage));
+        when(petServiceI.getById(anyString())).thenThrow(new PetNotFoundException(exceptionMessage));
 
-        PetNotFoundException exception = assertThrows(PetNotFoundException.class, () -> adoptionFormService.addNewAdoptionForm(adoptionFormCreateDto));
+        PetNotFoundException exception = assertThrows(PetNotFoundException.class, () -> adoptionFormService.create(adoptionFormCreateDto));
 
         assertEquals(exceptionMessage, exception.getMessage());
         verify(adoptionFormRepository, never()).save(any(AdoptionForm.class));
@@ -201,14 +198,14 @@ public class AdoptionFormServiceTest {
 
     @Test
     @DisplayName("Test if update AdoptionForm saves all fields and returns AdoptionFormGetDto")
-    void testUpdateAdoptionFormShouldSaveAllFieldsAndReturnAdoptionFormGetDto() throws AdoptionFormNotFoundException {
+    void testUpdateAdoptionFormShouldSaveAllFieldsAndReturnGetDto() throws AdoptionFormNotFoundException {
 
         AdoptionForm updatedAdoptionForm = createAdoptionForm();
         updatedAdoptionForm.setPetVacationHome("Pet Hotel");
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.of(testAdoptionForm));
         when(adoptionFormRepository.save(any(AdoptionForm.class))).thenReturn(updatedAdoptionForm);
-        AdoptionFormGetDto result = adoptionFormService.updateAdoptionForm(testAdoptionForm.getId(), adoptionFormUpdateDto);
+        AdoptionFormGetDto result = adoptionFormService.update(testAdoptionForm.getId(), adoptionFormUpdateDto);
 
         assertNotNull(adoptionFormUpdateDto);
         assertEquals(adoptionFormUpdateDto.petVacationHome(), result.petVacationHome());
@@ -216,28 +213,28 @@ public class AdoptionFormServiceTest {
 
     @Test
     @DisplayName("Test if update AdoptionForm throws AdoptionFormNotFound exception when there is no AdoptionForm")
-    void testUpdateAdoptionFormThrowsAdoptionFormNotFoundException(){
+    void testUpdateAdoptionFormThrowsNotFoundException(){
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.empty());
 
-        assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.updateAdoptionForm(testAdoptionForm.getId(), adoptionFormUpdateDto));
+        assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.update(testAdoptionForm.getId(), adoptionFormUpdateDto));
     }
 
     @Test
     @DisplayName("Test if delete AdoptionForm works correctly and returns message")
-    void testDeleteAdoptionFormAndReturnConfirmationMessage() throws AdoptionFormNotFoundException {
+    void testDeleteAndReturnConfirmationMessage() throws AdoptionFormNotFoundException {
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.of(testAdoptionForm));
 
-        assertEquals(adoptionFormService.deleteAdoptionForm(testAdoptionForm.getId()), ADOPTION_FORM_WITH_ID + testAdoptionForm.getId() + DELETE_SUCCESS);
+        assertEquals(adoptionFormService.delete(testAdoptionForm.getId()), ADOPTION_FORM_WITH_ID + testAdoptionForm.getId() + DELETE_SUCCESS);
     }
 
     @Test
     @DisplayName("Test if delete AdoptionForm throws AdoptionFormNotFound exception when there is no AdoptionForm")
-    void testDeleteAdoptionFormThrowsAdoptionFormNotFoundException(){
+    void testDeleteAdoptionFormThrowsNotFoundException(){
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.empty());
 
-        assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.deleteAdoptionForm(testAdoptionForm.getId()));
+        assertThrows(AdoptionFormNotFoundException.class, () -> adoptionFormService.delete(testAdoptionForm.getId()));
     }
 }

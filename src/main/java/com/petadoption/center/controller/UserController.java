@@ -4,11 +4,11 @@ import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.user.UserNotFoundException;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,50 +20,50 @@ import java.util.Set;
 @RequestMapping("/api/v1/user")
 public class UserController {
 
+    private final UserServiceI userServiceI;
+
     @Autowired
-    private UserServiceI userServiceI;
+    public UserController(UserServiceI userServiceI) {
+        this.userServiceI = userServiceI;
+    }
 
     @GetMapping("/")
-    public ResponseEntity<List<UserGetDto>> getAllUsers(@RequestParam (defaultValue = "0", required = false) int page,
-                                                        @RequestParam (defaultValue = "5", required = false) int size,
-                                                        @RequestParam (defaultValue = "id", required = false) String sortBy) {
-        return new ResponseEntity<>(userServiceI.getAllUsers(page, size, sortBy), HttpStatus.OK);
+    public ResponseEntity<List<UserGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
+        return new ResponseEntity<>(userServiceI.getAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<UserGetDto> getUserById(@PathVariable("id") String id) throws UserNotFoundException {
-        return new ResponseEntity<>(userServiceI.getUserById(id), HttpStatus.OK);
+    public ResponseEntity<UserGetDto> getById(@PathVariable("id") String id) {
+        return new ResponseEntity<>(userServiceI.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<UserGetDto> addNewUser(@Valid @RequestBody UserCreateDto dto) {
-        return new ResponseEntity<>(userServiceI.addNewUser(dto), HttpStatus.CREATED);
+    public ResponseEntity<UserGetDto> create(@Valid @RequestBody UserCreateDto dto) {
+        return new ResponseEntity<>(userServiceI.create(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<UserGetDto> updateUser(@PathVariable ("id") String id, @Valid @RequestBody UserUpdateDto dto) throws UserNotFoundException {
-        return new ResponseEntity<>(userServiceI.updateUser(id, dto), HttpStatus.OK);
+    public ResponseEntity<UserGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody UserUpdateDto dto) {
+        return new ResponseEntity<>(userServiceI.update(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable ("id") String id) throws UserNotFoundException {
-        return new ResponseEntity<>(userServiceI.deleteUser(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@PathVariable ("id") String id) {
+        return new ResponseEntity<>(userServiceI.delete(id), HttpStatus.OK);
     }
 
     @PostMapping("/addPetToFavorites/{userId}/{petId}")
-    public ResponseEntity<String> addPetToFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) throws UserNotFoundException,
-            PetNotFoundException {
+    public ResponseEntity<String> addPetToFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) {
         return new ResponseEntity<>(userServiceI.addPetToFavorites(userId, petId), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/removePetFromFavorites/{userId}/{petId}")
-    public ResponseEntity<String> removePetFromFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) throws UserNotFoundException,
-            PetNotFoundException {
+    public ResponseEntity<String> removePetFromFavorites(@PathVariable("userId") String userId, @PathVariable("petId") String petId) {
         return new ResponseEntity<>(userServiceI.removePetFromFavorites(userId, petId), HttpStatus.ACCEPTED);
     }
 
     @GetMapping("/getFavoritePets/{userId}")
-    public ResponseEntity<Set<PetGetDto>> getFavoritePets(@PathVariable("userId") String userId) throws UserNotFoundException {
+    public ResponseEntity<Set<PetGetDto>> getFavoritePets(@PathVariable("userId") String userId) {
         return new ResponseEntity<>(userServiceI.getFavoritePets(userId), HttpStatus.OK);
     }
 }

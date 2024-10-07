@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class BreedControllerTest {
     @Test
     @DisplayName("Test if get all breeds works correctly")
     @DirtiesContext
-    void getAllBreeds() throws Exception {
+    void getAll() throws Exception {
 
         createBreed();
 
@@ -82,7 +83,7 @@ public class BreedControllerTest {
         mockMvc.perform(get("/api/v1/breed/")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sortBy", "id")
+                        .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
@@ -93,7 +94,7 @@ public class BreedControllerTest {
     @Test
     @DisplayName("Test if get breed by id works correctly")
     @DirtiesContext
-    void getBreedById() throws Exception {
+    void getById() throws Exception {
 
         createBreed();
 
@@ -109,7 +110,7 @@ public class BreedControllerTest {
     @Test
     @DisplayName("Test if update breed works correctly")
     @DirtiesContext
-    void updateBreed() throws Exception {
+    void update() throws Exception {
 
         createBreed();
 
@@ -123,11 +124,11 @@ public class BreedControllerTest {
     @Test
     @DisplayName("Test if delete breed works correctly")
     @DirtiesContext
-    void deleteBreed() throws Exception {
+    void delete() throws Exception {
 
         createBreed();
 
-        mockMvc.perform(delete("/api/v1/breed/delete/{id}",breedGetDto.id())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/breed/delete/{id}",breedGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(BREED_WITH_ID + breedGetDto.id() + DELETE_SUCCESS));

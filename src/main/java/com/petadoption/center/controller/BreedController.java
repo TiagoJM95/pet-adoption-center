@@ -3,11 +3,11 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
-import com.petadoption.center.exception.breed.BreedNotFoundException;
-import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.service.interfaces.BreedServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,41 +18,40 @@ import java.util.List;
 @RequestMapping("/api/v1/breed")
 public class BreedController {
 
+    private final BreedServiceI breedServiceI;
+
     @Autowired
-    private BreedServiceI breedServiceI;
+    public BreedController(BreedServiceI breedServiceI) {
+        this.breedServiceI = breedServiceI;
+    }
 
     @GetMapping("/")
-    public ResponseEntity<List<BreedGetDto>> getAllBreeds(@RequestParam (defaultValue = "0", required = false) int page,
-                                                          @RequestParam (defaultValue = "5", required = false) int size,
-                                                          @RequestParam (defaultValue = "id", required = false) String sortBy){
-        return new ResponseEntity<>(breedServiceI.getAllBreeds(page, size, sortBy), HttpStatus.OK);
+    public ResponseEntity<List<BreedGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
+        return new ResponseEntity<>(breedServiceI.getAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<BreedGetDto> getBreedById(@PathVariable("id") String id) throws BreedNotFoundException {
-        return new ResponseEntity<>(breedServiceI.getBreedById(id), HttpStatus.OK);
+    public ResponseEntity<BreedGetDto> getById(@PathVariable("id") String id) {
+        return new ResponseEntity<>(breedServiceI.getById(id), HttpStatus.OK);
     }
 
-    @GetMapping("/species/{species}")
-    public ResponseEntity<List<BreedGetDto>> getBreedsBySpecies(@PathVariable("species") String species)
-            throws SpeciesNotFoundException {
-        return new ResponseEntity<>(breedServiceI.getBreedsBySpecies(species), HttpStatus.OK);
+    @GetMapping("/species/{speciesName}")
+    public ResponseEntity<List<BreedGetDto>> getBySpecies(@PathVariable("speciesName") String speciesName) {
+        return new ResponseEntity<>(breedServiceI.getBySpecies(speciesName), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<BreedGetDto> addNewBreed(@Valid @RequestBody BreedCreateDto dto)
-            throws SpeciesNotFoundException {
-        return new ResponseEntity<>(breedServiceI.addNewBreed(dto), HttpStatus.CREATED);
+    public ResponseEntity<BreedGetDto> create(@Valid @RequestBody BreedCreateDto dto) {
+        return new ResponseEntity<>(breedServiceI.create(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<BreedGetDto> updateBreed(@PathVariable ("id") String id, @Valid @RequestBody BreedUpdateDto dto)
-            throws BreedNotFoundException {
-        return new ResponseEntity<>(breedServiceI.updateBreed(id, dto), HttpStatus.OK);
+    public ResponseEntity<BreedGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody BreedUpdateDto dto) {
+        return new ResponseEntity<>(breedServiceI.update(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> deleteBreed(@PathVariable ("id") String id) throws BreedNotFoundException {
-        return new ResponseEntity<>(breedServiceI.deleteBreed(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@PathVariable ("id") String id) {
+        return new ResponseEntity<>(breedServiceI.delete(id), HttpStatus.OK);
     }
 }

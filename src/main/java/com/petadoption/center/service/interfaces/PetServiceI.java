@@ -3,26 +3,16 @@ package com.petadoption.center.service.interfaces;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
-import com.petadoption.center.exception.breed.BreedMismatchException;
-import com.petadoption.center.exception.breed.BreedNotFoundException;
-import com.petadoption.center.exception.color.ColorNotFoundException;
-import com.petadoption.center.exception.organization.OrgNotFoundException;
-import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.species.SpeciesNotFoundException;
 import com.petadoption.center.specifications.PetSearchCriteria;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface PetServiceI {
-    PetGetDto getPetById(String id) throws PetNotFoundException;
-
-    List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, int page, int size, String sortBy);
-
-    PetGetDto addNewPet(PetCreateDto pet) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException;
-
-    void addListOfNewPets(List<PetCreateDto> pets) throws OrgNotFoundException, SpeciesNotFoundException, ColorNotFoundException, BreedNotFoundException, BreedMismatchException;
-
-    PetGetDto updatePet(String id, PetUpdateDto pet) throws PetNotFoundException, OrgNotFoundException;
-
-    String deletePet(String id) throws PetNotFoundException;
+    PetGetDto getById(String id);
+    List<PetGetDto> searchPets(PetSearchCriteria searchCriteria, Pageable pageable);
+    PetGetDto create(PetCreateDto dto);
+    String createFromList(List<PetCreateDto> dtoList);
+    PetGetDto update(String id, PetUpdateDto dto);
+    String delete(String id);
 }

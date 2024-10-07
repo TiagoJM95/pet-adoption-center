@@ -36,7 +36,8 @@ public class PetConverter {
                 .imageUrl(dto.imageUrl())
                 .isAdopted(dto.isAdopted())
                 .attributes(dto.attributes())
-                .organization(OrgConverter.toModel(dto.organizationDto()))
+                .organization(OrganizationConverter.toModel(dto.organizationDto()))
+                .createdAt(dto.createdAt())
                 .build();
     }
     
@@ -60,7 +61,7 @@ public class PetConverter {
                 .isAdopted(pet.isAdopted())
                 .attributes(pet.getAttributes())
                 .createdAt(pet.getCreatedAt())
-                .organizationDto(OrgConverter.toDto(pet.getOrganization()))
+                .organizationDto(OrganizationConverter.toDto(pet.getOrganization()))
                 .build();
     }
 }
