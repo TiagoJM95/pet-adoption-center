@@ -2,7 +2,7 @@ package com.petadoption.center.converter;
 
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
@@ -57,7 +57,7 @@ public class PetConverterTest {
     ColorGetDto primaryColorDto;
     ColorGetDto secondaryColorDto;
     ColorGetDto tertiaryColorDto;
-    OrgGetDto organizationDto;
+    OrganizationGetDto organizationDto;
 
     @BeforeEach
     void setUp(){

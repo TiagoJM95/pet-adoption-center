@@ -1,13 +1,13 @@
 package com.petadoption.center.converter;
 
-import com.petadoption.center.dto.organization.OrgCreateDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrganizationCreateDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.model.Organization;
 
 
-public class OrgConverter {
+public class OrganizationConverter {
 
-    public static Organization toModel(OrgCreateDto dto) {
+    public static Organization toModel(OrganizationCreateDto dto) {
         if (dto == null) return null;
         return Organization.builder().
                 name(dto.name()).
@@ -20,7 +20,7 @@ public class OrgConverter {
                 build();
     }
 
-    public static Organization toModel(OrgGetDto dto) {
+    public static Organization toModel(OrganizationGetDto dto) {
         if (dto == null) return null;
         return Organization.builder().
                 id(dto.id()).
@@ -34,9 +34,9 @@ public class OrgConverter {
                 build();
     }
 
-    public static OrgGetDto toDto(Organization org) {
+    public static OrganizationGetDto toDto(Organization org) {
         if (org == null) return null;
-        return new OrgGetDto(
+        return new OrganizationGetDto(
                 org.getId(),
                 org.getName(),
                 org.getEmail(),

@@ -1,69 +1,67 @@
 package com.petadoption.center.service;
 
-import com.petadoption.center.converter.OrgConverter;
-import com.petadoption.center.dto.organization.OrgCreateDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
-import com.petadoption.center.dto.organization.OrgUpdateDto;
+import com.petadoption.center.converter.OrganizationConverter;
+import com.petadoption.center.dto.organization.OrganizationCreateDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
+import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
 import com.petadoption.center.model.Organization;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
+import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static com.petadoption.center.util.Messages.*;
-import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class OrganizationService implements OrganizationServiceI {
 
     @Autowired
-    private OrganizationRepository orgRepository;
+    private OrganizationRepository organizationRepository;
 
     @Override
-    public List<OrgGetDto> getAllOrganizations(int page, int size, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return orgRepository.findAll(pageRequest).stream().map(OrgConverter::toDto).toList();
+    public List<OrganizationGetDto> getAll(Pageable pageable) {
+        return organizationRepository.findAll(pageable).stream().map(OrganizationConverter::toDto).toList();
     }
 
     @Override
-    public OrgGetDto getOrganizationById(String id) throws OrganizationNotFoundException {
-        return OrgConverter.toDto(findOrgById(id));
+    public OrganizationGetDto getById(String id) {
+        return OrganizationConverter.toDto(findById(id));
     }
 
     @Override
-    public OrgGetDto addNewOrganization(OrgCreateDto dto) {
-        return OrgConverter.toDto(orgRepository.save(OrgConverter.toModel(dto)));
+    public OrganizationGetDto create(OrganizationCreateDto dto) {
+        return OrganizationConverter.toDto(organizationRepository.save(OrganizationConverter.toModel(dto)));
     }
 
     @Override
-    public OrgGetDto updateOrganization(String id, OrgUpdateDto dto) throws OrganizationNotFoundException {
-        Organization org = findOrgById(id);
-        updateOrgFields(dto, org);
-        return OrgConverter.toDto(orgRepository.save(org));
+    public OrganizationGetDto update(String id, OrganizationUpdateDto dto) {
+        Organization org = findById(id);
+        updateFields(dto,org);
+        return OrganizationConverter.toDto(organizationRepository.save(org));
     }
 
     @Override
-    public String deleteOrganization(String id) throws OrganizationNotFoundException {
-        findOrgById(id);
-        orgRepository.deleteById(id);
+    public String delete(String id) {
+        findById(id);
+        organizationRepository.deleteById(id);
         return ORG_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Organization findOrgById(String id) throws OrganizationNotFoundException {
-        return orgRepository.findById(id).orElseThrow(() -> new OrganizationNotFoundException(ORG_WITH_ID + id + NOT_FOUND));
+    private Organization findById(String id) {
+        return organizationRepository.findById(id).orElseThrow(() -> new OrganizationNotFoundException(ORG_WITH_ID + id + NOT_FOUND));
     }
 
-    private void updateOrgFields(OrgUpdateDto dto, Organization org) {
-        updateFields(dto.name(), org.getName(), org::setName);
-        updateFields(dto.email(), org.getEmail(), org::setEmail);
-        updateFields(dto.phoneNumber(), org.getPhoneNumber(), org::setPhoneNumber);
-        updateFields(dto.websiteUrl(), org.getWebsiteUrl(), org::setWebsiteUrl);
-        updateFields(dto.socialMedia(), org.getSocialMedia(), org::setSocialMedia);
-        updateFields(dto.address(), org.getAddress(), org::setAddress);
+    private void updateFields(OrganizationUpdateDto dto, Organization organization) {
+        Utils.updateFields(dto.name(), organization.getName(), organization::setName);
+        Utils.updateFields(dto.email(), organization.getEmail(), organization::setEmail);
+        Utils.updateFields(dto.phoneNumber(), organization.getPhoneNumber(), organization::setPhoneNumber);
+        Utils.updateFields(dto.websiteUrl(), organization.getWebsiteUrl(), organization::setWebsiteUrl);
+        Utils.updateFields(dto.socialMedia(), organization.getSocialMedia(), organization::setSocialMedia);
+        Utils.updateFields(dto.address(), organization.getAddress(), organization::setAddress);
     }
 }

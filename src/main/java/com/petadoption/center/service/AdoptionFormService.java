@@ -7,8 +7,6 @@ import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
 import com.petadoption.center.exception.not_found.AdoptionFormNotFoundException;
-import com.petadoption.center.exception.not_found.PetNotFoundException;
-import com.petadoption.center.exception.not_found.UserNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.User;
@@ -16,10 +14,9 @@ import com.petadoption.center.repository.AdoptionFormRepository;
 import com.petadoption.center.service.interfaces.AdoptionFormServiceI;
 import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
+import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,7 +24,6 @@ import java.util.List;
 import static com.petadoption.center.converter.AdoptionFormConverter.toDto;
 import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Utils.updateFields;
 
 @Service
 public class AdoptionFormService implements AdoptionFormServiceI {
@@ -50,7 +46,7 @@ public class AdoptionFormService implements AdoptionFormServiceI {
 
     @Override
     public AdoptionFormGetDto getById(String id) {
-        return toDto(findAdoptionFormById(id));
+        return toDto(findById(id));
     }
 
     @Override
@@ -61,19 +57,19 @@ public class AdoptionFormService implements AdoptionFormServiceI {
 
     @Override
     public AdoptionFormGetDto update(String id, AdoptionFormUpdateDto dto) {
-        AdoptionForm adoptionForm = findAdoptionFormById(id);
-        updateAdoptionFormFields(dto, adoptionForm);
+        AdoptionForm adoptionForm = findById(id);
+        updateFields(dto, adoptionForm);
         return toDto(adoptionFormRepository.save(adoptionForm));
     }
 
     @Override
     public String delete(String id) {
-        findAdoptionFormById(id);
+        findById(id);
         adoptionFormRepository.deleteById(id);
         return ADOPTION_FORM_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private AdoptionForm findAdoptionFormById(String id) {
+    private AdoptionForm findById(String id) {
         return adoptionFormRepository.findById(id).orElseThrow(() -> new AdoptionFormNotFoundException(id));
     }
 
@@ -87,11 +83,11 @@ public class AdoptionFormService implements AdoptionFormServiceI {
        return adoptionForm;
     }
 
-    private void updateAdoptionFormFields(AdoptionFormUpdateDto dto, AdoptionForm adoptionForm) {
-        updateFields(dto.userFamily(), adoptionForm.getUserFamily(), adoptionForm::setUserFamily);
-        updateFields(dto.petVacationHome(), adoptionForm.getPetVacationHome(), adoptionForm::setPetVacationHome);
-        updateFields(dto.isResponsibleForPet(), adoptionForm.getIsResponsibleForPet(), adoptionForm::setIsResponsibleForPet);
-        updateFields(dto.otherNotes(), adoptionForm.getOtherNotes(), adoptionForm::setOtherNotes);
-        updateFields(dto.petAddress(), adoptionForm.getPetAddress(), adoptionForm::setPetAddress);
+    private void updateFields(AdoptionFormUpdateDto dto, AdoptionForm adoptionForm) {
+        Utils.updateFields(dto.userFamily(), adoptionForm.getUserFamily(), adoptionForm::setUserFamily);
+        Utils.updateFields(dto.petVacationHome(), adoptionForm.getPetVacationHome(), adoptionForm::setPetVacationHome);
+        Utils.updateFields(dto.isResponsibleForPet(), adoptionForm.getIsResponsibleForPet(), adoptionForm::setIsResponsibleForPet);
+        Utils.updateFields(dto.otherNotes(), adoptionForm.getOtherNotes(), adoptionForm::setOtherNotes);
+        Utils.updateFields(dto.petAddress(), adoptionForm.getPetAddress(), adoptionForm::setPetAddress);
     }
 }

@@ -32,7 +32,7 @@ public class ColorService implements ColorServiceI {
 
     @Override
     public ColorGetDto getById(String id) {
-        return ColorConverter.toDto(findColorById(id));
+        return ColorConverter.toDto(findById(id));
     }
 
     @Override
@@ -42,12 +42,12 @@ public class ColorService implements ColorServiceI {
 
     @Override
     public String delete(String id) {
-        findColorById(id);
+        findById(id);
         colorRepository.deleteById(id);
         return COLOR_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private Color findColorById(String id) {
+    private Color findById(String id) {
         return colorRepository.findById(id).orElseThrow(
                 () -> new ColorNotFoundException(COLOR_WITH_ID + id + NOT_FOUND));
     }

@@ -5,7 +5,7 @@ import com.petadoption.center.model.embeddable.SocialMedia;
 import lombok.Builder;
 
 @Builder
-public record OrgGetDto(
+public record OrganizationGetDto(
         String id,
         String name,
         String email,

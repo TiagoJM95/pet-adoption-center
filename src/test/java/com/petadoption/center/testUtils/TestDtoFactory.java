@@ -8,8 +8,8 @@ import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.dto.organization.OrgCreateDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrganizationCreateDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
@@ -76,8 +76,8 @@ public class TestDtoFactory {
                 .build();
     }
 
-    public static OrgGetDto orgGetDto() {
-        return OrgGetDto.builder()
+    public static OrganizationGetDto orgGetDto() {
+        return OrganizationGetDto.builder()
                 .id("777777-77777777-7777")
                 .name("Pet Adoption Center")
                 .email("org@email.com")
@@ -191,8 +191,8 @@ public class TestDtoFactory {
                 .build();
     }
 
-    public static OrgCreateDto orgCreateDto(){
-        return OrgCreateDto.builder()
+    public static OrganizationCreateDto orgCreateDto(){
+        return OrganizationCreateDto.builder()
                 .name("Pet Adoption Center")
                 .email("org@email.com")
                 .nif("123456789")

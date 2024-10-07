@@ -104,16 +104,16 @@ public class PetService implements PetServiceI {
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
 
         pet.setSpecies(species);
-        pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getBreedById(dto.primaryBreedId())));
+        pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getById(dto.primaryBreedId())));
         pet.setSecondaryBreed(getBreedOrNull(dto.secondaryBreedId(), species));
-        pet.setPrimaryColor(ColorConverter.toModel(colorServiceI.getColorById(dto.primaryColor())));
+        pet.setPrimaryColor(ColorConverter.toModel(colorServiceI.getById(dto.primaryColor())));
         pet.setSecondaryColor(getColorOrNull(dto.secondaryColor()));
         pet.setTertiaryColor(getColorOrNull(dto.tertiaryColor()));
         pet.setGender(convertStringToEnum(dto.gender(), Genders.class));
         pet.setCoat(convertStringToEnum(dto.coat(), Coats.class));
         pet.setSize(convertStringToEnum(dto.size(), Sizes.class));
         pet.setAge(convertStringToEnum(dto.age(), Ages.class));
-        pet.setOrganization(OrgConverter.toModel(organizationServiceI.getOrganizationById(dto.organizationId())));
+        pet.setOrganization(OrganizationConverter.toModel(organizationServiceI.getById(dto.organizationId())));
         return pet;
     }
 
@@ -141,7 +141,7 @@ public class PetService implements PetServiceI {
     }
 
     private void updatePetFields(PetUpdateDto dto, Pet pet) throws OrganizationNotFoundException {
-        Organization org = OrgConverter.toModel(organizationServiceI.getOrganizationById(dto.organizationId()));
+        Organization org = OrganizationConverter.toModel(organizationServiceI.getById(dto.organizationId()));
 
         updateFields(convertStringToEnum(dto.size(), Sizes.class), pet.getSize(), pet::setSize);
         updateFields(convertStringToEnum(dto.age(), Ages.class), pet.getAge(), pet::setAge);
@@ -153,10 +153,10 @@ public class PetService implements PetServiceI {
     }
 
     private Color getColorOrNull(String colorId) throws ColorNotFoundException {
-        return colorId == null ? null : ColorConverter.toModel(colorServiceI.getColorById(colorId));
+        return colorId == null ? null : ColorConverter.toModel(colorServiceI.getById(colorId));
     }
 
     private Breed getBreedOrNull(String breedId, Species species) throws BreedNotFoundException {
-        return breedId == null ? null : BreedConverter.toModel(breedServiceI.getBreedById(breedId));
+        return breedId == null ? null : BreedConverter.toModel(breedServiceI.getById(breedId));
     }
 }

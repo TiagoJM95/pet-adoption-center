@@ -1,12 +1,13 @@
 package com.petadoption.center.controller;
 
-import com.petadoption.center.dto.organization.OrgCreateDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
-import com.petadoption.center.dto.organization.OrgUpdateDto;
-import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
+import com.petadoption.center.dto.organization.OrganizationCreateDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
+import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,32 +22,27 @@ public class OrganizationController {
     private OrganizationServiceI organizationServiceI;
 
     @GetMapping("/")
-    public ResponseEntity<List<OrgGetDto>> getAll(@RequestParam (defaultValue = "0", required = false) int page,
-                                                  @RequestParam (defaultValue = "5", required = false) int size,
-                                                  @RequestParam (defaultValue = "id", required = false) String sortBy) {
-        return new ResponseEntity<>(organizationServiceI.getAllOrganizations(page, size, sortBy), HttpStatus.OK);
+    public ResponseEntity<List<OrganizationGetDto>> getAll(@PageableDefault(page = 0, size = 5, sort = "id") Pageable pageable) {
+        return new ResponseEntity<>(organizationServiceI.getAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
-    public ResponseEntity<OrgGetDto> getById(@PathVariable("id") String id)
-            throws OrganizationNotFoundException {
-        return new ResponseEntity<>(organizationServiceI.getOrganizationById(id), HttpStatus.OK);
+    public ResponseEntity<OrganizationGetDto> getById(@PathVariable("id") String id) {
+        return new ResponseEntity<>(organizationServiceI.getById(id), HttpStatus.OK);
     }
 
     @PostMapping("/")
-    public ResponseEntity<OrgGetDto> create(@Valid @RequestBody OrgCreateDto organization) {
-        return new ResponseEntity<>(organizationServiceI.addNewOrganization(organization), HttpStatus.CREATED);
+    public ResponseEntity<OrganizationGetDto> create(@Valid @RequestBody OrganizationCreateDto dto) {
+        return new ResponseEntity<>(organizationServiceI.create(dto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<OrgGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody OrgUpdateDto organization)
-            throws OrganizationNotFoundException {
-        return new ResponseEntity<>(organizationServiceI.updateOrganization(id, organization), HttpStatus.OK);
+    public ResponseEntity<OrganizationGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody OrganizationUpdateDto dto) {
+        return new ResponseEntity<>(organizationServiceI.update(id, dto), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable ("id") String id)
-            throws OrganizationNotFoundException {
-        return new ResponseEntity<>(organizationServiceI.deleteOrganization(id), HttpStatus.OK);
+    public ResponseEntity<String> delete(@PathVariable ("id") String id) {
+        return new ResponseEntity<>(organizationServiceI.delete(id), HttpStatus.OK);
     }
 }

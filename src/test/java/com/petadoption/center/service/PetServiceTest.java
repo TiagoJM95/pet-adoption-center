@@ -2,7 +2,7 @@ package com.petadoption.center.service;
 
 import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
@@ -199,7 +199,7 @@ public class PetServiceTest {
     void shouldThrowColorNotFoundExceptionWhenColorIsNotFound() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, ColorNotFoundException {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
-        when(colorService.getColorById(anyString())).thenThrow(new ColorNotFoundException("InvalidColor"));
+        when(colorService.getById(anyString())).thenThrow(new ColorNotFoundException("InvalidColor"));
 
         ColorNotFoundException ex = assertThrows(ColorNotFoundException.class, () -> petService.addNewPet(petCreateDto));
 
@@ -213,7 +213,7 @@ public class PetServiceTest {
     void shouldThrowOrgNotFoundExceptionWhenOrgIsNotFound() throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException, OrganizationNotFoundException {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
-        when(organizationService.getOrganizationById(anyString())).thenThrow(new OrganizationNotFoundException("InvalidOrganization"));
+        when(organizationService.getById(anyString())).thenThrow(new OrganizationNotFoundException("InvalidOrganization"));
 
         OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.addNewPet(petCreateDto));
 
@@ -307,7 +307,7 @@ public class PetServiceTest {
                 .findFirst()
                 .orElseThrow();
 
-        when(colorService.getColorById(anyString())).thenAnswer(invocation -> {
+        when(colorService.getById(anyString())).thenAnswer(invocation -> {
             String colorId = invocation.getArgument(0);
             if (colorId.equals(problematicDto.primaryColor())) {
                 throw new ColorNotFoundException("InvalidColor");
@@ -331,12 +331,12 @@ public class PetServiceTest {
                 .findFirst()
                 .orElseThrow();
 
-        when(organizationService.getOrganizationById(anyString())).thenAnswer(invocation -> {
+        when(organizationService.getById(anyString())).thenAnswer(invocation -> {
             String orgId = invocation.getArgument(0);
             if (orgId.equals(problematicDto.organizationId())) {
                 throw new OrganizationNotFoundException("InvalidOrg");
             }
-            return any(OrgGetDto.class);
+            return any(OrganizationGetDto.class);
         });
 
         OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.addListOfNewPets(pets));
@@ -376,7 +376,7 @@ public class PetServiceTest {
     void shouldThrowOrgNotFoundExceptionWhenOrgIdIsInvalid() throws OrganizationNotFoundException {
 
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
-        when(organizationService.getOrganizationById(anyString())).thenThrow(new OrganizationNotFoundException("Org not found"));
+        when(organizationService.getById(anyString())).thenThrow(new OrganizationNotFoundException("Org not found"));
 
         OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.updatePet(petId, petUpdateDto));
 

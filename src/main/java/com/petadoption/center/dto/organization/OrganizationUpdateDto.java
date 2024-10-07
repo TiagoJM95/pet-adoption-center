@@ -12,7 +12,7 @@ import lombok.Builder;
 import static com.petadoption.center.util.Messages.*;
 
 @Builder
-public record OrgUpdateDto(
+public record OrganizationUpdateDto(
 
         @Pattern(regexp = "[a-zA-Z_0-9]+", message = LETTERS_AND_NUMBERS)
         String name,

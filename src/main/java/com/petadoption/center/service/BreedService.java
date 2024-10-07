@@ -8,16 +8,13 @@ import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.exception.BreedMismatchException;
 import com.petadoption.center.exception.not_found.BreedNotFoundException;
-import com.petadoption.center.exception.not_found.SpeciesNotFoundException;
 import com.petadoption.center.model.Breed;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.BreedRepository;
 import com.petadoption.center.service.interfaces.BreedServiceI;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,7 +42,7 @@ public class BreedService implements BreedServiceI {
 
     @Override
     public BreedGetDto getById(String id) {
-        return BreedConverter.toDto(findBreedById(id));
+        return BreedConverter.toDto(findById(id));
     }
 
     @Override
@@ -65,14 +62,14 @@ public class BreedService implements BreedServiceI {
 
     @Override
     public BreedGetDto update(String id, BreedUpdateDto dto) {
-        Breed breed = findBreedById(id);
+        Breed breed = findById(id);
         updateFields(dto.name(), breed.getName(), breed::setName);
         return BreedConverter.toDto(breedRepository.save(breed));
     }
 
     @Override
     public String delete(String id) {
-        findBreedById(id);
+        findById(id);
         breedRepository.deleteById(id);
         return BREED_WITH_ID + id + DELETE_SUCCESS;
     }
@@ -81,7 +78,7 @@ public class BreedService implements BreedServiceI {
     public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) {
 
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
-        Breed primaryBreed = findBreedById(dto.primaryBreedId());
+        Breed primaryBreed = findById(dto.primaryBreedId());
         Breed secondaryBreed;
 
         if(!Objects.equals(primaryBreed.getSpecies(), species)) {
@@ -89,14 +86,14 @@ public class BreedService implements BreedServiceI {
         }
 
         if(dto.secondaryBreedId() != null) {
-            secondaryBreed = findBreedById(dto.secondaryBreedId());
+            secondaryBreed = findById(dto.secondaryBreedId());
             if(!Objects.equals(secondaryBreed.getSpecies(), species)) {
                 throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
             }
         }
     }
 
-    private Breed findBreedById(String id) {
+    private Breed findById(String id) {
         return breedRepository.findById(id).orElseThrow(
                 () -> new BreedNotFoundException(BREED_WITH_ID + id + NOT_FOUND));
     }

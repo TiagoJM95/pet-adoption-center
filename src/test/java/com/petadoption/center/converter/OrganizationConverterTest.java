@@ -1,7 +1,7 @@
 package com.petadoption.center.converter;
 
-import com.petadoption.center.dto.organization.OrgCreateDto;
-import com.petadoption.center.dto.organization.OrgGetDto;
+import com.petadoption.center.dto.organization.OrganizationCreateDto;
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.model.Organization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,25 +18,25 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
-public class OrgConverterTest {
+public class OrganizationConverterTest {
 
 
-    private OrgCreateDto orgCreateDto;
-    private OrgGetDto orgGetDto;
+    private OrganizationCreateDto organizationCreateDto;
+    private OrganizationGetDto organizationGetDto;
     private Organization org;
 
     @BeforeEach
     void setUp() {
-        orgCreateDto = orgCreateDto();
-        orgGetDto = orgGetDto();
+        organizationCreateDto = orgCreateDto();
+        organizationGetDto = orgGetDto();
         org = createOrganization();
     }
 
 
     @Test
-    @DisplayName("Test OrgCreateDto to Org model is working correctly")
+    @DisplayName("Test OrganizationCreateDto to Org model is working correctly")
     void fromOrgCreateDtoToModel() {
-        Organization org = OrgConverter.toModel(orgCreateDto);
+        Organization org = OrganizationConverter.toModel(organizationCreateDto);
 
         assertEquals("Pet Adoption Center", org.getName());
         assertEquals("org@email.com", org.getEmail());
@@ -54,9 +54,9 @@ public class OrgConverterTest {
     }
 
     @Test
-    @DisplayName("Test OrgGetDto to Org model is working correctly")
+    @DisplayName("Test OrganizationGetDto to Org model is working correctly")
     void fromOrgGetDtoToModel() {
-        Organization org = OrgConverter.toModel(orgGetDto);
+        Organization org = OrganizationConverter.toModel(organizationGetDto);
 
         assertEquals("777777-77777777-7777", org.getId());
         assertEquals("Pet Adoption Center", org.getName());
@@ -76,41 +76,41 @@ public class OrgConverterTest {
 
 
     @Test
-    @DisplayName("Test Org model to OrgGetDto is working correctly")
+    @DisplayName("Test Org model to OrganizationGetDto is working correctly")
     void fromModelToOrgGetDto() {
 
-        OrgGetDto orgGetDto = OrgConverter.toDto(org);
+        OrganizationGetDto organizationGetDto = OrganizationConverter.toDto(org);
 
-        assertEquals("777777-77777777-7777", orgGetDto.id());
-        assertEquals("Pet Adoption Center", orgGetDto.name());
-        assertEquals("org@email.com", orgGetDto.email());
-        assertEquals("123456789", orgGetDto.phoneNumber());
-        assertEquals("Rua de Santo Antonio, 123", orgGetDto.address().getStreet());
-        assertEquals("Gondomar", orgGetDto.address().getCity());
-        assertEquals("Porto", orgGetDto.address().getState());
-        assertEquals("4444-444", orgGetDto.address().getPostalCode());
-        assertEquals("https://www.org.com", orgGetDto.websiteUrl());
-        assertEquals("https://www.facebook.com", orgGetDto.socialMedia().getFacebook());
-        assertEquals("https://www.instagram.com", orgGetDto.socialMedia().getInstagram());
-        assertEquals("https://www.twitter.com", orgGetDto.socialMedia().getTwitter());
-        assertEquals("https://www.youtube.com", orgGetDto.socialMedia().getYoutube());
+        assertEquals("777777-77777777-7777", organizationGetDto.id());
+        assertEquals("Pet Adoption Center", organizationGetDto.name());
+        assertEquals("org@email.com", organizationGetDto.email());
+        assertEquals("123456789", organizationGetDto.phoneNumber());
+        assertEquals("Rua de Santo Antonio, 123", organizationGetDto.address().getStreet());
+        assertEquals("Gondomar", organizationGetDto.address().getCity());
+        assertEquals("Porto", organizationGetDto.address().getState());
+        assertEquals("4444-444", organizationGetDto.address().getPostalCode());
+        assertEquals("https://www.org.com", organizationGetDto.websiteUrl());
+        assertEquals("https://www.facebook.com", organizationGetDto.socialMedia().getFacebook());
+        assertEquals("https://www.instagram.com", organizationGetDto.socialMedia().getInstagram());
+        assertEquals("https://www.twitter.com", organizationGetDto.socialMedia().getTwitter());
+        assertEquals("https://www.youtube.com", organizationGetDto.socialMedia().getYoutube());
     }
 
     @Test
-    @DisplayName("Test OrgCreateDto return null if received null dto")
+    @DisplayName("Test OrganizationCreateDto return null if received null dto")
     void testIfFromOrgCreateDtoReturnNullIfReceivedNullDto() {
-        assertNull(OrgConverter.toModel((OrgCreateDto) null));
+        assertNull(OrganizationConverter.toModel((OrganizationCreateDto) null));
     }
 
     @Test
-    @DisplayName("Test OrgGetDto return null if received null dto")
+    @DisplayName("Test OrganizationGetDto return null if received null dto")
     void testIfFromOrgGetDtoReturnNullIfReceivedNullDto() {
-        assertNull(OrgConverter.toModel((OrgGetDto) null));
+        assertNull(OrganizationConverter.toModel((OrganizationGetDto) null));
     }
 
     @Test
     @DisplayName("Test Org model return null if received null model")
     void testIfFromModelReturnNullIfReceivedNullModel() {
-        assertNull(OrgConverter.toDto(null));
+        assertNull(OrganizationConverter.toDto(null));
     }
 }
