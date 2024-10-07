@@ -16,6 +16,7 @@ import com.petadoption.center.service.interfaces.BreedServiceI;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -38,25 +39,24 @@ public class BreedService implements BreedServiceI {
     }
 
     @Override
-    public List<BreedGetDto> getAllBreeds(int page, int size, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return breedRepository.findAll(pageRequest).stream().map(BreedConverter::toDto).toList();
+    public List<BreedGetDto> getAll(Pageable pageable) {
+        return breedRepository.findAll(pageable).stream().map(BreedConverter::toDto).toList();
     }
 
     @Override
-    public BreedGetDto getBreedById(String id) throws BreedNotFoundException {
+    public BreedGetDto getById(String id) {
         return BreedConverter.toDto(findBreedById(id));
     }
 
     @Override
-    public List<BreedGetDto> getBreedsBySpecies(String species) throws SpeciesNotFoundException {
-        Species filterSpecies = SpeciesConverter.toModel(speciesServiceI.getSpeciesByName(species));
-        return breedRepository.findBySpecies(filterSpecies).stream()
+    public List<BreedGetDto> getBySpecies(String speciesName) {
+        Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesByName(speciesName));
+        return breedRepository.findBySpecies(species).stream()
                 .map(BreedConverter::toDto).toList();
     }
 
     @Override
-    public BreedGetDto addNewBreed(BreedCreateDto dto) throws SpeciesNotFoundException {
+    public BreedGetDto create(BreedCreateDto dto) {
         Breed breed = BreedConverter.toModel(dto);
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.speciesId()));
         breed.setSpecies(species);
@@ -64,21 +64,21 @@ public class BreedService implements BreedServiceI {
     }
 
     @Override
-    public BreedGetDto updateBreed(String id, BreedUpdateDto dto) throws BreedNotFoundException {
+    public BreedGetDto update(String id, BreedUpdateDto dto) {
         Breed breed = findBreedById(id);
         updateFields(dto.name(), breed.getName(), breed::setName);
         return BreedConverter.toDto(breedRepository.save(breed));
     }
 
     @Override
-    public String deleteBreed(String id) throws BreedNotFoundException {
+    public String delete(String id) {
         findBreedById(id);
         breedRepository.deleteById(id);
         return BREED_WITH_ID + id + DELETE_SUCCESS;
     }
 
     @Override
-    public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) throws BreedNotFoundException, BreedMismatchException, SpeciesNotFoundException {
+    public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) {
 
         Species species = SpeciesConverter.toModel(speciesServiceI.getSpeciesById(dto.petSpeciesId()));
         Breed primaryBreed = findBreedById(dto.primaryBreedId());
@@ -96,7 +96,7 @@ public class BreedService implements BreedServiceI {
         }
     }
 
-    private Breed findBreedById(String id) throws BreedNotFoundException {
+    private Breed findBreedById(String id) {
         return breedRepository.findById(id).orElseThrow(
                 () -> new BreedNotFoundException(BREED_WITH_ID + id + NOT_FOUND));
     }

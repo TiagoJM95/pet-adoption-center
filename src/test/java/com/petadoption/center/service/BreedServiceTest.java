@@ -173,34 +173,34 @@ public class BreedServiceTest {
 
     @Test
     @DisplayName("Test if get Breed by id works correctly")
-    void getBreedByIdShouldReturnBreed() throws BreedNotFoundException {
+    void getBreedByIdShouldReturn() throws BreedNotFoundException {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.of(testBreed));
 
-        BreedGetDto result = breedService.getBreedById(testBreed.getId());
+        BreedGetDto result = breedService.getById(testBreed.getId());
 
         assertEquals(testBreed.getName(), result.name());
     }
 
     @Test
     @DisplayName("Test if get Breed by id throws BreedNotFoundException")
-    void getBreedByIdShouldThrowBreedNotFoundException() {
+    void getBreedByIdShouldThrowNotFoundException() {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.empty());
 
-        assertThrows(BreedNotFoundException.class, () -> breedService.getBreedById(testBreed.getId()));
+        assertThrows(BreedNotFoundException.class, () -> breedService.getById(testBreed.getId()));
     }
 
     
     @Test
     @DisplayName("Test if add new breed saves and returns BreedGetDto")
-    void addNewBreedShouldReturnBreedGetDto() throws SpeciesNotFoundException {
+    void createGetDto() throws SpeciesNotFoundException {
 
         when(speciesService.getSpeciesById(breedCreateDto.speciesId())).thenReturn(toDto(species));
 
         when(breedRepository.save(any(Breed.class))).thenReturn(testBreed);
 
-        BreedGetDto result = breedService.addNewBreed(breedCreateDto);
+        BreedGetDto result = breedService.create(breedCreateDto);
 
         assertNotNull(breedCreateDto);
         assertEquals(testBreed.getName(), result.name());
@@ -210,21 +210,21 @@ public class BreedServiceTest {
 
     @Test
     @DisplayName("Test if add new breed throws exception if species is not found")
-    void addNewBreedShouldThrowSpeciesNotFoundException() throws SpeciesNotFoundException {
+    void createShouldThrowSpeciesNotFoundException() throws SpeciesNotFoundException {
 
         when(speciesService.getSpeciesById(breedCreateDto.speciesId())).thenThrow(SpeciesNotFoundException.class);
 
-        assertThrows(SpeciesNotFoundException.class, () -> breedService.addNewBreed(breedCreateDto));
+        assertThrows(SpeciesNotFoundException.class, () -> breedService.create(breedCreateDto));
     }
 
     @Test
     @DisplayName("Test if update breed saves all fields and returns BreedGetDto")
-    void updateBreedShouldSaveAllFieldsAndReturnBreedGetDto() throws BreedNotFoundException {
+    void updateBreedShouldSaveAllFieldsAndReturnGetDto() throws BreedNotFoundException {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.of(testBreed));
         when(breedRepository.save(any(Breed.class))).thenReturn(updatedBreed);
 
-        BreedGetDto result = breedService.updateBreed(testBreed.getId(), breedUpdateDto);
+        BreedGetDto result = breedService.update(testBreed.getId(), breedUpdateDto);
 
         assertNotNull(breedUpdateDto);
         assertEquals(breedUpdateDto.name(), result.name());
@@ -232,29 +232,29 @@ public class BreedServiceTest {
 
     @Test
     @DisplayName("Test if update breed throws exception breed not found")
-    void updateBreedShouldThrowBreedNotFoundException() {
+    void updateBreedShouldThrowNotFoundException() {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.empty());
 
-        assertThrows(BreedNotFoundException.class, () -> breedService.updateBreed(testBreed.getId(), breedUpdateDto));
+        assertThrows(BreedNotFoundException.class, () -> breedService.update(testBreed.getId(), breedUpdateDto));
     }
 
 
     @Test
     @DisplayName("Test if delete breed works correctly")
-    void deleteBreedShouldWorkCorrectly() throws BreedNotFoundException {
+    void deleteShouldWorkCorrectly() throws BreedNotFoundException {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.of(testBreed));
 
-        assertEquals(breedService.deleteBreed(testBreed.getId()),BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
+        assertEquals(breedService.delete(testBreed.getId()),BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
     }
 
     @Test
     @DisplayName("Test if delete breed throws exception breed not found")
-    void deleteBreedShouldThrowBreedNotFoundException() {
+    void deleteBreedShouldThrowNotFoundException() {
 
         when(breedRepository.findById(testBreed.getId())).thenReturn(Optional.empty());
 
-        assertThrows(BreedNotFoundException.class, () -> breedService.deleteBreed(testBreed.getId()));
+        assertThrows(BreedNotFoundException.class, () -> breedService.delete(testBreed.getId()));
     }
 }

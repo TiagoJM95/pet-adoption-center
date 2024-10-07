@@ -73,26 +73,26 @@ public class BreedControllerTest {
 
         List<BreedGetDto> expectedBreeds = List.of(breedGetDto);
 
-        when(breedServiceI.getAllBreeds(page, size, sortBy)).thenReturn(expectedBreeds);
+        when(breedServiceI.getAll(page, size, sortBy)).thenReturn(expectedBreeds);
 
         ResponseEntity<List<BreedGetDto>> response = breedController.getAll(page, size, sortBy);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedBreeds, response.getBody());
-        verify(breedServiceI).getAllBreeds(page, size, sortBy);
+        verify(breedServiceI).getAll(page, size, sortBy);
     }
 
     @Test
     @DisplayName("Test if get Breed by id works correctly")
     void getBreedByIdShouldReturn() throws BreedNotFoundException {
 
-        when(breedServiceI.getBreedById(testBreed.getId())).thenReturn(breedGetDto);
+        when(breedServiceI.getById(testBreed.getId())).thenReturn(breedGetDto);
 
         ResponseEntity<BreedGetDto> response = breedController.getById(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
-        verify(breedServiceI).getBreedById(testBreed.getId());
+        verify(breedServiceI).getById(testBreed.getId());
 
     }
 
@@ -100,26 +100,26 @@ public class BreedControllerTest {
     @DisplayName("Test if add new Breed works correctly")
     void create() throws SpeciesNotFoundException {
 
-        when(breedServiceI.addNewBreed(breedCreateDto)).thenReturn(breedGetDto);
+        when(breedServiceI.create(breedCreateDto)).thenReturn(breedGetDto);
 
         ResponseEntity<BreedGetDto> response = breedController.create(breedCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
-        verify(breedServiceI).addNewBreed(breedCreateDto);
+        verify(breedServiceI).create(breedCreateDto);
     }
 
     @Test
     @DisplayName("Test if update Breed works correctly")
     void updateBreedShouldReturn() throws BreedNotFoundException, BreedDuplicateException {
 
-        when(breedServiceI.updateBreed(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
+        when(breedServiceI.update(testBreed.getId(), breedUpdateDto)).thenReturn(breedGetDto);
 
         ResponseEntity<BreedGetDto> response = breedController.update(testBreed.getId(), breedUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(breedGetDto, response.getBody());
-        verify(breedServiceI).updateBreed(testBreed.getId(), breedUpdateDto);
+        verify(breedServiceI).update(testBreed.getId(), breedUpdateDto);
     }
 
 
@@ -127,12 +127,12 @@ public class BreedControllerTest {
     @DisplayName("Test if delete Breed works correctly")
     void deleteBreedShouldReturn() throws BreedNotFoundException {
 
-        when(breedServiceI.deleteBreed(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
+        when(breedServiceI.delete(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
 
         ResponseEntity<String> response = breedController.delete(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS, response.getBody());
-        verify(breedServiceI).deleteBreed(testBreed.getId());
+        verify(breedServiceI).delete(testBreed.getId());
     }
 }
