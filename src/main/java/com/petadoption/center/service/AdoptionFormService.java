@@ -18,6 +18,7 @@ import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,6 @@ import static com.petadoption.center.converter.AdoptionFormConverter.toDto;
 import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Utils.updateFields;
-
 
 @Service
 public class AdoptionFormService implements AdoptionFormServiceI {
@@ -44,55 +44,54 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     }
 
     @Override
-    public List<AdoptionFormGetDto> getAllAdoptionForms(int page, int size, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return adoptionFormRepository.findAll(pageRequest).stream().map(AdoptionFormConverter::toDto).toList();
+    public List<AdoptionFormGetDto> getAll(Pageable pageable) {
+        return adoptionFormRepository.findAll(pageable).stream().map(AdoptionFormConverter::toDto).toList();
     }
 
     @Override
-    public AdoptionFormGetDto getAdoptionFormById(String id) throws AdoptionFormNotFoundException{
+    public AdoptionFormGetDto getById(String id) {
         return toDto(findAdoptionFormById(id));
     }
 
     @Override
-    public AdoptionFormGetDto addNewAdoptionForm(AdoptionFormCreateDto adoptionFormCreateDto) throws UserNotFoundException, PetNotFoundException {
-        AdoptionForm adoptionForm = buildAdoptionFormFromDto(adoptionFormCreateDto);
+    public AdoptionFormGetDto create(AdoptionFormCreateDto dto) {
+        AdoptionForm adoptionForm = buildAdoptionFormFromDto(dto);
         return AdoptionFormConverter.toDto(adoptionFormRepository.save(adoptionForm));
     }
 
     @Override
-    public AdoptionFormGetDto updateAdoptionForm(String id, AdoptionFormUpdateDto adoptionFormUpdateDto) throws AdoptionFormNotFoundException {
+    public AdoptionFormGetDto update(String id, AdoptionFormUpdateDto dto) {
         AdoptionForm adoptionForm = findAdoptionFormById(id);
-        updateAdoptionFormFields(adoptionFormUpdateDto, adoptionForm);
+        updateAdoptionFormFields(dto, adoptionForm);
         return toDto(adoptionFormRepository.save(adoptionForm));
     }
 
     @Override
-    public String deleteAdoptionForm(String id) throws AdoptionFormNotFoundException {
+    public String delete(String id) {
         findAdoptionFormById(id);
         adoptionFormRepository.deleteById(id);
         return ADOPTION_FORM_WITH_ID + id + DELETE_SUCCESS;
     }
 
-    private AdoptionForm findAdoptionFormById(String id) throws AdoptionFormNotFoundException {
+    private AdoptionForm findAdoptionFormById(String id) {
         return adoptionFormRepository.findById(id).orElseThrow(() -> new AdoptionFormNotFoundException(id));
     }
 
-    private AdoptionForm buildAdoptionFormFromDto(AdoptionFormCreateDto adoptionFormCreateDto) throws UserNotFoundException, PetNotFoundException {
-       AdoptionForm adoptionForm = AdoptionFormConverter.toModel(adoptionFormCreateDto);
-       User user = UserConverter.toModel(userServiceI.getUserById(adoptionFormCreateDto.userId()));
-       Pet pet = PetConverter.toModel(petServiceI.getPetById(adoptionFormCreateDto.petId()));
+    private AdoptionForm buildAdoptionFormFromDto(AdoptionFormCreateDto dto) {
+       AdoptionForm adoptionForm = AdoptionFormConverter.toModel(dto);
+       User user = UserConverter.toModel(userServiceI.getUserById(dto.userId()));
+       Pet pet = PetConverter.toModel(petServiceI.getPetById(dto.petId()));
 
        adoptionForm.setUser(user);
        adoptionForm.setPet(pet);
        return adoptionForm;
     }
 
-    private void updateAdoptionFormFields(AdoptionFormUpdateDto adoptionFormUpdateDto, AdoptionForm adoptionForm) {
-        updateFields(adoptionFormUpdateDto.userFamily(), adoptionForm.getUserFamily(), adoptionForm::setUserFamily);
-        updateFields(adoptionFormUpdateDto.petVacationHome(), adoptionForm.getPetVacationHome(), adoptionForm::setPetVacationHome);
-        updateFields(adoptionFormUpdateDto.isResponsibleForPet(), adoptionForm.getIsResponsibleForPet(), adoptionForm::setIsResponsibleForPet);
-        updateFields(adoptionFormUpdateDto.otherNotes(), adoptionForm.getOtherNotes(), adoptionForm::setOtherNotes);
-        updateFields(adoptionFormUpdateDto.petAddress(), adoptionForm.getPetAddress(), adoptionForm::setPetAddress);
+    private void updateAdoptionFormFields(AdoptionFormUpdateDto dto, AdoptionForm adoptionForm) {
+        updateFields(dto.userFamily(), adoptionForm.getUserFamily(), adoptionForm::setUserFamily);
+        updateFields(dto.petVacationHome(), adoptionForm.getPetVacationHome(), adoptionForm::setPetVacationHome);
+        updateFields(dto.isResponsibleForPet(), adoptionForm.getIsResponsibleForPet(), adoptionForm::setIsResponsibleForPet);
+        updateFields(dto.otherNotes(), adoptionForm.getOtherNotes(), adoptionForm::setOtherNotes);
+        updateFields(dto.petAddress(), adoptionForm.getPetAddress(), adoptionForm::setPetAddress);
     }
 }
