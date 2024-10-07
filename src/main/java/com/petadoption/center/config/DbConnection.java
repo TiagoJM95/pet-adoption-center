@@ -1,6 +1,6 @@
 package com.petadoption.center.config;
 
-import com.petadoption.center.exception.db.DatabaseConnectionException;
+import com.petadoption.center.exception.DatabaseConnectionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,7 +18,6 @@ public class DbConnection {
     }
 
     public void checkDbConnection() throws DatabaseConnectionException {
-
         try {
             jdbcTemplate.execute("SELECT 1");
         } catch (Exception e) {

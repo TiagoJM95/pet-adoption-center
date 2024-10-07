@@ -4,8 +4,8 @@ import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.pet.PetNotFoundException;
-import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.not_found.PetNotFoundException;
+import com.petadoption.center.exception.not_found.UserNotFoundException;
 
 import java.util.List;
 import java.util.Set;

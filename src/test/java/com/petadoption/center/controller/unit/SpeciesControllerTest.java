@@ -4,7 +4,7 @@ import com.petadoption.center.controller.SpeciesController;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesNotFoundException;
+import com.petadoption.center.exception.not_found.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.junit.jupiter.api.BeforeEach;

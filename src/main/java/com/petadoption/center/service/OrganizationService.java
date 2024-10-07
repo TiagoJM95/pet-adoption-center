@@ -4,7 +4,7 @@ import com.petadoption.center.converter.OrgConverter;
 import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
-import com.petadoption.center.exception.organization.OrganizationNotFoundException;
+import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
 import com.petadoption.center.model.Organization;
 import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;

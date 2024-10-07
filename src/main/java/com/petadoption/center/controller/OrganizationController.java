@@ -3,7 +3,7 @@ package com.petadoption.center.controller;
 import com.petadoption.center.dto.organization.OrgCreateDto;
 import com.petadoption.center.dto.organization.OrgGetDto;
 import com.petadoption.center.dto.organization.OrgUpdateDto;
-import com.petadoption.center.exception.organization.OrganizationNotFoundException;
+import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

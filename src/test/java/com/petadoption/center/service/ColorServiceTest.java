@@ -2,7 +2,7 @@ package com.petadoption.center.service;
 
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.color.ColorNotFoundException;
+import com.petadoption.center.exception.not_found.ColorNotFoundException;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.repository.ColorRepository;
 import org.junit.jupiter.api.BeforeEach;

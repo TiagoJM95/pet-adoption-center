@@ -3,7 +3,7 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.not_found.UserNotFoundException;
 import com.petadoption.center.model.User;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.repository.UserRepository;

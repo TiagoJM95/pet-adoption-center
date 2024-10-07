@@ -4,7 +4,7 @@ import com.petadoption.center.controller.UserController;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserNotFoundException;
+import com.petadoption.center.exception.not_found.UserNotFoundException;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
