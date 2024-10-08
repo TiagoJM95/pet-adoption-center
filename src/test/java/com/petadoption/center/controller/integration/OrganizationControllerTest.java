@@ -83,6 +83,20 @@ public class OrganizationControllerTest {
     }
 
     @Test
+    @DisplayName("Test if create organization send DataIntegrityViolationException")
+    @DirtiesContext
+    void createOrganizationThrowsDataIntegrityException() throws Exception {
+
+        createOrganizationAndReturnGetDto();
+
+        mockMvc.perform(post("/api/v1/organization/")
+                        .content(objectMapper.writeValueAsString(organizationCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andReturn();
+    }
+
+    @Test
     @DisplayName("Test if get all organizations works correctly")
     @DirtiesContext
     void getAllOrganizations() throws Exception {
