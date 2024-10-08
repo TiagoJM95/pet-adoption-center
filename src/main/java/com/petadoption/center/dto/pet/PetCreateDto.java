@@ -21,7 +21,7 @@ public record PetCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
-        String petSpeciesId,
+        String speciesId,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)

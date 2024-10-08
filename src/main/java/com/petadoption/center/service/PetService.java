@@ -54,7 +54,7 @@ public class PetService implements PetServiceI {
 
     @Override
     public List<PetGetDto> searchPets(PetSearchCriteria criteria, Pageable pageable) {
-        Specification<Pet> filters = buildFilters(criteria);
+        Specification<Pet> filters = (criteria == null) ? Specification.where(null) : buildFilters(criteria);
         return petRepository.findAll(filters, pageable).stream().map(PetConverter::toDto).toList();
     }
 
@@ -99,7 +99,7 @@ public class PetService implements PetServiceI {
     private Pet buildPetFromDto(PetCreateDto dto) {
         Pet pet = PetConverter.toModel(dto);
 
-        pet.setSpecies(SpeciesConverter.toModel(speciesServiceI.getById(dto.petSpeciesId())));
+        pet.setSpecies(SpeciesConverter.toModel(speciesServiceI.getById(dto.speciesId())));
         pet.setPrimaryBreed(BreedConverter.toModel(breedServiceI.getById(dto.primaryBreedId())));
         pet.setSecondaryBreed(getBreedOrNull(dto.secondaryBreedId()));
         pet.setPrimaryColor(ColorConverter.toModel(colorServiceI.getById(dto.primaryColor())));

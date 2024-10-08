@@ -159,7 +159,7 @@ public class TestDtoFactory {
     public static PetCreateDto petCreateDto(String name) {
         return PetCreateDto.builder()
                 .name(name)
-                .petSpeciesId("111111-11111111-1111")
+                .speciesId("111111-11111111-1111")
                 .primaryBreedId("222222-22222222-2222")
                 .secondaryBreedId("333333-33333333-3333")
                 .primaryColor("444444-44444444-4444")
