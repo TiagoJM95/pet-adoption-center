@@ -70,7 +70,7 @@ public class AdoptionFormControllerTest {
 
         int page = 0;
         int size = 10;
-        String sort = "created_at";
+        String sort = "createdAt";
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<AdoptionFormGetDto> listOfAdoptionForms = List.of(adoptionFormGetDto);
