@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -21,6 +22,8 @@ import java.time.LocalDateTime;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
+import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,6 +66,7 @@ public class OrganizationControllerTest {
 
     @Test
     @DisplayName("Test if create organization works correctly")
+    @DirtiesContext
     void createOrganizationAndReturnGetDto() throws Exception {
 
        var result = mockMvc.perform(post("/api/v1/organization/")
@@ -78,4 +82,67 @@ public class OrganizationControllerTest {
 
     }
 
+    @Test
+    @DisplayName("Test if get all organizations works correctly")
+    @DirtiesContext
+    void getAllOrganizations() throws Exception {
+
+        createOrganizationAndReturnGetDto();
+
+        mockMvc.perform(get("/api/v1/organization/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id", is(organizationGetDto.id())))
+                .andExpect(jsonPath("$[0].name", is(organizationGetDto.name())))
+                .andExpect(jsonPath("$[0].email", is(organizationGetDto.email())))
+                .andExpect(jsonPath("$[0].nif", is(organizationGetDto.nif())))
+                .andExpect(jsonPath("$[0].phoneNumber", is(organizationGetDto.phoneNumber())))
+                .andExpect(jsonPath("$[0].websiteUrl", is(organizationGetDto.websiteUrl())));
+
+    }
+
+    @Test
+    @DisplayName("Test if get organization by id works correctly")
+    @DirtiesContext
+    void getOrganizationById() throws Exception {
+
+        createOrganizationAndReturnGetDto();
+
+        mockMvc.perform(get("/api/v1/organization/{id}", organizationGetDto.id())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(organizationGetDto.id())))
+                .andExpect(jsonPath("$.name", is(organizationGetDto.name())))
+                .andExpect(jsonPath("$.email", is(organizationGetDto.email())))
+                .andExpect(jsonPath("$.nif", is(organizationGetDto.nif())))
+                .andExpect(jsonPath("$.phoneNumber", is(organizationGetDto.phoneNumber())));
+    }
+
+    @Test
+    @DisplayName("Test if update organization works correctly")
+    @DirtiesContext
+    void updateOrganization() throws Exception {
+
+        createOrganizationAndReturnGetDto();
+
+        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
+                        .content(objectMapper.writeValueAsString(organizationUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email", is(organizationUpdateDto.email())));
+    }
+
+
+    @Test
+    @DisplayName("Test if delete organization works correctly")
+    @DirtiesContext
+    void deleteOrganization() throws Exception {
+
+        createOrganizationAndReturnGetDto();
+
+        mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationGetDto.id())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(ORG_WITH_ID + organizationGetDto.id() + DELETE_SUCCESS));
+    }
 }

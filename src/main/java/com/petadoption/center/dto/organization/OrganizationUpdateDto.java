@@ -14,7 +14,7 @@ import static com.petadoption.center.util.Messages.*;
 @Builder
 public record OrganizationUpdateDto(
 
-        @Pattern(regexp = "[a-zA-Z_0-9]+", message = LETTERS_AND_NUMBERS)
+        @Pattern(regexp = "[a-zA-Z_0-9 .-]+", message = LETTERS_AND_NUMBERS)
         String name,
 
         @Email
@@ -33,7 +33,7 @@ public record OrganizationUpdateDto(
         @NotNull(message = BLANK_FIELD)
         Address address,
 
-        @Pattern(regexp = "[a-zA-Z_0-9.-]", message = WEBSITE_URL)
+        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,
 
