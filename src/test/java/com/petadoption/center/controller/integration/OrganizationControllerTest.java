@@ -119,6 +119,15 @@ public class OrganizationControllerTest {
     }
 
     @Test
+    @DisplayName("Test if get organization by id throws organization not found exception")
+    void getOrganizationByIdThrowsOrganizationNotFoundException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/organization/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if update organization works correctly")
     void updateOrganization() throws Exception {
 
@@ -129,6 +138,16 @@ public class OrganizationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.email", is(organizationUpdateDto.email())));
+    }
+
+    @Test
+    @DisplayName("Test if update organization throws organization not found exception")
+    void updateOrganizationThrowsOrganizationNotFoundException() throws Exception {
+
+        mockMvc.perform(put("/api/v1/organization/update/{id}", "11111-11111-1111-1111")
+                        .content(objectMapper.writeValueAsString(organizationUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
 
@@ -142,5 +161,14 @@ public class OrganizationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(ORG_WITH_ID + organizationGetDto.id() + DELETE_SUCCESS));
+    }
+
+    @Test
+    @DisplayName("Test if delete organization throws organization not found exception")
+    void deleteOrganizationThrowsOrganizationNotFoundException() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/organization/delete/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }
