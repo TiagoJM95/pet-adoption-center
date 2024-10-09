@@ -52,7 +52,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if create user works correctly")
-    @DirtiesContext
     void createUserShouldReturnUser() throws Exception {
 
        var result = mockMvc.perform(post("/api/v1/user/")
@@ -69,7 +68,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get all users works correctly")
-    @DirtiesContext
     void getAllAfterCreatingUser() throws Exception {
 
         createUserShouldReturnUser();
@@ -89,7 +87,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    @DirtiesContext
     void getUserByIdShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
@@ -106,7 +103,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if update user works correctly")
-    @DirtiesContext
     void updateUserShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
@@ -121,7 +117,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if delete user works correctly")
-    @DirtiesContext
     void deleteUserShouldReturn() throws Exception {
 
         createUserShouldReturnUser();

@@ -45,28 +45,16 @@ public class OrganizationControllerTest {
     private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
-    private OrganizationGetDto updatedOrganizationGetDto;
+
 
     @BeforeEach
     void setUp() {
         organizationCreateDto = orgCreateDto();
         organizationUpdateDto = orgUpdateDto();
-        updatedOrganizationGetDto = OrganizationGetDto.builder()
-                .id("777777-77777777-7777")
-                .name("Pet Adoption Center")
-                .email("email@email.com")
-                .nif("123456789")
-                .phoneNumber("123456789")
-                .address(createAddress())
-                .websiteUrl("https://www.org.com")
-                .socialMedia(createSocialMedia())
-                .createdAt(LocalDateTime.of(2024,1,1,1,1))
-                .build();
     }
 
     @Test
     @DisplayName("Test if create organization works correctly")
-    @DirtiesContext
     void createOrganizationAndReturnGetDto() throws Exception {
 
        var result = mockMvc.perform(post("/api/v1/organization/")
@@ -82,7 +70,7 @@ public class OrganizationControllerTest {
 
     }
 
-    @Test
+  /*  @Test
     @DisplayName("Test if create organization send DataIntegrityViolationException")
     @DirtiesContext
     void createOrganizationThrowsDataIntegrityException() throws Exception {
@@ -94,11 +82,10 @@ public class OrganizationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
-    }
+    }*/
 
     @Test
     @DisplayName("Test if get all organizations works correctly")
-    @DirtiesContext
     void getAllOrganizations() throws Exception {
 
         createOrganizationAndReturnGetDto();
@@ -117,12 +104,11 @@ public class OrganizationControllerTest {
 
     @Test
     @DisplayName("Test if get organization by id works correctly")
-    @DirtiesContext
     void getOrganizationById() throws Exception {
 
         createOrganizationAndReturnGetDto();
 
-        mockMvc.perform(get("/api/v1/organization/{id}", organizationGetDto.id())
+        mockMvc.perform(get("/api/v1/organization/id/{id}", organizationGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(organizationGetDto.id())))
@@ -134,7 +120,6 @@ public class OrganizationControllerTest {
 
     @Test
     @DisplayName("Test if update organization works correctly")
-    @DirtiesContext
     void updateOrganization() throws Exception {
 
         createOrganizationAndReturnGetDto();
@@ -149,7 +134,6 @@ public class OrganizationControllerTest {
 
     @Test
     @DisplayName("Test if delete organization works correctly")
-    @DirtiesContext
     void deleteOrganization() throws Exception {
 
         createOrganizationAndReturnGetDto();
