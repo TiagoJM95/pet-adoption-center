@@ -4,22 +4,30 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.organization.OrganizationUpdateDto;
-import jakarta.transaction.Transactional;
+import com.petadoption.center.model.embeddable.Address;
+import com.petadoption.center.model.embeddable.SocialMedia;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
-import static jakarta.transaction.Transactional.TxType.NEVER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -49,6 +57,59 @@ public class OrganizationControllerTest {
         organizationUpdateDto = orgUpdateDto();
     }
 
+    static Stream<Arguments> orgCreateDtoListProvider() {
+        OrganizationCreateDto baseOrg = OrganizationCreateDto.builder()
+                .name("Adopting Center")
+                .email("adopting@email.com")
+                .nif("987654321")
+                .phoneNumber("987654321")
+                .address(Address.builder()
+                        .city("Lisboa")
+                        .postalCode("1234-567")
+                        .state("Lisboa")
+                        .street("Rua dos Bobos, 321")
+                        .build())
+                .websiteUrl("https://www.adoptingcenter.com")
+                .socialMedia(SocialMedia.builder()
+                        .facebook("https://www.facebook.com/test")
+                        .youtube("https://www.youtube.com/test")
+                        .instagram("https://www.instagram.com/test")
+                        .twitter("https://www.twitter.com/test")
+                        .build())
+                .build();
+
+        return Stream.of(
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build()),
+                Arguments.of(baseOrg.toBuilder().nif("123456789").build()),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build()),
+                Arguments.of(baseOrg.toBuilder().address(Address.builder()
+                        .street("Rua de Santo Antonio, 123")
+                        .postalCode("4444-444")
+                        .city("Gondomar")
+                        .state("Porto")
+                        .build()).build()),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build()),
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .facebook("https://www.facebook.com")
+                        .instagram("https://www.instagram.com")
+                        .twitter("https://www.twitter.com")
+                        .youtube("https://www.youtube.com")
+                        .build()))
+
+        );
+    }
+
+
+
+    private void persistOrganization() throws Exception {
+
+        mockMvc.perform(post("/api/v1/organization/")
+                        .content(objectMapper.writeValueAsString(organizationCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+    }
+
     @Test
     @DisplayName("Test if create organization works correctly")
     void createOrganizationAndReturnGetDto() throws Exception {
@@ -68,7 +129,7 @@ public class OrganizationControllerTest {
 
     @Test
     @DisplayName("Test if create organization send DataIntegrityViolationException")
-    @Transactional(value = NEVER)
+    @Transactional
     void createOrganizationThrowsDataIntegrityException() throws Exception {
 
         mockMvc.perform(post("/api/v1/organization/")
@@ -84,6 +145,23 @@ public class OrganizationControllerTest {
                 .andReturn();
 
     }
+
+    @ParameterizedTest
+    @MethodSource("orgCreateDtoListProvider")
+    @DisplayName("Test if create organization send DataIntegrityViolationException")
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto) throws Exception {
+
+        persistOrganization();
+
+        mockMvc.perform(post("/api/v1/organization/")
+                        .content(objectMapper.writeValueAsString(organizationCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Please try again.")))
+                .andReturn();
+    }
+
 
     @Test
     @DisplayName("Test if get all organizations works correctly")
