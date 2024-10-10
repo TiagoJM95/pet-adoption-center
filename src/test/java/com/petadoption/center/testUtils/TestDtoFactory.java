@@ -313,7 +313,7 @@ public class TestDtoFactory {
 
     public static InterestUpdateDto interestUpdateDto() {
         return InterestUpdateDto.builder()
-                .status("ACCEPTED")
+                .status("Form Requested")
                 .build();
     }
 }

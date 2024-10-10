@@ -14,6 +14,7 @@ import com.petadoption.center.specifications.PetSearchCriteria;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class TestEntityFactory {
 
@@ -154,6 +155,7 @@ public class TestEntityFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
+                .interests(Set.of())
                 .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
