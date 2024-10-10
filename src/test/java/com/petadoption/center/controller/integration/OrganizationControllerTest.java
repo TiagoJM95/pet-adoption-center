@@ -12,18 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.io.UnsupportedEncodingException;
-import java.time.LocalDateTime;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
-import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
-import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
+import static jakarta.transaction.Transactional.TxType.NEVER;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -70,19 +66,24 @@ public class OrganizationControllerTest {
 
     }
 
-  /*  @Test
+    @Test
     @DisplayName("Test if create organization send DataIntegrityViolationException")
-    @DirtiesContext
+    @Transactional(value = NEVER)
     void createOrganizationThrowsDataIntegrityException() throws Exception {
 
-        createOrganizationAndReturnGetDto();
+        mockMvc.perform(post("/api/v1/organization/")
+                        .content(objectMapper.writeValueAsString(organizationCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
 
         mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
-    }*/
+
+    }
 
     @Test
     @DisplayName("Test if get all organizations works correctly")
