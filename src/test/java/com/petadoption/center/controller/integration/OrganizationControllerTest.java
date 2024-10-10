@@ -6,6 +6,7 @@ import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
+import com.petadoption.center.repository.OrganizationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Propagation;
@@ -46,6 +48,9 @@ public class OrganizationControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private OrganizationRepository organizationRepository;
+
     private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
@@ -55,6 +60,10 @@ public class OrganizationControllerTest {
     void setUp() {
         organizationCreateDto = orgCreateDto();
         organizationUpdateDto = orgUpdateDto();
+    }
+
+     public void resetDatabase() {
+        organizationRepository.deleteAll();
     }
 
     static Stream<Arguments> orgCreateDtoListProvider() {
@@ -94,8 +103,7 @@ public class OrganizationControllerTest {
                         .instagram("https://www.instagram.com")
                         .twitter("https://www.twitter.com")
                         .youtube("https://www.youtube.com")
-                        .build()))
-
+                        .build()).build())
         );
     }
 
@@ -127,25 +135,6 @@ public class OrganizationControllerTest {
 
     }
 
-    @Test
-    @DisplayName("Test if create organization send DataIntegrityViolationException")
-    @Transactional
-    void createOrganizationThrowsDataIntegrityException() throws Exception {
-
-        mockMvc.perform(post("/api/v1/organization/")
-                        .content(objectMapper.writeValueAsString(organizationCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        mockMvc.perform(post("/api/v1/organization/")
-                        .content(objectMapper.writeValueAsString(organizationCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict())
-                .andReturn();
-
-    }
-
     @ParameterizedTest
     @MethodSource("orgCreateDtoListProvider")
     @DisplayName("Test if create organization send DataIntegrityViolationException")
@@ -160,6 +149,8 @@ public class OrganizationControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Please try again.")))
                 .andReturn();
+
+        resetDatabase();
     }
 
 
