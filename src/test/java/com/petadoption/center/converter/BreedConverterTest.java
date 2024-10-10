@@ -29,7 +29,7 @@ public class BreedConverterTest {
     @DisplayName("Test BreedCreateDto to Breed model is working correctly")
     void fromBreedCreateDtoToModel() {
 
-        Breed breed = BreedConverter.toModel(breedCreateDto(species.getId()));
+        Breed breed = BreedConverter.toModel(primaryBreedCreateDto(species.getId()));
 
         assertEquals("Golden Retriever", breed.getName());
     }

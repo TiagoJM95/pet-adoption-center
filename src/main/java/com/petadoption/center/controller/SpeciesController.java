@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/pet-species")
+@RequestMapping("/api/v1/species")
 public class SpeciesController {
 
     private final SpeciesServiceI speciesServiceI;

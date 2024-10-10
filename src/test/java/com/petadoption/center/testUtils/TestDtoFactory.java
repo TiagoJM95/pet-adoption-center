@@ -150,9 +150,21 @@ public class TestDtoFactory {
 
     // CREATE DTOs
 
-    public static ColorCreateDto colorCreateDto(){
+    public static ColorCreateDto primaryColorCreateDto() {
         return ColorCreateDto.builder()
                 .name("Black")
+                .build();
+    }
+
+    public static ColorCreateDto secondaryColorCreateDto() {
+        return ColorCreateDto.builder()
+                .name("White")
+                .build();
+    }
+
+    public static ColorCreateDto tertiaryColorCreateDto() {
+        return ColorCreateDto.builder()
+                .name("Brown")
                 .build();
     }
 
@@ -195,14 +207,21 @@ public class TestDtoFactory {
                 .build();
     }
 
-    public static BreedCreateDto breedCreateDto(String speciesId){
+    public static BreedCreateDto primaryBreedCreateDto(String speciesId){
         return BreedCreateDto.builder()
                 .name("Golden Retriever")
                 .speciesId(speciesId)
                 .build();
     }
 
-    public static OrganizationCreateDto orgCreateDto(){
+    public static BreedCreateDto secondaryBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Labrador")
+                .speciesId(speciesId)
+                .build();
+    }
+
+    public static OrganizationCreateDto organizationCreateDto(){
         return OrganizationCreateDto.builder()
                 .name("Pet Adoption Center")
                 .email("org@email.com")

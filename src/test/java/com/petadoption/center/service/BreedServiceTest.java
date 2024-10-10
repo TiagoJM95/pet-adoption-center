@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.petadoption.center.converter.SpeciesConverter.toDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.breedCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryBreedCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.breedUpdateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createBreed;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
@@ -64,7 +64,7 @@ public class BreedServiceTest {
 
         species = createSpecies();
         testBreed = createBreed(species);
-        breedCreateDto = breedCreateDto(species.getId());
+        breedCreateDto = primaryBreedCreateDto(species.getId());
         breedUpdateDto = breedUpdateDto();
         updatedBreed = createBreed(species);
 

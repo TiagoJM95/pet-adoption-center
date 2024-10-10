@@ -48,7 +48,7 @@ public class PetController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<PetGetDto> update(@Valid @PathVariable ("id") String id, @RequestBody PetUpdateDto dto) {
+    public ResponseEntity<PetGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody PetUpdateDto dto) {
         return new ResponseEntity<>(petServiceI.update(id, dto), HttpStatus.OK);
     }
 

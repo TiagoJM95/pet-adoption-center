@@ -20,7 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.breedCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryBreedCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.breedUpdateDto;
 import static com.petadoption.center.util.Messages.BREED_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
@@ -50,7 +50,7 @@ public class BreedControllerTest {
     @BeforeEach
     void setUp() {
         String SpeciesId = testPersistenceHelper.persistTestSpecies();
-        breedCreateDto = breedCreateDto(SpeciesId);
+        breedCreateDto = primaryBreedCreateDto(SpeciesId);
         breedUpdateDto = breedUpdateDto();
     }
 
