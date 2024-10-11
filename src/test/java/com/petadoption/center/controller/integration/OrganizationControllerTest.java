@@ -7,6 +7,7 @@ import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import com.petadoption.center.repository.OrganizationRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.stream.Stream;
@@ -39,7 +36,6 @@ import static org.hamcrest.Matchers.is;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Transactional
 public class OrganizationControllerTest {
 
     @Autowired
@@ -62,12 +58,36 @@ public class OrganizationControllerTest {
         organizationUpdateDto = orgUpdateDto();
     }
 
-     public void resetDatabase() {
+    @AfterEach
+    void tearDown() {
         organizationRepository.deleteAll();
     }
 
     static Stream<Arguments> orgCreateDtoListProvider() {
-        OrganizationCreateDto baseOrg = OrganizationCreateDto.builder()
+        OrganizationCreateDto baseOrg = orgCreateAnotherDto();
+
+        return Stream.of(
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build()),
+                Arguments.of(baseOrg.toBuilder().nif("123456789").build()),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build()),
+                Arguments.of(baseOrg.toBuilder().address(Address.builder()
+                        .street("Rua de Santo Antonio, 123")
+                        .postalCode("4444-444")
+                        .city("Gondomar")
+                        .state("Porto")
+                        .build()).build()),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build()),
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .facebook("https://www.facebook.com")
+                        .instagram("https://www.instagram.com")
+                        .twitter("https://www.twitter.com")
+                        .youtube("https://www.youtube.com")
+                        .build()).build())
+        );
+    }
+
+    static Stream<Arguments> orgUpdateDtoListProvider() {
+        OrganizationUpdateDto baseOrg = OrganizationUpdateDto.builder()
                 .name("Adopting Center")
                 .email("adopting@email.com")
                 .nif("987654321")
@@ -107,22 +127,33 @@ public class OrganizationControllerTest {
         );
     }
 
+        private void persistOrganization() throws Exception {
 
-
-    private void persistOrganization() throws Exception {
-
-        mockMvc.perform(post("/api/v1/organization/")
+        var result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
+
+        organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+    }
+
+    private void persistOrganizationToUpdate() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/organization/")
+                        .content(objectMapper.writeValueAsString(orgCreateAnotherDto()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
     }
 
     @Test
     @DisplayName("Test if create organization works correctly")
     void createOrganizationAndReturnGetDto() throws Exception {
 
-       var result = mockMvc.perform(post("/api/v1/organization/")
+       mockMvc.perform(post("/api/v1/organization/")
                 .content(objectMapper.writeValueAsString(organizationCreateDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -130,15 +161,11 @@ public class OrganizationControllerTest {
                 .andExpect(jsonPath("$.email", is(organizationCreateDto.email())))
                 .andReturn();
 
-
-       organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
-
     }
 
     @ParameterizedTest
     @MethodSource("orgCreateDtoListProvider")
     @DisplayName("Test if create organization send DataIntegrityViolationException")
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
     void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto) throws Exception {
 
         persistOrganization();
@@ -150,7 +177,6 @@ public class OrganizationControllerTest {
                 .andExpect(content().string(org.hamcrest.Matchers.containsString("Please try again.")))
                 .andReturn();
 
-        resetDatabase();
     }
 
 
@@ -158,7 +184,7 @@ public class OrganizationControllerTest {
     @DisplayName("Test if get all organizations works correctly")
     void getAllOrganizations() throws Exception {
 
-        createOrganizationAndReturnGetDto();
+        persistOrganization();
 
         mockMvc.perform(get("/api/v1/organization/")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -176,7 +202,7 @@ public class OrganizationControllerTest {
     @DisplayName("Test if get organization by id works correctly")
     void getOrganizationById() throws Exception {
 
-        createOrganizationAndReturnGetDto();
+        persistOrganization();
 
         mockMvc.perform(get("/api/v1/organization/id/{id}", organizationGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -201,7 +227,7 @@ public class OrganizationControllerTest {
     @DisplayName("Test if update organization works correctly")
     void updateOrganization() throws Exception {
 
-        createOrganizationAndReturnGetDto();
+        persistOrganization();
 
         mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
@@ -220,12 +246,29 @@ public class OrganizationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @ParameterizedTest
+    @MethodSource("orgUpdateDtoListProvider")
+    @DisplayName("Test if update organization send DataIntegrityViolationException")
+    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto) throws Exception {
+
+        persistOrganization();
+
+        persistOrganizationToUpdate();
+
+        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
+                        .content(objectMapper.writeValueAsString(organizationUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andExpect(content().string(org.hamcrest.Matchers.containsString("Please try again.")))
+                .andReturn();
+    }
+
 
     @Test
     @DisplayName("Test if delete organization works correctly")
     void deleteOrganization() throws Exception {
 
-        createOrganizationAndReturnGetDto();
+        persistOrganization();
 
         mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
