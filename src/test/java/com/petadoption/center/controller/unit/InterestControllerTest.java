@@ -50,7 +50,7 @@ public class InterestControllerTest {
        interestGetDto = interestGetDto();
        interestGetDtoUpdated = interestGetDtoUpdated();
        interestCreateDto = interestCreateDto();
-       interestUpdateDto = interestUpdateDto();
+       interestUpdateDto = interestUpdateDtoToFormRequested();
     }
 
     @Test

@@ -23,8 +23,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.interestUpdateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
 import static com.petadoption.center.util.Messages.*;
 import static org.hamcrest.Matchers.is;
@@ -48,7 +47,8 @@ public class InterestControllerTest {
 
     private InterestGetDto interestGetDto;
     private InterestCreateDto interestCreateDto;
-    private InterestUpdateDto interestUpdateDto;
+    private InterestUpdateDto interestUpdateDtoRejected;
+    private InterestUpdateDto interestUpdateDtoFormRequested;
     private UserGetDto userGetDto;
     private PetGetDto petGetDto;
     private OrganizationGetDto organizationGetDto;
@@ -77,7 +77,8 @@ public class InterestControllerTest {
                 orgId
         );
 
-        interestUpdateDto = interestUpdateDto();
+        interestUpdateDtoRejected = interestUpdateDtoToRejected();
+        interestUpdateDtoFormRequested = interestUpdateDtoToFormRequested();
     }
 
     private void addUser() throws Exception {
@@ -166,16 +167,14 @@ public class InterestControllerTest {
                 .andReturn();
     }
 
-    //TODO é preciso corrigir o update para mudar o status
-    /*@Test
+    @Test
     @DisplayName("Test get interest history by organization id returns interest list with size 1")
     @DirtiesContext
     void testGetInterestHistoryByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
-        testCreateInterest();
+        testUpdateInterestToRejected();
 
-
-        mockMvc.perform(get(URL + "/interest/organization/{organizationId}/history", orgId)
+        mockMvc.perform(get(URL + "/interest/organization/{orgId}/history", orgId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -183,7 +182,7 @@ public class InterestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
                 .andReturn();
-    }*/
+    }
 
     @Test
     @DisplayName("Test get current interest by user id returns empty")
@@ -232,15 +231,15 @@ public class InterestControllerTest {
                 .andReturn();
     }
 
-    //TODO corrigir update
-    /*@Test
+
+    @Test
     @DisplayName("Test get interest history by user id returns interest list with size 1")
     @DirtiesContext
     void testGetInterestHistoryByUserIdReturnsInterestSizeOne() throws Exception {
 
-        testCreateInterest();
+        testUpdateInterestToRejected();
 
-        mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
+        mockMvc.perform(get(URL + "/interest/user/{userId}/history", userId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -248,7 +247,7 @@ public class InterestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
                 .andReturn();
-    }*/
+    }
 
     @Test
     @DisplayName("Test get current interest by id returns interest")
@@ -310,21 +309,33 @@ public class InterestControllerTest {
         );
     }
 
-
-    //TODO corrigir o stack overflow
-    /*@Test
-    @DisplayName("Test if update interest works correctly")
+    @Test
+    @DisplayName("Test if update interest to form requested works correctly")
     @DirtiesContext
-    void testUpdateInterest() throws Exception {
+    void testUpdateInterestToFormRequested() throws Exception {
 
         testCreateInterest();
 
-        MvcResult result = mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
-                        .content(objectMapper.writeValueAsString(interestUpdateDto))
+        mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
+                        .content(objectMapper.writeValueAsString(interestUpdateDtoFormRequested))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
-    }*/
+    }
+
+    @Test
+    @DisplayName("Test if update interest to rejected works correctly")
+    @DirtiesContext
+    void testUpdateInterestToRejected() throws Exception {
+
+        testCreateInterest();
+
+        mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
+                        .content(objectMapper.writeValueAsString(interestUpdateDtoRejected))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
 
     @Test
     @DisplayName("Test if delete interest works correctly")
