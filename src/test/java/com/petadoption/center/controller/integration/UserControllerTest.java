@@ -1,11 +1,13 @@
 package com.petadoption.center.controller.integration;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,11 +42,11 @@ public class UserControllerTest {
 
 
     private UserGetDto userGetDto;
-    private UserCreateDto userCreateDto;
-    private UserUpdateDto userUpdateDto;
+    private static UserCreateDto userCreateDto;
+    private static UserUpdateDto userUpdateDto;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         userCreateDto = userCreateDto();
         userUpdateDto = userUpdateDto();
     }
@@ -52,7 +54,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if create user works correctly")
-    @DirtiesContext
     void createUserShouldReturnUser() throws Exception {
 
        var result = mockMvc.perform(post("/api/v1/user/")
@@ -69,7 +70,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get all users works correctly")
-    @DirtiesContext
     void getAllAfterCreatingUser() throws Exception {
 
         createUserShouldReturnUser();
@@ -89,7 +89,6 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    @DirtiesContext
     void getUserByIdShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
@@ -103,10 +102,18 @@ public class UserControllerTest {
     }
 
 
+    @Test
+    @DisplayName("Test if get user by id throws exception user not found")
+    void getUserByIdShouldThrowException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/user/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
 
     @Test
     @DisplayName("Test if update user works correctly")
-    @DirtiesContext
     void updateUserShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
@@ -120,8 +127,18 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Test if update user throws exception user not found")
+    void updateUserShouldThrowException() throws Exception {
+
+        mockMvc.perform(put("/api/v1/user/update/{id}", "11111-11111-1111-1111")
+                        .content(objectMapper.writeValueAsString(userUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
     @DisplayName("Test if delete user works correctly")
-    @DirtiesContext
     void deleteUserShouldReturn() throws Exception {
 
         createUserShouldReturnUser();
@@ -130,5 +147,14 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS));
+    }
+
+    @Test
+    @DisplayName("Test if delete user throws exception user not found")
+    void deleteUserShouldThrowException() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/user/delete/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

@@ -17,6 +17,7 @@ import static com.petadoption.center.util.Messages.*;
 @Builder
 public class SocialMedia {
 
+
     @Pattern(regexp = "^[a-zA-Z0-9.:/-]*$", message = FACEBOOK_VALID)
     @Size(max = 255, message = CHARACTERS_LIMIT)
     private String facebook;
