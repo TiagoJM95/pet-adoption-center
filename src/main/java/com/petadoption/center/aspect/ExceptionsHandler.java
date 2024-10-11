@@ -2,6 +2,8 @@ package com.petadoption.center.aspect;
 
 import com.petadoption.center.exception.DatabaseConnectionException;
 import com.petadoption.center.exception.not_found.ModelNotFoundException;
+import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,17 +16,17 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.petadoption.center.util.Messages.LOGGER_DB_CONNECTION;
-import static com.petadoption.center.util.Messages.LOGGER_NOT_FOUND;
+import static com.petadoption.center.util.Messages.*;
 
-@Aspect
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionsHandler {
 
     // Adicionar handler para BreedMismatchException e InvalidStatusChangeException
@@ -32,64 +34,93 @@ public class ExceptionsHandler {
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
 
     @ExceptionHandler(ModelNotFoundException.class)
-    public ResponseEntity<String> notFoundHandler(Exception ex) {
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public Error notFoundHandler(Exception ex, HttpServletRequest request) {
         logger.error(LOGGER_NOT_FOUND, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .message(ex.getMessage())
+                .method(request.getMethod())
+                .path(request.getRequestURI())
+                .build();
     }
 
     @ExceptionHandler(DatabaseConnectionException.class)
-    public ResponseEntity<String> dbConnectionHandler(Exception ex) {
+    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT)
+    public Error dbConnectionHandler(Exception ex, HttpServletRequest request) {
         logger.error(LOGGER_DB_CONNECTION, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .message(ex.getMessage())
+                .method(request.getMethod())
+                .path(request.getRequestURI())
+                .build();
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> requestBodyHandler(Exception ex) {
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Error requestBodyHandler(Exception ex, HttpServletRequest request) {
         logger.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .message(ex.getMessage())
+                .method(request.getMethod())
+                .path(request.getRequestURI())
+                .build();
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Throwable cause = ex.getCause();
-        String message = (cause != null) ? cause.getMessage() : "Unknown error";
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public Error handleDataIntegrityViolationException(Exception ex, HttpServletRequest request) {
+        // Get the root cause of the exception to extract the database message
+        String message = (ex.getCause() != null) ? ex.getCause().getMessage() : "Unknown error";
 
-        Matcher keyValueMatcher = Pattern.compile("Key \\(([^)]+)\\)=\\(([^)]+)\\)").matcher(message); // regex key values
-        Matcher tableNameMatcher = Pattern.compile("insert into ([^\\s]+)").matcher(message); // regex table name
-
-        String tableName = null;
-
-        if (tableNameMatcher.find()) {
-            tableName = tableNameMatcher.group(1);
-            if (!tableName.isEmpty()) {
-                tableName = tableName.substring(0, tableName.length() - 1); // remove last letter of table name
-            }
-        }
+        // Pattern to extract the keys and values that caused the violation
+        Matcher keyValueMatcher = Pattern.compile("Key \\(([^)]+)\\)=\\(([^)]+)\\)").matcher(message);
+        String friendlyMessage = "Duplicate entry";  // Default message
 
         if (keyValueMatcher.find()) {
-            String[] keys = keyValueMatcher.group(1).split(",\\s");
-            String[] values = keyValueMatcher.group(2).split(",\\s");
+            String[] keys = keyValueMatcher.group(1).split(",\\s*");  // Get the keys (e.g., 'name', 'species_id', etc.)
+            String[] values = keyValueMatcher.group(2).split(",\\s*");  // Get the values (e.g., 'Buddy', 'UUID1', 'UUID2', etc.)
 
-            StringBuilder output = new StringBuilder(); // build error message
-            if (tableName != null) {
-                output.append(tableName).append(" with ");
-            }
+            StringBuilder output = new StringBuilder();  // Build the key-value pair message
             for (int i = 0; i < keys.length; i++) {
-                if(i == keys.length - 1) {
-                    output.append(keys[i]).append(" ").append(values[i]).append(" already exists.");
-                    break;
+                output.append(keys[i]).append(": ").append(values[i]);  // Append key and value
+                if (i < keys.length - 1) {
+                    output.append(", ");  // Add comma between pairs, but not after the last one
                 }
-                output.append(keys[i]).append(" ").append(values[i]).append(" ").append("and ");
             }
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(output.toString());
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("You have entered an invalid data. Please try again.");
+            if(keys.length > 1){
+                friendlyMessage = output.append(" combination already exists!").toString();
+            }
+            else {
+                friendlyMessage = output.append(" already exists!").toString();  // Append the final part of the message
+            }
         }
+
+        // Extract the constraint name if needed
+        Matcher constraintMatcher = Pattern.compile("constraint \"([^\"]+)\"").matcher(message);
+        String constraintName = constraintMatcher.find() ? constraintMatcher.group(1) : "Unknown constraint";
+
+        return Error.builder()
+                .timestamp(new Date())
+                .message(friendlyMessage)  // Replace DB message with the friendly one
+                .constraint(constraintName)
+                .method(request.getMethod())
+                .path(request.getRequestURI())
+                .build();
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("An unexpected error occurred: " + ex.getMessage());
+    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT)
+    public Error handleGeneralException(Exception ex, HttpServletRequest request) {
+        logger.error(LOGGER_GENERIC, ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .message(ex.getMessage())
+                .method(request.getMethod())
+                .path(request.getRequestURI())
+                .build();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

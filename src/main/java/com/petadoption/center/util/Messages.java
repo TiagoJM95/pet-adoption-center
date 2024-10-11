@@ -90,6 +90,8 @@ public class Messages {
 
     public static final String LOGGER_DB_CONNECTION = "Exception DbConnection: {} ";
 
+    public static final String LOGGER_GENERIC = "Generic Exception: {} ";
+
     // VALIDATION MESSAGES
 
     public static final String BLANK_FIELD = "This field cannot be blank";
