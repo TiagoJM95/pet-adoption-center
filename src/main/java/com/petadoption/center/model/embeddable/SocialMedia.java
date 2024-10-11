@@ -22,11 +22,11 @@ public class SocialMedia {
     private String facebook;
 
     @Pattern(regexp = "^[a-zA-Z0-9.:@/-]*$", message = INSTAGRAM_VALID)
-    @Size(max = 30, message = CHARACTERS_LIMIT)
+    @Size(max = 255, message = CHARACTERS_LIMIT)
     private String instagram;
 
     @Pattern(regexp = "^[a-zA-Z0-9.@:/-]*$", message = TWITTER_VALID)
-    @Size(max = 30, message = CHARACTERS_LIMIT)
+    @Size(max = 255, message = CHARACTERS_LIMIT)
     private String twitter;
 
     @Pattern(regexp = "^[a-zA-Z0-9.@:/-]*$", message = YOUTUBE_VALID)

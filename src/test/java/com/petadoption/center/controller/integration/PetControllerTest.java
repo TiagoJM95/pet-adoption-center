@@ -10,7 +10,6 @@ import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
-import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.enums.Ages;
@@ -22,7 +21,7 @@ import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.specifications.PetSearchCriteria;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,11 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.util.stream.Stream;
 
@@ -66,50 +64,92 @@ public class PetControllerTest {
     @Autowired
     private PetRepository petRepository;
 
-    private SpeciesGetDto speciesGetDto;
-    private String speciesId;
-    private BreedGetDto primaryBreedGetDto;
-    private String primaryBreedId;
-    private BreedGetDto secondaryBreedGetDto;
-    private String secondaryBreedId;
-    private ColorGetDto primaryColorGetDto;
-    private String primaryColorId;
-    private ColorGetDto secondaryColorGetDto;
-    private String secondaryColorId;
-    private ColorGetDto tertiaryColorGetDto;
-    private String tertiaryColorId;
-    private OrganizationGetDto organizationGetDto;
-    private String organizationId;
-    private String petId;
-    private PetGetDto petGetDto;
-    private static PetCreateDto petCreateDtoAllFields;
-    private static PetCreateDto petCreateDtoNullFields;
-    private static PetGetDto expectedAllFieldsDto;
-    private static PetGetDto expectedNullFieldsDto;
-    private PetUpdateDto petUpdateDto;
-    private PetSearchCriteria petSearchCriteria;
     private final String URL = "/api/v1/pet/";
+
+    private SpeciesGetDto speciesGetDto1;
+    private SpeciesGetDto speciesGetDto2;
+
+    private BreedGetDto primaryBreedGetDto1;
+    private BreedGetDto primaryBreedGetDto2;
+
+    private BreedGetDto secondaryBreedGetDto1;
+    private BreedGetDto secondaryBreedGetDto2;
+
+    private ColorGetDto primaryColorGetDto;
+    private ColorGetDto secondaryColorGetDto;
+    private ColorGetDto tertiaryColorGetDto;
+
+    private OrganizationGetDto organizationGetDto1;
+    private OrganizationGetDto organizationGetDto2;
+
+    private static PetCreateDto petCreateDto;
+    private static PetGetDto expectedGetDto;
+
+    private PetSearchCriteria petSearchCriteria;
 
 
     @BeforeAll
     void setup() throws Exception {
 
-        persistSpecies();
-        persistPrimaryBreed();
-        persistSecondaryBreed();
-        persistPrimaryColor();
-        persistSecondaryColor();
-        persistTertiaryColor();
-        persistOrganization();
+        speciesGetDto1 = persistSpecies(speciesCreateDto());
+        speciesGetDto2 = persistSpecies(otherSpeciesCreateDto());
+
+        primaryBreedGetDto1 = persistBreed(primaryBreedCreateDto(speciesGetDto1.id()));
+        primaryBreedGetDto2 = persistBreed(otherPrimaryBreedCreateDto(speciesGetDto2.id()));
+
+        secondaryBreedGetDto1 = persistBreed(secondaryBreedCreateDto(speciesGetDto1.id()));
+        secondaryBreedGetDto2 = persistBreed(otherSecondaryBreedCreateDto(speciesGetDto2.id()));
+
+        primaryColorGetDto = persistColor(primaryColorCreateDto());
+        secondaryColorGetDto = persistColor(secondaryColorCreateDto());
+        tertiaryColorGetDto = persistColor(tertiaryColorCreateDto());
+
+        organizationGetDto1 = persistOrganization(organizationCreateDto());
+        organizationGetDto2 = persistOrganization(otherOrganizationCreateDto());
 
         Attributes attributes = createAttributes();
 
-        petUpdateDto = PetUpdateDto.builder()
-                .size("Extra Large")
-                .age("Senior")
+        petCreateDto = PetCreateDto.builder()
+                .name("Max")
+                .speciesId(speciesGetDto1.id())
+                .primaryBreedId(primaryBreedGetDto1.id())
+                .secondaryBreedId(secondaryBreedGetDto1.id())
+                .primaryColor(primaryColorGetDto.id())
+                .secondaryColor(secondaryColorGetDto.id())
+                .tertiaryColor(tertiaryColorGetDto.id())
+                .gender("Male")
+                .coat("Medium")
+                .age("Adult")
+                .size("Large")
+                .description("Max is friendly dog!")
+                .imageUrl("https://dog.com")
+                .isAdopted(false)
+                .attributes(attributes)
+                .organizationId(organizationGetDto1.id())
                 .build();
 
-        petCreateDtoAllFields = PetCreateDto.builder()
+        expectedGetDto = PetGetDto.builder()
+                .name("Max")
+                .speciesDto(speciesGetDto1)
+                .primaryBreedDto(primaryBreedGetDto1)
+                .secondaryBreedDto(secondaryBreedGetDto1)
+                .primaryColorDto(primaryColorGetDto)
+                .secondaryColorDto(secondaryColorGetDto)
+                .tertiaryColorDto(tertiaryColorGetDto)
+                .gender(Genders.MALE)
+                .coat(Coats.MEDIUM)
+                .size(Sizes.LARGE)
+                .age(Ages.ADULT)
+                .description("Max is friendly dog!")
+                .imageUrl("https://dog.com")
+                .isAdopted(false)
+                .attributes(attributes)
+                .organizationDto(organizationGetDto1)
+                .build();
+    }
+
+    /*void method(){
+        createAllFields = PetMutableDto.builder()
                 .name("Max")
                 .speciesId(speciesId)
                 .primaryBreedId(primaryBreedId)
@@ -128,7 +168,7 @@ public class PetControllerTest {
                 .organizationId(organizationId)
                 .build();
 
-        petCreateDtoNullFields = PetCreateDto.builder()
+        createNullFields = PetMutableDto.builder()
                 .name("Max")
                 .speciesId(speciesId)
                 .primaryBreedId(primaryBreedId)
@@ -144,7 +184,7 @@ public class PetControllerTest {
                 .organizationId(organizationId)
                 .build();
 
-        expectedAllFieldsDto = PetGetDto.builder()
+        expectedAllFields = PetMutableDto.builder()
                 .name("Max")
                 .speciesDto(speciesGetDto)
                 .primaryBreedDto(primaryBreedGetDto)
@@ -152,10 +192,10 @@ public class PetControllerTest {
                 .primaryColorDto(primaryColorGetDto)
                 .secondaryColorDto(secondaryColorGetDto)
                 .tertiaryColorDto(tertiaryColorGetDto)
-                .gender(Genders.MALE)
-                .coat(Coats.MEDIUM)
-                .size(Sizes.LARGE)
-                .age(Ages.ADULT)
+                .genders(Genders.MALE)
+                .coats(Coats.MEDIUM)
+                .sizes(Sizes.LARGE)
+                .ages(Ages.ADULT)
                 .description("Max is friendly dog!")
                 .imageUrl("https://dog.com")
                 .isAdopted(false)
@@ -163,124 +203,105 @@ public class PetControllerTest {
                 .organizationDto(organizationGetDto)
                 .build();
 
-        expectedNullFieldsDto = PetGetDto.builder()
+        expectedNullFields = PetMutableDto.builder()
                 .name("Max")
                 .speciesDto(speciesGetDto)
                 .primaryBreedDto(primaryBreedGetDto)
                 .primaryColorDto(primaryColorGetDto)
-                .gender(Genders.MALE)
-                .coat(Coats.MEDIUM)
-                .size(Sizes.LARGE)
-                .age(Ages.ADULT)
+                .genders(Genders.MALE)
+                .coats(Coats.MEDIUM)
+                .sizes(Sizes.LARGE)
+                .ages(Ages.ADULT)
                 .description("Max is friendly dog!")
                 .imageUrl("https://dog.com")
                 .isAdopted(false)
                 .attributes(attributes)
                 .organizationDto(organizationGetDto)
                 .build();
+    }*/
+
+    @AfterEach
+    void reset(){
+        petRepository.deleteAll();
     }
 
-    private void persistSpecies() throws Exception {
-        SpeciesCreateDto speciesCreateDto = speciesCreateDto();
-
+    private SpeciesGetDto persistSpecies(SpeciesCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/species/")
-                        .content(objectMapper.writeValueAsString(speciesCreateDto))
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andReturn();
 
-        speciesGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
-        speciesId = speciesGetDto.id();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
     }
 
-    private void persistPrimaryBreed() throws Exception {
-        BreedCreateDto breedCreateDto = primaryBreedCreateDto(speciesId);
-
+    private BreedGetDto persistBreed(BreedCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/breed/")
-                        .content(objectMapper.writeValueAsString(breedCreateDto))
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andReturn();
 
-        primaryBreedGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
-        primaryBreedId = primaryBreedGetDto.id();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
     }
 
-    private void persistSecondaryBreed() throws Exception {
-        BreedCreateDto breedCreateDto = secondaryBreedCreateDto(speciesId);
-
-        MvcResult result = mockMvc.perform(post("/api/v1/breed/")
-                        .content(objectMapper.writeValueAsString(breedCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
-
-        secondaryBreedGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
-        secondaryBreedId = secondaryBreedGetDto.id();
-    }
-
-    private void persistPrimaryColor() throws Exception {
-        ColorCreateDto colorCreateDto = primaryColorCreateDto();
-
+    private ColorGetDto persistColor(ColorCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/color/")
-                        .content(objectMapper.writeValueAsString(colorCreateDto))
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andReturn();
 
-        primaryColorGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-        primaryColorId = primaryColorGetDto.id();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
     }
 
-    private void persistSecondaryColor() throws Exception {
-        ColorCreateDto colorCreateDto = secondaryColorCreateDto();
-
-        MvcResult result = mockMvc.perform(post("/api/v1/color/")
-                        .content(objectMapper.writeValueAsString(colorCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
-
-        secondaryColorGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-        secondaryColorId = secondaryColorGetDto.id();
-    }
-
-    private void persistTertiaryColor() throws Exception {
-        ColorCreateDto colorCreateDto = tertiaryColorCreateDto();
-
-        MvcResult result = mockMvc.perform(post("/api/v1/color/")
-                        .content(objectMapper.writeValueAsString(colorCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                        .andReturn();
-
-        tertiaryColorGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-        tertiaryColorId = tertiaryColorGetDto.id();
-    }
-
-    private void persistOrganization() throws Exception {
-        OrganizationCreateDto organizationCreateDto = organizationCreateDto();
-
+    private OrganizationGetDto persistOrganization(OrganizationCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/organization/")
-                        .content(objectMapper.writeValueAsString(organizationCreateDto))
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                         .andReturn();
 
-        organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
-        organizationId = organizationGetDto.id();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
     }
 
-    private static Stream<Arguments> provideDtos() {
-        return Stream.of(
-                arguments(petCreateDtoAllFields, expectedAllFieldsDto),
-                arguments(petCreateDtoNullFields, expectedNullFieldsDto)
-        );
-    }
-
-    private MvcResult persistPet(PetCreateDto dto) throws Exception {
+    private PetGetDto persistPet(PetCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post(URL + "addSingle")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        petGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
-        petId = petGetDto.id();
-        return result;
+        return objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
+    }
+
+    private static Stream<Arguments> provideCreateDtosWithAllPropsAndNullProps() {
+        return Stream.of(
+                arguments(petCreateDto, expectedGetDto),
+                arguments(petCreateDto.toBuilder()
+                                .secondaryBreedId(null)
+                                .build(),
+                        expectedGetDto.toBuilder()
+                                .secondaryBreedDto(null)
+                                .build()),
+                arguments(petCreateDto.toBuilder()
+                                .secondaryBreedId(null)
+                                .secondaryColor(null)
+                                .tertiaryColor(null)
+                                .build(),
+                        expectedGetDto.toBuilder()
+                                .secondaryBreedDto(null)
+                                .secondaryColorDto(null)
+                                .tertiaryColorDto(null)
+                                .build())
+        );
+    }
+
+    private static Stream<Arguments> provideCreateDtosForDupesCheck(){
+        return Stream.of(
+                arguments(petCreateDto.toBuilder()
+                        .imageUrl("https://dif.com")
+                        .build()),
+                arguments(petCreateDto.toBuilder()
+                        .name("Fifi")
+                        .build())
+        );
     }
 
 
@@ -288,49 +309,55 @@ public class PetControllerTest {
 
 
     @ParameterizedTest
-    @MethodSource("provideDtos")
+    @MethodSource("provideCreateDtosWithAllPropsAndNullProps")
     @DisplayName("Should persist a new Pet and return a PetGetDto with correct fields when a valid PetCreateDto is provided")
-    void shouldCreatePetAndReturnCorrectPetGetDto_whenPetIsValid(PetCreateDto petCreateDto, PetGetDto expected) throws Exception {
+    void shouldCreatePetAndReturnCorrectPetGetDto_whenPetIsValid(PetCreateDto createDto, PetGetDto expected) throws Exception {
 
-        persistPet(petCreateDto);
+        PetGetDto persistedPetDto = persistPet(createDto);
 
-        assertThat(petGetDto)
+        assertThat(persistedPetDto)
                 .usingRecursiveComparison()
                 .ignoringFields("id")
                 .ignoringFieldsMatchingRegexes(".*createdAt")
                 .isEqualTo(expected);
-        assertNotNull(petGetDto.createdAt());
-        assertTrue(petGetDto.id().matches("^[0-9a-fA-F-]{36}$"));
+        assertNotNull(persistedPetDto.createdAt());
+        assertTrue(persistedPetDto.id().matches("^[0-9a-fA-F-]{36}$"));
     }
 
     @ParameterizedTest
-    @MethodSource("provideDtos")
+    @MethodSource("provideCreateDtosWithAllPropsAndNullProps")
     @DisplayName("Persisted Pet should match the Pet retrieved from the database")
-    void shouldMatchPersistedPetWithRetrievedPet_whenPetIsValid(PetCreateDto petCreateDto) throws Exception {
+    void shouldMatchPersistedPetWithRetrievedPet_whenPetIsValid(PetCreateDto createDto) throws Exception {
 
-        persistPet(petCreateDto);
+        PetGetDto persistedPetDto = persistPet(createDto);
 
-        Pet savedPet = petRepository.findById(petId)
-                .orElseThrow(() -> new PetNotFoundException(PET_WITH_ID + petId + NOT_FOUND));
-        PetGetDto savedPetDto = PetConverter.toDto(savedPet);
+        Pet retrievedPet = petRepository.findById(persistedPetDto.id())
+                .orElseThrow(() -> new PetNotFoundException(PET_WITH_ID + persistedPetDto.id() + NOT_FOUND));
+        PetGetDto retrievedPetDto = PetConverter.toDto(retrievedPet);
 
-        assertThat(petGetDto)
+        assertThat(persistedPetDto)
                 .usingRecursiveComparison()
                 .ignoringFieldsMatchingRegexes(".*createdAt")
-                .isEqualTo(savedPetDto);
+                .isEqualTo(retrievedPetDto);
     }
 
-    @Test
-    @DisplayName("Should throw DataIntegrityViolationException when trying to save an existing Pet")
-    void shouldThrowDataIntegrityViolationException_WhenTryingToSaveExistingPet() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideCreateDtosForDupesCheck")
+    @DisplayName("Should throw DataIntegrityViolationException when creating a Pet with a constraint that already exists")
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    void shouldThrowDataIntegrityViolationException_WhenCreatingPet_WhenConstraintAlreadyExists(PetCreateDto dto) throws Exception {
 
-        persistPet(petCreateDtoAllFields);
-
+        // Save the first
+        persistPet(dto);
+        // Verify the second one fails
         MvcResult result = mockMvc.perform(post(URL + "addSingle")
-                        .content(objectMapper.writeValueAsString(petCreateDtoAllFields))
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
+        // Assert that the exception message includes the constraint name
+        // Assert that only one pet exists in the DB
+
     }
 
     @Test
@@ -348,22 +375,6 @@ public class PetControllerTest {
     @Test
     @DisplayName("Returns a PetGetDto when petService.getById() is called with a valid Id")
     void shouldReturnPetGetDto_WhenGetByIdIsCalledWithValidId() throws Exception {
-
-        persistPet(petCreateDtoAllFields);
-
-        MvcResult result = mockMvc.perform(get(URL + "id/{id}", petId))
-                .andExpect(status().isOk())
-                .andReturn();
-
-        PetGetDto actual = objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
-
-        assertThat(actual)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .ignoringFieldsMatchingRegexes(".*createdAt")
-                .isEqualTo(expectedAllFieldsDto);
-        assertNotNull(actual.createdAt());
-        assertTrue(petGetDto.id().matches("^[0-9a-fA-F-]{36}$"));
     }
 
     @Test

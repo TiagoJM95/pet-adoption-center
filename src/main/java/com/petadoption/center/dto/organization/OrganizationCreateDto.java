@@ -8,7 +8,7 @@ import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
 
-@Builder
+@Builder(toBuilder = true)
 public record OrganizationCreateDto(
 
         @NotBlank(message = BLANK_FIELD)

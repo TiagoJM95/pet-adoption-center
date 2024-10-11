@@ -195,6 +195,12 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static SpeciesCreateDto otherSpeciesCreateDto(){
+        return SpeciesCreateDto.builder()
+                .name("Cat")
+                .build();
+    }
+
     public static UserCreateDto userCreateDto(){
         return UserCreateDto.builder()
                 .firstName("John")
@@ -214,9 +220,23 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static BreedCreateDto otherPrimaryBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Siamese")
+                .speciesId(speciesId)
+                .build();
+    }
+
     public static BreedCreateDto secondaryBreedCreateDto(String speciesId){
         return BreedCreateDto.builder()
                 .name("Labrador")
+                .speciesId(speciesId)
+                .build();
+    }
+
+    public static BreedCreateDto otherSecondaryBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Persian")
                 .speciesId(speciesId)
                 .build();
     }
@@ -230,6 +250,18 @@ public class TestDtoFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
+                .build();
+    }
+
+    public static OrganizationCreateDto otherOrganizationCreateDto(){
+        return OrganizationCreateDto.builder()
+                .name("AdoptPet")
+                .email("adoptpet@email.com")
+                .nif("987654321")
+                .phoneNumber("987654321")
+                .address(otherCreateAddress())
+                .websiteUrl("https://www.adoptpet.com")
+                .socialMedia(otherCreateSocialMedia())
                 .build();
     }
 
