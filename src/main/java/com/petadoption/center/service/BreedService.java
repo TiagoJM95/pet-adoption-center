@@ -77,7 +77,7 @@ public class BreedService implements BreedServiceI {
     @Override
     public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) {
 
-        Species species = SpeciesConverter.toModel(speciesServiceI.getById(dto.petSpeciesId()));
+        Species species = SpeciesConverter.toModel(speciesServiceI.getById(dto.speciesId()));
         Breed primaryBreed = findById(dto.primaryBreedId());
         Breed secondaryBreed;
 

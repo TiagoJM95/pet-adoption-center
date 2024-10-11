@@ -35,6 +35,7 @@ public record OrganizationCreateDto(
         Address address,
 
         @NotBlank(message = BLANK_FIELD)
+
         @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,

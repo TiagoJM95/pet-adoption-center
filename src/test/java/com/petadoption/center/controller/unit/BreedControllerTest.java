@@ -61,7 +61,7 @@ public class BreedControllerTest {
         updatedBreed.setId("1234-1234-5678");
         updatedBreed.setName("Weimaraner");
 
-        breedCreateDto = breedCreateDto(species.getId());
+        breedCreateDto = primaryBreedCreateDto(species.getId());
         breedUpdateDto = breedUpdateDto();
         breedGetDto = primaryBreedGetDto(speciesGetDto);
     }

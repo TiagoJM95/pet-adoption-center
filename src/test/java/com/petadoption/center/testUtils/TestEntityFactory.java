@@ -113,6 +113,15 @@ public class TestEntityFactory {
                 .build();
     }
 
+    public static Address otherCreateAddress() {
+        return Address.builder()
+                .street("Rua Diferente da Outra, 321")
+                .city("Rio Tinto")
+                .state("Porto")
+                .postalCode("4435-100")
+                .build();
+    }
+
     public static Address updateAddress() {
         return Address.builder()
                 .street("Rua das Gaivotas, 456")
@@ -128,6 +137,15 @@ public class TestEntityFactory {
                 .instagram("https://www.instagram.com")
                 .twitter("https://www.twitter.com")
                 .youtube("https://www.youtube.com")
+                .build();
+    }
+
+    public static SocialMedia otherCreateSocialMedia() {
+        return SocialMedia.builder()
+                .facebook("https://www.facebook.com/outro")
+                .instagram("https://www.instagram.com/outro")
+                .twitter("https://www.twitter.com/outro")
+                .youtube("https://www.youtube.com/outro")
                 .build();
     }
 

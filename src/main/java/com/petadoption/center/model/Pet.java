@@ -19,7 +19,8 @@ import java.util.Objects;
 @Setter
 @Builder
 @Table(name = "pets", uniqueConstraints = {
-        @UniqueConstraint(name = "UniquePet", columnNames = {"name", "species_id", "primary_breed_id", "secondary_breed_id", "primary_color_id", "secondary_color_id", "tertiary_color_id", "gender", "coat", "size", "age", "description", "image_url", "is_adopted", "sterilized", "vaccinated", "chipped", "special_needs", "house_trained", "good_with_kids", "good_with_dogs", "good_with_cats", "created_at", "organization_id"})
+        @UniqueConstraint(name = "UniquePetNameSpeciesOrg", columnNames = {"name", "species_id", "organization_id"}),
+        @UniqueConstraint(name = "UniquePetImage", columnNames = {"image_url"})
 })
 public class Pet {
 

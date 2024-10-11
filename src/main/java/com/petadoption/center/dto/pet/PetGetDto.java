@@ -1,5 +1,6 @@
 package com.petadoption.center.dto.pet;
 
+import ch.qos.logback.classic.spi.LoggingEventVO;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
@@ -13,7 +14,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder
+@Builder(toBuilder = true)
 public record PetGetDto(
         String id,
         String name,
