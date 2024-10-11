@@ -257,26 +257,6 @@ public class TestDtoFactory {
     }
 
 
-    public static OrganizationCreateDto orgCreateAnotherDto(){
-        return OrganizationCreateDto.builder()
-                .name("Adopting Center")
-                .email("adopting@email.com")
-                .nif("987654321")
-                .phoneNumber("987654321")
-                .address(Address.builder()
-                        .city("Lisboa")
-                        .postalCode("1234-567")
-                        .state("Lisboa")
-                        .street("Rua dos Bobos, 321")
-                        .build())
-                .websiteUrl("https://www.adoptingcenter.com")
-                .socialMedia(SocialMedia.builder()
-                        .facebook("https://www.facebook.com/test")
-                        .youtube("https://www.youtube.com/test")
-                        .instagram("https://www.instagram.com/test")
-                        .twitter("https://www.twitter.com/test")
-                        .build())
-
     public static OrganizationCreateDto otherOrganizationCreateDto(){
         return OrganizationCreateDto.builder()
                 .name("AdoptPet")

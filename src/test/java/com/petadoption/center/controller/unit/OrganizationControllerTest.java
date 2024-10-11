@@ -50,7 +50,7 @@ public class OrganizationControllerTest {
     @BeforeEach
     void setUp() {
         organizationGetDto = orgGetDto();
-        organizationCreateDto = orgCreateDto();
+        organizationCreateDto = organizationCreateDto();
         organizationUpdateDto = orgUpdateDto();
         updatedOrganizationGetDto = OrganizationGetDto.builder()
                 .id("777777-77777777-7777")

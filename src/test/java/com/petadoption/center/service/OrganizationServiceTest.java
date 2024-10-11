@@ -20,8 +20,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.orgCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.orgUpdateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.organizationCreateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createOrganization;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
@@ -57,7 +57,7 @@ public class OrganizationServiceTest {
         testOrganization = createOrganization();
         updatedOrganization = createOrganization();
         updatedOrganization.setEmail("email@email.com");
-        organizationCreateDto = orgCreateDto();
+        organizationCreateDto = organizationCreateDto();
         organizationUpdateDto = orgUpdateDto();
 
         org1 = createOrganization();

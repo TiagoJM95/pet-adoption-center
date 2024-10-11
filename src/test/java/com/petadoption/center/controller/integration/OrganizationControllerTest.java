@@ -25,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -54,7 +55,7 @@ public class OrganizationControllerTest {
 
     @BeforeEach
     void setUp() {
-        organizationCreateDto = orgCreateDto();
+        organizationCreateDto = organizationCreateDto();
         organizationUpdateDto = orgUpdateDto();
     }
 
@@ -64,25 +65,16 @@ public class OrganizationControllerTest {
     }
 
     static Stream<Arguments> orgCreateDtoListProvider() {
-        OrganizationCreateDto baseOrg = orgCreateAnotherDto();
+        OrganizationCreateDto baseOrg = otherOrganizationCreateDto();
 
         return Stream.of(
                 Arguments.of(baseOrg.toBuilder().email("org@email.com").build()),
                 Arguments.of(baseOrg.toBuilder().nif("123456789").build()),
                 Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build()),
-                Arguments.of(baseOrg.toBuilder().address(Address.builder()
-                        .street("Rua de Santo Antonio, 123")
-                        .postalCode("4444-444")
-                        .city("Gondomar")
-                        .state("Porto")
-                        .build()).build()),
+                Arguments.of(baseOrg.toBuilder().address(createAddress()).build()),
                 Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build()),
-                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .facebook("https://www.facebook.com")
-                        .instagram("https://www.instagram.com")
-                        .twitter("https://www.twitter.com")
-                        .youtube("https://www.youtube.com")
-                        .build()).build())
+                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia())
+                        .build())
         );
     }
 
@@ -141,7 +133,7 @@ public class OrganizationControllerTest {
     private void persistOrganizationToUpdate() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/organization/")
-                        .content(objectMapper.writeValueAsString(orgCreateAnotherDto()))
+                        .content(objectMapper.writeValueAsString(otherOrganizationCreateDto()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andReturn();
