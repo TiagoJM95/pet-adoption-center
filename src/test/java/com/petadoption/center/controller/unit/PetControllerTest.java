@@ -84,14 +84,14 @@ public class PetControllerTest {
 
         int page = 0;
         int size = 10;
-        String sort = "created_at";
+        String sort = "createdAt";
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<PetGetDto> expected = List.of(petGetDto);
 
         when(petService.searchPets(any(PetSearchCriteria.class), any(Pageable.class))).thenReturn(expected);
 
-        ResponseEntity<List<PetGetDto>> actual = petController.searchPets(petSearchCriteria(), pageable);
+        ResponseEntity<List<PetGetDto>> actual = petController.searchPets(pageable, petSearchCriteria());
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         assertEquals(expected, actual.getBody());

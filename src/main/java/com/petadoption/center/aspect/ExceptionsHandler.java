@@ -27,6 +27,8 @@ import static com.petadoption.center.util.Messages.LOGGER_NOT_FOUND;
 @ControllerAdvice
 public class ExceptionsHandler {
 
+    // Adicionar handler para BreedMismatchException e InvalidStatusChangeException
+
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
 
     @ExceptionHandler(ModelNotFoundException.class)

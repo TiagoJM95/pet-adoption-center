@@ -8,7 +8,7 @@ import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
 
-@Builder
+@Builder(toBuilder = true)
 public record OrganizationCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
@@ -35,7 +35,7 @@ public record OrganizationCreateDto(
         Address address,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z_0-9.-]+", message = WEBSITE_URL)
+        @Pattern(regexp = "^[a-zA-Z0-9.@:/-]*$", message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,
 

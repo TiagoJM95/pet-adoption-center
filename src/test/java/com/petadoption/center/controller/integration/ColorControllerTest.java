@@ -16,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static org.hamcrest.Matchers.is;
@@ -41,7 +41,7 @@ public class ColorControllerTest {
 
     @BeforeEach
     void setUp() {
-        colorCreateDto = colorCreateDto();
+        colorCreateDto = primaryColorCreateDto();
     }
 
     @Test

@@ -99,7 +99,7 @@ public class PetConverterTest {
     void testIfPetCreateDtoToPetModelIsWorkingCorrectly() {
         PetCreateDto petCreateDto = PetCreateDto.builder()
                 .name(name)
-                .petSpeciesId(species.getId())
+                .speciesId(species.getId())
                 .primaryBreedId(primaryBreed.getId())
                 .secondaryBreedId(secondaryBreed.getId())
                 .primaryColor(primaryColor.getId())

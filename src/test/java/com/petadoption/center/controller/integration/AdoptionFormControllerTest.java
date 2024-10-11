@@ -129,7 +129,7 @@ public class AdoptionFormControllerTest {
     private void addPet() throws Exception {
         PetCreateDto petCreateDto = PetCreateDto.builder()
                 .name("Bobi")
-                .petSpeciesId(speciesId)
+                .speciesId(speciesId)
                 .primaryBreedId(breedId)
                 .primaryColor(colorId)
                 .gender("MALE")
