@@ -6,11 +6,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -30,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@Transactional
 public class UserControllerTest {
 
 
@@ -39,6 +36,9 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private UserRepository userRepository;
 
 
     private UserGetDto userGetDto;
@@ -49,6 +49,23 @@ public class UserControllerTest {
     static void setUp() {
         userCreateDto = userCreateDto();
         userUpdateDto = userUpdateDto();
+    }
+
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+    }
+
+    private void persistUser() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/user/")
+                        .content(objectMapper.writeValueAsString(userCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+
     }
 
 
@@ -63,16 +80,13 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.firstName", is(userCreateDto.firstName())))
                 .andExpect(jsonPath("$.lastName", is(userCreateDto.lastName())))
                 .andReturn();
-
-       userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-
     }
 
     @Test
     @DisplayName("Test if get all users works correctly")
     void getAllAfterCreatingUser() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
         mockMvc.perform(get("/api/v1/user/")
                         .param("page", "0")
@@ -91,7 +105,7 @@ public class UserControllerTest {
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturn() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
         mockMvc.perform(get("/api/v1/user/id/{id}", userGetDto.id())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -116,7 +130,7 @@ public class UserControllerTest {
     @DisplayName("Test if update user works correctly")
     void updateUserShouldReturn() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
         mockMvc.perform(put("/api/v1/user/update/{id}", userGetDto.id())
                         .content(objectMapper.writeValueAsString(userUpdateDto))
@@ -141,7 +155,7 @@ public class UserControllerTest {
     @DisplayName("Test if delete user works correctly")
     void deleteUserShouldReturn() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
         mockMvc.perform(delete("/api/v1/user/delete/{id}", userGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
