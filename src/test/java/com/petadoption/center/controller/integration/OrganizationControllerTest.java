@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
 import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
 import static com.petadoption.center.util.Messages.ORG_WITH_ID;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -64,26 +65,24 @@ public class OrganizationControllerTest {
         organizationRepository.deleteAll();
     }
 
-    static Stream<Arguments> orgCreateDtoListProvider() {
+    static Stream<Arguments> orgCreateDtoProvider() {
         OrganizationCreateDto baseOrg = otherOrganizationCreateDto();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build()),
-                Arguments.of(baseOrg.toBuilder().nif("123456789").build()),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build()),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build()),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build()),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia())
-                        .build())
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email"),
+                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number"),
+                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address"),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url"),
+                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media")
         );
     }
 
-    static Stream<Arguments> orgUpdateDtoListProvider() {
+    static Stream<Arguments> orgUpdateDtoProvider() {
         OrganizationUpdateDto baseOrg = OrganizationUpdateDto.builder()
                 .name("Adopting Center")
                 .email("adopting@email.com")
-                .nif("987654321")
-                .phoneNumber("987654321")
+                .phoneNumber("987654123")
                 .address(Address.builder()
                         .city("Lisboa")
                         .postalCode("1234-567")
@@ -100,22 +99,11 @@ public class OrganizationControllerTest {
                 .build();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build()),
-                Arguments.of(baseOrg.toBuilder().nif("123456789").build()),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build()),
-                Arguments.of(baseOrg.toBuilder().address(Address.builder()
-                        .street("Rua de Santo Antonio, 123")
-                        .postalCode("4444-444")
-                        .city("Gondomar")
-                        .state("Porto")
-                        .build()).build()),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build()),
-                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .facebook("https://www.facebook.com")
-                        .instagram("https://www.instagram.com")
-                        .twitter("https://www.twitter.com")
-                        .youtube("https://www.youtube.com")
-                        .build()).build())
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number"),
+                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address"),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url"),
+                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media")
         );
     }
 
@@ -155,10 +143,10 @@ public class OrganizationControllerTest {
 
     }
 
-    @ParameterizedTest
-    @MethodSource("orgCreateDtoListProvider")
+    @ParameterizedTest(name = "Test {index}: Creating organization with {1}")
+    @MethodSource("orgCreateDtoProvider")
     @DisplayName("Test if create organization send DataIntegrityViolationException")
-    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto) throws Exception {
+    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto, String fieldBeingTested) throws Exception {
 
         persistOrganization();
 
@@ -238,10 +226,10 @@ public class OrganizationControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @ParameterizedTest
-    @MethodSource("orgUpdateDtoListProvider")
+    @ParameterizedTest(name = "Test {index}: update organization with {1}")
+    @MethodSource("orgUpdateDtoProvider")
     @DisplayName("Test if update organization send DataIntegrityViolationException")
-    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto) throws Exception {
+    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto, String fieldBeingTested) throws Exception {
 
         persistOrganization();
 

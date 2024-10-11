@@ -21,10 +21,6 @@ public record OrganizationUpdateDto(
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
-        @Size(min = 9, max = 9, message = PHONE_NUMBER_SIZE)
-        @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        String nif,
-
         @Pattern(regexp = "[0-9]+", message = PHONE_NUMBER_FORMAT)
         @Size(max = 10, message = PHONE_NUMBER_SIZE)
         String phoneNumber,

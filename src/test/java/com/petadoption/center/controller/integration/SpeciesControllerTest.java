@@ -55,7 +55,7 @@ public class SpeciesControllerTest {
     @DisplayName("Test create species is working correctly")
     void createSpecies() throws Exception {
 
-       var result = mockMvc.perform(post("/api/v1/pet-species/")
+       var result = mockMvc.perform(post("/api/v1/species/")
                         .content(objectMapper.writeValueAsString(speciesCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -74,7 +74,7 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(get("/api/v1/pet-species/")
+        mockMvc.perform(get("/api/v1/species/")
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -90,7 +90,7 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(get("/api/v1/pet-species/id/{id}", speciesId)
+        mockMvc.perform(get("/api/v1/species/id/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(speciesGetDto.name())));
@@ -100,7 +100,7 @@ public class SpeciesControllerTest {
     @DisplayName("Test if get species by id throws not found exception")
     void getSpeciesByIdThrowsNotFoundException() throws Exception {
 
-        mockMvc.perform(get("/api/v1/pet-species/id/{id}", "11111-11111-1111-1111")
+        mockMvc.perform(get("/api/v1/species/id/{id}", "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -111,7 +111,7 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(put("/api/v1/pet-species/update/{id}", speciesId)
+        mockMvc.perform(put("/api/v1/species/update/{id}", speciesId)
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -122,7 +122,7 @@ public class SpeciesControllerTest {
     @DisplayName("Test if update species throws not found exception")
     void updateSpeciesThrowsNotFoundException() throws Exception {
 
-        mockMvc.perform(put("/api/v1/pet-species/update/{id}", "11111-11111-1111-1111")
+        mockMvc.perform(put("/api/v1/species/update/{id}", "11111-11111-1111-1111")
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -134,7 +134,7 @@ public class SpeciesControllerTest {
 
         createSpecies();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/pet-species/delete/{id}", speciesId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/species/delete/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(SPECIES_WITH_ID + speciesId + DELETE_SUCCESS));
@@ -144,7 +144,7 @@ public class SpeciesControllerTest {
     @DisplayName("Test if delete species throws not found exception")
     void deleteThrowsNotFoundException() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/pet-species/delete/{id}", "11111-11111-1111-1111")
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/species/delete/{id}", "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

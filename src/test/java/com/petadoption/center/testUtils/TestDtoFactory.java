@@ -331,7 +331,6 @@ public class TestDtoFactory {
         return OrganizationUpdateDto.builder()
                 .name("Pet Adoption Center")
                 .email("email@email.com")
-                .nif("123456789")
                 .phoneNumber("123456789")
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
