@@ -21,7 +21,6 @@ import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.specifications.PetSearchCriteria;
-import org.springframework.transaction.annotation.Transactional;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -34,20 +33,19 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
-import static com.petadoption.center.testUtils.TestEntityFactory.*;
-import static com.petadoption.center.util.Messages.NOT_FOUND;
-import static com.petadoption.center.util.Messages.PET_WITH_ID;
+import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
+import static com.petadoption.center.util.Messages.PET_NOT_FOUND;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -332,7 +330,7 @@ public class PetControllerTest {
         PetGetDto persistedPetDto = persistPet(createDto);
 
         Pet retrievedPet = petRepository.findById(persistedPetDto.id())
-                .orElseThrow(() -> new PetNotFoundException(PET_WITH_ID + persistedPetDto.id() + NOT_FOUND));
+                .orElseThrow(() -> new PetNotFoundException(format(PET_NOT_FOUND, persistedPetDto.id())));
         PetGetDto retrievedPetDto = PetConverter.toDto(retrievedPet);
 
         assertThat(persistedPetDto)

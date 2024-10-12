@@ -25,8 +25,8 @@ import java.util.List;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
+import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -117,12 +117,12 @@ public class SpeciesControllerTest {
     @DisplayName("Test if delete species works correctly")
     void deleteShouldReturnMessage() throws SpeciesNotFoundException {
 
-        when(speciesServiceI.delete(testSpecies.getId())).thenReturn(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
+        when(speciesServiceI.delete(testSpecies.getId())).thenReturn(format(SPECIES_DELETE_MESSAGE, testSpecies.getId()));
 
         ResponseEntity<String> result = speciesController.delete(testSpecies.getId());
 
         assertEquals(HttpStatus.OK, result.getStatusCode());
-        assertEquals(SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS, result.getBody());
+        assertEquals(format(SPECIES_DELETE_MESSAGE, testSpecies.getId()), result.getBody());
         verify(speciesServiceI).delete(testSpecies.getId());
     }
 }

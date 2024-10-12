@@ -1,6 +1,5 @@
 package com.petadoption.center.controller.integration;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.user.UserCreateDto;
@@ -19,8 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -115,7 +114,6 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastName", is(userGetDto.lastName())));
     }
 
-
     @Test
     @DisplayName("Test if get user by id throws exception user not found")
     void getUserByIdShouldThrowException() throws Exception {
@@ -124,8 +122,7 @@ public class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
-
+  
     @Test
     @DisplayName("Test if update user works correctly")
     void updateUserShouldReturn() throws Exception {
@@ -160,7 +157,7 @@ public class UserControllerTest {
         mockMvc.perform(delete("/api/v1/user/delete/{id}", userGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(USER_DELETE_MESSAGE, userGetDto.id())));
     }
 
     @Test

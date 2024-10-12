@@ -28,6 +28,7 @@ import java.util.List;
 import static com.petadoption.center.converter.EnumConverter.convertStringToEnum;
 import static com.petadoption.center.specifications.PetSpecifications.*;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 
 @Service
 public class PetService implements PetServiceI {
@@ -88,12 +89,12 @@ public class PetService implements PetServiceI {
     public String delete(String id) {
         findById(id);
         petRepository.deleteById(id);
-        return PET_WITH_ID + id + DELETE_SUCCESS;
+        return format(PET_DELETE_MESSAGE, id);
     }
 
     private Pet findById(String id) {
         return petRepository.findById(id).orElseThrow(
-                () -> new PetNotFoundException(PET_WITH_ID + id + NOT_FOUND));
+                () -> new PetNotFoundException(format(PET_NOT_FOUND, id)));
     }
 
     private Pet buildPetFromDto(PetCreateDto dto) {

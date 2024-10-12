@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
+import static com.petadoption.center.util.Messages.ORG_NOT_FOUND;
+import static java.lang.String.format;
 
 @Service
 public class OrganizationService implements OrganizationServiceI {
@@ -49,11 +51,12 @@ public class OrganizationService implements OrganizationServiceI {
     public String delete(String id) {
         findById(id);
         organizationRepository.deleteById(id);
-        return ORG_WITH_ID + id + DELETE_SUCCESS;
+        return format(ORG_DELETE_MESSAGE, id);
     }
 
     private Organization findById(String id) {
-        return organizationRepository.findById(id).orElseThrow(() -> new OrganizationNotFoundException(ORG_WITH_ID + id + NOT_FOUND));
+        return organizationRepository.findById(id).orElseThrow(
+                () -> new OrganizationNotFoundException(format(ORG_NOT_FOUND, id)));
     }
 
     private void updateFields(OrganizationUpdateDto dto, Organization organization) {

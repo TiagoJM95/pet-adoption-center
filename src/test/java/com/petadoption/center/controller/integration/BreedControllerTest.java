@@ -20,10 +20,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.primaryBreedCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.breedUpdateDto;
-import static com.petadoption.center.util.Messages.BREED_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryBreedCreateDto;
+import static com.petadoption.center.util.Messages.BREED_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -146,7 +146,7 @@ public class BreedControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/breed/delete/{id}",breedGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(BREED_WITH_ID + breedGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(BREED_DELETE_MESSAGE, breedGetDto.id())));
     }
 
     @Test

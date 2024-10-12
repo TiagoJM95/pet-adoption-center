@@ -17,7 +17,6 @@ import com.petadoption.center.service.interfaces.ColorServiceI;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +30,12 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.*;
-import static com.petadoption.center.testUtils.TestEntityFactory.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.petCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.petGetDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
+import static com.petadoption.center.testUtils.TestEntityFactory.createPet;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -131,12 +133,12 @@ public class PetServiceCreationTest {
     @DisplayName("Throws SpeciesNotFoundException when create() is called with invalid species")
     void shouldThrowSpeciesNotFoundExceptionDuringCreationWhenSpeciesIsNotFound() {
 
-        doThrow(new SpeciesNotFoundException(SPECIES_WITH_ID + petCreateDto.speciesId() + NOT_FOUND))
+        doThrow(new SpeciesNotFoundException(format(SPECIES_NOT_FOUND, petCreateDto.speciesId())))
                 .when(breedService).verifyIfBreedsAndSpeciesMatch(any(PetCreateDto.class));
 
         SpeciesNotFoundException ex = assertThrows(SpeciesNotFoundException.class, () -> petService.create(petCreateDto));
 
-        assertEquals(SPECIES_WITH_ID + petCreateDto.speciesId() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(SPECIES_NOT_FOUND, petCreateDto.speciesId()), ex.getMessage());
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         verify(petRepository, never()).save(any(Pet.class));
     }
@@ -145,12 +147,12 @@ public class PetServiceCreationTest {
     @DisplayName("Throws BreedNotFoundException when create() is called with invalid breed")
     void shouldThrowBreedNotFoundExceptionDuringCreationWhenBreedIsNotFound() {
 
-        doThrow(new BreedNotFoundException(BREED_WITH_ID + petCreateDto.primaryBreedId() + NOT_FOUND))
+        doThrow(new BreedNotFoundException(format(BREED_NOT_FOUND, petCreateDto.primaryBreedId())))
                 .when(breedService).verifyIfBreedsAndSpeciesMatch(any(PetCreateDto.class));
 
         BreedNotFoundException ex = assertThrows(BreedNotFoundException.class, () -> petService.create(petCreateDto));
 
-        assertEquals(BREED_WITH_ID + petCreateDto.primaryBreedId() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(BREED_NOT_FOUND, petCreateDto.primaryBreedId()), ex.getMessage());
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         verify(petRepository, never()).save(any(Pet.class));
     }
@@ -161,11 +163,11 @@ public class PetServiceCreationTest {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         when(colorService.getById(anyString()))
-                .thenThrow(new ColorNotFoundException(COLOR_WITH_ID + petCreateDto.primaryColor() + NOT_FOUND));
+                .thenThrow(new ColorNotFoundException(format(COLOR_NOT_FOUND, petCreateDto.primaryColor())));
 
         ColorNotFoundException ex = assertThrows(ColorNotFoundException.class, () -> petService.create(petCreateDto));
 
-        assertEquals(COLOR_WITH_ID + petCreateDto.primaryColor() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(COLOR_NOT_FOUND, petCreateDto.primaryColor()), ex.getMessage());
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         verify(petRepository, never()).save(any(Pet.class));
     }
@@ -176,11 +178,11 @@ public class PetServiceCreationTest {
 
         doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         when(organizationService.getById(anyString()))
-                .thenThrow(new OrganizationNotFoundException(ORG_WITH_ID + petCreateDto.organizationId() + NOT_FOUND));
+                .thenThrow(new OrganizationNotFoundException(format(ORG_NOT_FOUND, petCreateDto.organizationId())));
 
         OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.create(petCreateDto));
 
-        assertEquals(ORG_WITH_ID + petCreateDto.organizationId() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(ORG_NOT_FOUND, petCreateDto.organizationId()), ex.getMessage());
         verify(breedService, times(1)).verifyIfBreedsAndSpeciesMatch(petCreateDto);
         verify(petRepository, never()).save(any(Pet.class));
     }
@@ -236,12 +238,12 @@ public class PetServiceCreationTest {
                 .orElseThrow();
 
         lenient().doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(any(PetCreateDto.class));
-        doThrow(new SpeciesNotFoundException(SPECIES_WITH_ID + problematicDto.speciesId() + NOT_FOUND))
+        doThrow(new SpeciesNotFoundException(format(SPECIES_NOT_FOUND, problematicDto.speciesId())))
                 .when(breedService).verifyIfBreedsAndSpeciesMatch(problematicDto);
 
         SpeciesNotFoundException ex = assertThrows(SpeciesNotFoundException.class, () -> petService.createFromList(pets));
 
-        assertEquals(SPECIES_WITH_ID + problematicDto.speciesId() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(SPECIES_NOT_FOUND, problematicDto.speciesId()), ex.getMessage());
         verify(breedService, times(pets.indexOf(problematicDto)+1)).verifyIfBreedsAndSpeciesMatch(any());
         verify(petRepository, times(pets.indexOf(problematicDto))).save(any(Pet.class));
     }
@@ -257,12 +259,12 @@ public class PetServiceCreationTest {
                 .orElseThrow();
 
         lenient().doNothing().when(breedService).verifyIfBreedsAndSpeciesMatch(any(PetCreateDto.class));
-        doThrow(new BreedNotFoundException(BREED_WITH_ID + problematicDto.primaryBreedId() + NOT_FOUND))
+        doThrow(new BreedNotFoundException(format(BREED_NOT_FOUND, problematicDto.primaryBreedId())))
                 .when(breedService).verifyIfBreedsAndSpeciesMatch(problematicDto);
 
         BreedNotFoundException ex = assertThrows(BreedNotFoundException.class, () -> petService.createFromList(pets));
 
-        assertEquals(BREED_WITH_ID + problematicDto.primaryBreedId() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(BREED_NOT_FOUND, problematicDto.primaryBreedId()), ex.getMessage());
         verify(breedService, times(pets.indexOf(problematicDto)+1)).verifyIfBreedsAndSpeciesMatch(any());
         verify(petRepository, times(pets.indexOf(problematicDto))).save(any(Pet.class));
     }
@@ -280,14 +282,14 @@ public class PetServiceCreationTest {
         when(colorService.getById(anyString())).thenAnswer(invocation -> {
             String colorId = invocation.getArgument(0);
             if (colorId.equals(problematicDto.primaryColor())) {
-                throw new ColorNotFoundException(COLOR_WITH_ID + colorId + NOT_FOUND);
+                throw new ColorNotFoundException(format(COLOR_NOT_FOUND, colorId));
             }
             return any(ColorGetDto.class);
         });
 
         ColorNotFoundException ex = assertThrows(ColorNotFoundException.class, () -> petService.createFromList(pets));
 
-        assertEquals(COLOR_WITH_ID + problematicDto.primaryColor() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(COLOR_NOT_FOUND, problematicDto.primaryColor()), ex.getMessage());
         verify(petRepository, times(pets.indexOf(problematicDto))).save(any(Pet.class));
     }
 
@@ -304,14 +306,14 @@ public class PetServiceCreationTest {
         when(organizationService.getById(anyString())).thenAnswer(invocation -> {
             String orgId = invocation.getArgument(0);
             if (orgId.equals(problematicDto.organizationId())) {
-                throw new OrganizationNotFoundException(ORG_WITH_ID + orgId + NOT_FOUND);
+                throw new OrganizationNotFoundException(format(ORG_NOT_FOUND, orgId));
             }
             return any(OrganizationGetDto.class);
         });
 
         OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> petService.createFromList(pets));
 
-        assertEquals(ORG_WITH_ID + problematicDto.organizationId() + NOT_FOUND, ex.getMessage());
+        assertEquals(format(ORG_NOT_FOUND, problematicDto.organizationId()), ex.getMessage());
         verify(petRepository, times(pets.indexOf(problematicDto))).save(any(Pet.class));
     }
 }

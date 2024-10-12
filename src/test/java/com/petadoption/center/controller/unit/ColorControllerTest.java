@@ -25,8 +25,8 @@ import java.util.List;
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorGetDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createPrimaryColor;
-import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -106,12 +106,12 @@ public class ColorControllerTest {
     @DisplayName("Test if delete Color works correctly")
     void deleteColorShouldReturn() throws ColorNotFoundException {
 
-        when(colorServiceI.delete(testColor.getId())).thenReturn(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
+        when(colorServiceI.delete(testColor.getId())).thenReturn(format(COLOR_DELETE_MESSAGE, testColor.getId()));
 
         ResponseEntity<String> response = colorController.delete(testColor.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS, response.getBody());
+        assertEquals(format(COLOR_DELETE_MESSAGE, testColor.getId()), response.getBody());
         verify(colorServiceI).delete(testColor.getId());
     }
 }

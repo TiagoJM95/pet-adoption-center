@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
+import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -137,7 +137,7 @@ public class SpeciesControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/species/delete/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(SPECIES_WITH_ID + speciesId + DELETE_SUCCESS));
+                .andExpect(content().string(format(SPECIES_DELETE_MESSAGE, speciesId)));
     }
 
     @Test

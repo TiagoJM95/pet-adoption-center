@@ -5,7 +5,8 @@ import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
 import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Sizes;
-import com.petadoption.center.exception.not_found.*;
+import com.petadoption.center.exception.not_found.OrganizationNotFoundException;
+import com.petadoption.center.exception.not_found.PetNotFoundException;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.service.PetService;
@@ -14,7 +15,10 @@ import com.petadoption.center.service.interfaces.ColorServiceI;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import com.petadoption.center.specifications.PetSearchCriteria;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -30,9 +34,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.*;
-import static com.petadoption.center.testUtils.TestEntityFactory.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.petGetDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.petUpdateDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createPet;
+import static com.petadoption.center.testUtils.TestEntityFactory.petSearchCriteria;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -136,7 +143,7 @@ public class PetServiceTest {
         PetNotFoundException ex = assertThrows(PetNotFoundException.class,
                 () -> petService.update(petId, petUpdateDto));
 
-        assertEquals(PET_WITH_ID + petId + NOT_FOUND, ex.getMessage());
+        assertEquals(format(PET_NOT_FOUND, petId), ex.getMessage());
         verify(petRepository, never()).save(any(Pet.class));
     }
 
@@ -145,13 +152,13 @@ public class PetServiceTest {
     void shouldThrowOrgNotFoundExceptionWhenOrgIdIsInvalid() {
 
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
-        when(organizationService.getById(anyString()))
-                .thenThrow(new OrganizationNotFoundException(ORG_WITH_ID + petId + NOT_FOUND));
+        when(organizationService.getById(petUpdateDto.organizationId()))
+                .thenThrow(new OrganizationNotFoundException(format(ORG_NOT_FOUND, petUpdateDto.organizationId())));
 
         OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class,
                 () -> petService.update(petId, petUpdateDto));
 
-        assertEquals(ORG_WITH_ID + petId + NOT_FOUND, ex.getMessage());
+        assertEquals(format(ORG_NOT_FOUND, petUpdateDto.organizationId()), ex.getMessage());
         verify(petRepository, never()).save(any(Pet.class));
     }
 
@@ -164,7 +171,7 @@ public class PetServiceTest {
     void shouldReturnStringWhenPetIsDeletedSuccessfully() {
 
         when(petRepository.findById(petId)).thenReturn(Optional.of(pet));
-        String expectedString = PET_WITH_ID + petId + DELETE_SUCCESS;
+        String expectedString = format(PET_DELETE_MESSAGE, petId);
 
         String actual = petService.delete(petId);
 
@@ -181,7 +188,7 @@ public class PetServiceTest {
         PetNotFoundException ex = assertThrows(PetNotFoundException.class,
                 () -> petService.delete(petId));
 
-        assertEquals(PET_WITH_ID + petId + NOT_FOUND, ex.getMessage());
+        assertEquals(format(PET_NOT_FOUND, petId), ex.getMessage());
         verify(petRepository, never()).deleteById(petId);
     }
 

@@ -29,8 +29,8 @@ import java.util.List;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createBreed;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
-import static com.petadoption.center.util.Messages.BREED_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.BREED_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -131,12 +131,12 @@ public class BreedControllerTest {
     @DisplayName("Test if delete Breed works correctly")
     void deleteBreedShouldReturn() throws BreedNotFoundException {
 
-        when(breedServiceI.delete(testBreed.getId())).thenReturn(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS);
+        when(breedServiceI.delete(testBreed.getId())).thenReturn(format(BREED_DELETE_MESSAGE, testBreed.getId()));
 
         ResponseEntity<String> response = breedController.delete(testBreed.getId());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(BREED_WITH_ID + testBreed.getId() + DELETE_SUCCESS, response.getBody());
+        assertEquals(format(BREED_DELETE_MESSAGE, testBreed.getId()), response.getBody());
         verify(breedServiceI).delete(testBreed.getId());
     }
 }

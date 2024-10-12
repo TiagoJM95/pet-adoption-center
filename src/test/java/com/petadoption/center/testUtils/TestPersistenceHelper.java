@@ -1,7 +1,5 @@
 package com.petadoption.center.testUtils;
 
-import com.petadoption.center.dto.species.SpeciesCreateDto;
-import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.model.*;
 import com.petadoption.center.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -24,8 +24,9 @@ import java.util.Optional;
 import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createUser;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
+import static com.petadoption.center.util.Messages.USER_NOT_FOUND;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -158,7 +159,6 @@ public class UserServiceTest {
         assertEquals(result.get(2).firstName(), updatedUser.getFirstName());
     }
 
-
     @Test
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturn() throws UserNotFoundException {
@@ -189,7 +189,6 @@ public class UserServiceTest {
         assertEquals(userCreateDto.email(), result.email());
    }
 
-
     @Test
     @DisplayName("Test if update user saves all fields and returns UserGetDto")
     void updateUserShouldSaveAllFieldsAndReturnGetDto() throws UserNotFoundException {
@@ -211,14 +210,13 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.update(testUser.getId(), userUpdateDto));
     }
 
-
     @Test
     @DisplayName("Test if delete user erase user and return message")
     void deleteShouldEraseAndDisplayMessage() throws UserNotFoundException {
 
         when(userRepository.findById(testUser.getId())).thenReturn(Optional.of(testUser));
 
-        assertEquals(userService.delete(testUser.getId()),USER_WITH_ID + testUser.getId() + DELETE_SUCCESS);
+        assertEquals(userService.delete(testUser.getId()), format(USER_DELETE_MESSAGE, testUser.getId()));
     }
 
     @Test
@@ -229,10 +227,6 @@ public class UserServiceTest {
 
         assertThrows(UserNotFoundException.class, () -> userService.delete(testUser.getId()));
     }
-
-
-
-
 
     // FOR VALIDATION TESTS
 
