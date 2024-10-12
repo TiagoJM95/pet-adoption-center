@@ -28,8 +28,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -137,12 +137,12 @@ public class AdoptionFormControllerTest {
 
         String id = "1111-1111-2222";
 
-        when(adoptionFormServiceI.delete(id)).thenReturn(USER_WITH_ID + id + DELETE_SUCCESS);
+        when(adoptionFormServiceI.delete(id)).thenReturn(format(ADOPTION_FORM_DELETE_MESSAGE, id));
 
         ResponseEntity<String> response = adoptionFormController.delete(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(USER_WITH_ID + id + DELETE_SUCCESS, response.getBody());
+        assertEquals(format(ADOPTION_FORM_DELETE_MESSAGE, id), response.getBody());
 
         verify(adoptionFormServiceI).delete(id);
     }

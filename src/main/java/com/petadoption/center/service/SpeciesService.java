@@ -16,6 +16,7 @@ import java.util.List;
 
 import static com.petadoption.center.util.Messages.*;
 import static com.petadoption.center.util.Utils.updateFields;
+import static java.lang.String.format;
 
 @Service
 public class SpeciesService implements SpeciesServiceI {
@@ -58,16 +59,16 @@ public class SpeciesService implements SpeciesServiceI {
     public String delete(String id) {
         findById(id);
         speciesRepository.deleteById(id);
-        return SPECIES_WITH_ID + id + DELETE_SUCCESS;
+        return format(SPECIES_DELETE_MESSAGE, id);
     }
 
     private Species findById(String id) {
         return speciesRepository.findById(id).orElseThrow(
-                () -> new SpeciesNotFoundException(SPECIES_WITH_ID + id + NOT_FOUND));
+                () -> new SpeciesNotFoundException(format(SPECIES_NOT_FOUND, id)));
     }
 
     private Species findByName(String name) {
         return speciesRepository.findByName(name).orElseThrow(
-                () -> new SpeciesNotFoundException(SPECIES_WITH_NAME + name + NOT_FOUND));
+                () -> new SpeciesNotFoundException(format(SPECIES_NOT_FOUND_NAME, name)));
     }
 }

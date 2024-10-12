@@ -7,8 +7,8 @@ import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.enums.Status;
-import com.petadoption.center.exception.not_found.InterestNotFoundException;
 import com.petadoption.center.exception.InvalidStatusChangeException;
+import com.petadoption.center.exception.not_found.InterestNotFoundException;
 import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Interest;
 import com.petadoption.center.model.Organization;
@@ -27,6 +27,7 @@ import java.util.List;
 import static com.petadoption.center.converter.EnumConverter.convertStringToEnum;
 import static com.petadoption.center.enums.Status.*;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 
 @Service
 public class InterestService implements InterestServiceI {
@@ -122,7 +123,7 @@ public class InterestService implements InterestServiceI {
 
     private void verifyIfStatusChangeIsValid(Status currentStatus, Status newStatus) {
         if (currentStatus == newStatus) {
-            throw new InvalidStatusChangeException(INVALID_STATUS_CHANGE_SAME + newStatus.getDescription());
+            throw new InvalidStatusChangeException(INVALID_STATUS_CHANGE_SAME);
         }
         if (newStatus == ACCEPTED && currentStatus != FORM_FILLED){
             throw new InvalidStatusChangeException(INVALID_STATUS_CHANGE);
@@ -153,11 +154,11 @@ public class InterestService implements InterestServiceI {
     public String delete(String id) {
         findById(id);
         interestRepository.deleteById(id);
-        return INTEREST_WITH_ID + id + DELETE_SUCCESS;
+        return format(INTEREST_DELETE_MESSAGE, id);
     }
 
     private Interest findById(String interestId) {
         return interestRepository.findById(interestId).orElseThrow(
-                () -> new InterestNotFoundException(INTEREST_WITH_ID + interestId + NOT_FOUND));
+                () -> new InterestNotFoundException(format(INTEREST_NOT_FOUND, interestId)));
     }
 }

@@ -28,8 +28,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
-import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -247,6 +247,6 @@ public class AdoptionFormControllerTest {
         mockMvc.perform(delete("/api/v1/adoption-form/delete/{id}", adoptionFormId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(ADOPTION_FORM_WITH_ID + adoptionFormId + DELETE_SUCCESS));
+                .andExpect(content().string(format(ADOPTION_FORM_DELETE_MESSAGE, adoptionFormId)));
     }
 }

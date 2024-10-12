@@ -17,8 +17,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
-import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -97,6 +97,6 @@ public class ColorControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", colorGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(COLOR_WITH_ID + colorGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorGetDto.id())));
     }
 }
