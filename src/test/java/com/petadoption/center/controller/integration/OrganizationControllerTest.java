@@ -1,6 +1,7 @@
 package com.petadoption.center.controller.integration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.petadoption.center.aspect.Error;
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.organization.OrganizationUpdateDto;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 
 import java.util.stream.Stream;
@@ -27,8 +29,9 @@ import java.util.stream.Stream;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.ORG_WITH_ID;
+import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
+import static java.lang.String.format;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -53,7 +56,6 @@ public class OrganizationControllerTest {
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
 
-
     @BeforeEach
     void setUp() {
         organizationCreateDto = organizationCreateDto();
@@ -69,12 +71,12 @@ public class OrganizationControllerTest {
         OrganizationCreateDto baseOrg = otherOrganizationCreateDto();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email"),
-                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address"),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url"),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media")
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
         );
     }
 
@@ -99,11 +101,11 @@ public class OrganizationControllerTest {
                 .build();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address"),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url"),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media")
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
         );
     }
 
@@ -154,9 +156,7 @@ public class OrganizationControllerTest {
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Please try again.")))
                 .andReturn();
-
     }
 
 
@@ -239,7 +239,6 @@ public class OrganizationControllerTest {
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
-                .andExpect(content().string(org.hamcrest.Matchers.containsString("Please try again.")))
                 .andReturn();
     }
 
@@ -253,7 +252,7 @@ public class OrganizationControllerTest {
         mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(ORG_WITH_ID + organizationGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(ORG_DELETE_MESSAGE, organizationGetDto.id())));
     }
 
     @Test

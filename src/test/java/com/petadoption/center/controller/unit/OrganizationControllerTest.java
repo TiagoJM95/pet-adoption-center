@@ -26,8 +26,8 @@ import java.util.List;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -173,12 +173,12 @@ public class OrganizationControllerTest {
     @DisplayName("Test if delete organization works correctly")
     void deleteOrganizationAndReturnString() {
 
-        when(organizationServiceI.delete(organizationGetDto.id())).thenReturn(USER_WITH_ID + organizationGetDto.id() + DELETE_SUCCESS);
+        when(organizationServiceI.delete(organizationGetDto.id())).thenReturn(format(ORG_DELETE_MESSAGE, organizationGetDto.id()));
 
         ResponseEntity<String> response = organizationController.delete(organizationGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(USER_WITH_ID + organizationGetDto.id() + DELETE_SUCCESS, response.getBody());
+        assertEquals(format(ORG_DELETE_MESSAGE, organizationGetDto.id()), response.getBody());
         verify(organizationServiceI, times(1)).delete(organizationGetDto.id());
     }
 

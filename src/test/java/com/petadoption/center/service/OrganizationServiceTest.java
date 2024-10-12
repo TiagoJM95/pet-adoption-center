@@ -23,8 +23,8 @@ import java.util.Optional;
 import static com.petadoption.center.testUtils.TestDtoFactory.orgUpdateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.organizationCreateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createOrganization;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.ORG_WITH_ID;
+import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -226,7 +226,7 @@ public class OrganizationServiceTest {
         String result = organizationService.delete(testOrganization.getId());
 
         assertNotNull(result);
-        assertEquals(ORG_WITH_ID + testOrganization.getId() + DELETE_SUCCESS, result);
+        assertEquals(format(ORG_DELETE_MESSAGE, testOrganization.getId()), result);
     }
 
     @Test
