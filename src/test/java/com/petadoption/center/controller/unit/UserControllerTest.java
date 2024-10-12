@@ -73,7 +73,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    void getUserByIdShouldReturn() throws UserNotFoundException {
+    void getUserByIdShouldReturn() {
 
         String id = "1111-1111-2222";
 

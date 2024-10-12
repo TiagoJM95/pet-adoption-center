@@ -46,7 +46,6 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if create color works correctly")
-    @DirtiesContext
     void createColor() throws Exception {
 
       var result =  mockMvc.perform(post("/api/v1/color/")
@@ -61,7 +60,6 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get all colors works correctly")
-    @DirtiesContext
     void getAll() throws Exception {
 
         createColor();
@@ -75,7 +73,6 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get color by id works correctly")
-    @DirtiesContext
     void getById() throws Exception {
 
         createColor();
@@ -88,8 +85,16 @@ public class ColorControllerTest {
     }
 
     @Test
+    @DisplayName("Test if get color by id throws color not found exception")
+    void getByIdThrowsColorNotFoundException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/color/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if delete color works correctly")
-    @DirtiesContext
     void delete() throws Exception {
 
         createColor();

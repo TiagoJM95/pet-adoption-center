@@ -10,6 +10,7 @@ import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
+import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
@@ -19,6 +20,8 @@ import com.petadoption.center.dto.species.SpeciesUpdateDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.model.embeddable.Address;
+import com.petadoption.center.model.embeddable.SocialMedia;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -253,6 +256,7 @@ public class TestDtoFactory {
                 .build();
     }
 
+
     public static OrganizationCreateDto otherOrganizationCreateDto(){
         return OrganizationCreateDto.builder()
                 .name("AdoptPet")
@@ -320,6 +324,17 @@ public class TestDtoFactory {
                 .isResponsibleForPet(true)
                 .otherNotes("Notes")
                 .petAddress(createAddress())
+                .build();
+    }
+
+    public static OrganizationUpdateDto orgUpdateDto(){
+        return OrganizationUpdateDto.builder()
+                .name("Pet Adoption Center")
+                .email("email@email.com")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
                 .build();
     }
 }

@@ -56,7 +56,6 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test create breed is working correctly")
-    @DirtiesContext
     void createBreed() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/breed/")
@@ -72,7 +71,6 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if get all breeds works correctly")
-    @DirtiesContext
     void getAll() throws Exception {
 
         createBreed();
@@ -93,7 +91,6 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if get breed by id works correctly")
-    @DirtiesContext
     void getById() throws Exception {
 
         createBreed();
@@ -108,8 +105,17 @@ public class BreedControllerTest {
 
 
     @Test
+    @DisplayName("Test if get breed by id throws breed not found exception")
+    void getByIdThrowsBreedNotFoundException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/breed/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
     @DisplayName("Test if update breed works correctly")
-    @DirtiesContext
     void update() throws Exception {
 
         createBreed();
@@ -122,8 +128,17 @@ public class BreedControllerTest {
     }
 
     @Test
+    @DisplayName("Test if update breed throws breed not found exception")
+    void updateThrowsBreedNotFoundException() throws Exception {
+
+        mockMvc.perform(put("/api/v1/breed/update/{id}", "11111-11111-1111-1111")
+                        .content(objectMapper.writeValueAsString(breedUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if delete breed works correctly")
-    @DirtiesContext
     void delete() throws Exception {
 
         createBreed();
@@ -132,5 +147,14 @@ public class BreedControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(format(BREED_DELETE_MESSAGE, breedGetDto.id())));
+    }
+
+    @Test
+    @DisplayName("Test if delete breed throws breed not found exception")
+    void deleteThrowsBreedNotFoundException() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/breed/delete/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }
