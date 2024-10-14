@@ -1,9 +1,6 @@
 package com.petadoption.center.testUtils;
 
-import com.petadoption.center.enums.Ages;
-import com.petadoption.center.enums.Coats;
-import com.petadoption.center.enums.Genders;
-import com.petadoption.center.enums.Sizes;
+import com.petadoption.center.enums.*;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
@@ -14,6 +11,7 @@ import com.petadoption.center.specifications.PetSearchCriteria;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public class TestEntityFactory {
 
@@ -172,6 +170,7 @@ public class TestEntityFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
+                .interests(Set.of())
                 .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
@@ -275,7 +274,6 @@ public class TestEntityFactory {
                 .otherNotes("Notes")
                 .petAddress(createAddress())
                 .createdAt(LocalDateTime.of(2024, 1, 1, 1, 1))
-                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -300,6 +298,17 @@ public class TestEntityFactory {
                 .goodWithKids(false)
                 .state("Porto")
                 .city("Gondomar")
+                .build();
+    }
+
+    public static Interest createInterest() {
+        return Interest.builder()
+                .id("1111-2222-3333")
+                .user(createUser())
+                .pet(createPet())
+                .organization(createOrganization())
+                .status(Status.PENDING)
+                .createdAt(LocalDateTime.of(2024, 1, 1, 1 ,1))
                 .build();
     }
 }

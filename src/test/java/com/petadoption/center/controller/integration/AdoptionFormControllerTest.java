@@ -17,9 +17,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.LocalDate;
 import java.util.List;
 
+import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
 import static com.petadoption.center.util.Messages.ADOPTION_FORM_DELETE_MESSAGE;
 import static java.lang.String.format;
@@ -38,14 +38,13 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
     private AdoptionFormUpdateDto adoptionFormUpdateDto;
     private UserGetDto userGetDto;
     private PetGetDto petGetDto;
-    private Address address;
     private String userId;
     private String petId;
     private String orgId;
     private String speciesId;
     private String breedId;
     private String colorId;
-    String adoptionFormId;
+    private String adoptionFormId;
 
 
     @BeforeEach
@@ -63,7 +62,7 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
                 List.of("DOG", "PARROT")
         );
 
-        address = new Address("Rua das Andorinhas, 123",
+        Address address = new Address("Rua das Andorinhas, 123",
                 "Vila Nova de Gaia",
                 "Porto",
                 "4410-000");
@@ -91,15 +90,7 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
     }
 
     private void addUser() throws Exception {
-        UserCreateDto userCreateDto = UserCreateDto.builder()
-                .firstName("Manuel")
-                .lastName("Silva")
-                .email("email@email.com")
-                .nif("123456789")
-                .dateOfBirth(LocalDate.of(1990, 10, 25))
-                .address(address)
-                .phoneNumber("123456789")
-                .build();
+        UserCreateDto userCreateDto = userCreateDto();
 
         MvcResult result = mockMvc.perform(post("/api/v1/user/")
                 .content(objectMapper.writeValueAsString(userCreateDto))
@@ -113,16 +104,16 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     private void addPet() throws Exception {
         PetCreateDto petCreateDto = PetCreateDto.builder()
-                .name("Bobi")
-                .speciesId(speciesId)
+                .name("Max")
+                .petSpeciesId(speciesId)
                 .primaryBreedId(breedId)
                 .primaryColor(colorId)
                 .gender("MALE")
-                .coat("HAIRLESS")
+                .coat("SHORT")
                 .size("SMALL")
-                .age("BABY")
-                .description("Description")
-                .imageUrl("http://aeer.com")
+                .age("ADULT")
+                .description("Max is a very friendly dog")
+                .imageUrl("https://www.dogimages.com")
                 .isAdopted(false)
                 .attributes(createAttributes())
                 .organizationId(orgId)
@@ -144,7 +135,7 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
         helper.cleanAll();
     }
 
-    //TESTS BEGIN
+
 
     @Test
     @DisplayName("Test get all adoption forms when empty returns empty")
