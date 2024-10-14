@@ -1,6 +1,6 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.petadoption.center.aspect.Error;
 import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
@@ -19,21 +19,13 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.exception.not_found.PetNotFoundException;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.embeddable.Attributes;
-import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.specifications.PetSearchCriteria;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Stream;
 
@@ -42,25 +34,13 @@ import static com.petadoption.center.testUtils.TestEntityFactory.createAttribute
 import static com.petadoption.center.util.Messages.PET_NOT_FOUND;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@Transactional
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class PetControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private PetRepository petRepository;
+public class PetControllerTest extends TestContainerConfig{
 
     private final String URL = "/api/v1/pet/";
 
@@ -122,7 +102,7 @@ public class PetControllerTest {
                 .description("Max is friendly dog!")
                 .imageUrl("https://dog.com")
                 .isAdopted(false)
-                .attributes(attributes)
+                .attributes(createAttributes())
                 .organizationId(organizationGetDto1.id())
                 .build();
 
@@ -218,6 +198,11 @@ public class PetControllerTest {
                 .build();
     }*/
 
+    @AfterAll
+    void cleanAll(){
+        helper.cleanAll();
+    }
+
     @AfterEach
     void reset(){
         petRepository.deleteAll();
@@ -269,7 +254,7 @@ public class PetControllerTest {
         return objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
     }
 
-    private static Stream<Arguments> provideCreateDtosWithAllPropsAndNullProps() {
+    private Stream<Arguments> provideCreateDtosWithAllPropsAndNullProps() {
         return Stream.of(
                 arguments(petCreateDto, expectedGetDto),
                 arguments(petCreateDto.toBuilder()
@@ -291,15 +276,34 @@ public class PetControllerTest {
         );
     }
 
-    private static Stream<Arguments> provideCreateDtosForDupesCheck(){
+    private Stream<Arguments> provideCreateDtosForDupesCheck() {
+        PetCreateDto dto = PetCreateDto.builder()
+                .name("Bobby")
+                .speciesId(speciesGetDto2.id())
+                .primaryBreedId(primaryBreedGetDto2.id())
+                .secondaryBreedId(secondaryBreedGetDto2.id())
+                .primaryColor(primaryColorGetDto.id())
+                .gender("Female")
+                .coat("Short")
+                .age("Baby")
+                .size("Medium")
+                .description("Bobby is a cat!")
+                .imageUrl("https://cat.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organizationId(organizationGetDto2.id())
+                .build();
         return Stream.of(
-                arguments(petCreateDto.toBuilder()
-                        .imageUrl("https://dif.com")
-                        .build()),
-                arguments(petCreateDto.toBuilder()
-                        .name("Fifi")
-                        .build())
-        );
+                arguments(dto.toBuilder()
+                        .name("Max")
+                        .speciesId(speciesGetDto1.id())
+                        .primaryBreedId(primaryBreedGetDto1.id())
+                        .secondaryBreedId(secondaryBreedGetDto1.id())
+                        .organizationId(organizationGetDto1.id())
+                        .build(), "uniquepetnamespeciesorg"),
+                arguments(dto.toBuilder()
+                        .imageUrl("https://dog.com")
+                        .build(), "uniquepetimage"));
     }
 
 
@@ -339,14 +343,13 @@ public class PetControllerTest {
                 .isEqualTo(retrievedPetDto);
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Check for constraint {1}")
     @MethodSource("provideCreateDtosForDupesCheck")
     @DisplayName("Should throw DataIntegrityViolationException when creating a Pet with a constraint that already exists")
-    @Transactional(propagation = Propagation.NOT_SUPPORTED)
-    void shouldThrowDataIntegrityViolationException_WhenCreatingPet_WhenConstraintAlreadyExists(PetCreateDto dto) throws Exception {
+    void shouldThrowDataIntegrityViolationException_WhenCreatingPet_WhenConstraintAlreadyExists(PetCreateDto dto, String constraintName) throws Exception {
 
         // Save the first
-        persistPet(dto);
+        persistPet(petCreateDto);
         // Verify the second one fails
         MvcResult result = mockMvc.perform(post(URL + "addSingle")
                         .content(objectMapper.writeValueAsString(dto))
@@ -354,8 +357,11 @@ public class PetControllerTest {
                 .andExpect(status().isConflict())
                 .andReturn();
         // Assert that the exception message includes the constraint name
-        // Assert that only one pet exists in the DB
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
 
+        assertEquals(constraintName, error.constraint());
+        // Assert that only one pet exists in the DB
+        assertEquals(petRepository.findAll().size(), 1);
     }
 
     @Test

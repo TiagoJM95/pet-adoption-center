@@ -1,6 +1,5 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
 import com.petadoption.center.dto.adoptionForm.AdoptionFormUpdateDto;
@@ -10,18 +9,12 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
-import com.petadoption.center.testUtils.TestPersistenceHelper;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
@@ -36,18 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
-@Transactional
-public class AdoptionFormControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private TestPersistenceHelper testPersistenceHelper;
+public class AdoptionFormControllerTest extends TestContainerConfig{
 
     private AdoptionFormCreateDto adoptionFormCreateDto;
     private AdoptionFormGetDto adoptionFormGetDto;
@@ -62,12 +46,13 @@ public class AdoptionFormControllerTest {
     private String colorId;
     private String adoptionFormId;
 
+
     @BeforeEach
     void setUp() throws Exception {
-        speciesId = testPersistenceHelper.persistTestSpecies();
-        breedId = testPersistenceHelper.persistTestPrimaryBreed();
-        colorId = testPersistenceHelper.persistTestPrimaryColor();
-        orgId = testPersistenceHelper.persistTestOrg();
+        speciesId = helper.persistTestSpecies();
+        breedId = helper.persistTestPrimaryBreed();
+        colorId = helper.persistTestPrimaryColor();
+        orgId = helper.persistTestOrg();
 
         Family family = new Family(
                 4,
@@ -144,6 +129,12 @@ public class AdoptionFormControllerTest {
 
         petId = petGetDto.id();
     }
+
+    @AfterEach
+    void cleanTable(){
+        helper.cleanAll();
+    }
+
 
 
     @Test

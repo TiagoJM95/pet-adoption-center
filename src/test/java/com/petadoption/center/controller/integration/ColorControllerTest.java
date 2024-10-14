@@ -1,19 +1,12 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
@@ -24,24 +17,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@Transactional
-public class ColorControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+public class ColorControllerTest extends TestContainerConfig {
 
     private ColorGetDto colorGetDto;
     private ColorCreateDto colorCreateDto;
 
+
     @BeforeEach
     void setUp() {
         colorCreateDto = primaryColorCreateDto();
+    }
+
+    @AfterEach
+    void tearDown() {
+        colorRepository.deleteAll();
+    }
+
+    private String persistColor() throws Exception {
+        return helper.persistTestPrimaryColor();
     }
 
     @Test
@@ -62,26 +56,26 @@ public class ColorControllerTest {
     @DisplayName("Test if get all colors works correctly")
     void getAll() throws Exception {
 
-        createColor();
+        String id = persistColor();
 
         mockMvc.perform(get("/api/v1/color/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(colorGetDto.id())))
-                .andExpect(jsonPath("$[0].name", is(colorGetDto.name())));
+                .andExpect(jsonPath("$[0].id", is(id)))
+                .andExpect(jsonPath("$[0].name", is(colorCreateDto.name())));
     }
 
     @Test
     @DisplayName("Test if get color by id works correctly")
     void getById() throws Exception {
 
-        createColor();
+        String id = persistColor();
 
-        mockMvc.perform(get("/api/v1/color/id/{id}", colorGetDto.id())
+        mockMvc.perform(get("/api/v1/color/id/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(colorGetDto.id())))
-                .andExpect(jsonPath("$.name", is(colorGetDto.name())));
+                .andExpect(jsonPath("$.id", is(id)))
+                .andExpect(jsonPath("$.name", is(colorCreateDto.name())));
     }
 
     @Test
@@ -97,11 +91,11 @@ public class ColorControllerTest {
     @DisplayName("Test if delete color works correctly")
     void delete() throws Exception {
 
-        createColor();
+        String id = persistColor();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", colorGetDto.id())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorGetDto.id())));
+                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, id)));
     }
 }

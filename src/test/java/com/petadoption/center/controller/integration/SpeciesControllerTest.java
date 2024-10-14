@@ -1,20 +1,13 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDateTime;
@@ -27,17 +20,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@Transactional
-public class SpeciesControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+public class SpeciesControllerTest extends TestContainerConfig{
 
     private SpeciesGetDto speciesGetDto;
     private SpeciesCreateDto speciesCreateDto;
@@ -49,6 +32,11 @@ public class SpeciesControllerTest {
     void setUp() {
         speciesCreateDto = speciesCreateDto();
         speciesUpdateDto = speciesUpdateDto();
+    }
+
+    @AfterEach
+    void tearDown() {
+        speciesRepository.deleteAll();
     }
 
     @Test
