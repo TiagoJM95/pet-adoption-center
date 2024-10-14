@@ -24,6 +24,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.interestUpdateDtoToFormRequested;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -40,6 +41,8 @@ public class InterestControllerTest {
 
     private static Pageable pageable;
     private static String orgId;
+    private static String userId;
+    private static String interestId;
     private static InterestGetDto interestGetDto;
     private static InterestGetDto interestGetDtoUpdated;
     private static InterestCreateDto interestCreateDto;
@@ -112,26 +115,26 @@ public class InterestControllerTest {
     void testGetCurrentInterestsByUser() {
 
         List<InterestGetDto> interestGetDtoList = List.of(interestGetDto);
-        when(interestService.getCurrentByUserId(pageable, orgId)).thenReturn(interestGetDtoList);
+        when(interestService.getCurrentByUserId(pageable, userId)).thenReturn(interestGetDtoList);
 
-        ResponseEntity<List<InterestGetDto>> response = interestController.getCurrentByUserId(pageable, orgId);
+        ResponseEntity<List<InterestGetDto>> response = interestController.getCurrentByUserId(pageable, userId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(interestGetDtoList, response.getBody());
 
-        verify(interestService).getCurrentByUserId(pageable, orgId);
+        verify(interestService).getCurrentByUserId(pageable, userId);
     }
 
     @Test
     @DisplayName("Test trow OrganizationNotFoundException when getting a current interest with invalid user id")
     void testThrowOrganizationNotFoundWhenGettingCurrentInterestWithInvalidUserId() {
 
-        when(interestService.getCurrentByUserId(pageable, orgId)).thenThrow(new OrganizationNotFoundException("Invalid Id"));
+        when(interestService.getCurrentByUserId(pageable, userId)).thenThrow(new OrganizationNotFoundException("Invalid Id"));
 
-        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> interestController.getCurrentByUserId(pageable, orgId));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> interestController.getCurrentByUserId(pageable, userId));
 
         assertEquals("Invalid Id", ex.getMessage());
-        verify(interestService, times(1)).getCurrentByUserId(pageable, orgId);
+        verify(interestService, times(1)).getCurrentByUserId(pageable, userId);
     }
 
     @Test
@@ -139,52 +142,52 @@ public class InterestControllerTest {
     void testGetInterestHistoryByUser() {
 
         List<InterestGetDto> interestGetDtoList = List.of(interestGetDto);
-        when(interestService.getHistoryByUserId(pageable, orgId)).thenReturn(interestGetDtoList);
+        when(interestService.getHistoryByUserId(pageable, userId)).thenReturn(interestGetDtoList);
 
-        ResponseEntity<List<InterestGetDto>> response = interestController.getHistoryByUserId(pageable, orgId);
+        ResponseEntity<List<InterestGetDto>> response = interestController.getHistoryByUserId(pageable, userId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(interestGetDtoList, response.getBody());
 
-        verify(interestService).getHistoryByUserId(pageable, orgId);
+        verify(interestService).getHistoryByUserId(pageable, userId);
     }
 
     @Test
     @DisplayName("Test trow OrganizationNotFoundException when getting interest history with invalid user id")
     void testThrowOrganizationNotFoundWhenGettingInterestHistoryWithInvalidUserId() {
 
-        when(interestService.getHistoryByUserId(pageable, orgId)).thenThrow(new OrganizationNotFoundException("Invalid Id"));
+        when(interestService.getHistoryByUserId(pageable, userId)).thenThrow(new OrganizationNotFoundException("Invalid Id"));
 
-        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> interestController.getHistoryByUserId(pageable, orgId));
+        OrganizationNotFoundException ex = assertThrows(OrganizationNotFoundException.class, () -> interestController.getHistoryByUserId(pageable, userId));
 
         assertEquals("Invalid Id", ex.getMessage());
-        verify(interestService, times(1)).getHistoryByUserId(pageable, orgId);
+        verify(interestService, times(1)).getHistoryByUserId(pageable, userId);
     }
 
     @Test
     @DisplayName("Test get interest by Id")
     void testGetInterestById() {
 
-        when(interestService.getById(orgId)).thenReturn(interestGetDto);
+        when(interestService.getById(interestId)).thenReturn(interestGetDto);
 
-        ResponseEntity<InterestGetDto> response = interestController.getById(orgId);
+        ResponseEntity<InterestGetDto> response = interestController.getById(interestId);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(interestGetDto, response.getBody());
 
-        verify(interestService).getById(orgId);
+        verify(interestService).getById(interestId);
     }
 
     @Test
     @DisplayName("Test throw InterestNotFound when getting interest by Id")
     void testThrowInterestNotFoundWhenGettingInterestById() {
 
-        when(interestService.getById(orgId)).thenThrow(new InterestNotFoundException("Invalid Id"));
+        when(interestService.getById(interestId)).thenThrow(new InterestNotFoundException("Invalid Id"));
 
-        InterestNotFoundException ex = assertThrows(InterestNotFoundException.class, () -> interestController.getById(orgId));
+        InterestNotFoundException ex = assertThrows(InterestNotFoundException.class, () -> interestController.getById(interestId));
 
         assertEquals("Invalid Id", ex.getMessage());
-        verify(interestService, times(1)).getById(orgId);
+        verify(interestService, times(1)).getById(interestId);
     }
 
     @Test
