@@ -10,8 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.orgCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.orgGetDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.organizationCreateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createOrganization;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -27,7 +27,7 @@ public class OrganizationConverterTest {
 
     @BeforeEach
     void setUp() {
-        organizationCreateDto = orgCreateDto();
+        organizationCreateDto = organizationCreateDto();
         organizationGetDto = orgGetDto();
         org = createOrganization();
     }

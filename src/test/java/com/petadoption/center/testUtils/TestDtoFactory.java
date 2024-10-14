@@ -13,6 +13,7 @@ import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
+import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.pet.PetUpdateDto;
@@ -23,6 +24,8 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.enums.Status;
+import com.petadoption.center.model.embeddable.Address;
+import com.petadoption.center.model.embeddable.SocialMedia;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -179,16 +182,28 @@ public class TestDtoFactory {
 
     // CREATE DTOs
 
-    public static ColorCreateDto colorCreateDto(){
+    public static ColorCreateDto primaryColorCreateDto() {
         return ColorCreateDto.builder()
                 .name("Black")
+                .build();
+    }
+
+    public static ColorCreateDto secondaryColorCreateDto() {
+        return ColorCreateDto.builder()
+                .name("White")
+                .build();
+    }
+
+    public static ColorCreateDto tertiaryColorCreateDto() {
+        return ColorCreateDto.builder()
+                .name("Brown")
                 .build();
     }
 
     public static PetCreateDto petCreateDto(String name) {
         return PetCreateDto.builder()
                 .name(name)
-                .petSpeciesId("111111-11111111-1111")
+                .speciesId("111111-11111111-1111")
                 .primaryBreedId("222222-22222222-2222")
                 .secondaryBreedId("333333-33333333-3333")
                 .primaryColor("444444-44444444-4444")
@@ -212,6 +227,12 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static SpeciesCreateDto otherSpeciesCreateDto(){
+        return SpeciesCreateDto.builder()
+                .name("Cat")
+                .build();
+    }
+
     public static UserCreateDto userCreateDto(){
         return UserCreateDto.builder()
                 .firstName("John")
@@ -224,14 +245,35 @@ public class TestDtoFactory {
                 .build();
     }
 
-    public static BreedCreateDto breedCreateDto(String speciesId){
+    public static BreedCreateDto primaryBreedCreateDto(String speciesId){
         return BreedCreateDto.builder()
                 .name("Golden Retriever")
                 .speciesId(speciesId)
                 .build();
     }
 
-    public static OrganizationCreateDto orgCreateDto(){
+    public static BreedCreateDto otherPrimaryBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Siamese")
+                .speciesId(speciesId)
+                .build();
+    }
+
+    public static BreedCreateDto secondaryBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Labrador")
+                .speciesId(speciesId)
+                .build();
+    }
+
+    public static BreedCreateDto otherSecondaryBreedCreateDto(String speciesId){
+        return BreedCreateDto.builder()
+                .name("Persian")
+                .speciesId(speciesId)
+                .build();
+    }
+
+    public static OrganizationCreateDto organizationCreateDto(){
         return OrganizationCreateDto.builder()
                 .name("Pet Adoption Center")
                 .email("org@email.com")
@@ -240,6 +282,19 @@ public class TestDtoFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
+                .build();
+    }
+
+
+    public static OrganizationCreateDto otherOrganizationCreateDto(){
+        return OrganizationCreateDto.builder()
+                .name("AdoptPet")
+                .email("adoptpet@email.com")
+                .nif("987654321")
+                .phoneNumber("987654321")
+                .address(otherCreateAddress())
+                .websiteUrl("https://www.adoptpet.com")
+                .socialMedia(otherCreateSocialMedia())
                 .build();
     }
 
@@ -319,6 +374,17 @@ public class TestDtoFactory {
     public static InterestUpdateDto interestUpdateDtoToFormRequested() {
         return InterestUpdateDto.builder()
                 .status("FORM_REQUESTED")
+                .build();
+    }
+  
+    public static OrganizationUpdateDto orgUpdateDto(){
+        return OrganizationUpdateDto.builder()
+                .name("Pet Adoption Center")
+                .email("email@email.com")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
                 .build();
     }
 }

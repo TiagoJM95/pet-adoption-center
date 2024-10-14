@@ -22,8 +22,8 @@ import java.util.Optional;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
+import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -210,7 +210,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
-        assertEquals(speciesService.delete(testSpecies.getId()), SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
+        assertEquals(speciesService.delete(testSpecies.getId()), format(SPECIES_DELETE_MESSAGE, testSpecies.getId()));
     }
 
     @Test

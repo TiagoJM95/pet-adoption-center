@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
+import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -53,10 +53,9 @@ public class SpeciesControllerTest {
 
     @Test
     @DisplayName("Test create species is working correctly")
-    @DirtiesContext
     void createSpecies() throws Exception {
 
-       var result = mockMvc.perform(post("/api/v1/pet-species/")
+       var result = mockMvc.perform(post("/api/v1/species/")
                         .content(objectMapper.writeValueAsString(speciesCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -71,12 +70,11 @@ public class SpeciesControllerTest {
 
     @Test
     @DisplayName("Test if get all species works correctly")
-    @DirtiesContext
     void getAllSpecies() throws Exception {
 
         createSpecies();
 
-        mockMvc.perform(get("/api/v1/pet-species/")
+        mockMvc.perform(get("/api/v1/species/")
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -88,25 +86,32 @@ public class SpeciesControllerTest {
 
     @Test
     @DisplayName("Test if get species by id works correctly")
-    @DirtiesContext
     void getSpeciesById() throws Exception {
 
         createSpecies();
 
-        mockMvc.perform(get("/api/v1/pet-species/id/{id}", speciesId)
+        mockMvc.perform(get("/api/v1/species/id/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is(speciesGetDto.name())));
     }
 
     @Test
+    @DisplayName("Test if get species by id throws not found exception")
+    void getSpeciesByIdThrowsNotFoundException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/species/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if update species works correctly")
-    @DirtiesContext
     void updateSpecies() throws Exception {
 
         createSpecies();
 
-        mockMvc.perform(put("/api/v1/pet-species/update/{id}", speciesId)
+        mockMvc.perform(put("/api/v1/species/update/{id}", speciesId)
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -114,15 +119,33 @@ public class SpeciesControllerTest {
     }
 
     @Test
+    @DisplayName("Test if update species throws not found exception")
+    void updateSpeciesThrowsNotFoundException() throws Exception {
+
+        mockMvc.perform(put("/api/v1/species/update/{id}", "11111-11111-1111-1111")
+                        .content(objectMapper.writeValueAsString(speciesUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if delete species works correctly")
-    @DirtiesContext
     void delete() throws Exception {
 
         createSpecies();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/pet-species/delete/{id}", speciesId)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/species/delete/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(SPECIES_WITH_ID + speciesId + DELETE_SUCCESS));
+                .andExpect(content().string(format(SPECIES_DELETE_MESSAGE, speciesId)));
+    }
+
+    @Test
+    @DisplayName("Test if delete species throws not found exception")
+    void deleteThrowsNotFoundException() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/species/delete/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

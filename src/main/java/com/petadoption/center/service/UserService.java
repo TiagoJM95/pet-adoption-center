@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 import static com.petadoption.center.converter.UserConverter.toDto;
 import static com.petadoption.center.converter.UserConverter.toModel;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 
 @Service
 public class UserService implements UserServiceI {
@@ -63,7 +64,7 @@ public class UserService implements UserServiceI {
     public String delete(String id) {
         findById(id);
         userRepository.deleteById(id);
-        return USER_WITH_ID + id + DELETE_SUCCESS;
+        return format(USER_DELETE_MESSAGE, id);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class UserService implements UserServiceI {
         Pet pet = PetConverter.toModel(petService.getById(petId));
         user.getFavoritePets().add(pet);
         userRepository.save(user);
-        return ADDED_TO_FAVORITE_SUCCESS;
+        return format(ADDED_TO_FAVORITE_SUCCESS, pet.getId());
     }
 
     @Override
@@ -87,7 +88,7 @@ public class UserService implements UserServiceI {
         Pet pet = PetConverter.toModel(petService.getById(petId));
         user.getFavoritePets().remove(pet);
         userRepository.save(user);
-        return REMOVED_FROM_FAVORITE_SUCCESS;
+        return format(REMOVED_FROM_FAVORITE_SUCCESS, pet.getId());
     }
 
     private void updateFields(UserUpdateDto dto, User user) {
@@ -99,6 +100,7 @@ public class UserService implements UserServiceI {
     }
 
     private User findById(String id) {
-        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return userRepository.findById(id).orElseThrow(
+                () -> new UserNotFoundException(format(USER_NOT_FOUND, id)));
     }
 }

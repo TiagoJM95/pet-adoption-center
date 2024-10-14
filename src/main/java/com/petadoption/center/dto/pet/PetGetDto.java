@@ -13,7 +13,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-@Builder
+@Builder(toBuilder = true)
 public record PetGetDto(
         String id,
         String name,

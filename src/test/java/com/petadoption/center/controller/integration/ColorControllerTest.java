@@ -16,9 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
-import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
+import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,12 +41,11 @@ public class ColorControllerTest {
 
     @BeforeEach
     void setUp() {
-        colorCreateDto = colorCreateDto();
+        colorCreateDto = primaryColorCreateDto();
     }
 
     @Test
     @DisplayName("Test if create color works correctly")
-    @DirtiesContext
     void createColor() throws Exception {
 
       var result =  mockMvc.perform(post("/api/v1/color/")
@@ -61,7 +60,6 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get all colors works correctly")
-    @DirtiesContext
     void getAll() throws Exception {
 
         createColor();
@@ -75,7 +73,6 @@ public class ColorControllerTest {
 
     @Test
     @DisplayName("Test if get color by id works correctly")
-    @DirtiesContext
     void getById() throws Exception {
 
         createColor();
@@ -88,8 +85,16 @@ public class ColorControllerTest {
     }
 
     @Test
+    @DisplayName("Test if get color by id throws color not found exception")
+    void getByIdThrowsColorNotFoundException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/color/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if delete color works correctly")
-    @DirtiesContext
     void delete() throws Exception {
 
         createColor();
@@ -97,6 +102,6 @@ public class ColorControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", colorGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(COLOR_WITH_ID + colorGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorGetDto.id())));
     }
 }

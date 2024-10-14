@@ -23,8 +23,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -73,7 +73,7 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    void getUserByIdShouldReturn() throws UserNotFoundException {
+    void getUserByIdShouldReturn() {
 
         String id = "1111-1111-2222";
 
@@ -117,13 +117,12 @@ public class UserControllerTest {
     @DisplayName("Test if delete user works correctly")
     void deleteUserShouldReturn() throws UserNotFoundException {
 
-        when(userServiceI.delete(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
+        when(userServiceI.delete(userGetDto.id())).thenReturn(format(USER_DELETE_MESSAGE, userGetDto.id()));
 
         ResponseEntity<String> response = userController.delete(userGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS, response.getBody());
+        assertEquals(format(USER_DELETE_MESSAGE, userGetDto.id()), response.getBody());
         verify(userServiceI).delete(userGetDto.id());
     }
-
 }

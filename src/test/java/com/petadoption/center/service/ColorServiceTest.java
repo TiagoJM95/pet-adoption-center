@@ -18,10 +18,10 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Optional;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.colorCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createPrimaryColor;
-import static com.petadoption.center.util.Messages.COLOR_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -49,7 +49,7 @@ public class ColorServiceTest {
         updatedColor.setId("1111-2222-2222");
         updatedColor.setName("White");
 
-        colorCreateDto = colorCreateDto();
+        colorCreateDto = primaryColorCreateDto();
 
         int page = 0;
         int size = 10;
@@ -186,7 +186,7 @@ public class ColorServiceTest {
 
         when(colorRepository.findById(testColor.getId())).thenReturn(Optional.of(testColor));
 
-        assertEquals(colorService.delete(testColor.getId()), COLOR_WITH_ID + testColor.getId() + DELETE_SUCCESS);
+        assertEquals(colorService.delete(testColor.getId()), format(COLOR_DELETE_MESSAGE, testColor.getId()));
     }
 
 

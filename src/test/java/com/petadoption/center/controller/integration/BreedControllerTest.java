@@ -20,10 +20,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.List;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.breedCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.breedUpdateDto;
-import static com.petadoption.center.util.Messages.BREED_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.testUtils.TestDtoFactory.primaryBreedCreateDto;
+import static com.petadoption.center.util.Messages.BREED_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -50,13 +50,12 @@ public class BreedControllerTest {
     @BeforeEach
     void setUp() {
         String SpeciesId = testPersistenceHelper.persistTestSpecies();
-        breedCreateDto = breedCreateDto(SpeciesId);
+        breedCreateDto = primaryBreedCreateDto(SpeciesId);
         breedUpdateDto = breedUpdateDto();
     }
 
     @Test
     @DisplayName("Test create breed is working correctly")
-    @DirtiesContext
     void createBreed() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/breed/")
@@ -72,7 +71,6 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if get all breeds works correctly")
-    @DirtiesContext
     void getAll() throws Exception {
 
         createBreed();
@@ -93,7 +91,6 @@ public class BreedControllerTest {
 
     @Test
     @DisplayName("Test if get breed by id works correctly")
-    @DirtiesContext
     void getById() throws Exception {
 
         createBreed();
@@ -108,8 +105,17 @@ public class BreedControllerTest {
 
 
     @Test
+    @DisplayName("Test if get breed by id throws breed not found exception")
+    void getByIdThrowsBreedNotFoundException() throws Exception {
+
+        mockMvc.perform(get("/api/v1/breed/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+
+    @Test
     @DisplayName("Test if update breed works correctly")
-    @DirtiesContext
     void update() throws Exception {
 
         createBreed();
@@ -122,8 +128,17 @@ public class BreedControllerTest {
     }
 
     @Test
+    @DisplayName("Test if update breed throws breed not found exception")
+    void updateThrowsBreedNotFoundException() throws Exception {
+
+        mockMvc.perform(put("/api/v1/breed/update/{id}", "11111-11111-1111-1111")
+                        .content(objectMapper.writeValueAsString(breedUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     @DisplayName("Test if delete breed works correctly")
-    @DirtiesContext
     void delete() throws Exception {
 
         createBreed();
@@ -131,6 +146,15 @@ public class BreedControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/breed/delete/{id}",breedGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(BREED_WITH_ID + breedGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(BREED_DELETE_MESSAGE, breedGetDto.id())));
+    }
+
+    @Test
+    @DisplayName("Test if delete breed throws breed not found exception")
+    void deleteThrowsBreedNotFoundException() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/breed/delete/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

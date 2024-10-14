@@ -13,7 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
+import static com.petadoption.center.util.Messages.COLOR_NOT_FOUND;
+import static java.lang.String.format;
 
 @Service
 public class ColorService implements ColorServiceI {
@@ -44,11 +46,11 @@ public class ColorService implements ColorServiceI {
     public String delete(String id) {
         findById(id);
         colorRepository.deleteById(id);
-        return COLOR_WITH_ID + id + DELETE_SUCCESS;
+        return format(COLOR_DELETE_MESSAGE, id);
     }
 
     private Color findById(String id) {
         return colorRepository.findById(id).orElseThrow(
-                () -> new ColorNotFoundException(COLOR_WITH_ID + id + NOT_FOUND));
+                () -> new ColorNotFoundException(format(COLOR_NOT_FOUND, id)));
     }
 }

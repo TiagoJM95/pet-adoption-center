@@ -25,7 +25,9 @@ import java.util.Optional;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAdoptionForm;
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_DELETE_MESSAGE;
+import static com.petadoption.center.util.Messages.PET_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -186,7 +188,7 @@ public class AdoptionFormServiceTest {
     @DisplayName("Test throw UserNotFoundException when creating AdoptionForm when user Id is invalid")
     void testThrowPetNotFoundWhenCreatingAdoptionFormWithInvalidUserId() throws PetNotFoundException {
 
-        String exceptionMessage = PET_WITH_ID + adoptionFormCreateDto.petId() + NOT_FOUND;
+        String exceptionMessage = format(PET_DELETE_MESSAGE, adoptionFormCreateDto.petId());
 
         when(petServiceI.getById(anyString())).thenThrow(new PetNotFoundException(exceptionMessage));
 
@@ -226,7 +228,7 @@ public class AdoptionFormServiceTest {
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.of(testAdoptionForm));
 
-        assertEquals(adoptionFormService.delete(testAdoptionForm.getId()), ADOPTION_FORM_WITH_ID + testAdoptionForm.getId() + DELETE_SUCCESS);
+        assertEquals(adoptionFormService.delete(testAdoptionForm.getId()), format(ADOPTION_FORM_DELETE_MESSAGE, testAdoptionForm.getId()));
     }
 
     @Test

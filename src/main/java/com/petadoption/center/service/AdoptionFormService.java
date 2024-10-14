@@ -22,8 +22,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static com.petadoption.center.converter.AdoptionFormConverter.toDto;
-import static com.petadoption.center.util.Messages.ADOPTION_FORM_WITH_ID;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_DELETE_MESSAGE;
+import static com.petadoption.center.util.Messages.ADOPTION_FORM_NOT_FOUND;
+import static java.lang.String.format;
 
 @Service
 public class AdoptionFormService implements AdoptionFormServiceI {
@@ -66,11 +67,12 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     public String delete(String id) {
         findById(id);
         adoptionFormRepository.deleteById(id);
-        return ADOPTION_FORM_WITH_ID + id + DELETE_SUCCESS;
+        return format(ADOPTION_FORM_DELETE_MESSAGE, id);
     }
 
     private AdoptionForm findById(String id) {
-        return adoptionFormRepository.findById(id).orElseThrow(() -> new AdoptionFormNotFoundException(id));
+        return adoptionFormRepository.findById(id).orElseThrow(
+                () -> new AdoptionFormNotFoundException(format(ADOPTION_FORM_NOT_FOUND, id)));
     }
 
     private AdoptionForm buildAdoptionFormFromDto(AdoptionFormCreateDto dto) {

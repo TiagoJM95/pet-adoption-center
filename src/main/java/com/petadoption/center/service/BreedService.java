@@ -22,6 +22,7 @@ import java.util.Objects;
 
 import static com.petadoption.center.util.Messages.*;
 import static com.petadoption.center.util.Utils.updateFields;
+import static java.lang.String.format;
 
 @Service
 public class BreedService implements BreedServiceI {
@@ -71,30 +72,30 @@ public class BreedService implements BreedServiceI {
     public String delete(String id) {
         findById(id);
         breedRepository.deleteById(id);
-        return BREED_WITH_ID + id + DELETE_SUCCESS;
+        return format(BREED_DELETE_MESSAGE, id);
     }
 
     @Override
     public void verifyIfBreedsAndSpeciesMatch(PetCreateDto dto) {
 
-        Species species = SpeciesConverter.toModel(speciesServiceI.getById(dto.petSpeciesId()));
+        Species species = SpeciesConverter.toModel(speciesServiceI.getById(dto.speciesId()));
         Breed primaryBreed = findById(dto.primaryBreedId());
         Breed secondaryBreed;
 
         if(!Objects.equals(primaryBreed.getSpecies(), species)) {
-            throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
+            throw new BreedMismatchException(format(BREED_SPECIES_MISMATCH, primaryBreed.getName(), species.getName()));
         }
 
         if(dto.secondaryBreedId() != null) {
             secondaryBreed = findById(dto.secondaryBreedId());
             if(!Objects.equals(secondaryBreed.getSpecies(), species)) {
-                throw new BreedMismatchException(BREED_SPECIES_MISMATCH);
+                throw new BreedMismatchException(format(BREED_SPECIES_MISMATCH, secondaryBreed.getName(), species.getName()));
             }
         }
     }
 
     private Breed findById(String id) {
         return breedRepository.findById(id).orElseThrow(
-                () -> new BreedNotFoundException(BREED_WITH_ID + id + NOT_FOUND));
+                () -> new BreedNotFoundException(format(BREED_NOT_FOUND, id)));
     }
 }

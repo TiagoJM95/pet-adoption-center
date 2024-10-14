@@ -11,19 +11,15 @@ import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
 
-@Builder
+@Builder(toBuilder = true)
 public record OrganizationUpdateDto(
 
-        @Pattern(regexp = "[a-zA-Z_0-9]+", message = LETTERS_AND_NUMBERS)
+        @Pattern(regexp = "[a-zA-Z_0-9 .-]+", message = LETTERS_AND_NUMBERS)
         String name,
 
         @Email
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
-
-        @Size(min = 9, max = 9, message = PHONE_NUMBER_SIZE)
-        @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        String nif,
 
         @Pattern(regexp = "[0-9]+", message = PHONE_NUMBER_FORMAT)
         @Size(max = 10, message = PHONE_NUMBER_SIZE)
@@ -33,7 +29,7 @@ public record OrganizationUpdateDto(
         @NotNull(message = BLANK_FIELD)
         Address address,
 
-        @Pattern(regexp = "[a-zA-Z_0-9.-]", message = WEBSITE_URL)
+        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,
 

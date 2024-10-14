@@ -1,104 +1,168 @@
 package com.petadoption.center.aspect;
 
+import com.petadoption.center.exception.BreedMismatchException;
 import com.petadoption.center.exception.DatabaseConnectionException;
+import com.petadoption.center.exception.InvalidStatusChangeException;
 import com.petadoption.center.exception.not_found.ModelNotFoundException;
-import org.aspectj.lang.annotation.Aspect;
+import com.petadoption.center.util.ConstraintMessageResolver;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.petadoption.center.util.Messages.LOGGER_DB_CONNECTION;
-import static com.petadoption.center.util.Messages.LOGGER_NOT_FOUND;
+import static com.petadoption.center.util.Messages.*;
 
-@Aspect
-@ControllerAdvice
+@RestControllerAdvice
 public class ExceptionsHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(ExceptionsHandler.class);
 
+    private final ConstraintMessageResolver messageResolver;
+
+    @Autowired
+    public ExceptionsHandler(ConstraintMessageResolver messageResolver) {
+        this.messageResolver = messageResolver;
+    }
+
     @ExceptionHandler(ModelNotFoundException.class)
-    public ResponseEntity<String> notFoundHandler(Exception ex) {
+    @ResponseStatus(value = HttpStatus.NOT_FOUND)
+    public Error notFoundHandler(ModelNotFoundException ex, HttpServletRequest request) {
         logger.error(LOGGER_NOT_FOUND, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .build();
     }
 
     @ExceptionHandler(DatabaseConnectionException.class)
-    public ResponseEntity<String> dbConnectionHandler(Exception ex) {
+    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT)
+    public Error dbConnectionHandler(DatabaseConnectionException ex, HttpServletRequest request) {
         logger.error(LOGGER_DB_CONNECTION, ex.getMessage());
-        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.REQUEST_TIMEOUT.value())
+                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .build();
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> requestBodyHandler(Exception ex) {
-        logger.error(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    public Error requestBodyHandler(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        logger.error(LOGGER_NO_BODY, ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .build();
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
-        Throwable cause = ex.getCause();
-        String message = (cause != null) ? cause.getMessage() : "Unknown error";
+    @ResponseStatus(value = HttpStatus.CONFLICT)
+    public Error handleDataIntegrityViolationException(DataIntegrityViolationException ex, HttpServletRequest request) {
+        logger.error(LOGGER_DUPLICATE, ex.getMessage());
+        String message = (ex.getCause() != null) ? ex.getCause().getMessage() : "Unknown error";
 
-        Matcher keyValueMatcher = Pattern.compile("Key \\(([^)]+)\\)=\\(([^)]+)\\)").matcher(message); // regex key values
-        Matcher tableNameMatcher = Pattern.compile("insert into ([^\\s]+)").matcher(message); // regex table name
+        Matcher constraintMatcher = Pattern.compile("constraint \"([^\"]+)\"").matcher(message);
+        String constraintName = constraintMatcher.find() ? constraintMatcher.group(1) : "Unknown constraint";
 
-        String tableName = null;
+        String friendlyMessage = messageResolver.getMessage(constraintName);
+        String hint = messageResolver.getHint(constraintName);
 
-        if (tableNameMatcher.find()) {
-            tableName = tableNameMatcher.group(1);
-            if (!tableName.isEmpty()) {
-                tableName = tableName.substring(0, tableName.length() - 1); // remove last letter of table name
-            }
-        }
-
-        if (keyValueMatcher.find()) {
-            String[] keys = keyValueMatcher.group(1).split(",\\s");
-            String[] values = keyValueMatcher.group(2).split(",\\s");
-
-            StringBuilder output = new StringBuilder(); // build error message
-            if (tableName != null) {
-                output.append(tableName).append(" with ");
-            }
-            for (int i = 0; i < keys.length; i++) {
-                if(i == keys.length - 1) {
-                    output.append(keys[i]).append(" ").append(values[i]).append(" already exists.");
-                    break;
-                }
-                output.append(keys[i]).append(" ").append(values[i]).append(" ").append("and ");
-            }
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(output.toString());
-        } else {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("You have entered an invalid data. Please try again.");
-        }
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.CONFLICT.value())
+                .error(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(friendlyMessage)
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .constraint(constraintName)
+                .hint(hint)
+                .build();
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body("An unexpected error occurred: " + ex.getMessage());
+    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT)
+    public Error handleGeneralException(Exception ex, HttpServletRequest request) {
+        logger.error(LOGGER_EXCEPTION, ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.REQUEST_TIMEOUT.value())
+                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .build();
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    protected ResponseEntity<Object> validationsHandlerNotValid(MethodArgumentNotValidException exception) {
+    public Error handleValidationException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        logger.error(LOGGER_VALIDATION, ex.getMessage());
         Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getAllErrors().forEach(error -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
         });
-        return ResponseEntity.badRequest().body(errors);
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.REQUEST_TIMEOUT.value())
+                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .validationIssue(errors)
+                .build();
+    }
+
+    @ExceptionHandler(BreedMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handleBreedMismatchException(BreedMismatchException ex, HttpServletRequest request) {
+        logger.error(LOGGER_MISMATCH, ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.REQUEST_TIMEOUT.value())
+                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .message(ex.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(InvalidStatusChangeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handleInvalidStatusChangeException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        logger.error(LOGGER_STATUS, ex.getMessage());
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.REQUEST_TIMEOUT.value())
+                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .message(ex.getMessage())
+                .build();
     }
 }

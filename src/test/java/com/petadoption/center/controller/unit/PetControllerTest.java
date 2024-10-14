@@ -26,8 +26,8 @@ import java.util.List;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.petSearchCriteria;
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.PET_WITH_ID;
+import static com.petadoption.center.util.Messages.PET_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -84,14 +84,14 @@ public class PetControllerTest {
 
         int page = 0;
         int size = 10;
-        String sort = "created_at";
+        String sort = "createdAt";
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<PetGetDto> expected = List.of(petGetDto);
 
         when(petService.searchPets(any(PetSearchCriteria.class), any(Pageable.class))).thenReturn(expected);
 
-        ResponseEntity<List<PetGetDto>> actual = petController.searchPets(petSearchCriteria(), pageable);
+        ResponseEntity<List<PetGetDto>> actual = petController.searchPets(pageable, petSearchCriteria());
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
         assertEquals(expected, actual.getBody());
@@ -287,12 +287,12 @@ public class PetControllerTest {
     @DisplayName("Returns a String when deletePet() is called with valid ID")
     void shouldReturnStringWhenIdIsValid() throws PetNotFoundException {
 
-        when(petService.delete(anyString())).thenReturn(PET_WITH_ID + petGetDto.id() + DELETE_SUCCESS);
+        when(petService.delete(anyString())).thenReturn(format(PET_DELETE_MESSAGE, petGetDto.id()));
 
         ResponseEntity<String> actual = petController.delete(petGetDto.id());
 
         assertEquals(HttpStatus.OK, actual.getStatusCode());
-        assertEquals(PET_WITH_ID + petGetDto.id() + DELETE_SUCCESS, actual.getBody());
+        assertEquals(format(PET_DELETE_MESSAGE, petGetDto.id()), actual.getBody());
         verify(petService, times(1)).delete(anyString());
     }
 
