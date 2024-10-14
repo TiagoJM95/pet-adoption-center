@@ -8,6 +8,9 @@ import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
+import com.petadoption.center.dto.interest.InterestCreateDto;
+import com.petadoption.center.dto.interest.InterestGetDto;
+import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.dto.organization.OrganizationCreateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.organization.OrganizationUpdateDto;
@@ -20,6 +23,7 @@ import com.petadoption.center.dto.species.SpeciesUpdateDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.enums.Status;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 
@@ -149,6 +153,31 @@ public class TestDtoFactory {
                 .petAddress(createAddress())
                 .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
+    }
+
+    public static InterestGetDto interestGetDto() {
+        return InterestGetDto.builder()
+                .id("1111-2222-3333")
+                .userDto(userGetDto())
+                .petDto(petGetDto())
+                .organizationDto(orgGetDto())
+                .status(Status.PENDING)
+                .timestamp(LocalDateTime.of(2024, 1, 1, 1 ,1))
+                .build();
+
+    }
+
+    public static InterestGetDto interestGetDtoUpdated() {
+        return InterestGetDto.builder()
+                .id("1111-2222-3333")
+                .userDto(userGetDto())
+                .petDto(petGetDto())
+                .organizationDto(orgGetDto())
+                .status(Status.ACCEPTED)
+                .timestamp(LocalDateTime.of(2024, 1, 1, 1 ,1))
+                .reviewTimestamp(LocalDateTime.of(2024, 1, 1, 2, 1))
+                .build();
+
     }
 
     // CREATE DTOs
@@ -281,6 +310,15 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static InterestCreateDto interestCreateDto() {
+        return InterestCreateDto.builder()
+                .userId(userGetDto().id())
+                .petId(petGetDto().id())
+                .organizationId(orgGetDto().id())
+                .build();
+
+    }
+
     // UPDATE DTOs
 
     public static BreedUpdateDto breedUpdateDto(){
@@ -327,6 +365,18 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static InterestUpdateDto interestUpdateDtoToRejected() {
+        return InterestUpdateDto.builder()
+                .status("rejected")
+                .build();
+    }
+
+    public static InterestUpdateDto interestUpdateDtoToFormRequested() {
+        return InterestUpdateDto.builder()
+                .status("FORM_REQUESTED")
+                .build();
+    }
+  
     public static OrganizationUpdateDto orgUpdateDto(){
         return OrganizationUpdateDto.builder()
                 .name("Pet Adoption Center")

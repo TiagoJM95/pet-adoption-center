@@ -224,7 +224,7 @@ public class AdoptionFormServiceTest {
 
     @Test
     @DisplayName("Test if delete AdoptionForm works correctly and returns message")
-    void testDeleteAndReturnConfirmationMessage() throws AdoptionFormNotFoundException {
+    void testDeleteAdoptionFormAndReturnConfirmationMessage() throws AdoptionFormNotFoundException {
 
         when(adoptionFormRepository.findById(testAdoptionForm.getId())).thenReturn(Optional.of(testAdoptionForm));
 

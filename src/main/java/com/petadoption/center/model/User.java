@@ -66,9 +66,6 @@ public class User {
     )
     private Set<Pet> adoptedPets = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    private Set<Interest> interests = new HashSet<>();
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -77,12 +74,12 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(nif, user.nif) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(dateOfBirth, user.dateOfBirth) && Objects.equals(address, user.address) && Objects.equals(favoritePets, user.favoritePets) && Objects.equals(adoptedPets, user.adoptedPets) && Objects.equals(interests, user.interests);
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(nif, user.nif) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(dateOfBirth, user.dateOfBirth) && Objects.equals(address, user.address) && Objects.equals(favoritePets, user.favoritePets) && Objects.equals(adoptedPets, user.adoptedPets);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, nif, phoneNumber, dateOfBirth, address, favoritePets, adoptedPets, interests);
+        return Objects.hash(id, firstName, lastName, email, nif, phoneNumber, dateOfBirth, address, favoritePets, adoptedPets);
     }
 
     @PrePersist
