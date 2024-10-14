@@ -34,11 +34,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@Transactional
-public class AdoptionFormControllerTest {
+public class AdoptionFormControllerTest extends AbastractIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
