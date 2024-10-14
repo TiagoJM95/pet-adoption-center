@@ -1,6 +1,5 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.aspect.Error;
 import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
@@ -20,25 +19,13 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.exception.not_found.PetNotFoundException;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.embeddable.Attributes;
-import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.specifications.PetSearchCriteria;
-import com.petadoption.center.testUtils.TestPersistenceHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.stream.Stream;
 
@@ -46,29 +33,14 @@ import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
 import static com.petadoption.center.util.Messages.PET_NOT_FOUND;
 import static java.lang.String.format;
-import static java.nio.file.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
-public class PetControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private PetRepository petRepository;
-    @Autowired
-    private TestPersistenceHelper helper;
+public class PetControllerTest extends TestContainerConfig{
 
     private final String URL = "/api/v1/pet/";
 
@@ -96,7 +68,6 @@ public class PetControllerTest {
 
     @BeforeAll
     void setup() throws Exception {
-        helper.cleanAll();
 
         speciesGetDto1 = persistSpecies(speciesCreateDto());
         speciesGetDto2 = persistSpecies(otherSpeciesCreateDto());
@@ -226,11 +197,6 @@ public class PetControllerTest {
                 .organizationDto(organizationGetDto)
                 .build();
     }*/
-
-    @BeforeAll
-    void before(){
-        helper.cleanAll();
-    }
 
     @AfterAll
     void cleanAll(){
