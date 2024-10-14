@@ -7,13 +7,22 @@ import com.petadoption.center.dto.organization.OrganizationUpdateDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import com.petadoption.center.repository.OrganizationRepository;
+import com.petadoption.center.testUtils.TestPersistenceHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 
 import java.util.stream.Stream;
@@ -29,7 +38,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.hamcrest.Matchers.is;
 
-public class OrganizationControllerTest extends AbastractIntegrationTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class OrganizationControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,6 +51,9 @@ public class OrganizationControllerTest extends AbastractIntegrationTest {
 
     @Autowired
     private OrganizationRepository organizationRepository;
+
+    @Autowired
+    private static TestPersistenceHelper testPersistenceHelper;
 
     private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;

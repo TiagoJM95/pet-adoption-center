@@ -3,18 +3,22 @@ package com.petadoption.center.controller.integration;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
+import com.petadoption.center.testUtils.TestPersistenceHelper;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
@@ -24,8 +28,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-public class ColorControllerTest extends AbastractIntegrationTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class ColorControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -33,8 +39,16 @@ public class ColorControllerTest extends AbastractIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private static TestPersistenceHelper testPersistenceHelper;
+
     private ColorGetDto colorGetDto;
     private ColorCreateDto colorCreateDto;
+
+    @AfterAll
+    static void cleanAll(){
+        testPersistenceHelper.cleanAll();
+    }
 
     @BeforeEach
     void setUp() {

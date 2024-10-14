@@ -4,18 +4,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
+import com.petadoption.center.testUtils.TestPersistenceHelper;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDateTime;
 
@@ -27,7 +31,10 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class SpeciesControllerTest extends AbastractIntegrationTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class SpeciesControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -35,11 +42,19 @@ public class SpeciesControllerTest extends AbastractIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private static TestPersistenceHelper testPersistenceHelper;
+
     private SpeciesGetDto speciesGetDto;
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
 
     private String speciesId;
+
+    @AfterAll
+    static void cleanAll(){
+        testPersistenceHelper.cleanAll();
+    }
 
     @BeforeEach
     void setUp() {

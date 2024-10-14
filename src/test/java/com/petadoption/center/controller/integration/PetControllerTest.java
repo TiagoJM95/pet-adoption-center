@@ -22,14 +22,23 @@ import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.repository.PetRepository;
 import com.petadoption.center.specifications.PetSearchCriteria;
+import com.petadoption.center.testUtils.TestPersistenceHelper;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.stream.Stream;
 
@@ -46,7 +55,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class PetControllerTest extends AbastractIntegrationTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureMockMvc
+public class PetControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -54,6 +67,8 @@ public class PetControllerTest extends AbastractIntegrationTest {
     private ObjectMapper objectMapper;
     @Autowired
     private PetRepository petRepository;
+    @Autowired
+    private TestPersistenceHelper helper;
 
     private final String URL = "/api/v1/pet/";
 
@@ -81,6 +96,7 @@ public class PetControllerTest extends AbastractIntegrationTest {
 
     @BeforeAll
     void setup() throws Exception {
+        helper.cleanAll();
 
         speciesGetDto1 = persistSpecies(speciesCreateDto());
         speciesGetDto2 = persistSpecies(otherSpeciesCreateDto());
@@ -210,6 +226,16 @@ public class PetControllerTest extends AbastractIntegrationTest {
                 .organizationDto(organizationGetDto)
                 .build();
     }*/
+
+    @BeforeAll
+    void before(){
+        helper.cleanAll();
+    }
+
+    @AfterAll
+    void cleanAll(){
+        helper.cleanAll();
+    }
 
     @AfterEach
     void reset(){

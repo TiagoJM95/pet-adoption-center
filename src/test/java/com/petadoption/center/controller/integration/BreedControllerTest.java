@@ -5,13 +5,19 @@ import com.petadoption.center.dto.breed.BreedCreateDto;
 import com.petadoption.center.dto.breed.BreedGetDto;
 import com.petadoption.center.dto.breed.BreedUpdateDto;
 import com.petadoption.center.testUtils.TestPersistenceHelper;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 
@@ -23,7 +29,10 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class BreedControllerTest extends AbastractIntegrationTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@AutoConfigureMockMvc
+public class BreedControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -32,11 +41,16 @@ public class BreedControllerTest extends AbastractIntegrationTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private TestPersistenceHelper testPersistenceHelper;
+    private static TestPersistenceHelper testPersistenceHelper;
 
     private BreedGetDto breedGetDto;
     private BreedCreateDto breedCreateDto;
     private BreedUpdateDto breedUpdateDto;
+
+    @AfterAll
+    static void cleanAll(){
+        testPersistenceHelper.cleanAll();
+    }
 
     @BeforeEach
     void setUp() {

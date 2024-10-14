@@ -8,13 +8,12 @@ import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
+import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
+import com.petadoption.center.repository.AdoptionFormRepository;
 import com.petadoption.center.testUtils.TestPersistenceHelper;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -34,7 +34,11 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class AdoptionFormControllerTest extends AbastractIntegrationTest {
+@SpringBootTest
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@AutoConfigureMockMvc
+public class AdoptionFormControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -44,6 +48,9 @@ public class AdoptionFormControllerTest extends AbastractIntegrationTest {
 
     @Autowired
     private TestPersistenceHelper testPersistenceHelper;
+
+    @Autowired
+    private AdoptionFormRepository adoptionFormRepository;
 
     private AdoptionFormCreateDto adoptionFormCreateDto;
     private AdoptionFormGetDto adoptionFormGetDto;
@@ -58,6 +65,16 @@ public class AdoptionFormControllerTest extends AbastractIntegrationTest {
     private String breedId;
     private String colorId;
     String adoptionFormId;
+
+    @BeforeAll
+    void before(){
+        testPersistenceHelper.cleanAll();
+    }
+
+    /*@AfterAll
+    void cleanAll(){
+        testPersistenceHelper.cleanAll();
+    }*/
 
     @BeforeEach
     void setUp() throws Exception {
@@ -148,6 +165,11 @@ public class AdoptionFormControllerTest extends AbastractIntegrationTest {
         petGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
 
         petId = petGetDto.id();
+    }
+
+    @AfterEach
+    void cleanTable(){
+        testPersistenceHelper.cleanAll();
     }
 
     //TESTS BEGIN

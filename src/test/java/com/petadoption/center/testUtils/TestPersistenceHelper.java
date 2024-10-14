@@ -121,4 +121,15 @@ public class TestPersistenceHelper {
         interestRepository.save(interest);
         return interest.getId();
     }
+
+    public void cleanAll() {
+        interestRepository.deleteAll();
+        adoptionFormRepository.deleteAll();
+        petRepository.deleteAll();
+        breedRepository.deleteAll();
+        speciesRepository.deleteAll();
+        organizationRepository.deleteAll();
+        colorRepository.deleteAll();
+        userRepository.deleteAll();
+    }
 }
