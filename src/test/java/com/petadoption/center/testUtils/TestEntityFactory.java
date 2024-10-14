@@ -1,9 +1,6 @@
 package com.petadoption.center.testUtils;
 
-import com.petadoption.center.enums.Ages;
-import com.petadoption.center.enums.Coats;
-import com.petadoption.center.enums.Genders;
-import com.petadoption.center.enums.Sizes;
+import com.petadoption.center.enums.*;
 import com.petadoption.center.model.*;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Attributes;
@@ -284,6 +281,16 @@ public class TestEntityFactory {
                 .goodWithKids(false)
                 .state("Porto")
                 .city("Gondomar")
+                .build();
+    }
+
+    public static Interest createInterest() {
+        return Interest.builder()
+                .id("123123-123123-1111")
+                .user(createUser())
+                .pet(createPet())
+                .organization(createOrganization())
+                .status(Status.PENDING)
                 .build();
     }
 }
