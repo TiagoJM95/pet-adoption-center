@@ -25,6 +25,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.stream.Stream;
@@ -38,7 +39,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 public class PetControllerTest extends TestContainerConfig{
 
@@ -348,25 +348,31 @@ public class PetControllerTest extends TestContainerConfig{
     @DisplayName("Should throw DataIntegrityViolationException when creating a Pet with a constraint that already exists")
     void shouldThrowDataIntegrityViolationException_WhenCreatingPet_WhenConstraintAlreadyExists(PetCreateDto dto, String constraintName) throws Exception {
 
-        // Save the first
         persistPet(petCreateDto);
-        // Verify the second one fails
         MvcResult result = mockMvc.perform(post(URL + "addSingle")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
-        // Assert that the exception message includes the constraint name
         Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
 
         assertEquals(constraintName, error.constraint());
-        // Assert that only one pet exists in the DB
         assertEquals(petRepository.findAll().size(), 1);
     }
 
     @Test
     @DisplayName("Should throw HttpMessageNotReadableException when create is called with no request body")
-    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {}
+    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
+
+        MvcResult result = mockMvc.perform(post(URL + "addSingle")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+
+        assertTrue(error.message().contains("Required request body is missing"));
+    }
 
     @Test
     @DisplayName("Should throw MethodArgumentNotValidException when create is called with an invalid PetCreateDto")

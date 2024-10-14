@@ -105,7 +105,7 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
     private void addPet() throws Exception {
         PetCreateDto petCreateDto = PetCreateDto.builder()
                 .name("Max")
-                .petSpeciesId(speciesId)
+                .speciesId(speciesId)
                 .primaryBreedId(breedId)
                 .primaryColor(colorId)
                 .gender("MALE")

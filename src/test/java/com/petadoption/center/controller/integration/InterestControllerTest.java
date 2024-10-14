@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -97,7 +98,7 @@ public class InterestControllerTest {
     private void addPet() throws Exception {
         PetCreateDto petCreateDto = PetCreateDto.builder()
                 .name("Bobi")
-                .petSpeciesId(speciesId)
+                .speciesId(speciesId)
                 .primaryBreedId(breedId)
                 .primaryColor(colorId)
                 .gender("MALE")
@@ -279,7 +280,7 @@ public class InterestControllerTest {
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(INTEREST_WITH_ID + invalidId + NOT_FOUND))
+                .andExpect(content().string(format(INTEREST_NOT_FOUND, invalidId)))
                 .andReturn();
     }
 
@@ -347,7 +348,7 @@ public class InterestControllerTest {
         mockMvc.perform(delete(URL + "/interest/delete/{id}", interestGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(INTEREST_WITH_ID + interestGetDto.id() + DELETE_SUCCESS));
+                .andExpect(content().string(format(INTEREST_DELETE_MESSAGE, interestGetDto.id())));
     }
 
     @Test
@@ -360,6 +361,6 @@ public class InterestControllerTest {
         mockMvc.perform(delete(URL + "/interest/delete/{id}", invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(INTEREST_WITH_ID + invalidId + NOT_FOUND));
+                .andExpect(content().string(format(INTEREST_NOT_FOUND, invalidId)));
     }
 }

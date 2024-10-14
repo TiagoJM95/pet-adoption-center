@@ -27,6 +27,7 @@ import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.interestUpdateDtoToFormRequested;
 import static com.petadoption.center.testUtils.TestEntityFactory.createInterest;
 import static com.petadoption.center.util.Messages.*;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -406,7 +407,7 @@ public class InterestServiceTest {
 
         when(interestRepository.findById(testInterest.getId())).thenReturn(Optional.of(testInterest));
 
-        assertEquals(interestService.delete(testInterest.getId()), INTEREST_WITH_ID + testInterest.getId() + DELETE_SUCCESS);
+        assertEquals(interestService.delete(testInterest.getId()), format(INTEREST_DELETE_MESSAGE, testInterest.getId()));
     }
 
     @Test
