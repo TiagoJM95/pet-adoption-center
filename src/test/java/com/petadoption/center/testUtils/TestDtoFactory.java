@@ -160,7 +160,6 @@ public class TestDtoFactory {
                 .organizationDto(orgGetDto())
                 .status(Status.PENDING)
                 .timestamp(LocalDateTime.of(2024, 1, 1, 1 ,1))
-                .reviewTimestamp(LocalDateTime.of(2024, 1, 1, 2, 1))
                 .build();
 
     }
@@ -319,7 +318,7 @@ public class TestDtoFactory {
 
     public static InterestUpdateDto interestUpdateDtoToFormRequested() {
         return InterestUpdateDto.builder()
-                .status("Form Requested")
+                .status("FORM_REQUESTED")
                 .build();
     }
 }

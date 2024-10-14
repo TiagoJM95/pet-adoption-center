@@ -256,7 +256,6 @@ public class TestEntityFactory {
                 .otherNotes("Notes")
                 .petAddress(createAddress())
                 .createdAt(LocalDateTime.of(2024, 1, 1, 1, 1))
-                .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }
 
@@ -286,11 +285,12 @@ public class TestEntityFactory {
 
     public static Interest createInterest() {
         return Interest.builder()
-                .id("123123-123123-1111")
+                .id("1111-2222-3333")
                 .user(createUser())
                 .pet(createPet())
                 .organization(createOrganization())
                 .status(Status.PENDING)
+                .createdAt(LocalDateTime.of(2024, 1, 1, 1 ,1))
                 .build();
     }
 }
