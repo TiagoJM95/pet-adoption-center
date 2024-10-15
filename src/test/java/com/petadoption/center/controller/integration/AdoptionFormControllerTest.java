@@ -130,12 +130,35 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
         petId = petGetDto.id();
     }
 
+    private void addAdoptionForm() throws Exception{
+
+        MvcResult result = mockMvc.perform(post("/api/v1/adoption-form/")
+                        .content(objectMapper.writeValueAsString(adoptionFormCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        AdoptionFormGetDto adoptionFormCreated = objectMapper.readValue(result.getResponse().getContentAsString(), AdoptionFormGetDto.class);
+
+        adoptionFormId = adoptionFormCreated.id();
+
+        adoptionFormGetDto = new AdoptionFormGetDto(
+                adoptionFormId,
+                userGetDto,
+                petGetDto,
+                adoptionFormCreated.userFamily(),
+                adoptionFormCreated.petVacationHome(),
+                adoptionFormCreated.isResponsibleForPet(),
+                adoptionFormCreated.otherNotes(),
+                adoptionFormCreated.petAddress(),
+                adoptionFormCreated.createdAt()
+        );
+    }
+
     @AfterEach
     void cleanTable(){
         helper.cleanAll();
     }
-
-
 
     @Test
     @DisplayName("Test get all adoption forms when empty returns empty")
@@ -158,7 +181,7 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
     @DirtiesContext
     void testGetAllReturnsOne() throws Exception {
 
-        testCreateAdoptionForm();
+        addAdoptionForm();
 
         mockMvc.perform(get("/api/v1/adoption-form/")
                         .param("page", "0")
@@ -203,9 +226,10 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test if update an adoption form works correctly")
+    @DirtiesContext
     void testUpdate() throws Exception {
 
-        testCreateAdoptionForm();
+        addAdoptionForm();
 
         mockMvc.perform(put("/api/v1/adoption-form/update/{id}", adoptionFormId)
                         .content(objectMapper.writeValueAsString(adoptionFormUpdateDto))

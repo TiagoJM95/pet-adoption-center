@@ -280,7 +280,7 @@ public class InterestControllerTest {
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(format(INTEREST_NOT_FOUND, invalidId)))
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)))
                 .andReturn();
     }
 
@@ -361,6 +361,6 @@ public class InterestControllerTest {
         mockMvc.perform(delete(URL + "/interest/delete/{id}", invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(format(INTEREST_NOT_FOUND, invalidId)));
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)));
     }
 }
