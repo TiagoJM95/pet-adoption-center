@@ -1,13 +1,18 @@
 package com.petadoption.center.dto.pet;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.petadoption.center.enums.Ages;
+import com.petadoption.center.enums.Coats;
+import com.petadoption.center.enums.Genders;
+import com.petadoption.center.enums.Sizes;
+import com.petadoption.center.model.embeddable.Attributes;
+import com.petadoption.center.validator.EnumValidator;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 
-import static com.petadoption.center.util.Messages.BLANK_FIELD;
-import static com.petadoption.center.util.Messages.ONLY_LETTERS;
+import static com.petadoption.center.util.Messages.*;
 
+@Builder(toBuilder = true)
 public record PetCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
@@ -16,7 +21,7 @@ public record PetCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
-        String petSpeciesId,
+        String speciesId,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
@@ -35,16 +40,16 @@ public record PetCreateDto(
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
         String tertiaryColor,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Genders.class, message = GENDER_INVALID)
         String gender,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Coats.class, message = COAT_INVALID)
         String coat,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Sizes.class, message = SIZE_INVALID)
         String size,
 
-        @NotBlank(message = BLANK_FIELD)
+        @EnumValidator(enumClass = Ages.class, message = AGE_INVALID)
         String age,
 
         @NotBlank(message = BLANK_FIELD)
@@ -55,74 +60,9 @@ public record PetCreateDto(
 
         Boolean isAdopted,
 
-        Boolean petSterilized,
-
-        Boolean petVaccinated,
-
-        Boolean petChipped,
-
-        Boolean specialNeeds,
-
-        Boolean houseTrained,
-
-        Boolean goodWithKids,
-
-        Boolean goodWithDogs,
-
-        Boolean goodWithCats,
+        Attributes attributes,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
         String organizationId
-) {
-        @JsonCreator
-        public PetCreateDto(
-                @JsonProperty("name") String name,
-                @JsonProperty("petSpeciesId") String petSpeciesId,
-                @JsonProperty("primaryBreedId") String primaryBreedId,
-                @JsonProperty("secondaryBreedId") String secondaryBreedId,
-                @JsonProperty("primaryColor") String primaryColor,
-                @JsonProperty("secondaryColor") String secondaryColor,
-                @JsonProperty("tertiaryColor") String tertiaryColor,
-                @JsonProperty("gender") String gender,
-                @JsonProperty("coat") String coat,
-                @JsonProperty("size") String size,
-                @JsonProperty("age") String age,
-                @JsonProperty("description") String description,
-                @JsonProperty("imageUrl") String imageUrl,
-                @JsonProperty("isAdopted") Boolean isAdopted,
-                @JsonProperty("petSterilized") Boolean petSterilized,
-                @JsonProperty("petVaccinated") Boolean petVaccinated,
-                @JsonProperty("petChipped") Boolean petChipped,
-                @JsonProperty("specialNeeds") Boolean specialNeeds,
-                @JsonProperty("houseTrained") Boolean houseTrained,
-                @JsonProperty("goodWithKids") Boolean goodWithKids,
-                @JsonProperty("goodWithDogs") Boolean goodWithDogs,
-                @JsonProperty("goodWithCats") Boolean goodWithCats,
-                @JsonProperty("organizationId") String organizationId) {
-
-                this.name = name;
-                this.petSpeciesId = petSpeciesId;
-                this.primaryBreedId = primaryBreedId;
-                this.secondaryBreedId = secondaryBreedId != null ? secondaryBreedId : "NONE"; // Default value
-                this.primaryColor = primaryColor;
-                this.secondaryColor = secondaryColor != null ? secondaryColor : "NONE"; // Default value
-                this.tertiaryColor = tertiaryColor != null ? tertiaryColor : "NONE"; // Default value
-                this.gender = gender;
-                this.coat = coat;
-                this.size = size;
-                this.age = age;
-                this.description = description;
-                this.imageUrl = imageUrl;
-                this.isAdopted = isAdopted;
-                this.petSterilized = petSterilized;
-                this.petVaccinated = petVaccinated;
-                this.petChipped = petChipped;
-                this.specialNeeds = specialNeeds;
-                this.houseTrained = houseTrained;
-                this.goodWithKids = goodWithKids;
-                this.goodWithDogs = goodWithDogs;
-                this.goodWithCats = goodWithCats;
-                this.organizationId = organizationId;
-        }
-}
+) {}

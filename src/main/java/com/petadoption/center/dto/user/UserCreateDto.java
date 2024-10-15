@@ -1,12 +1,16 @@
 package com.petadoption.center.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.petadoption.center.model.embeddable.Address;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 
 import java.time.LocalDate;
 
 import static com.petadoption.center.util.Messages.*;
 
+@Builder
 public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
@@ -31,22 +35,9 @@ public record UserCreateDto(
         @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
         LocalDate dateOfBirth,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[ a-zA-Z_0-9,.-]+", message = STREET_CHARACTERS)
-        String street,
-
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[ a-zA-Z]+", message = ONLY_LETTERS)
-        String city,
-
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[ a-zA-Z]+", message = ONLY_LETTERS)
-        String state,
-
-        @NotBlank(message = BLANK_FIELD)
-        @Size(max = 8, min = 8, message = POSTAL_CODE_SIZE)
-        @Pattern(regexp = "[0-9-]+", message = POSTAL_CODE_FORMAT)
-        String postalCode,
+        @Valid
+        @NotNull(message = BLANK_FIELD)
+        Address address,
 
         @NotNull(message = BLANK_FIELD)
         String phoneNumber

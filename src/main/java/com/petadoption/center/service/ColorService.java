@@ -3,18 +3,19 @@ package com.petadoption.center.service;
 import com.petadoption.center.converter.ColorConverter;
 import com.petadoption.center.dto.color.ColorCreateDto;
 import com.petadoption.center.dto.color.ColorGetDto;
-import com.petadoption.center.exception.color.ColorNotFoundException;
+import com.petadoption.center.exception.not_found.ColorNotFoundException;
 import com.petadoption.center.model.Color;
 import com.petadoption.center.repository.ColorRepository;
 import com.petadoption.center.service.interfaces.ColorServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
+import static com.petadoption.center.util.Messages.COLOR_NOT_FOUND;
+import static java.lang.String.format;
 
 @Service
 public class ColorService implements ColorServiceI {
@@ -27,30 +28,29 @@ public class ColorService implements ColorServiceI {
     }
 
     @Override
-    public List<ColorGetDto> getAllColors(int page, int size, String sortBy) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.Direction.ASC, sortBy);
-        return colorRepository.findAll(pageRequest).stream().map(ColorConverter::toDto).toList();
+    public List<ColorGetDto> getAll(Pageable pageable) {
+        return colorRepository.findAll(pageable).stream().map(ColorConverter::toDto).toList();
     }
 
     @Override
-    public ColorGetDto getColorById(String id) throws ColorNotFoundException {
-        return ColorConverter.toDto(findColorById(id));
+    public ColorGetDto getById(String id) {
+        return ColorConverter.toDto(findById(id));
     }
 
     @Override
-    public ColorGetDto addNewColor(ColorCreateDto dto) {
+    public ColorGetDto create(ColorCreateDto dto) {
         return ColorConverter.toDto(colorRepository.save(ColorConverter.toModel(dto)));
     }
 
     @Override
-    public String deleteColor(String id) throws ColorNotFoundException {
-        findColorById(id);
+    public String delete(String id) {
+        findById(id);
         colorRepository.deleteById(id);
-        return COLOR_WITH_ID + id + DELETE_SUCCESS;
+        return format(COLOR_DELETE_MESSAGE, id);
     }
 
-    private Color findColorById(String id) throws ColorNotFoundException {
+    private Color findById(String id) {
         return colorRepository.findById(id).orElseThrow(
-                () -> new ColorNotFoundException(COLOR_WITH_ID + id + NOT_FOUND));
+                () -> new ColorNotFoundException(format(COLOR_NOT_FOUND, id)));
     }
 }

@@ -6,7 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Entity
 @NoArgsConstructor
@@ -60,5 +61,28 @@ public class Organization {
 
     @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
     @Column(name = "pets_owned")
-    private List<Pet> petsOwned;
+    private List<Pet> petsOwned = new ArrayList<>();
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Organization that = (Organization) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(nif, that.nif) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(address, that.address) && Objects.equals(websiteUrl, that.websiteUrl) && Objects.equals(socialMedia, that.socialMedia) && Objects.equals(petsOwned, that.petsOwned);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, email, nif, phoneNumber, address, websiteUrl, socialMedia, petsOwned);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 }

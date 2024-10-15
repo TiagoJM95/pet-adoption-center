@@ -1,82 +1,56 @@
 package com.petadoption.center.controller.integration;
 
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.model.embeddable.Address;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
+import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@Transactional
-public class UserControllerTest {
 
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
+public class UserControllerTest extends TestContainerConfig{
 
 
     private UserGetDto userGetDto;
-    private UserCreateDto userCreateDto;
-    private UserUpdateDto userUpdateDto;
+    private static UserCreateDto userCreateDto;
+    private static UserUpdateDto userUpdateDto;
 
-    private String userId;
+    @BeforeAll
+    static void setUp() {
+        userCreateDto = userCreateDto();
+        userUpdateDto = userUpdateDto();
+    }
 
-    @BeforeEach
-    void setUp() {
+    @AfterEach
+    void tearDown() {
+        userRepository.deleteAll();
+    }
 
-        userCreateDto = new UserCreateDto(
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456789",
-                LocalDate.of(1990, 10, 25),
-                "Rua das Andorinhas, 123",
-                "Vila Nova de Gaia",
-                "Porto",
-                "4410-000",
-                "123456789");
+    private void persistUser() throws Exception {
 
-        userUpdateDto = new UserUpdateDto(
-                "Tiago",
-                "Moreira",
-                "tm@email.com",
-                "Rua dos bandidos, 123",
-                "Rio Tinto",
-                "Porto",
-                "4100-001",
-                "934587967");
+        var result = mockMvc.perform(post("/api/v1/user/")
+                        .content(objectMapper.writeValueAsString(userCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
 
     }
 
 
     @Test
     @DisplayName("Test if create user works correctly")
-    @DirtiesContext
     void createUserShouldReturnUser() throws Exception {
 
        var result = mockMvc.perform(post("/api/v1/user/")
@@ -86,38 +60,18 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.firstName", is(userCreateDto.firstName())))
                 .andExpect(jsonPath("$.lastName", is(userCreateDto.lastName())))
                 .andReturn();
-
-       UserGetDto userCreated = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-
-       userId = userCreated.id();
-
-       userGetDto = new UserGetDto(
-               userId,
-               userCreateDto.firstName(),
-               userCreateDto.lastName(),
-               userCreateDto.email(),
-               userCreateDto.nif(),
-               userCreateDto.dateOfBirth(),
-               new Address( userCreateDto.street(),
-                       userCreateDto.city(),
-                       userCreateDto.postalCode(),
-                       userCreateDto.state()),
-               userCreateDto.phoneNumber()
-       );
-
     }
 
     @Test
     @DisplayName("Test if get all users works correctly")
-    @DirtiesContext
-    void getAllUsersAfterCreatingUser() throws Exception {
+    void getAllAfterCreatingUser() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
         mockMvc.perform(get("/api/v1/user/")
                         .param("page", "0")
                         .param("size", "5")
-                        .param("sortBy", "id")
+                        .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
@@ -129,12 +83,11 @@ public class UserControllerTest {
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    @DirtiesContext
-    void getUserByIdShouldReturnUser() throws Exception {
+    void getUserByIdShouldReturn() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
-        mockMvc.perform(get("/api/v1/user/id/{id}", userId)
+        mockMvc.perform(get("/api/v1/user/id/{id}", userGetDto.id())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(userGetDto.id())))
@@ -142,16 +95,22 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.lastName", is(userGetDto.lastName())));
     }
 
+    @Test
+    @DisplayName("Test if get user by id throws exception user not found")
+    void getUserByIdShouldThrowException() throws Exception {
 
-
+        mockMvc.perform(get("/api/v1/user/id/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+  
     @Test
     @DisplayName("Test if update user works correctly")
-    @DirtiesContext
-    void updateUserShouldReturnUser() throws Exception {
+    void updateUserShouldReturn() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
-        mockMvc.perform(put("/api/v1/user/update/{id}", userId)
+        mockMvc.perform(put("/api/v1/user/update/{id}", userGetDto.id())
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -160,15 +119,34 @@ public class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Test if update user throws exception user not found")
+    void updateUserShouldThrowException() throws Exception {
+
+        mockMvc.perform(put("/api/v1/user/update/{id}", "11111-11111-1111-1111")
+                        .content(objectMapper.writeValueAsString(userUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
     @DisplayName("Test if delete user works correctly")
-    @DirtiesContext
-    void deleteUserShouldReturnUser() throws Exception {
+    void deleteUserShouldReturn() throws Exception {
 
-        createUserShouldReturnUser();
+        persistUser();
 
-        mockMvc.perform(delete("/api/v1/user/delete/{id}", userId)
+        mockMvc.perform(delete("/api/v1/user/delete/{id}", userGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(USER_WITH_ID + userId + DELETE_SUCCESS));
+                .andExpect(content().string(format(USER_DELETE_MESSAGE, userGetDto.id())));
+    }
+
+    @Test
+    @DisplayName("Test if delete user throws exception user not found")
+    void deleteUserShouldThrowException() throws Exception {
+
+        mockMvc.perform(delete("/api/v1/user/delete/{id}", "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

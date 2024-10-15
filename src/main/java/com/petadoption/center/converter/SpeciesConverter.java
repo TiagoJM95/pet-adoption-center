@@ -18,13 +18,16 @@ public class SpeciesConverter {
         return Species.builder()
                 .id(dto.id())
                 .name(dto.name())
+                .createdAt(dto.createdAt())
                 .build();
     }
 
     public static SpeciesGetDto toDto(Species species) {
         if (species == null) return null;
-        return new SpeciesGetDto(
-                species.getId(),
-                species.getName());
+        return SpeciesGetDto.builder()
+                .id(species.getId())
+                .name(species.getName())
+                .createdAt(species.getCreatedAt())
+                .build();
     }
 }

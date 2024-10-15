@@ -1,11 +1,15 @@
 package com.petadoption.center.dto.user;
 
+import com.petadoption.center.model.embeddable.Address;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
-
+@Builder
 public record UserUpdateDto(
 
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
@@ -18,18 +22,10 @@ public record UserUpdateDto(
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
-        @Pattern(regexp = "[ a-zA-Z_0-9,.-]+", message = STREET_CHARACTERS)
-        String street,
+        @Valid
+        @NotNull(message = BLANK_FIELD)
+        Address address,
 
-        @Pattern(regexp = "[ a-zA-Z]+", message = ONLY_LETTERS)
-        String city,
-
-        @Pattern(regexp = "[ a-zA-Z]+", message = ONLY_LETTERS)
-        String state,
-
-        @Size(max = 8, min = 8, message = POSTAL_CODE_SIZE)
-        @Pattern(regexp = "[0-9-]+", message = POSTAL_CODE_FORMAT)
-        String postalCode,
-
+        @NotNull(message = BLANK_FIELD)
         String phoneNumber
 ) {}

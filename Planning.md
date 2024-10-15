@@ -83,30 +83,30 @@ It will allow for these organizations to post their pets for adoption and users 
   - Status: [X] Testing;
 - Remove owned pets from adoption
   - Status: [X] Testing;
-- View adoption requests for owned pets
-  - Status: [ ] Not Started
+- View adoption interests for owned pets
+  - Status: [X] Testing;
 - Review user information if they manifest interest in adopting an owned pet
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Create adoption forms for user interested in adopting a specific owned pet. The form is pre-filled with organization, pet and user information. Notify user.
   - Status: [ ] Not Started
-- Accept / reject adoption requests. Notify user.
-  - Status: [ ] Not Started
+- Accept / reject adoption interest. Notify user.
+  - Status: [X] Testing;
 
 ### What can a user do?
 - Add pet to favorites list
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - View favorites list
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Remove pet from favorites list
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Manifest interest in adopting a specific pet. Notify organization.
-  - Status: [ ] Not Started
+  - Status: [X] Testing;
 - Fill out adoption form when requested. Notify organization.
   - Status: [ ] Not Started
-- View all adoption requests pending
-  - Status: [ ] Not Started
-- View adoption requests history, accepted or rejected, with or without the respective adoption form.
-  - Status: [ ] Not Started
+- View all adoption interest pending
+  - Status: [X] Testing;
+- View adoption interest history, accepted or rejected, with or without the respective adoption form.
+  - Status: [X] Testing;
 
 ### Pet Search and Filters (For Users, Guests, Organizations and Admins)
 - Browse Pets by breed, age, etc.
@@ -114,6 +114,12 @@ It will allow for these organizations to post their pets for adoption and users 
 
 ### Notification Service
 - Communicate with external service to send emails and messages
+  - Status: [ ] Not Started
+
+### Suggestions
+- Timestamps for all database persistence
+  - Status: [ ] Not Started
+- Customize DTO's based on necessity
   - Status: [ ] Not Started
 
 ## 4. Business Logic & Future Enhancements

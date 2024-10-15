@@ -3,32 +3,32 @@ package com.petadoption.center.service;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.exception.species.SpeciesDuplicateException;
-import com.petadoption.center.exception.species.SpeciesNotFoundException;
+import com.petadoption.center.exception.not_found.SpeciesNotFoundException;
 import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.SPECIES_WITH_ID;
+import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSpecies;
+import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class SpeciesServiceTest {
 
@@ -42,32 +42,34 @@ public class SpeciesServiceTest {
     private Species updatedSpecies;
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
+    private Pageable pageable;
 
     @BeforeEach
     void setUp() {
-        testSpecies = new Species();
-        testSpecies.setId("1111-1111-2222");
-        testSpecies.setName("Dog");
+        testSpecies = createSpecies();
 
-        updatedSpecies = new Species();
+        updatedSpecies = createSpecies();
         updatedSpecies.setId("1111-2222-2222");
         updatedSpecies.setName("Cat");
 
-        speciesCreateDto = new SpeciesCreateDto("Dog");
+        speciesCreateDto = speciesCreateDto();
+        speciesUpdateDto = speciesUpdateDto();
 
-        speciesUpdateDto = new SpeciesUpdateDto("Cat");
+        int page = 0;
+        int size = 10;
+        String sort = "created_at";
+        pageable = PageRequest.of(page, size, Sort.by(sort));
     }
 
     @Test
     @DisplayName("Test if get all species return empty list if no species")
     void getAllPetSpeciesShouldReturnEmpty() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Species> pagedSpecies = new PageImpl<>(List.of());
 
-        when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
+        when(speciesRepository.findAll(pageable)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(0, result.size());
     }
@@ -77,12 +79,11 @@ public class SpeciesServiceTest {
     @DisplayName("Test if get all species is working correctly")
     void getAllPetSpeciesShouldReturnSpecies() {
 
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
         Page<Species> pagedSpecies = new PageImpl<>(List.of(testSpecies));
 
-        when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
+        when(speciesRepository.findAll(pageable)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(1, result.size());
         assertEquals(testSpecies.getName(), result.getFirst().name());
@@ -94,12 +95,11 @@ public class SpeciesServiceTest {
 
         Species speciesToAdd = new Species();
         List<Species> allSpecies = List.of(testSpecies, updatedSpecies, speciesToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.ASC, "id");
-        Page<Species> pagedSpecies = new PageImpl<>(List.of(testSpecies, updatedSpecies), pageRequest, allSpecies.size());
+        Page<Species> pagedSpecies = new PageImpl<>(List.of(testSpecies, updatedSpecies), pageable, allSpecies.size());
 
-        when(speciesRepository.findAll(pageRequest)).thenReturn(pagedSpecies);
+        when(speciesRepository.findAll(pageable)).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 10, "id");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(2, result.size());
         assertEquals(testSpecies.getName(), result.get(0).name());
@@ -115,12 +115,11 @@ public class SpeciesServiceTest {
         speciesToAdd.setName("Bird");
 
         List<Species> allSpecies = List.of(testSpecies, updatedSpecies, speciesToAdd);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.DESC, "name");
-        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageRequest, allSpecies.size());
+        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageable, allSpecies.size());
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "name");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(3,result.size());
         assertEquals(result.get(0).name(), testSpecies.getName());
@@ -137,12 +136,11 @@ public class SpeciesServiceTest {
         speciesToAdd.setName("Bird");
 
         List<Species> allSpecies = List.of( speciesToAdd, updatedSpecies, testSpecies);
-        PageRequest pageRequest = PageRequest.of(0, 3, Sort.Direction.ASC, "name");
-        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageRequest, allSpecies.size());
+        Page<Species> pagedSpecies = new PageImpl<>(allSpecies, pageable, allSpecies.size());
 
         when(speciesRepository.findAll(any(PageRequest.class))).thenReturn(pagedSpecies);
 
-        List<SpeciesGetDto> result = speciesService.getAllSpecies(0, 3, "name");
+        List<SpeciesGetDto> result = speciesService.getAll(pageable);
 
         assertEquals(3, result.size());
         assertEquals(result.get(0).name(), speciesToAdd.getName());
@@ -156,7 +154,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
-        SpeciesGetDto result = speciesService.getSpeciesById(testSpecies.getId());
+        SpeciesGetDto result = speciesService.getById(testSpecies.getId());
 
         assertEquals(testSpecies.getName(), result.name());
     }
@@ -167,43 +165,31 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getSpeciesById(testSpecies.getId()));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.getById(testSpecies.getId()));
     }
 
     @Test
     @DisplayName("Test if add new species saves and returns SpeciesGetDto")
-    void addPetSpeciesShouldSaveAndReturnSpecies() throws SpeciesDuplicateException {
-
-        when(speciesRepository.findByName(testSpecies.getName())).thenReturn(Optional.empty());
+    void addPetSpeciesShouldSaveAndReturnSpecies() {
 
         when(speciesRepository.save(any(Species.class))).thenReturn(testSpecies);
 
-        SpeciesGetDto result = speciesService.addNewSpecies(speciesCreateDto);
+        SpeciesGetDto result = speciesService.create(speciesCreateDto);
 
         assertNotNull(result);
         assertEquals(testSpecies.getName(), result.name());
     }
 
-/*    @Test
-    @DisplayName("Test if add new species throws SpeciesNameDuplicateException")
-    void addPetSpeciesShouldThrowException() {
-
-        when(speciesRepository.findByName(speciesCreateDto.name())).thenReturn(Optional.of(testSpecies));
-
-        assertThrows(SpeciesDuplicateException.class, () -> speciesService.addNewSpecies(speciesCreateDto));
-    }*/
 
     @Test
     @DisplayName("Test if update species saves and returns SpeciesGetDto")
-    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException, SpeciesDuplicateException {
-
-        when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.empty());
+    void updatePetSpeciesShouldSaveAndReturnSpecies() throws SpeciesNotFoundException {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
         when(speciesRepository.save(any(Species.class))).thenReturn(updatedSpecies);
 
-        SpeciesGetDto result = speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto);
+        SpeciesGetDto result = speciesService.update(testSpecies.getId(), speciesUpdateDto);
 
         assertNotNull(speciesUpdateDto);
         assertEquals(speciesUpdateDto.name(), result.name());
@@ -215,19 +201,8 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.update(testSpecies.getId(), speciesUpdateDto));
     }
-
-/*    @Test
-    @DisplayName("Test if update species throws SpeciesNameDuplicateException")
-    void updatePetSpeciesShouldThrowDuplicatedNameException(){
-
-        when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
-
-        when(speciesRepository.findByName(speciesUpdateDto.name())).thenReturn(Optional.of(testSpecies));
-
-        assertThrows(SpeciesDuplicateException.class, () -> speciesService.updateSpecies(testSpecies.getId(), speciesUpdateDto));
-    }*/
 
     @Test
     @DisplayName("Test if delete species removes and returns SpeciesGetDto")
@@ -235,7 +210,7 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.of(testSpecies));
 
-        assertEquals(speciesService.deleteSpecies(testSpecies.getId()), SPECIES_WITH_ID + testSpecies.getId() + DELETE_SUCCESS);
+        assertEquals(speciesService.delete(testSpecies.getId()), format(SPECIES_DELETE_MESSAGE, testSpecies.getId()));
     }
 
     @Test
@@ -244,6 +219,6 @@ public class SpeciesServiceTest {
 
         when(speciesRepository.findById(testSpecies.getId())).thenReturn(Optional.empty());
 
-        assertThrows(SpeciesNotFoundException.class, () -> speciesService.deleteSpecies(testSpecies.getId()));
+        assertThrows(SpeciesNotFoundException.class, () -> speciesService.delete(testSpecies.getId()));
     }
 }

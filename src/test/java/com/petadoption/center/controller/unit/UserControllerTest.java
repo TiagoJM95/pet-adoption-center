@@ -4,30 +4,32 @@ import com.petadoption.center.controller.UserController;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.exception.user.UserDuplicateException;
-import com.petadoption.center.exception.user.UserNotFoundException;
-import com.petadoption.center.model.embeddable.Address;
+import com.petadoption.center.exception.not_found.UserNotFoundException;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import static com.petadoption.center.util.Messages.DELETE_SUCCESS;
-import static com.petadoption.center.util.Messages.USER_WITH_ID;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
+import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class UserControllerTest {
 
@@ -41,118 +43,86 @@ public class UserControllerTest {
     private UserCreateDto userCreateDto;
     private UserUpdateDto userUpdateDto;
 
+
     @BeforeEach
     void setUp() {
-        userGetDto = new UserGetDto(
-                "1111-1111-2222",
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456789",
-                LocalDate.of(1990, 10, 25),
-                new Address("Rua das Andorinhas, 123",
-                        "Vila Nova de Gaia",
-                        "Porto",
-                        "4410-000"),
-                "123456789"
-        );
-
-        userCreateDto = new UserCreateDto(
-                "Manuel",
-                "Silva",
-                "email@email.com",
-                "123456788",
-                LocalDate.of(1990, 10, 25),
-                "Rua dos animais, 123", "Gondomar",
-                "Porto",
-                "4400-000",
-                "912354678"
-        );
-
-        userUpdateDto = new UserUpdateDto(
-                "Tiago",
-                "Moreira",
-                "tm@email.com",
-                "Rua dos bandidos, 123",
-                "Rio Tinto",
-                "Porto",
-                "4100-001",
-                "934587967"
-                );
+        userGetDto = userGetDto();
+        userCreateDto = userCreateDto();
+        userUpdateDto = userUpdateDto();
     }
 
     @Test
     @DisplayName("Test if get all users works correctly")
-    void getAllUsersShouldReturnUsers() {
+    void getAllUsersShouldReturn() {
 
         int page = 0;
-        int size = 5;
-        String sortBy = "id";
+        int size = 10;
+        String sort = "created_at";
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sort));
 
         List<UserGetDto> expectedUsers = List.of(userGetDto);
 
-        when(userServiceI.getAllUsers(page, size, sortBy)).thenReturn(expectedUsers);
+        when(userServiceI.getAll(pageable)).thenReturn(expectedUsers);
 
-        ResponseEntity<List<UserGetDto>> response = userController.getAllUsers(page, size, sortBy);
+        ResponseEntity<List<UserGetDto>> response = userController.getAll(pageable);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedUsers, response.getBody());
-        verify(userServiceI).getAllUsers(page, size, sortBy);
+        verify(userServiceI).getAll(pageable);
     }
 
     @Test
     @DisplayName("Test if get user by id works correctly")
-    void getUserByIdShouldReturnUser() throws UserNotFoundException {
+    void getUserByIdShouldReturn() {
 
         String id = "1111-1111-2222";
 
-        when(userServiceI.getUserById(id)).thenReturn(userGetDto);
+        when(userServiceI.getById(id)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.getUserById(id);
+        ResponseEntity<UserGetDto> response = userController.getById(id);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userServiceI).getUserById(id);
+        verify(userServiceI).getById(id);
 
     }
 
     @Test
     @DisplayName("Test if add new user works correctly")
-    void addNewUserShouldReturnUser() throws UserDuplicateException {
+    void create() {
 
-        when(userServiceI.addNewUser(userCreateDto)).thenReturn(userGetDto);
+        when(userServiceI.create(userCreateDto)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.addNewUser(userCreateDto);
+        ResponseEntity<UserGetDto> response = userController.create(userCreateDto);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userServiceI).addNewUser(userCreateDto);
+        verify(userServiceI).create(userCreateDto);
     }
 
     @Test
     @DisplayName("Test if update user works correctly")
-    void updateUserShouldReturnUser() throws UserNotFoundException, UserDuplicateException {
+    void updateUserShouldReturn() throws UserNotFoundException {
 
-        when(userServiceI.updateUser(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
+        when(userServiceI.update(userGetDto.id(), userUpdateDto)).thenReturn(userGetDto);
 
-        ResponseEntity<UserGetDto> response = userController.updateUser(userGetDto.id(), userUpdateDto);
+        ResponseEntity<UserGetDto> response = userController.update(userGetDto.id(), userUpdateDto);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(userGetDto, response.getBody());
-        verify(userServiceI).updateUser(userGetDto.id(), userUpdateDto);
+        verify(userServiceI).update(userGetDto.id(), userUpdateDto);
     }
 
     @Test
     @DisplayName("Test if delete user works correctly")
-    void deleteUserShouldReturnUser() throws UserNotFoundException {
+    void deleteUserShouldReturn() throws UserNotFoundException {
 
-        when(userServiceI.deleteUser(userGetDto.id())).thenReturn(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS);
+        when(userServiceI.delete(userGetDto.id())).thenReturn(format(USER_DELETE_MESSAGE, userGetDto.id()));
 
-        ResponseEntity<String> response = userController.deleteUser(userGetDto.id());
+        ResponseEntity<String> response = userController.delete(userGetDto.id());
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(USER_WITH_ID + userGetDto.id() + DELETE_SUCCESS, response.getBody());
-        verify(userServiceI).deleteUser(userGetDto.id());
+        assertEquals(format(USER_DELETE_MESSAGE, userGetDto.id()), response.getBody());
+        verify(userServiceI).delete(userGetDto.id());
     }
-
 }
