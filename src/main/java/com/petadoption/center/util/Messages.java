@@ -81,4 +81,4 @@ public class Messages {
     public static final String REMOVED_FROM_FAVORITE_SUCCESS = "Pet with id {%s} successfully removed from favorites";
     public static final String PET_LIST_ADDED_SUCCESS = "All the pets in the provided list were successfully created";
 
-
+}

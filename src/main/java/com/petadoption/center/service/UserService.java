@@ -32,8 +32,6 @@ public class UserService implements UserServiceI {
     private final UserRepository userRepository;
     private final PetServiceI petService;
 
-    private final EmailService emailService;
-
     @Autowired
     public UserService(UserRepository userRepository, PetServiceI petService) {
         this.userRepository = userRepository;
