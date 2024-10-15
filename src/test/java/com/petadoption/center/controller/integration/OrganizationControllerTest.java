@@ -13,15 +13,14 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
-
+import com.petadoption.center.aspect.Error;
 import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
-import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
-import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
 import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -47,12 +46,45 @@ public class OrganizationControllerTest extends TestContainerConfig {
         OrganizationCreateDto baseOrg = otherOrganizationCreateDto();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueorgemail"),
                 Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueorgnif"),
                 Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueorgstreetandpostalcode"),
+                Arguments.of(baseOrg.toBuilder().address(Address.builder()
+                        .street("Rua de Santo Antonio, 123")
+                        .postalCode("4444-444")
+                        .city("Lisboa")
+                        .state("Lisboa").build())
+                        .build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
+
                 Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com/123")
+                        .twitter("https://www.twitter.com/123")
+                        .instagram("https://www.instagram.com/123")
+                        .facebook("https://www.facebook.com")
+                        .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com/123")
+                        .twitter("https://www.twitter.com/123")
+                        .instagram("https://www.instagram.com")
+                        .facebook("https://www.facebook.com/123")
+                        .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com/123")
+                        .twitter("https://www.twitter.com")
+                        .instagram("https://www.instagram.com/123")
+                        .facebook("https://www.facebook.com/123")
+                        .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com")
+                        .twitter("https://www.twitter.com/123")
+                        .instagram("https://www.instagram.com/123")
+                        .facebook("https://www.facebook.com/123")
+                        .build()).build(), "repeated social media - youtube", "uniqueorgyoutube")
         );
     }
 
@@ -77,11 +109,44 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .build();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueorgemail"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
+                Arguments.of(baseOrg.toBuilder().address(Address.builder()
+                                .street("Rua de Santo Antonio, 123")
+                                .postalCode("4444-444")
+                                .city("Lisboa")
+                                .state("Lisboa").build())
+                        .build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
+
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com/123")
+                        .twitter("https://www.twitter.com/123")
+                        .instagram("https://www.instagram.com/123")
+                        .facebook("https://www.facebook.com")
+                        .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com/123")
+                        .twitter("https://www.twitter.com/123")
+                        .instagram("https://www.instagram.com")
+                        .facebook("https://www.facebook.com/123")
+                        .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com/123")
+                        .twitter("https://www.twitter.com")
+                        .instagram("https://www.instagram.com/123")
+                        .facebook("https://www.facebook.com/123")
+                        .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com")
+                        .twitter("https://www.twitter.com/123")
+                        .instagram("https://www.instagram.com/123")
+                        .facebook("https://www.facebook.com/123")
+                        .build()).build(), "repeated social media - youtube", "uniqueorgyoutube")
         );
     }
 
@@ -124,15 +189,19 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @ParameterizedTest(name = "Test {index}: Creating organization with {1}")
     @MethodSource("orgCreateDtoProvider")
     @DisplayName("Test if create organization send DataIntegrityViolationException")
-    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto, String fieldBeingTested) throws Exception {
+    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto, String fieldBeingTested, String constraint) throws Exception {
 
         persistOrganization();
 
-        mockMvc.perform(post("/api/v1/organization/")
+        var result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertEquals(error.constraint(), constraint );
+
     }
 
 
@@ -205,17 +274,20 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @ParameterizedTest(name = "Test {index}: update organization with {1}")
     @MethodSource("orgUpdateDtoProvider")
     @DisplayName("Test if update organization send DataIntegrityViolationException")
-    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto, String fieldBeingTested) throws Exception {
+    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto, String fieldBeingTested, String constraint) throws Exception {
 
         persistOrganization();
 
         persistOrganizationToUpdate();
 
-        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
+       var result = mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertEquals(error.constraint(), constraint );
     }
 
 
