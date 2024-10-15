@@ -10,11 +10,8 @@ import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import org.junit.jupiter.api.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
@@ -27,10 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
 public class AdoptionFormControllerTest extends TestContainerConfig{
 
     private AdoptionFormCreateDto adoptionFormCreateDto;
@@ -87,6 +80,11 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
                 "Only 2 weeks per year of vacation",
                 address
         );
+    }
+
+    @AfterEach
+    void cleanTable(){
+        helper.cleanAll();
     }
 
     private void addUser() throws Exception {
@@ -153,11 +151,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
                 adoptionFormCreated.petAddress(),
                 adoptionFormCreated.createdAt()
         );
-    }
-
-    @AfterEach
-    void cleanTable(){
-        helper.cleanAll();
     }
 
     @Test
