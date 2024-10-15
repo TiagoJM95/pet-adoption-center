@@ -155,7 +155,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test get all adoption forms when empty returns empty")
-    @DirtiesContext
     void testGetAllEmptyAdoptionFormsReturnsEmpty() throws Exception {
 
         mockMvc.perform(get("/api/v1/adoption-form/")
@@ -171,7 +170,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test get all adoption with 1 element returns 1 element")
-    @DirtiesContext
     void testGetAllReturnsOne() throws Exception {
 
         addAdoptionForm();
@@ -191,7 +189,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test if create adoption form works correctly")
-    @DirtiesContext
     void testCreateAdoptionForm() throws Exception {
 
         MvcResult result = mockMvc.perform(post("/api/v1/adoption-form/")
@@ -219,7 +216,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test if update an adoption form works correctly")
-    @DirtiesContext
     void testUpdate() throws Exception {
 
         addAdoptionForm();
@@ -237,7 +233,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test if delete an adoption form works correctly")
-    @DirtiesContext
     void testDelete() throws Exception {
 
         testUpdate();
