@@ -6,9 +6,12 @@ import com.petadoption.center.enums.Genders;
 import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.validator.EnumValidator;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import org.hibernate.validator.constraints.UUID;
 
 import static com.petadoption.center.util.Messages.*;
 
@@ -19,25 +22,22 @@ public record PetCreateDto(
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String name,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(message = ONLY_UUID)
         String speciesId,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(message = ONLY_UUID)
         String primaryBreedId,
 
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(allowEmpty = true, message = ONLY_UUID)
         String secondaryBreedId,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(message = ONLY_UUID)
         String primaryColor,
 
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(allowEmpty = true, message = ONLY_UUID)
         String secondaryColor,
 
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(allowEmpty = true, message = ONLY_UUID)
         String tertiaryColor,
 
         @EnumValidator(enumClass = Genders.class, message = GENDER_INVALID)
@@ -56,13 +56,15 @@ public record PetCreateDto(
         String description,
 
         @NotBlank(message = BLANK_FIELD)
+        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
+        @Size(max = 100, message = CHARACTERS_LIMIT)
         String imageUrl,
 
         Boolean isAdopted,
 
+        @Valid
         Attributes attributes,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(message = ONLY_UUID)
         String organizationId
 ) {}

@@ -4,31 +4,35 @@ import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.validator.EnumValidator;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
+import org.hibernate.validator.constraints.UUID;
 
 import static com.petadoption.center.util.Messages.*;
 
 @Builder
 public record PetUpdateDto(
 
-        @EnumValidator(enumClass = Sizes.class, message = SIZE_INVALID)
+        @EnumValidator(enumClass = Sizes.class, message = SIZE_INVALID, allowNull = true)
         String size,
 
-        @EnumValidator(enumClass = Ages.class, message = AGE_INVALID)
+        @EnumValidator(enumClass = Ages.class, message = AGE_INVALID, allowNull = true)
         String age,
 
-        @NotBlank(message = BLANK_FIELD)
         String description,
 
-        @NotBlank(message = BLANK_FIELD)
+        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
+        @Size(max = 100, message = CHARACTERS_LIMIT)
         String imageUrl,
 
         boolean isAdopted,
 
+        @Valid
         Attributes attributes,
 
-        @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
+        @UUID(allowEmpty = true, message = ONLY_UUID)
         String organizationId
 ) {}
