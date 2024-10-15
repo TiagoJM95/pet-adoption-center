@@ -138,10 +138,19 @@ public class PetService implements PetServiceI {
     }
 
     private void updateFields(PetUpdateDto dto, Pet pet) {
-        Organization org = OrganizationConverter.toModel(organizationServiceI.getById(dto.organizationId()));
 
-        Utils.updateFields(convertStringToEnum(dto.size(), Sizes.class), pet.getSize(), pet::setSize);
-        Utils.updateFields(convertStringToEnum(dto.age(), Ages.class), pet.getAge(), pet::setAge);
+        Organization org = dto.organizationId() != null
+                ? OrganizationConverter.toModel(organizationServiceI.getById(dto.organizationId()))
+                : null;
+        Sizes sizes = dto.size() != null
+                ? convertStringToEnum(dto.size(), Sizes.class)
+                :null;
+        Ages ages = dto.age() != null
+                ? convertStringToEnum(dto.age(), Ages.class)
+                :null;
+
+        Utils.updateFields(sizes, pet.getSize(), pet::setSize);
+        Utils.updateFields(ages, pet.getAge(), pet::setAge);
         Utils.updateFields(dto.description(), pet.getDescription(), pet::setDescription);
         Utils.updateFields(dto.imageUrl(), pet.getImageUrl(), pet::setImageUrl);
         Utils.updateFields(dto.isAdopted(), pet.isAdopted(), pet::setAdopted);
