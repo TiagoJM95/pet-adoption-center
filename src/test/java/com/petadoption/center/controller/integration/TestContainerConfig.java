@@ -45,7 +45,7 @@ public class TestContainerConfig {
     @Autowired
     protected  InterestRepository interestRepository;
 
-
+    protected String URL = "/api/v1";
 
     private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER;
 
