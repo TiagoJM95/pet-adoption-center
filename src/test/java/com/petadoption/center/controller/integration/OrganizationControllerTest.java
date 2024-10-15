@@ -52,38 +52,26 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 Arguments.of(baseOrg.toBuilder().address(Address.builder()
                         .street("Rua de Santo Antonio, 123")
                         .postalCode("4444-444")
-                        .city("Lisboa")
-                        .state("Lisboa").build())
-                        .build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
+                        .city("Lisbon")
+                        .state("Lisbon")
+                        .build()).build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
 
                 Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .youtube("https://www.youtube.com/123")
-                        .twitter("https://www.twitter.com/123")
-                        .instagram("https://www.instagram.com/123")
                         .facebook("https://www.facebook.com")
                         .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .youtube("https://www.youtube.com/123")
-                        .twitter("https://www.twitter.com/123")
                         .instagram("https://www.instagram.com")
-                        .facebook("https://www.facebook.com/123")
                         .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .youtube("https://www.youtube.com/123")
                         .twitter("https://www.twitter.com")
-                        .instagram("https://www.instagram.com/123")
-                        .facebook("https://www.facebook.com/123")
                         .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
                         .youtube("https://www.youtube.com")
-                        .twitter("https://www.twitter.com/123")
-                        .instagram("https://www.instagram.com/123")
-                        .facebook("https://www.facebook.com/123")
                         .build()).build(), "repeated social media - youtube", "uniqueorgyoutube")
         );
     }
@@ -114,38 +102,27 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 Arguments.of(baseOrg.toBuilder().address(Address.builder()
                                 .street("Rua de Santo Antonio, 123")
                                 .postalCode("4444-444")
-                                .city("Lisboa")
-                                .state("Lisboa").build())
+                                .city("Lisbon")
+                                .state("Lisbon")
+                                .build())
                         .build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
 
                 Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .youtube("https://www.youtube.com/123")
-                        .twitter("https://www.twitter.com/123")
-                        .instagram("https://www.instagram.com/123")
                         .facebook("https://www.facebook.com")
                         .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .youtube("https://www.youtube.com/123")
-                        .twitter("https://www.twitter.com/123")
                         .instagram("https://www.instagram.com")
-                        .facebook("https://www.facebook.com/123")
                         .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .youtube("https://www.youtube.com/123")
                         .twitter("https://www.twitter.com")
-                        .instagram("https://www.instagram.com/123")
-                        .facebook("https://www.facebook.com/123")
                         .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
                         .youtube("https://www.youtube.com")
-                        .twitter("https://www.twitter.com/123")
-                        .instagram("https://www.instagram.com/123")
-                        .facebook("https://www.facebook.com/123")
                         .build()).build(), "repeated social media - youtube", "uniqueorgyoutube")
         );
     }
