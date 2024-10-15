@@ -48,10 +48,10 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         return Stream.of(
                 Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueemail"),
+                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueorgnif"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
+                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueorgstreetandpostalcode"),
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
                 Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
         );
     }
