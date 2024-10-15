@@ -8,12 +8,12 @@ import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
@@ -157,7 +157,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get current interest by organization id returns interest list with size 1")
-    @DirtiesContext
     void testGetCurrentInterestByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
         createInterest();
@@ -174,7 +173,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get interest history by organization id returns empty")
-    @DirtiesContext
     void testGetInterestHistoryByOrganizationIdReturnsEmpty() throws Exception {
 
         mockMvc.perform(get(URL + "/interest/organization/{organizationId}/history", orgId)
@@ -189,7 +187,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get interest history by organization id returns interest list with size 1")
-    @DirtiesContext
     void testGetInterestHistoryByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
         updateInterestToRejected();
@@ -206,7 +203,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get current interest by user id returns empty")
-    @DirtiesContext
     void testGetCurrentInterestByUserIdReturnsEmpty() throws Exception {
 
         mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
@@ -221,7 +217,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get current interest by user id returns interest list with size 1")
-    @DirtiesContext
     void testGetCurrentInterestByUserIdReturnsInterestSizeOne() throws Exception {
 
         createInterest();
@@ -238,7 +233,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get interest history by user id returns empty")
-    @DirtiesContext
     void testGetInterestHistoryByUserIdReturnsEmpty() throws Exception {
 
         mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
@@ -254,7 +248,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get interest history by user id returns interest list with size 1")
-    @DirtiesContext
     void testGetInterestHistoryByUserIdReturnsInterestSizeOne() throws Exception {
 
         updateInterestToRejected();
@@ -271,7 +264,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get current interest by id returns interest")
-    @DirtiesContext
     void testGetInterestByIdReturnsInterest() throws Exception {
 
         createInterest();
@@ -288,7 +280,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test get current interest with invalid id throws InterestNotFoundException")
-    @DirtiesContext
     void testGetInterestByIdReturnsInterestNotFoundException() throws Exception {
 
         String invalidId = "123123-123123";
@@ -305,7 +296,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test create new interest works correctly")
-    @DirtiesContext
     void testCreateInterest() throws Exception {
 
         MvcResult result = mockMvc.perform(post(URL + "/interest/")
@@ -331,7 +321,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test if update interest to form requested works correctly")
-    @DirtiesContext
     void testUpdateInterestToFormRequested() throws Exception {
 
         createInterest();
@@ -345,7 +334,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test if update interest to rejected works correctly")
-    @DirtiesContext
     void testUpdateInterestToRejected() throws Exception {
 
         createInterest();
@@ -359,7 +347,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test if delete interest works correctly")
-    @DirtiesContext
     void testDeleteInterest() throws Exception {
 
         createInterest();
@@ -372,7 +359,6 @@ public class InterestControllerTest extends TestContainerConfig {
 
     @Test
     @DisplayName("Test if delete interest with invalid id throws InterestNotFoundException")
-    @DirtiesContext
     void testDeleteInterestWithInvalidIdThrowsInterestNotFoundException() throws Exception {
 
         String invalidId = "123123-123123";

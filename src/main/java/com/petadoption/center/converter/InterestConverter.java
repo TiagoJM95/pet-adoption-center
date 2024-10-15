@@ -6,6 +6,7 @@ import com.petadoption.center.model.Interest;
 public class InterestConverter {
 
     public static InterestGetDto toDto (Interest interest) {
+        if (interest == null) return null;
         return InterestGetDto.builder()
                 .id(interest.getId())
                 .userDto(UserConverter.toDto(interest.getUser()))
