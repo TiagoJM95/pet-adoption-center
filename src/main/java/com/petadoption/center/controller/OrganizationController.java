@@ -25,27 +25,27 @@ public class OrganizationController {
         this.organizationServiceI = organizationServiceI;
     }
 
-    @GetMapping("/")
+    @GetMapping("/public/")
     public ResponseEntity<List<OrganizationGetDto>> getAll(@PageableDefault(sort = "createdAt") Pageable pageable) {
         return new ResponseEntity<>(organizationServiceI.getAll(pageable), HttpStatus.OK);
     }
 
-    @GetMapping("/id/{id}")
+    @GetMapping("/public/id/{id}")
     public ResponseEntity<OrganizationGetDto> getById(@PathVariable("id") String id) {
         return new ResponseEntity<>(organizationServiceI.getById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping("/public/")
     public ResponseEntity<OrganizationGetDto> create(@Valid @RequestBody OrganizationCreateDto dto) {
         return new ResponseEntity<>(organizationServiceI.create(dto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/public/update/{id}")
     public ResponseEntity<OrganizationGetDto> update(@PathVariable ("id") String id, @Valid @RequestBody OrganizationUpdateDto dto) {
         return new ResponseEntity<>(organizationServiceI.update(id, dto), HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/public/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable ("id") String id) {
         return new ResponseEntity<>(organizationServiceI.delete(id), HttpStatus.OK);
     }
