@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
+import org.hibernate.validator.constraints.UUID;
 
-import static com.petadoption.center.util.Messages.BLANK_FIELD;
-import static com.petadoption.center.util.Messages.ONLY_LETTERS;
+import static com.petadoption.center.util.Messages.*;
 
 @Builder
 public record BreedCreateDto(
@@ -14,6 +14,6 @@ public record BreedCreateDto(
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
         String name,
 
-        @NotNull
+        @UUID(message = ONLY_UUID)
         String speciesId
 ) {}

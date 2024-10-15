@@ -23,5 +23,4 @@ public record AdoptionFormUpdateDto(
 
         @NotNull(message = BLANK_FIELD)
         Address petAddress
-) {
-}
+) {}
