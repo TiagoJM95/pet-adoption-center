@@ -58,6 +58,17 @@ public class Messages {
     public static final String INSTAGRAM_VALID = "Special characters allowed are  . - @ ";
     public static final String TWITTER_VALID = "Special characters allowed are  . - / ";
     public static final String YOUTUBE_VALID = "Special characters allowed are  . - / ";
+
+    //SERVICE MESSAGES
+
+    public static final String DELETE_SUCCESS = " deleted successfully";
+
+    //CONFIG
+
+    public static final String QUEUE_NAME = "emailQueue";
+    public static final String EXCHANGE_NAME = "emailExchange";
+    public static final String ROUTING_KEY = "emailRoutingKey";
+
     public static final String REQUIRED_FIELD = "This field is required.";
     public static final String AGE_INVALID = "Invalid age description: {0}";
     public static final String COAT_INVALID = "Invalid coat description: {0}";
@@ -69,4 +80,5 @@ public class Messages {
     public static final String ADDED_TO_FAVORITE_SUCCESS = "Pet with id {%s} successfully added to favorites";
     public static final String REMOVED_FROM_FAVORITE_SUCCESS = "Pet with id {%s} successfully removed from favorites";
     public static final String PET_LIST_ADDED_SUCCESS = "All the pets in the provided list were successfully created";
-}
+
+
