@@ -23,28 +23,23 @@ public class EnumValidatorConstraint implements ConstraintValidator<EnumValidato
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value == null) {
-            if (allowNull) {
-                return true;
-            } else {
-                context.disableDefaultConstraintViolation();
-                context.buildConstraintViolationWithTemplate(REQUIRED_FIELD)
-                        .addConstraintViolation();
-                return false;
-            }
-        }
+        if (value == null) return allowNull || addNewConstraintViolation(REQUIRED_FIELD, context);
 
-        String editedValue = formatStringForEnum(value);
+        String formattedValue = formatStringForEnum(value);
         Object[] enumValues = enumClass.getEnumConstants();
         for (Object enumValue : enumValues) {
-            if (editedValue.equals(enumValue.toString())) return true;
+            if (formattedValue.equals(enumValue.toString())) return true;
         }
 
-        context.disableDefaultConstraintViolation();
         String formattedMessage = MessageFormat.format(messageTemplate, value);
-        context.buildConstraintViolationWithTemplate(formattedMessage)
-                .addConstraintViolation();
 
+        return addNewConstraintViolation(formattedMessage, context);
+    }
+
+    private boolean addNewConstraintViolation(String message, ConstraintValidatorContext context) {
+        context.disableDefaultConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message)
+                .addConstraintViolation();
         return false;
     }
 }
