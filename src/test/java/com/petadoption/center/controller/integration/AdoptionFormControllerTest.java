@@ -10,11 +10,8 @@ import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import org.junit.jupiter.api.*;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
@@ -27,10 +24,6 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@AutoConfigureMockMvc
 public class AdoptionFormControllerTest extends TestContainerConfig{
 
     private AdoptionFormCreateDto adoptionFormCreateDto;
@@ -89,6 +82,11 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
         );
     }
 
+    @AfterEach
+    void cleanTable(){
+        helper.cleanAll();
+    }
+
     private void addUser() throws Exception {
         UserCreateDto userCreateDto = userCreateDto();
 
@@ -130,16 +128,33 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
         petId = petGetDto.id();
     }
 
-    @AfterEach
-    void cleanTable(){
-        helper.cleanAll();
+    private void addAdoptionForm() throws Exception{
+
+        MvcResult result = mockMvc.perform(post("/api/v1/adoption-form/")
+                        .content(objectMapper.writeValueAsString(adoptionFormCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        AdoptionFormGetDto adoptionFormCreated = objectMapper.readValue(result.getResponse().getContentAsString(), AdoptionFormGetDto.class);
+
+        adoptionFormId = adoptionFormCreated.id();
+
+        adoptionFormGetDto = new AdoptionFormGetDto(
+                adoptionFormId,
+                userGetDto,
+                petGetDto,
+                adoptionFormCreated.userFamily(),
+                adoptionFormCreated.petVacationHome(),
+                adoptionFormCreated.isResponsibleForPet(),
+                adoptionFormCreated.otherNotes(),
+                adoptionFormCreated.petAddress(),
+                adoptionFormCreated.createdAt()
+        );
     }
-
-
 
     @Test
     @DisplayName("Test get all adoption forms when empty returns empty")
-    @DirtiesContext
     void testGetAllEmptyAdoptionFormsReturnsEmpty() throws Exception {
 
         mockMvc.perform(get("/api/v1/adoption-form/")
@@ -155,10 +170,9 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test get all adoption with 1 element returns 1 element")
-    @DirtiesContext
     void testGetAllReturnsOne() throws Exception {
 
-        testCreateAdoptionForm();
+        addAdoptionForm();
 
         mockMvc.perform(get("/api/v1/adoption-form/")
                         .param("page", "0")
@@ -175,7 +189,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test if create adoption form works correctly")
-    @DirtiesContext
     void testCreateAdoptionForm() throws Exception {
 
         MvcResult result = mockMvc.perform(post("/api/v1/adoption-form/")
@@ -205,7 +218,7 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
     @DisplayName("Test if update an adoption form works correctly")
     void testUpdate() throws Exception {
 
-        testCreateAdoptionForm();
+        addAdoptionForm();
 
         mockMvc.perform(put("/api/v1/adoption-form/update/{id}", adoptionFormId)
                         .content(objectMapper.writeValueAsString(adoptionFormUpdateDto))
@@ -220,7 +233,6 @@ public class AdoptionFormControllerTest extends TestContainerConfig{
 
     @Test
     @DisplayName("Test if delete an adoption form works correctly")
-    @DirtiesContext
     void testDelete() throws Exception {
 
         testUpdate();

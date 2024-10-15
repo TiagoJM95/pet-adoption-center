@@ -50,8 +50,8 @@ public class AdoptionFormConverterTest {
     void testIfPassingNullToAnyAdoptionFormConverterMethodReturnsNull() {
 
         assertNull(AdoptionFormConverter.toModel((AdoptionFormCreateDto) null));
-        assertNull(PetConverter.toModel((PetGetDto) null));
-        assertNull(PetConverter.toDto((Pet) null));
+        assertNull(AdoptionFormConverter.toModel((AdoptionFormGetDto) null));
+        assertNull(AdoptionFormConverter.toDto(null));
     }
 
     @Test

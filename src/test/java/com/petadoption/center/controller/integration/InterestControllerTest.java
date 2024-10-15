@@ -1,6 +1,5 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
@@ -9,18 +8,12 @@ import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
-import com.petadoption.center.testUtils.TestPersistenceHelper;
 import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
@@ -31,20 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@AutoConfigureMockMvc
-@Transactional
-public class InterestControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private TestPersistenceHelper testPersistenceHelper;
+public class InterestControllerTest extends TestContainerConfig {
 
     private InterestGetDto interestGetDto;
     private InterestCreateDto interestCreateDto;
@@ -64,10 +44,10 @@ public class InterestControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        speciesId = testPersistenceHelper.persistTestSpecies();
-        breedId = testPersistenceHelper.persistTestPrimaryBreed();
-        colorId = testPersistenceHelper.persistTestPrimaryColor();
-        orgId = testPersistenceHelper.persistTestOrg();
+        speciesId = helper.persistTestSpecies();
+        breedId = helper.persistTestPrimaryBreed();
+        colorId = helper.persistTestPrimaryColor();
+        orgId = helper.persistTestOrg();
 
         addUser();
         addPet();
@@ -80,6 +60,11 @@ public class InterestControllerTest {
 
         interestUpdateDtoRejected = interestUpdateDtoToRejected();
         interestUpdateDtoFormRequested = interestUpdateDtoToFormRequested();
+    }
+
+    @AfterEach
+    void cleanTable() {
+        helper.cleanAll();
     }
 
     private void addUser() throws Exception {
@@ -122,6 +107,40 @@ public class InterestControllerTest {
         petId = petGetDto.id();
     }
 
+    private void createInterest() throws Exception {
+
+        MvcResult result = mockMvc.perform(post(URL + "/interest/")
+                        .content(objectMapper.writeValueAsString(interestCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        InterestGetDto interestGetDtoCreated = objectMapper.readValue(result.getResponse().getContentAsString(), InterestGetDto.class);
+
+        interestId = interestGetDtoCreated.id();
+
+        interestGetDto = new InterestGetDto(
+                interestId,
+                userGetDto,
+                petGetDto,
+                organizationGetDto,
+                interestGetDtoCreated.status(),
+                interestGetDtoCreated.timestamp(),
+                interestGetDtoCreated.reviewTimestamp()
+        );
+    }
+
+    private void updateInterestToRejected() throws Exception {
+
+        createInterest();
+
+        mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
+                        .content(objectMapper.writeValueAsString(interestUpdateDtoRejected))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+    }
+
     @Test
     @DisplayName("Test get current interest by organization id returns empty")
     void testGetCurrentInterestByOrganizationIdReturnsEmpty() throws Exception {
@@ -138,10 +157,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get current interest by organization id returns interest list with size 1")
-    @DirtiesContext
     void testGetCurrentInterestByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
-        testCreateInterest();
+        createInterest();
 
         mockMvc.perform(get(URL + "/interest/organization/{organizationId}/current", orgId)
                         .param("page", "0")
@@ -155,7 +173,6 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get interest history by organization id returns empty")
-    @DirtiesContext
     void testGetInterestHistoryByOrganizationIdReturnsEmpty() throws Exception {
 
         mockMvc.perform(get(URL + "/interest/organization/{organizationId}/history", orgId)
@@ -170,10 +187,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get interest history by organization id returns interest list with size 1")
-    @DirtiesContext
     void testGetInterestHistoryByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
-        testUpdateInterestToRejected();
+        updateInterestToRejected();
 
         mockMvc.perform(get(URL + "/interest/organization/{orgId}/history", orgId)
                         .param("page", "0")
@@ -187,7 +203,6 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get current interest by user id returns empty")
-    @DirtiesContext
     void testGetCurrentInterestByUserIdReturnsEmpty() throws Exception {
 
         mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
@@ -202,10 +217,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get current interest by user id returns interest list with size 1")
-    @DirtiesContext
     void testGetCurrentInterestByUserIdReturnsInterestSizeOne() throws Exception {
 
-        testCreateInterest();
+        createInterest();
 
         mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
                         .param("page", "0")
@@ -219,7 +233,6 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get interest history by user id returns empty")
-    @DirtiesContext
     void testGetInterestHistoryByUserIdReturnsEmpty() throws Exception {
 
         mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
@@ -235,10 +248,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get interest history by user id returns interest list with size 1")
-    @DirtiesContext
     void testGetInterestHistoryByUserIdReturnsInterestSizeOne() throws Exception {
 
-        testUpdateInterestToRejected();
+        updateInterestToRejected();
 
         mockMvc.perform(get(URL + "/interest/user/{userId}/history", userId)
                         .param("page", "0")
@@ -252,10 +264,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get current interest by id returns interest")
-    @DirtiesContext
     void testGetInterestByIdReturnsInterest() throws Exception {
 
-        testCreateInterest();
+        createInterest();
 
         mockMvc.perform(get(URL + "/interest/id/{id}", interestId)
                         .param("page", "0")
@@ -269,7 +280,6 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test get current interest with invalid id throws InterestNotFoundException")
-    @DirtiesContext
     void testGetInterestByIdReturnsInterestNotFoundException() throws Exception {
 
         String invalidId = "123123-123123";
@@ -280,13 +290,12 @@ public class InterestControllerTest {
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(format(INTEREST_NOT_FOUND, invalidId)))
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)))
                 .andReturn();
     }
 
     @Test
     @DisplayName("Test create new interest works correctly")
-    @DirtiesContext
     void testCreateInterest() throws Exception {
 
         MvcResult result = mockMvc.perform(post(URL + "/interest/")
@@ -312,10 +321,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test if update interest to form requested works correctly")
-    @DirtiesContext
     void testUpdateInterestToFormRequested() throws Exception {
 
-        testCreateInterest();
+        createInterest();
 
         mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
                         .content(objectMapper.writeValueAsString(interestUpdateDtoFormRequested))
@@ -326,10 +334,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test if update interest to rejected works correctly")
-    @DirtiesContext
     void testUpdateInterestToRejected() throws Exception {
 
-        testCreateInterest();
+        createInterest();
 
         mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
                         .content(objectMapper.writeValueAsString(interestUpdateDtoRejected))
@@ -340,10 +347,9 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test if delete interest works correctly")
-    @DirtiesContext
     void testDeleteInterest() throws Exception {
 
-        testCreateInterest();
+        createInterest();
 
         mockMvc.perform(delete(URL + "/interest/delete/{id}", interestGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -353,7 +359,6 @@ public class InterestControllerTest {
 
     @Test
     @DisplayName("Test if delete interest with invalid id throws InterestNotFoundException")
-    @DirtiesContext
     void testDeleteInterestWithInvalidIdThrowsInterestNotFoundException() throws Exception {
 
         String invalidId = "123123-123123";
@@ -361,6 +366,6 @@ public class InterestControllerTest {
         mockMvc.perform(delete(URL + "/interest/delete/{id}", invalidId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(format(INTEREST_NOT_FOUND, invalidId)));
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)));
     }
 }

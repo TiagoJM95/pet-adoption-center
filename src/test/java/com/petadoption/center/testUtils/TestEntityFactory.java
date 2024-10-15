@@ -170,7 +170,6 @@ public class TestEntityFactory {
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
-                .interests(Set.of())
                 .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
     }

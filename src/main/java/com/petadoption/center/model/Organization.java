@@ -63,10 +63,6 @@ public class Organization {
     @Column(name = "pets_owned")
     private List<Pet> petsOwned = new ArrayList<>();
 
-    @OneToMany(mappedBy = "organization", fetch = FetchType.EAGER)
-    @Column(name = "interests_in_owned_pets")
-    private Set<Interest> interests = new HashSet<>();
-
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -75,12 +71,12 @@ public class Organization {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(nif, that.nif) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(address, that.address) && Objects.equals(websiteUrl, that.websiteUrl) && Objects.equals(socialMedia, that.socialMedia) && Objects.equals(petsOwned, that.petsOwned) && Objects.equals(interests, that.interests);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(nif, that.nif) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(address, that.address) && Objects.equals(websiteUrl, that.websiteUrl) && Objects.equals(socialMedia, that.socialMedia) && Objects.equals(petsOwned, that.petsOwned);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, nif, phoneNumber, address, websiteUrl, socialMedia, petsOwned, interests);
+        return Objects.hash(id, name, email, nif, phoneNumber, address, websiteUrl, socialMedia, petsOwned);
     }
 
     @PrePersist
