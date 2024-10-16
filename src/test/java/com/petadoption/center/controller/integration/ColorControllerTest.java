@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
 import static java.lang.String.format;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -20,8 +21,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ColorControllerTest extends TestContainerConfig {
 
-    private ColorGetDto colorGetDto;
     private ColorCreateDto colorCreateDto;
+    private String colorId;
 
 
     @BeforeEach
@@ -34,48 +35,72 @@ public class ColorControllerTest extends TestContainerConfig {
         colorRepository.deleteAll();
     }
 
-    private String persistColor() throws Exception {
-        return helper.persistTestPrimaryColor();
+    private ColorGetDto persistColor() throws Exception {
+
+        var result =  mockMvc.perform(post("/api/v1/color/")
+                        .content(objectMapper.writeValueAsString(colorCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        ColorGetDto colorCreatedDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
+        colorId = colorCreatedDto.id();
+        return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
     }
 
     @Test
     @DisplayName("Test if create color works correctly")
     void createColor() throws Exception {
 
-      var result =  mockMvc.perform(post("/api/v1/color/")
-                        .content(objectMapper.writeValueAsString(colorCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(colorCreateDto.name())))
-                .andReturn();
+        ColorGetDto expected = ColorGetDto.builder()
+                .name(colorCreateDto.name())
+                .build();
 
-      colorGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
+        ColorGetDto colorCreatedGetDto = persistColor();
+
+        assertThat(colorCreatedGetDto)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(expected);
     }
 
     @Test
     @DisplayName("Test if get all colors works correctly")
     void getAll() throws Exception {
 
-        String id = persistColor();
+        ColorGetDto colorCreatedGetDto = persistColor();
 
-        mockMvc.perform(get("/api/v1/color/")
+        var result = mockMvc.perform(get("/api/v1/color/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(id)))
-                .andExpect(jsonPath("$[0].name", is(colorCreateDto.name())));
+                .andReturn();
+
+        ColorGetDto[] colorGetDtoArray = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto[].class);
+        assertThat(colorGetDtoArray).hasSize(1);
+        assertThat(colorGetDtoArray[0])
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(colorCreatedGetDto);
     }
 
     @Test
     @DisplayName("Test if get color by id works correctly")
     void getById() throws Exception {
 
-        String id = persistColor();
+        ColorGetDto colorCreatedGetDto = persistColor();
 
-        mockMvc.perform(get("/api/v1/color/id/{id}", id)
+        var result = mockMvc.perform(get("/api/v1/color/id/{id}", colorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(id)))
-                .andExpect(jsonPath("$.name", is(colorCreateDto.name())));
+                .andReturn();
+
+        ColorGetDto colorGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
+        assertThat(colorGetDto)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(colorCreatedGetDto);
+
     }
 
     @Test
@@ -91,11 +116,11 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if delete color works correctly")
     void delete() throws Exception {
 
-        String id = persistColor();
+        persistColor();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", id)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", colorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, id)));
+                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorId)));
     }
 }
