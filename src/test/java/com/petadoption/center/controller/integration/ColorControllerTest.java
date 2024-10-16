@@ -16,6 +16,7 @@ import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreate
 import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -81,6 +82,19 @@ public class ColorControllerTest extends TestContainerConfig {
 
         Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertThat(error.constraint()).isEqualTo("uniquecolorname");
+    }
+
+    @Test
+    @DisplayName("Test if throw HttpMessageNotReadableException if request body is empty")
+    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/color/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertTrue(error.message().contains("Required request body is missing"));
     }
 
     @Test
