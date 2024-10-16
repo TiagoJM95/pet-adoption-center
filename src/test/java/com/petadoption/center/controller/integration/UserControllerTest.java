@@ -24,35 +24,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerTest extends TestContainerConfig{
 
-
-    private UserGetDto userGetDto;
     private static UserCreateDto userCreateDto;
     private static UserUpdateDto userUpdateDto;
-    private static UserGetDto expectedUserGetDto;
-    private static UserGetDto expectedUpdatedUserGetDto;
-
     private String userId;
 
     @BeforeAll
     static void setUp() {
         userCreateDto = userCreateDto();
         userUpdateDto = userUpdateDto();
-        expectedUserGetDto = UserGetDto.builder()
-                .firstName(userCreateDto.firstName())
-                .lastName(userCreateDto.lastName())
-                .email(userCreateDto.email())
-                .nif(userCreateDto.nif())
-                .dateOfBirth(userCreateDto.dateOfBirth())
-                .address(userCreateDto.address())
-                .phoneNumber(userCreateDto.phoneNumber())
-                .build();
-        expectedUpdatedUserGetDto = UserGetDto.builder()
-                .firstName(userUpdateDto.firstName())
-                .lastName(userUpdateDto.lastName())
-                .email(userUpdateDto.email())
-                .address(userUpdateDto.address())
-                .phoneNumber(userUpdateDto.phoneNumber())
-                .build();
     }
 
     @AfterEach
@@ -77,6 +56,16 @@ public class UserControllerTest extends TestContainerConfig{
     @Test
     @DisplayName("Test if create user works correctly")
     void createUserShouldReturnUser() throws Exception {
+
+        UserGetDto expectedUserGetDto = UserGetDto.builder()
+                .firstName(userCreateDto.firstName())
+                .lastName(userCreateDto.lastName())
+                .email(userCreateDto.email())
+                .nif(userCreateDto.nif())
+                .dateOfBirth(userCreateDto.dateOfBirth())
+                .address(userCreateDto.address())
+                .phoneNumber(userCreateDto.phoneNumber())
+                .build();
 
         UserGetDto userCreatedGetDto = persistUser();
 
@@ -142,6 +131,14 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if update user works correctly")
     void updateUserShouldReturn() throws Exception {
 
+        UserGetDto expectedUpdatedUserGetDto = UserGetDto.builder()
+                .firstName(userUpdateDto.firstName())
+                .lastName(userUpdateDto.lastName())
+                .email(userUpdateDto.email())
+                .address(userUpdateDto.address())
+                .phoneNumber(userUpdateDto.phoneNumber())
+                .build();
+
         persistUser();
 
         var result = mockMvc.perform(put("/api/v1/user/update/{id}", userId)
@@ -156,8 +153,6 @@ public class UserControllerTest extends TestContainerConfig{
                 .ignoringFields("id", "dateOfBirth", "nif")
                 .ignoringFieldsMatchingRegexes(".*createdAt")
                 .isEqualTo(expectedUpdatedUserGetDto);
-
-
     }
 
     @Test
