@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.petadoption.center.converter.EnumConverter.convertListOfStringToEnum;
 import static com.petadoption.center.converter.EnumConverter.convertStringToEnum;
 import static com.petadoption.center.specifications.PetSpecifications.*;
 import static com.petadoption.center.util.Messages.*;
@@ -115,26 +116,19 @@ public class PetService implements PetServiceI {
     }
 
     private Specification<Pet> buildFilters(PetSearchCriteria searchCriteria) {
-        return Specification.where(searchCriteria.nameLike() != null && !searchCriteria.nameLike().isEmpty() ? nameLike(searchCriteria.nameLike()) : null)
-                .and(searchCriteria.species() != null ? findBySpecies(searchCriteria.species()) : null)
-                .and(searchCriteria.state() != null ? findByState(searchCriteria.state()) : null)
-                .and(searchCriteria.city() != null ? findByCity(searchCriteria.city()) : null)
-                .and(searchCriteria.breed() != null ? findByBreed(searchCriteria.breed()) : null)
-                .and(searchCriteria.color() != null ? findByColor(searchCriteria.color()) : null)
-                .and(searchCriteria.gender() != null ? findByGender(convertStringToEnum(searchCriteria.gender(), Genders.class)) : null)
-                .and(searchCriteria.coat() != null ? findByCoat(convertStringToEnum(searchCriteria.coat(), Coats.class)) : null)
-                .and(searchCriteria.size() != null ? findBySize(convertStringToEnum(searchCriteria.size(), Sizes.class)) : null)
-                .and(searchCriteria.age() != null ? findByAge(convertStringToEnum(searchCriteria.age(), Ages.class)) : null)
-                .and(searchCriteria.isAdopted() != null ? isAdopted(searchCriteria.isAdopted()) : null)
-                .and(searchCriteria.isSterilized() != null ? isSterilized(searchCriteria.isSterilized()) : null)
-                .and(searchCriteria.isVaccinated() != null ? isVaccinated(searchCriteria.isVaccinated()) : null)
-                .and(searchCriteria.isChipped() != null ? isChipped(searchCriteria.isChipped()) : null)
-                .and(searchCriteria.isSpecialNeeds() != null ? isSpecialNeeds(searchCriteria.isSpecialNeeds()) : null)
-                .and(searchCriteria.isHouseTrained() != null ? isHouseTrained(searchCriteria.isHouseTrained()) : null)
-                .and(searchCriteria.goodWithKids() != null ? isGoodWithKids(searchCriteria.goodWithKids()) : null)
-                .and(searchCriteria.goodWithDogs() != null ? isGoodWithDogs(searchCriteria.goodWithDogs()) : null)
-                .and(searchCriteria.goodWithCats() != null ? isGoodWithCats(searchCriteria.goodWithCats()) : null)
-                .and(searchCriteria.isPureBreed() != null ? findByPureBreed(searchCriteria.isPureBreed()) : null);
+        return Specification
+                .where(searchCriteria.speciesNames() != null ? filterBySpecies(searchCriteria.speciesNames()) : null)
+                .and(searchCriteria.breedNames() != null ? filterByBreed(searchCriteria.breedNames()) : null)
+                .and(searchCriteria.colorNames() != null ? filterByColor(searchCriteria.colorNames()) : null)
+                .and(searchCriteria.coats() != null ? filterByCoat(convertListOfStringToEnum(searchCriteria.coats(), Coats.class)) : null)
+                .and(searchCriteria.sizes() != null ? filterBySize(convertListOfStringToEnum(searchCriteria.sizes(), Sizes.class)) : null)
+                .and(searchCriteria.ages() != null ? filterByAge(convertListOfStringToEnum(searchCriteria.ages(), Ages.class)) : null)
+                .and(searchCriteria.attributes() != null ? filterByAttributes(searchCriteria.attributes()) : null)
+                .and(searchCriteria.states() != null ? filterByState(searchCriteria.states()) : null)
+                .and(searchCriteria.cities() != null ? filterByCity(searchCriteria.cities()) : null)
+                .and(searchCriteria.gender() != null ? filterByGender(convertStringToEnum(searchCriteria.gender(), Genders.class)) : null)
+                .and(searchCriteria.isAdopted() != null ? filterByIsAdopted(searchCriteria.isAdopted()) : null)
+                .and(searchCriteria.isPureBreed() != null ? filterByPureBreed() : null);
     }
 
     private void updateFields(PetUpdateDto dto, Pet pet) {

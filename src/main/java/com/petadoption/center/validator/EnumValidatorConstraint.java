@@ -4,11 +4,12 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
 import java.text.MessageFormat;
+import java.util.List;
 
 import static com.petadoption.center.util.Messages.REQUIRED_FIELD;
 import static com.petadoption.center.util.Utils.formatStringForEnum;
 
-public class EnumValidatorConstraint implements ConstraintValidator<EnumValidator, String> {
+public class EnumValidatorConstraint implements ConstraintValidator<EnumValidator, Object> {
 
     private Class<? extends Enum<?>> enumClass;
     private boolean allowNull;
@@ -22,8 +23,23 @@ public class EnumValidatorConstraint implements ConstraintValidator<EnumValidato
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(Object value, ConstraintValidatorContext context) {
+
         if (value == null) return allowNull || addNewConstraintViolation(REQUIRED_FIELD, context);
+
+        if (value instanceof List<?> valueList) {
+            for (Object item : valueList) {
+                if (!(item instanceof String))
+                    return addNewConstraintViolation("All objects inside the list must be strings", context);
+                if (!isValidEnum((String) item, context)) return false;
+            }
+            return true;
+        }
+
+        return isValidEnum(value.toString(), context);
+    }
+
+    private boolean isValidEnum(String value, ConstraintValidatorContext context) {
 
         String formattedValue = formatStringForEnum(value);
         Object[] enumValues = enumClass.getEnumConstants();
@@ -32,7 +48,6 @@ public class EnumValidatorConstraint implements ConstraintValidator<EnumValidato
         }
 
         String formattedMessage = MessageFormat.format(messageTemplate, value);
-
         return addNewConstraintViolation(formattedMessage, context);
     }
 
