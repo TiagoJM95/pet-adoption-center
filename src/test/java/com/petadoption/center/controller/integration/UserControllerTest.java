@@ -86,7 +86,6 @@ public class UserControllerTest extends TestContainerConfig{
         userId = createResultDto.id();
     }
 
-
     @Test
     @DisplayName("Test if create user works correctly")
     void createUserShouldReturnUser() throws Exception {
@@ -129,6 +128,19 @@ public class UserControllerTest extends TestContainerConfig{
         Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertEquals(error.constraint(), constraint);
 
+    }
+
+    @Test
+    @DisplayName("Test if throw HttpMessageNotReadableException if request body is empty")
+    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/user/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertTrue(error.message().contains("Required request body is missing"));
     }
 
     @Test
