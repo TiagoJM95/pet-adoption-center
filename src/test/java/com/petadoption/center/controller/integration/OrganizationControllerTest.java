@@ -13,7 +13,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
+import com.petadoption.center.aspect.Error;
 
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
@@ -21,16 +23,19 @@ import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
 import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
 import static java.lang.String.format;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 public class OrganizationControllerTest extends TestContainerConfig {
 
     private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
+    private String organizationId;
 
     @BeforeEach
     void setUp() {
@@ -47,12 +52,33 @@ public class OrganizationControllerTest extends TestContainerConfig {
         OrganizationCreateDto baseOrg = otherOrganizationCreateDto();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueorgemail"),
+                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueorgnif"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
+                Arguments.of(baseOrg.toBuilder().address(Address.builder()
+                        .street("Rua de Santo Antonio, 123")
+                        .postalCode("4444-444")
+                        .city("Lisbon")
+                        .state("Lisbon")
+                        .build()).build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
+
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .facebook("https://www.facebook.com")
+                        .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .instagram("https://www.instagram.com")
+                        .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .twitter("https://www.twitter.com")
+                        .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com")
+                        .build()).build(), "repeated social media - youtube", "uniqueorgyoutube")
         );
     }
 
@@ -77,15 +103,37 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .build();
 
         return Stream.of(
-                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().address(createAddress()).build(), "repeated address", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueemail"),
-                Arguments.of(baseOrg.toBuilder().socialMedia(createSocialMedia()).build(), "repeated social media", "uniqueemail")
+                Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueorgemail"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
+                Arguments.of(baseOrg.toBuilder().address(Address.builder()
+                                .street("Rua de Santo Antonio, 123")
+                                .postalCode("4444-444")
+                                .city("Lisbon")
+                                .state("Lisbon")
+                                .build())
+                        .build(), "repeated address - Street + postal code", "uniqueorgstreetandpostalcode"),
+
+                Arguments.of(baseOrg.toBuilder().websiteUrl("https://www.org.com").build(), "repeated website url", "uniqueorgwebsiteurl"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .facebook("https://www.facebook.com")
+                        .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .instagram("https://www.instagram.com")
+                        .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .twitter("https://www.twitter.com")
+                        .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
+
+                Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
+                        .youtube("https://www.youtube.com")
+                        .build()).build(), "repeated social media - youtube", "uniqueorgyoutube")
         );
     }
 
-        private void persistOrganization() throws Exception {
+    private OrganizationGetDto persistOrganization() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
@@ -93,7 +141,9 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+        OrganizationGetDto resultDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+        organizationId = resultDto.id();
+        return resultDto;
     }
 
     private void persistOrganizationToUpdate() throws Exception {
@@ -111,63 +161,104 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if create organization works correctly")
     void createOrganizationAndReturnGetDto() throws Exception {
 
-       mockMvc.perform(post("/api/v1/organization/")
-                .content(objectMapper.writeValueAsString(organizationCreateDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(organizationCreateDto.name())))
-                .andExpect(jsonPath("$.email", is(organizationCreateDto.email())))
-                .andReturn();
+        OrganizationGetDto expectedOrganization = OrganizationGetDto.builder()
+                .name("Pet Adoption Center")
+                .email("org@email.com")
+                .nif("123456789")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
+                .build();
+
+       OrganizationGetDto orgGetDto = persistOrganization();
+
+       assertThat(orgGetDto)
+               .usingRecursiveComparison()
+               .ignoringFields("id")
+               .ignoringFieldsMatchingRegexes(".*createdAt")
+               .isEqualTo(expectedOrganization);
+
+        assertNotNull(orgGetDto.createdAt());
+        assertTrue(orgGetDto.id().matches("^[0-9a-fA-F-]{36}$"));
 
     }
 
     @ParameterizedTest(name = "Test {index}: Creating organization with {1}")
     @MethodSource("orgCreateDtoProvider")
     @DisplayName("Test if create organization send DataIntegrityViolationException")
-    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto, String fieldBeingTested) throws Exception {
+    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto, String fieldBeingTested, String constraint) throws Exception {
 
         persistOrganization();
 
-        mockMvc.perform(post("/api/v1/organization/")
+        var result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertEquals(error.constraint(), constraint);
     }
 
+    @Test
+    @DisplayName("Test if throw HttpMessageNotReadableException if request body is empty")
+    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/organization/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertTrue(error.message().contains("Required request body is missing"));
+    }
 
     @Test
     @DisplayName("Test if get all organizations works correctly")
     void getAllOrganizations() throws Exception {
 
-        persistOrganization();
+        OrganizationGetDto orgCreatedDto= persistOrganization();
 
         mockMvc.perform(get("/api/v1/organization/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(organizationGetDto.id())))
-                .andExpect(jsonPath("$[0].name", is(organizationGetDto.name())))
-                .andExpect(jsonPath("$[0].email", is(organizationGetDto.email())))
-                .andExpect(jsonPath("$[0].nif", is(organizationGetDto.nif())))
-                .andExpect(jsonPath("$[0].phoneNumber", is(organizationGetDto.phoneNumber())))
-                .andExpect(jsonPath("$[0].websiteUrl", is(organizationGetDto.websiteUrl())));
+                .andExpect(jsonPath("$[0].id", is(orgCreatedDto.id())))
+                .andExpect(jsonPath("$[0].name", is(orgCreatedDto.name())))
+                .andExpect(jsonPath("$[0].email", is(orgCreatedDto.email())))
+                .andExpect(jsonPath("$[0].nif", is(orgCreatedDto.nif())))
+                .andExpect(jsonPath("$[0].phoneNumber", is(orgCreatedDto.phoneNumber())))
+                .andExpect(jsonPath("$[0].websiteUrl", is(orgCreatedDto.websiteUrl())));
+    }
 
+    @Test
+    @DisplayName("Test if get all organizations return a empty list if no organizations in database")
+    void getAllOrganizationsEmptyList() throws Exception {
+
+        mockMvc.perform(get("/api/v1/organization/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
     @DisplayName("Test if get organization by id works correctly")
     void getOrganizationById() throws Exception {
 
-        persistOrganization();
+        OrganizationGetDto orgCreated = persistOrganization();
 
-        mockMvc.perform(get("/api/v1/organization/id/{id}", organizationGetDto.id())
+        var result = mockMvc.perform(get("/api/v1/organization/id/{id}", organizationId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(organizationGetDto.id())))
-                .andExpect(jsonPath("$.name", is(organizationGetDto.name())))
-                .andExpect(jsonPath("$.email", is(organizationGetDto.email())))
-                .andExpect(jsonPath("$.nif", is(organizationGetDto.nif())))
-                .andExpect(jsonPath("$.phoneNumber", is(organizationGetDto.phoneNumber())));
+                .andReturn();
+
+        OrganizationGetDto getResult = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+
+        assertThat(getResult)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(orgCreated);
     }
 
     @Test
@@ -183,13 +274,30 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if update organization works correctly")
     void updateOrganization() throws Exception {
 
+        OrganizationGetDto organizationUpdatedGetDto = OrganizationGetDto.builder()
+                .name(organizationUpdateDto.name())
+                .email(organizationUpdateDto.email())
+                .phoneNumber(organizationUpdateDto.phoneNumber())
+                .address(organizationUpdateDto.address())
+                .websiteUrl(organizationUpdateDto.websiteUrl())
+                .socialMedia(organizationUpdateDto.socialMedia())
+                .build();
+
         persistOrganization();
 
-        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
+        var result = mockMvc.perform(put("/api/v1/organization/update/{id}", organizationId)
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email", is(organizationUpdateDto.email())));
+                .andReturn();
+
+        OrganizationGetDto getUpdateResult = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+
+        assertThat(getUpdateResult)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "nif")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(organizationUpdatedGetDto);
     }
 
     @Test
@@ -205,19 +313,21 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @ParameterizedTest(name = "Test {index}: update organization with {1}")
     @MethodSource("orgUpdateDtoProvider")
     @DisplayName("Test if update organization send DataIntegrityViolationException")
-    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto, String fieldBeingTested) throws Exception {
+    void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto, String fieldBeingTested, String constraint) throws Exception {
 
         persistOrganization();
 
         persistOrganizationToUpdate();
 
-        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
+       var result = mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
-    }
 
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertEquals(error.constraint(), constraint );
+    }
 
     @Test
     @DisplayName("Test if delete organization works correctly")
@@ -225,10 +335,10 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         persistOrganization();
 
-        mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationGetDto.id())
+        mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(ORG_DELETE_MESSAGE, organizationGetDto.id())));
+                .andExpect(content().string(format(ORG_DELETE_MESSAGE, organizationId)));
     }
 
     @Test

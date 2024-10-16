@@ -245,6 +245,18 @@ public class TestDtoFactory {
                 .build();
     }
 
+    public static UserCreateDto otherUserCreateDto(){
+        return UserCreateDto.builder()
+                .firstName("Jane")
+                .lastName("Doe")
+                .email("user1@email.com")
+                .nif("987654322")
+                .dateOfBirth(LocalDate.of(1991, 1, 1))
+                .address(otherCreateAddress())
+                .phoneNumber("987654322")
+                .build();
+    }
+
     public static BreedCreateDto primaryBreedCreateDto(String speciesId){
         return BreedCreateDto.builder()
                 .name("Golden Retriever")
@@ -340,6 +352,16 @@ public class TestDtoFactory {
                 .email("tm@email.com")
                 .address(updateAddress())
                 .phoneNumber("934587967")
+                .build();
+    }
+
+    public static UserUpdateDto otherUserUpdateDto(){
+        return UserUpdateDto.builder()
+                .firstName("Maria")
+                .lastName("Silva")
+                .email("ms@email.com")
+                .address(otherCreateAddress())
+                .phoneNumber("934587968")
                 .build();
     }
 
