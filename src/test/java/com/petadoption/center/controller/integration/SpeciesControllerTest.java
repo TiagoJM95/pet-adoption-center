@@ -89,6 +89,19 @@ public class SpeciesControllerTest extends TestContainerConfig{
     }
 
     @Test
+    @DisplayName("Test if throw HttpMessageNotReadableException if request body is empty")
+    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/species/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertTrue(error.message().contains("Required request body is missing"));
+    }
+
+    @Test
     @DisplayName("Test if get all species works correctly")
     void getAllSpecies() throws Exception {
 
