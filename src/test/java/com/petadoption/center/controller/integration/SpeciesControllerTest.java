@@ -1,25 +1,23 @@
 package com.petadoption.center.controller.integration;
 
-import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
-import com.petadoption.center.dto.user.UserGetDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import com.petadoption.center.aspect.Error;
 
-import java.time.LocalDateTime;
+
 
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
 import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -73,6 +71,21 @@ public class SpeciesControllerTest extends TestContainerConfig{
 
         assertNotNull(createdSpeciesDto.createdAt());
         assertTrue(createdSpeciesDto.id().matches("^[0-9a-fA-F-]{36}$"));
+    }
+
+    @Test
+    @DisplayName("Test if create species throws DataIntegrityViolationException")
+    void createSpeciesThrowsDataIntegrityViolationException() throws Exception {
+        persistSpecies();
+
+        var result = mockMvc.perform(post("/api/v1/species/")
+                        .content(objectMapper.writeValueAsString(speciesCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertThat(error.constraint()).isEqualTo("uniquespeciesname");
     }
 
     @Test
