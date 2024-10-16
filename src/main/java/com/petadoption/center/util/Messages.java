@@ -39,6 +39,7 @@ public class Messages {
     public static final String LOGGER_NO_BODY = "HttpMessageNotReadableException - No body provided: {} ";
     public static final String LOGGER_DUPLICATE = "DataIntegrityViolationException - DB unique constraints violation: {} ";
     public static final String LOGGER_VALIDATION = "MethodArgumentNotValidException - Provided body failed validation: {} ";
+    public static final String LOGGER_LIST_VALIDATION = "HandlerMethodValidationException - Provided list failed validation: {} ";
     public static final String LOGGER_MISMATCH = "BreedMismatchException - Breed does not belong to species: {} ";
     public static final String LOGGER_STATUS = "InvalidStatusChangeException - New value provided for status is not possible: {} ";
 
@@ -48,6 +49,7 @@ public class Messages {
     public static final String STREET_CHARACTERS = "Special characters allowed are  , . - ";
     public static final String ONLY_LETTERS = "Only letters are allowed";
     public static final String ONLY_NUMBERS = "Only numbers are allowed";
+    public static final String ONLY_UUID = "Only alphanumeric characters and - are allowed";
     public static final String POSTAL_CODE_FORMAT = "Postal Code must be in the format XXXX-XXX";
     public static final String POSTAL_CODE_SIZE = "Postal Code must be less than 9 characters";
     public static final String PHONE_NUMBER_FORMAT = "Phone number must be only numbers";

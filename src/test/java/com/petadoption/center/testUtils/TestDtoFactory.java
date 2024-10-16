@@ -24,8 +24,6 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.enums.Status;
-import com.petadoption.center.model.embeddable.Address;
-import com.petadoption.center.model.embeddable.SocialMedia;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

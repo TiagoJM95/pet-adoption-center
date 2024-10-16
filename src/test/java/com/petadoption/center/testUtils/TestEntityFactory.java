@@ -11,7 +11,6 @@ import com.petadoption.center.specifications.PetSearchCriteria;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 public class TestEntityFactory {
 
@@ -278,25 +277,17 @@ public class TestEntityFactory {
 
     public static PetSearchCriteria petSearchCriteria(){
         return PetSearchCriteria.builder()
-                .nameLike("M")
-                .species(createSpecies())
-                .breed(createBreed(createSpecies()))
-                .color(createPrimaryColor())
+                .speciesNames(List.of("Dog"))
+                .breedNames(List.of("Labrador"))
+                .colorNames(List.of("Black"))
                 .gender("Male")
-                .size("Medium")
-                .coat("Short")
-                .age("Adult")
+                .sizes(List.of("Medium"))
+                .coats(List.of("Medium"))
+                .ages(List.of("Adult"))
                 .isAdopted(false)
-                .isSterilized(false)
-                .isVaccinated(false)
-                .isChipped(false)
-                .isSpecialNeeds(false)
-                .isHouseTrained(false)
-                .goodWithCats(false)
-                .goodWithDogs(false)
-                .goodWithKids(false)
-                .state("Porto")
-                .city("Gondomar")
+                .attributes(createAttributes())
+                .states(List.of("Porto"))
+                .cities(List.of("Gondomar"))
                 .build();
     }
 

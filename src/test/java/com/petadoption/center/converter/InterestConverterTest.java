@@ -1,19 +1,13 @@
 package com.petadoption.center.converter;
 
-import com.petadoption.center.dto.adoptionForm.AdoptionFormCreateDto;
-import com.petadoption.center.dto.adoptionForm.AdoptionFormGetDto;
-import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.pet.PetGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.enums.Status;
-import com.petadoption.center.model.AdoptionForm;
 import com.petadoption.center.model.Interest;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.User;
-import com.petadoption.center.testUtils.TestDtoFactory;
-import com.petadoption.center.testUtils.TestEntityFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

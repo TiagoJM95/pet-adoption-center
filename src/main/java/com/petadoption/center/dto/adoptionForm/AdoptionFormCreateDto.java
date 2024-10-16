@@ -4,21 +4,21 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
+import org.hibernate.validator.constraints.UUID;
 
 import static com.petadoption.center.util.Messages.BLANK_FIELD;
-import static com.petadoption.center.util.Messages.ONLY_LETTERS;
+import static com.petadoption.center.util.Messages.ONLY_UUID;
 
 @Builder
 public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(message = ONLY_UUID)
         String userId,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z0-9-]+", message = ONLY_LETTERS)
+        @UUID(message = ONLY_UUID)
         String petId,
 
         @NotNull(message = BLANK_FIELD)

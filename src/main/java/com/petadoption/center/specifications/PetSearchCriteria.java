@@ -1,46 +1,54 @@
 package com.petadoption.center.specifications;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Coats;
 import com.petadoption.center.enums.Genders;
 import com.petadoption.center.enums.Sizes;
-import com.petadoption.center.model.Breed;
-import com.petadoption.center.model.Color;
-import com.petadoption.center.model.Species;
+import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.validator.EnumValidator;
+import com.petadoption.center.validator.ListValidator;
+import jakarta.validation.Valid;
 import lombok.Builder;
+
+import java.util.List;
 
 import static com.petadoption.center.util.Messages.*;
 
 @Builder
-public record PetSearchCriteria(
-        String nameLike,
-        Species species,
-        Breed breed,
-        Color color,
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public record PetSearchCriteria (
+
+        @ListValidator(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        List<String> speciesNames,
+
+        @ListValidator(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        List<String> breedNames,
+
+        @ListValidator(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        List<String> colorNames,
 
         @EnumValidator(enumClass = Genders.class, allowNull = true, message = GENDER_INVALID)
         String gender,
 
         @EnumValidator(enumClass = Coats.class, allowNull = true, message = COAT_INVALID)
-        String coat,
+        List<String> coats,
 
         @EnumValidator(enumClass = Sizes.class, allowNull = true, message = SIZE_INVALID)
-        String size,
+        List<String> sizes,
 
         @EnumValidator(enumClass = Ages.class, allowNull = true, message = AGE_INVALID)
-        String age,
+        List<String> ages,
 
         Boolean isAdopted,
-        Boolean isSterilized,
-        Boolean isVaccinated,
-        Boolean isChipped,
-        Boolean isSpecialNeeds,
-        Boolean isHouseTrained,
-        Boolean goodWithKids,
-        Boolean goodWithDogs,
-        Boolean goodWithCats,
         Boolean isPureBreed,
-        String state,
-        String city
+
+        @Valid
+        Attributes attributes,
+
+        @ListValidator(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        List<String> states,
+
+        @ListValidator(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        List<String> cities
 ) {}
