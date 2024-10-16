@@ -30,7 +30,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 public class OrganizationControllerTest extends TestContainerConfig {
 
     private OrganizationGetDto organizationGetDto;
@@ -134,7 +133,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
         );
     }
 
-        private OrganizationGetDto persistOrganization() throws Exception {
+    private OrganizationGetDto persistOrganization() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
@@ -203,6 +202,18 @@ public class OrganizationControllerTest extends TestContainerConfig {
         assertEquals(error.constraint(), constraint);
     }
 
+    @Test
+    @DisplayName("Test if throw HttpMessageNotReadableException if request body is empty")
+    void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/organization/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertTrue(error.message().contains("Required request body is missing"));
+    }
 
     @Test
     @DisplayName("Test if get all organizations works correctly")
@@ -317,7 +328,6 @@ public class OrganizationControllerTest extends TestContainerConfig {
         Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
         assertEquals(error.constraint(), constraint );
     }
-
 
     @Test
     @DisplayName("Test if delete organization works correctly")
