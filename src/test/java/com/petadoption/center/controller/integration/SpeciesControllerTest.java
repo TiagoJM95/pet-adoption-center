@@ -1,5 +1,6 @@
 package com.petadoption.center.controller.integration;
 
+import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
@@ -16,22 +17,32 @@ import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
 import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class SpeciesControllerTest extends TestContainerConfig{
 
-    private SpeciesGetDto speciesGetDto;
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
-
+    private SpeciesGetDto expectedSpeciesGetDto;
+    private SpeciesGetDto expectedUpdatedSpecies;
     private String speciesId;
 
     @BeforeEach
     void setUp() {
         speciesCreateDto = speciesCreateDto();
         speciesUpdateDto = speciesUpdateDto();
+        expectedSpeciesGetDto = SpeciesGetDto.builder()
+                .name(speciesCreateDto.name())
+                .build();
+
+        expectedUpdatedSpecies = SpeciesGetDto.builder()
+                .name(speciesUpdateDto.name())
+                .build();
     }
 
     @AfterEach
@@ -39,36 +50,55 @@ public class SpeciesControllerTest extends TestContainerConfig{
         speciesRepository.deleteAll();
     }
 
+    private SpeciesGetDto persistSpecies() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/species/")
+                        .content(objectMapper.writeValueAsString(speciesCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        SpeciesGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
+        speciesId = createResultDto.id();
+        return createResultDto;
+    }
+
     @Test
     @DisplayName("Test create species is working correctly")
     void createSpecies() throws Exception {
 
-       var result = mockMvc.perform(post("/api/v1/species/")
-                        .content(objectMapper.writeValueAsString(speciesCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(speciesCreateDto.name())))
-               .andReturn();
+        SpeciesGetDto createdSpeciesDto = persistSpecies();
 
-        SpeciesGetDto specieCreated = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
+        assertThat(createdSpeciesDto)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(expectedSpeciesGetDto);
 
-        speciesId = specieCreated.id();
-        speciesGetDto = new SpeciesGetDto(speciesId, speciesCreateDto.name(), LocalDateTime.now());
+        assertNotNull(createdSpeciesDto.createdAt());
+        assertTrue(createdSpeciesDto.id().matches("^[0-9a-fA-F-]{36}$"));
     }
 
     @Test
     @DisplayName("Test if get all species works correctly")
     void getAllSpecies() throws Exception {
 
-        createSpecies();
+        SpeciesGetDto createdSpeciesDto = persistSpecies();
 
-        mockMvc.perform(get("/api/v1/species/")
+        var result =mockMvc.perform(get("/api/v1/species/")
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name", is(speciesGetDto.name())));
+                .andReturn();
+
+        SpeciesGetDto[] speciesGetDtoArray = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto[].class);
+        assertThat(speciesGetDtoArray).hasSize(1);
+        assertThat(speciesGetDtoArray[0])
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(createdSpeciesDto);
 
     }
 
@@ -76,12 +106,19 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if get species by id works correctly")
     void getSpeciesById() throws Exception {
 
-        createSpecies();
+        SpeciesGetDto createdSpeciesDto = persistSpecies();
 
-        mockMvc.perform(get("/api/v1/species/id/{id}", speciesId)
+        var result = mockMvc.perform(get("/api/v1/species/id/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(speciesGetDto.name())));
+                .andReturn();
+
+        SpeciesGetDto getResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
+        assertThat(getResultDto)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(createdSpeciesDto);
+
     }
 
     @Test
@@ -97,13 +134,23 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if update species works correctly")
     void updateSpecies() throws Exception {
 
-        createSpecies();
-
-        mockMvc.perform(put("/api/v1/species/update/{id}", speciesId)
+        persistSpecies();
+        var result = mockMvc.perform(put("/api/v1/species/update/{id}", speciesId)
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is(speciesUpdateDto.name())));
+                .andReturn();
+
+        SpeciesGetDto updateResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
+
+        assertThat(updateResultDto)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(expectedUpdatedSpecies);
+
+        assertNotNull(updateResultDto.createdAt());
+        assertTrue(updateResultDto.id().matches("^[0-9a-fA-F-]{36}$"));
     }
 
     @Test
@@ -120,7 +167,7 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if delete species works correctly")
     void delete() throws Exception {
 
-        createSpecies();
+        persistSpecies();
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/species/delete/{id}", speciesId)
                         .contentType(MediaType.APPLICATION_JSON))
