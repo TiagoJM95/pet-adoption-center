@@ -6,22 +6,21 @@ import com.petadoption.center.dto.breed.BreedUpdateDto;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import com.petadoption.center.aspect.Error;
 
-import java.util.List;
+
 
 import static com.petadoption.center.testUtils.TestDtoFactory.breedUpdateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryBreedCreateDto;
 import static com.petadoption.center.util.Messages.BREED_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 public class BreedControllerTest extends TestContainerConfig {
 
-    private BreedGetDto breedGetDto;
     private BreedCreateDto breedCreateDto;
     private BreedUpdateDto breedUpdateDto;
     private String breedId;
@@ -42,6 +41,7 @@ public class BreedControllerTest extends TestContainerConfig {
     void cleanSpecies(){
         speciesRepository.deleteAll();
     }
+
 
     private BreedGetDto persistBreed() throws Exception {
 
@@ -75,6 +75,21 @@ public class BreedControllerTest extends TestContainerConfig {
                 .isEqualTo(breedCreatedGetDto);
     }
 
+    @Test
+    @DisplayName("Test if create breed throws DataIntegrityViolationException")
+    void createBreedThrowsDataIntegrityViolationException() throws Exception {
+
+        persistBreed();
+
+        var result = mockMvc.perform(post("/api/v1/breed/")
+                        .content(objectMapper.writeValueAsString(breedCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertThat(error.constraint()).isEqualTo("uniquebreedname");
+    }
 
     @Test
     @DisplayName("Test if get all breeds works correctly")
@@ -95,7 +110,6 @@ public class BreedControllerTest extends TestContainerConfig {
                 .isEqualTo(breedCreatedGetDto);
     }
 
-
     @Test
     @DisplayName("Test if get breed by id works correctly")
     void getById() throws Exception {
@@ -114,7 +128,6 @@ public class BreedControllerTest extends TestContainerConfig {
                 .isEqualTo(breedCreatedGetDto);
     }
 
-
     @Test
     @DisplayName("Test if get breed by id throws breed not found exception")
     void getByIdThrowsBreedNotFoundException() throws Exception {
@@ -123,7 +136,6 @@ public class BreedControllerTest extends TestContainerConfig {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
 
     @Test
     @DisplayName("Test if update breed works correctly")
