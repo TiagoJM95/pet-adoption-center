@@ -36,24 +36,12 @@ public class OrganizationControllerTest extends TestContainerConfig {
     private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
-    private OrganizationGetDto expectedOrganization;
-
     private String organizationId;
 
     @BeforeEach
     void setUp() {
         organizationCreateDto = organizationCreateDto();
         organizationUpdateDto = orgUpdateDto();
-        expectedOrganization = OrganizationGetDto.builder()
-                .name("Pet Adoption Center")
-                .email("org@email.com")
-                .nif("123456789")
-                .phoneNumber("123456789")
-                .address(createAddress())
-                .websiteUrl("https://www.org.com")
-                .socialMedia(createSocialMedia())
-                .createdAt(LocalDateTime.of(2024,1,1,1,1))
-                .build();
     }
 
     @AfterEach
@@ -174,6 +162,17 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if create organization works correctly")
     void createOrganizationAndReturnGetDto() throws Exception {
 
+        OrganizationGetDto expectedOrganization = OrganizationGetDto.builder()
+                .name("Pet Adoption Center")
+                .email("org@email.com")
+                .nif("123456789")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
+                .build();
+
        OrganizationGetDto orgGetDto = persistOrganization();
 
        assertThat(orgGetDto)
@@ -201,8 +200,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .andReturn();
 
         Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
-        assertEquals(error.constraint(), constraint );
-
+        assertEquals(error.constraint(), constraint);
     }
 
 
@@ -221,7 +219,6 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .andExpect(jsonPath("$[0].nif", is(orgCreatedDto.nif())))
                 .andExpect(jsonPath("$[0].phoneNumber", is(orgCreatedDto.phoneNumber())))
                 .andExpect(jsonPath("$[0].websiteUrl", is(orgCreatedDto.websiteUrl())));
-
     }
 
     @Test
@@ -266,13 +263,30 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if update organization works correctly")
     void updateOrganization() throws Exception {
 
+        OrganizationGetDto organizationUpdatedGetDto = OrganizationGetDto.builder()
+                .name(organizationUpdateDto.name())
+                .email(organizationUpdateDto.email())
+                .phoneNumber(organizationUpdateDto.phoneNumber())
+                .address(organizationUpdateDto.address())
+                .websiteUrl(organizationUpdateDto.websiteUrl())
+                .socialMedia(organizationUpdateDto.socialMedia())
+                .build();
+
         persistOrganization();
 
-        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationId)
+        var result = mockMvc.perform(put("/api/v1/organization/update/{id}", organizationId)
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email", is(organizationUpdateDto.email())));
+                .andReturn();
+
+        OrganizationGetDto getUpdateResult = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+
+        assertThat(getUpdateResult)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "nif")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(organizationUpdatedGetDto);
     }
 
     @Test
