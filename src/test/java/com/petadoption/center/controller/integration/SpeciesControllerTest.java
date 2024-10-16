@@ -4,6 +4,7 @@ import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.species.SpeciesCreateDto;
 import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.species.SpeciesUpdateDto;
+import com.petadoption.center.dto.user.UserGetDto;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,21 +29,12 @@ public class SpeciesControllerTest extends TestContainerConfig{
 
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
-    private SpeciesGetDto expectedSpeciesGetDto;
-    private SpeciesGetDto expectedUpdatedSpecies;
     private String speciesId;
 
     @BeforeEach
     void setUp() {
         speciesCreateDto = speciesCreateDto();
         speciesUpdateDto = speciesUpdateDto();
-        expectedSpeciesGetDto = SpeciesGetDto.builder()
-                .name(speciesCreateDto.name())
-                .build();
-
-        expectedUpdatedSpecies = SpeciesGetDto.builder()
-                .name(speciesUpdateDto.name())
-                .build();
     }
 
     @AfterEach
@@ -66,6 +58,10 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @Test
     @DisplayName("Test create species is working correctly")
     void createSpecies() throws Exception {
+
+        SpeciesGetDto expectedSpeciesGetDto = SpeciesGetDto.builder()
+                .name(speciesCreateDto.name())
+                .build();
 
         SpeciesGetDto createdSpeciesDto = persistSpecies();
 
@@ -133,6 +129,10 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @Test
     @DisplayName("Test if update species works correctly")
     void updateSpecies() throws Exception {
+
+        SpeciesGetDto expectedUpdatedSpecies = SpeciesGetDto.builder()
+                .name(speciesUpdateDto.name())
+                .build();
 
         persistSpecies();
         var result = mockMvc.perform(put("/api/v1/species/update/{id}", speciesId)
