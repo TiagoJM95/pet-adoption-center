@@ -8,12 +8,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import com.petadoption.center.aspect.Error;
+
+
 
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -63,6 +65,22 @@ public class ColorControllerTest extends TestContainerConfig {
                 .ignoringFields("id")
                 .ignoringFieldsMatchingRegexes(".*createdAt")
                 .isEqualTo(expected);
+    }
+
+    @Test
+    @DisplayName("Test if create color throws DataIntegrityViolationException")
+    void createColorThrowsDataIntegrityViolationException() throws Exception {
+
+        persistColor();
+
+        var result = mockMvc.perform(post("/api/v1/color/")
+                        .content(objectMapper.writeValueAsString(colorCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertThat(error.constraint()).isEqualTo("uniquecolorname");
     }
 
     @Test
