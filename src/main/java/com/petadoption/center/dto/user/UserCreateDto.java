@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 import static com.petadoption.center.util.Messages.*;
 
-@Builder
+@Builder(toBuilder = true)
 public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)

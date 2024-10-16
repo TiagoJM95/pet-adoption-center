@@ -3,21 +3,24 @@ package com.petadoption.center.controller.integration;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import com.petadoption.center.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
+import com.petadoption.center.aspect.Error;
 
-import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
+
+import java.util.stream.Stream;
+
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -39,6 +42,25 @@ public class UserControllerTest extends TestContainerConfig{
         userRepository.deleteAll();
     }
 
+    static Stream<Arguments> userCreateDtoProvider() {
+
+        UserCreateDto baseUser = otherUserCreateDto();
+
+        return Stream.of(
+                Arguments.of(baseUser.toBuilder().email("user@email.com").build(), "repeated email", "uniqueuseremail"),
+                Arguments.of(baseUser.toBuilder().nif("987654321").build(), "repeated nif", "uniqueusernif"),
+                Arguments.of(baseUser.toBuilder().phoneNumber("987654321").build(), "repeated phone number", "uniqueuserphonenumber"));
+    }
+
+    static Stream<Arguments> userUpdateDtoProvider() {
+
+        UserUpdateDto baseUser = otherUserUpdateDto();
+
+        return Stream.of(
+                Arguments.of(baseUser.toBuilder().email("user@email.com").build(), "repeated email", "uniqueuseremail"),
+                Arguments.of(baseUser.toBuilder().phoneNumber("987654321").build(), "repeated phone number", "uniqueuserphonenumber"));
+    }
+
     private UserGetDto persistUser() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/user/")
@@ -50,6 +72,18 @@ public class UserControllerTest extends TestContainerConfig{
         UserGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
         userId = createResultDto.id();
         return createResultDto;
+    }
+
+    private void persistUserToUpdate() throws Exception {
+
+        var result = mockMvc.perform(post("/api/v1/user/")
+                        .content(objectMapper.writeValueAsString(otherUserCreateDto()))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        UserGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+        userId = createResultDto.id();
     }
 
 
@@ -77,6 +111,24 @@ public class UserControllerTest extends TestContainerConfig{
 
         assertNotNull(userCreatedGetDto.createdAt());
         assertTrue(userCreatedGetDto.id().matches("^[0-9a-fA-F-]{36}$"));
+    }
+
+    @ParameterizedTest(name = "Test {index}: Creating user with {1}")
+    @MethodSource("userCreateDtoProvider")
+    @DisplayName("Test if create user throws DataIntegrityViolationException")
+    void createUserThrowsDataIntegrityException(UserCreateDto userCreateDto, String fieldBeingTested, String constraint) throws Exception {
+
+        persistUser();
+
+        var result = mockMvc.perform(post("/api/v1/user/")
+                        .content(objectMapper.writeValueAsString(userCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertEquals(error.constraint(), constraint);
+
     }
 
     @Test
@@ -153,6 +205,25 @@ public class UserControllerTest extends TestContainerConfig{
                 .ignoringFields("id", "dateOfBirth", "nif")
                 .ignoringFieldsMatchingRegexes(".*createdAt")
                 .isEqualTo(expectedUpdatedUserGetDto);
+    }
+
+    @ParameterizedTest(name = "Test {index}: updating user with {1}")
+    @MethodSource("userUpdateDtoProvider")
+    @DisplayName("Test if update user throws DataIntegrityViolationException")
+    void updateUserThrowsDataIntegrityException(UserUpdateDto userUpdateDto, String fieldBeingTested, String constraint) throws Exception {
+
+        persistUser();
+
+        persistUserToUpdate();
+
+       var result = mockMvc.perform(put("/api/v1/user/update/{id}", userId)
+                        .content(objectMapper.writeValueAsString(userUpdateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andReturn();
+
+        Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
+        assertEquals(error.constraint(), constraint);
     }
 
     @Test
