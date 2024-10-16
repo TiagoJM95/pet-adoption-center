@@ -14,13 +14,19 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
 import com.petadoption.center.aspect.Error;
+
+import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
+import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
 import static com.petadoption.center.util.Messages.ORG_DELETE_MESSAGE;
 import static java.lang.String.format;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -30,11 +36,24 @@ public class OrganizationControllerTest extends TestContainerConfig {
     private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
+    private OrganizationGetDto expectedOrganization;
+
+    private String organizationId;
 
     @BeforeEach
     void setUp() {
         organizationCreateDto = organizationCreateDto();
         organizationUpdateDto = orgUpdateDto();
+        expectedOrganization = OrganizationGetDto.builder()
+                .name("Pet Adoption Center")
+                .email("org@email.com")
+                .nif("123456789")
+                .phoneNumber("123456789")
+                .address(createAddress())
+                .websiteUrl("https://www.org.com")
+                .socialMedia(createSocialMedia())
+                .createdAt(LocalDateTime.of(2024,1,1,1,1))
+                .build();
     }
 
     @AfterEach
@@ -127,7 +146,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
         );
     }
 
-        private void persistOrganization() throws Exception {
+        private OrganizationGetDto persistOrganization() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(organizationCreateDto))
@@ -135,7 +154,9 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+        OrganizationGetDto resultDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+        organizationId = resultDto.id();
+        return resultDto;
     }
 
     private void persistOrganizationToUpdate() throws Exception {
@@ -153,13 +174,16 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if create organization works correctly")
     void createOrganizationAndReturnGetDto() throws Exception {
 
-       mockMvc.perform(post("/api/v1/organization/")
-                .content(objectMapper.writeValueAsString(organizationCreateDto))
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name", is(organizationCreateDto.name())))
-                .andExpect(jsonPath("$.email", is(organizationCreateDto.email())))
-                .andReturn();
+       OrganizationGetDto orgGetDto = persistOrganization();
+
+       assertThat(orgGetDto)
+               .usingRecursiveComparison()
+               .ignoringFields("id")
+               .ignoringFieldsMatchingRegexes(".*createdAt")
+               .isEqualTo(expectedOrganization);
+
+        assertNotNull(orgGetDto.createdAt());
+        assertTrue(orgGetDto.id().matches("^[0-9a-fA-F-]{36}$"));
 
     }
 
@@ -186,34 +210,47 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all organizations works correctly")
     void getAllOrganizations() throws Exception {
 
-        persistOrganization();
+        OrganizationGetDto orgCreatedDto= persistOrganization();
 
         mockMvc.perform(get("/api/v1/organization/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(organizationGetDto.id())))
-                .andExpect(jsonPath("$[0].name", is(organizationGetDto.name())))
-                .andExpect(jsonPath("$[0].email", is(organizationGetDto.email())))
-                .andExpect(jsonPath("$[0].nif", is(organizationGetDto.nif())))
-                .andExpect(jsonPath("$[0].phoneNumber", is(organizationGetDto.phoneNumber())))
-                .andExpect(jsonPath("$[0].websiteUrl", is(organizationGetDto.websiteUrl())));
+                .andExpect(jsonPath("$[0].id", is(orgCreatedDto.id())))
+                .andExpect(jsonPath("$[0].name", is(orgCreatedDto.name())))
+                .andExpect(jsonPath("$[0].email", is(orgCreatedDto.email())))
+                .andExpect(jsonPath("$[0].nif", is(orgCreatedDto.nif())))
+                .andExpect(jsonPath("$[0].phoneNumber", is(orgCreatedDto.phoneNumber())))
+                .andExpect(jsonPath("$[0].websiteUrl", is(orgCreatedDto.websiteUrl())));
 
+    }
+
+    @Test
+    @DisplayName("Test if get all organizations return a empty list if no organizations in database")
+    void getAllOrganizationsEmptyList() throws Exception {
+
+        mockMvc.perform(get("/api/v1/organization/")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 
     @Test
     @DisplayName("Test if get organization by id works correctly")
     void getOrganizationById() throws Exception {
 
-        persistOrganization();
+        OrganizationGetDto orgCreated = persistOrganization();
 
-        mockMvc.perform(get("/api/v1/organization/id/{id}", organizationGetDto.id())
+        var result = mockMvc.perform(get("/api/v1/organization/id/{id}", organizationId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(organizationGetDto.id())))
-                .andExpect(jsonPath("$.name", is(organizationGetDto.name())))
-                .andExpect(jsonPath("$.email", is(organizationGetDto.email())))
-                .andExpect(jsonPath("$.nif", is(organizationGetDto.nif())))
-                .andExpect(jsonPath("$.phoneNumber", is(organizationGetDto.phoneNumber())));
+                .andReturn();
+
+        OrganizationGetDto getResult = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
+
+        assertThat(getResult)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(orgCreated);
     }
 
     @Test
@@ -231,7 +268,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         persistOrganization();
 
-        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationGetDto.id())
+        mockMvc.perform(put("/api/v1/organization/update/{id}", organizationId)
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -274,10 +311,10 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         persistOrganization();
 
-        mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationGetDto.id())
+        mockMvc.perform(delete("/api/v1/organization/delete/{id}", organizationId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(ORG_DELETE_MESSAGE, organizationGetDto.id())));
+                .andExpect(content().string(format(ORG_DELETE_MESSAGE, organizationId)));
     }
 
     @Test
