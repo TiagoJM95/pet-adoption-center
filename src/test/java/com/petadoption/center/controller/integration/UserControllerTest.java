@@ -3,6 +3,7 @@ package com.petadoption.center.controller.integration;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.model.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -13,7 +14,10 @@ import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
 import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -24,11 +28,31 @@ public class UserControllerTest extends TestContainerConfig{
     private UserGetDto userGetDto;
     private static UserCreateDto userCreateDto;
     private static UserUpdateDto userUpdateDto;
+    private static UserGetDto expectedUserGetDto;
+    private static UserGetDto expectedUpdatedUserGetDto;
+
+    private String userId;
 
     @BeforeAll
     static void setUp() {
         userCreateDto = userCreateDto();
         userUpdateDto = userUpdateDto();
+        expectedUserGetDto = UserGetDto.builder()
+                .firstName(userCreateDto.firstName())
+                .lastName(userCreateDto.lastName())
+                .email(userCreateDto.email())
+                .nif(userCreateDto.nif())
+                .dateOfBirth(userCreateDto.dateOfBirth())
+                .address(userCreateDto.address())
+                .phoneNumber(userCreateDto.phoneNumber())
+                .build();
+        expectedUpdatedUserGetDto = UserGetDto.builder()
+                .firstName(userUpdateDto.firstName())
+                .lastName(userUpdateDto.lastName())
+                .email(userUpdateDto.email())
+                .address(userUpdateDto.address())
+                .phoneNumber(userUpdateDto.phoneNumber())
+                .build();
     }
 
     @AfterEach
@@ -36,7 +60,7 @@ public class UserControllerTest extends TestContainerConfig{
         userRepository.deleteAll();
     }
 
-    private void persistUser() throws Exception {
+    private UserGetDto persistUser() throws Exception {
 
         var result = mockMvc.perform(post("/api/v1/user/")
                         .content(objectMapper.writeValueAsString(userCreateDto))
@@ -44,8 +68,9 @@ public class UserControllerTest extends TestContainerConfig{
                 .andExpect(status().isCreated())
                 .andReturn();
 
-        userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-
+        UserGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+        userId = createResultDto.id();
+        return createResultDto;
     }
 
 
@@ -53,46 +78,55 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if create user works correctly")
     void createUserShouldReturnUser() throws Exception {
 
-       var result = mockMvc.perform(post("/api/v1/user/")
-                        .content(objectMapper.writeValueAsString(userCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.firstName", is(userCreateDto.firstName())))
-                .andExpect(jsonPath("$.lastName", is(userCreateDto.lastName())))
-                .andReturn();
+        UserGetDto userCreatedGetDto = persistUser();
+
+        assertThat(userCreatedGetDto)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(expectedUserGetDto);
+
+        assertNotNull(userCreatedGetDto.createdAt());
+        assertTrue(userCreatedGetDto.id().matches("^[0-9a-fA-F-]{36}$"));
     }
 
     @Test
     @DisplayName("Test if get all users works correctly")
     void getAllAfterCreatingUser() throws Exception {
 
-        persistUser();
+        UserGetDto userCreatedGetDto = persistUser();
 
-        mockMvc.perform(get("/api/v1/user/")
-                        .param("page", "0")
-                        .param("size", "5")
-                        .param("sort", "id")
+        var result = mockMvc.perform(get("/api/v1/user/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(1)))
-                .andExpect(jsonPath("$[0].id", is(userGetDto.id())))
-                .andExpect(jsonPath("$[0].firstName", is(userGetDto.firstName())))
-                .andExpect(jsonPath("$[0].lastName", is(userGetDto.lastName())))
-                .andExpect(jsonPath("$[0].nif", is(userGetDto.nif())));
+                .andReturn();
+
+        UserGetDto[] userGetDtoArray = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto[].class);
+        assertThat(userGetDtoArray).hasSize(1);
+        assertThat(userGetDtoArray[0])
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(userCreatedGetDto);
+
     }
 
     @Test
     @DisplayName("Test if get user by id works correctly")
     void getUserByIdShouldReturn() throws Exception {
 
-        persistUser();
+        UserGetDto userCreatedGetDto = persistUser();
 
-        mockMvc.perform(get("/api/v1/user/id/{id}", userGetDto.id())
+        var result = mockMvc.perform(get("/api/v1/user/id/{id}", userId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(userGetDto.id())))
-                .andExpect(jsonPath("$.firstName", is(userGetDto.firstName())))
-                .andExpect(jsonPath("$.lastName", is(userGetDto.lastName())));
+                .andReturn();
+
+        UserGetDto getResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+        assertThat(getResultDto)
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(userCreatedGetDto);
     }
 
     @Test
@@ -110,12 +144,20 @@ public class UserControllerTest extends TestContainerConfig{
 
         persistUser();
 
-        mockMvc.perform(put("/api/v1/user/update/{id}", userGetDto.id())
+        var result = mockMvc.perform(put("/api/v1/user/update/{id}", userId)
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName", is(userUpdateDto.firstName())))
-                .andExpect(jsonPath("$.lastName", is(userUpdateDto.lastName())));
+                .andReturn();
+
+        UserGetDto updateResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
+        assertThat(updateResultDto)
+                .usingRecursiveComparison()
+                .ignoringFields("id", "dateOfBirth", "nif")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(expectedUpdatedUserGetDto);
+
+
     }
 
     @Test
@@ -135,10 +177,10 @@ public class UserControllerTest extends TestContainerConfig{
 
         persistUser();
 
-        mockMvc.perform(delete("/api/v1/user/delete/{id}", userGetDto.id())
+        mockMvc.perform(delete("/api/v1/user/delete/{id}", userId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(USER_DELETE_MESSAGE, userGetDto.id())));
+                .andExpect(content().string(format(USER_DELETE_MESSAGE, userId)));
     }
 
     @Test
