@@ -17,6 +17,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -105,14 +106,14 @@ public class ExceptionsHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.REQUEST_TIMEOUT)
+    @ResponseStatus(value = HttpStatus.I_AM_A_TEAPOT)
     public Error handleGeneralException(Exception ex, HttpServletRequest request) {
         logger.error(LOGGER_EXCEPTION, ex.getMessage());
         return Error.builder()
                 .timestamp(new Date())
-                .status(HttpStatus.REQUEST_TIMEOUT.value())
-                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
-                .message(ex.getMessage())
+                .status(HttpStatus.I_AM_A_TEAPOT.value())
+                .error(HttpStatus.I_AM_A_TEAPOT.getReasonPhrase())
+                .message(ex.getMessage() + ex.getClass())
                 .path(request.getRequestURI())
                 .method(request.getMethod())
                 .build();
@@ -130,8 +131,39 @@ public class ExceptionsHandler {
         });
         return Error.builder()
                 .timestamp(new Date())
-                .status(HttpStatus.REQUEST_TIMEOUT.value())
-                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .path(request.getRequestURI())
+                .method(request.getMethod())
+                .validationIssue(errors)
+                .build();
+    }
+
+    @ExceptionHandler(HandlerMethodValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Error handleListValidationException(HandlerMethodValidationException ex, HttpServletRequest request) {
+        logger.error(LOGGER_LIST_VALIDATION, ex.getMessage());
+        Map<String, String> errors = new HashMap<>();
+
+        if(ex.getDetailMessageArguments() != null) {
+            Object details = ex.getDetailMessageArguments()[0];
+            String detailStr = details.toString().replace(" and ", "");
+            String[] detailParts = detailStr.split(",");
+
+            for (String part : detailParts) {
+                String[] fieldErrorPair = part.split(": ", 2);
+                if (fieldErrorPair.length == 2) {
+                    String fieldName = fieldErrorPair[0].trim();
+                    String message = fieldErrorPair[1].trim();
+                    errors.put(fieldName, message);
+                }
+            }
+        }
+
+        return Error.builder()
+                .timestamp(new Date())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .path(request.getRequestURI())
                 .method(request.getMethod())
                 .validationIssue(errors)
@@ -144,8 +176,8 @@ public class ExceptionsHandler {
         logger.error(LOGGER_MISMATCH, ex.getMessage());
         return Error.builder()
                 .timestamp(new Date())
-                .status(HttpStatus.REQUEST_TIMEOUT.value())
-                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .path(request.getRequestURI())
                 .method(request.getMethod())
                 .message(ex.getMessage())
@@ -158,8 +190,8 @@ public class ExceptionsHandler {
         logger.error(LOGGER_STATUS, ex.getMessage());
         return Error.builder()
                 .timestamp(new Date())
-                .status(HttpStatus.REQUEST_TIMEOUT.value())
-                .error(HttpStatus.REQUEST_TIMEOUT.getReasonPhrase())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                 .path(request.getRequestURI())
                 .method(request.getMethod())
                 .message(ex.getMessage())

@@ -25,7 +25,6 @@ import static com.petadoption.center.testUtils.TestDtoFactory.userCreateDto;
 import static com.petadoption.center.testUtils.TestDtoFactory.userUpdateDto;
 import static com.petadoption.center.testUtils.TestEntityFactory.createUser;
 import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
-import static com.petadoption.center.util.Messages.USER_NOT_FOUND;
 import static java.lang.String.format;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

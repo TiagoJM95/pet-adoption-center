@@ -39,6 +39,7 @@ public class Messages {
     public static final String LOGGER_NO_BODY = "HttpMessageNotReadableException - No body provided: {} ";
     public static final String LOGGER_DUPLICATE = "DataIntegrityViolationException - DB unique constraints violation: {} ";
     public static final String LOGGER_VALIDATION = "MethodArgumentNotValidException - Provided body failed validation: {} ";
+    public static final String LOGGER_LIST_VALIDATION = "HandlerMethodValidationException - Provided list failed validation: {} ";
     public static final String LOGGER_MISMATCH = "BreedMismatchException - Breed does not belong to species: {} ";
     public static final String LOGGER_STATUS = "InvalidStatusChangeException - New value provided for status is not possible: {} ";
 

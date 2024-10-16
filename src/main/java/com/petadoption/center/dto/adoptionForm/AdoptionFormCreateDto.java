@@ -4,11 +4,11 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 import org.hibernate.validator.constraints.UUID;
 
-import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Messages.BLANK_FIELD;
+import static com.petadoption.center.util.Messages.ONLY_UUID;
 
 @Builder
 public record AdoptionFormCreateDto(
