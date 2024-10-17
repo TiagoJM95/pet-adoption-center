@@ -53,8 +53,8 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         return Stream.of(
                 Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueorgemail"),
-                Arguments.of(baseOrg.toBuilder().nif("123456789").build(), "repeated nif", "uniqueorgnif"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
+                Arguments.of(baseOrg.toBuilder().nipc("523456789").build(), "repeated nipc", "uniqueorgnipc"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("923456789").build(), "repeated phone number", "uniqueorgphonenumber"),
                 Arguments.of(baseOrg.toBuilder().address(Address.builder()
                         .street("Rua de Santo Antonio, 123")
                         .postalCode("4444-444")
@@ -86,7 +86,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
         OrganizationUpdateDto baseOrg = OrganizationUpdateDto.builder()
                 .name("Adopting Center")
                 .email("adopting@email.com")
-                .phoneNumber("987654123")
+                .phoneNumber("937654123")
                 .address(Address.builder()
                         .city("Lisboa")
                         .postalCode("1234-567")
@@ -104,7 +104,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         return Stream.of(
                 Arguments.of(baseOrg.toBuilder().email("org@email.com").build(), "repeated email", "uniqueorgemail"),
-                Arguments.of(baseOrg.toBuilder().phoneNumber("123456789").build(), "repeated phone number", "uniqueorgphonenumber"),
+                Arguments.of(baseOrg.toBuilder().phoneNumber("923456789").build(), "repeated phone number", "uniqueorgphonenumber"),
                 Arguments.of(baseOrg.toBuilder().address(Address.builder()
                                 .street("Rua de Santo Antonio, 123")
                                 .postalCode("4444-444")
@@ -164,8 +164,8 @@ public class OrganizationControllerTest extends TestContainerConfig {
         OrganizationGetDto expectedOrganization = OrganizationGetDto.builder()
                 .name("Pet Adoption Center")
                 .email("org@email.com")
-                .nif("123456789")
-                .phoneNumber("123456789")
+                .nipc("523456789")
+                .phoneNumber("923456789")
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
                 .socialMedia(createSocialMedia())
@@ -227,7 +227,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .andExpect(jsonPath("$[0].id", is(orgCreatedDto.id())))
                 .andExpect(jsonPath("$[0].name", is(orgCreatedDto.name())))
                 .andExpect(jsonPath("$[0].email", is(orgCreatedDto.email())))
-                .andExpect(jsonPath("$[0].nif", is(orgCreatedDto.nif())))
+                .andExpect(jsonPath("$[0].nipc", is(orgCreatedDto.nipc())))
                 .andExpect(jsonPath("$[0].phoneNumber", is(orgCreatedDto.phoneNumber())))
                 .andExpect(jsonPath("$[0].websiteUrl", is(orgCreatedDto.websiteUrl())));
     }
@@ -295,7 +295,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
 
         assertThat(getUpdateResult)
                 .usingRecursiveComparison()
-                .ignoringFields("id", "nif")
+                .ignoringFields("id", "nipc")
                 .ignoringFieldsMatchingRegexes(".*createdAt")
                 .isEqualTo(organizationUpdatedGetDto);
     }

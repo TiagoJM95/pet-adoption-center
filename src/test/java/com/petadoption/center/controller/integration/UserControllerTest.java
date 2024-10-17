@@ -48,8 +48,8 @@ public class UserControllerTest extends TestContainerConfig{
 
         return Stream.of(
                 Arguments.of(baseUser.toBuilder().email("user@email.com").build(), "repeated email", "uniqueuseremail"),
-                Arguments.of(baseUser.toBuilder().nif("987654321").build(), "repeated nif", "uniqueusernif"),
-                Arguments.of(baseUser.toBuilder().phoneNumber("987654321").build(), "repeated phone number", "uniqueuserphonenumber"));
+                Arguments.of(baseUser.toBuilder().nif("287654321").build(), "repeated nif", "uniqueusernif"),
+                Arguments.of(baseUser.toBuilder().phoneNumber("917654321").build(), "repeated phone number", "uniqueuserphonenumber"));
     }
 
     static Stream<Arguments> userUpdateDtoProvider() {
@@ -58,7 +58,7 @@ public class UserControllerTest extends TestContainerConfig{
 
         return Stream.of(
                 Arguments.of(baseUser.toBuilder().email("user@email.com").build(), "repeated email", "uniqueuseremail"),
-                Arguments.of(baseUser.toBuilder().phoneNumber("987654321").build(), "repeated phone number", "uniqueuserphonenumber"));
+                Arguments.of(baseUser.toBuilder().phoneNumber("917654321").build(), "repeated phone number", "uniqueuserphonenumber"));
     }
 
     private UserGetDto persistUser() throws Exception {

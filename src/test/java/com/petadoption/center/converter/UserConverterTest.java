@@ -30,13 +30,13 @@ public class UserConverterTest {
         assertEquals("John", user.getFirstName());
         assertEquals("Doe", user.getLastName());
         assertEquals("user@email.com", user.getEmail());
-        assertEquals("987654321", user.getNif());
+        assertEquals("287654321", user.getNif());
         assertEquals(LocalDate.of(1990, 1, 1), user.getDateOfBirth());
         assertEquals("Rua de Santo Antonio, 123", user.getAddress().getStreet());
         assertEquals("Gondomar", user.getAddress().getCity());
         assertEquals("Porto", user.getAddress().getState());
         assertEquals("4444-444", user.getAddress().getPostalCode());
-        assertEquals("987654321", user.getPhoneNumber());
+        assertEquals("917654321", user.getPhoneNumber());
 
     }
 
@@ -51,13 +51,13 @@ public class UserConverterTest {
         assertEquals("John", userGetDto.firstName());
         assertEquals("Doe", userGetDto.lastName());
         assertEquals("user@email.com", userGetDto.email());
-        assertEquals("987654321", userGetDto.nif());
+        assertEquals("287654321", userGetDto.nif());
         assertEquals(LocalDate.of(1990, 1, 1), userGetDto.dateOfBirth());
         assertEquals("Rua de Santo Antonio, 123", userGetDto.address().getStreet());
         assertEquals("Gondomar", userGetDto.address().getCity());
         assertEquals("Porto", userGetDto.address().getState());
         assertEquals("4444-444", userGetDto.address().getPostalCode());
-        assertEquals("987654321", userGetDto.phoneNumber());
+        assertEquals("917654321", userGetDto.phoneNumber());
 
     }
 

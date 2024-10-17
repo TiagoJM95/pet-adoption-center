@@ -40,8 +40,8 @@ public class OrganizationConverterTest {
 
         assertEquals("Pet Adoption Center", org.getName());
         assertEquals("org@email.com", org.getEmail());
-        assertEquals("123456789", org.getNif());
-        assertEquals("123456789", org.getPhoneNumber());
+        assertEquals("523456789", org.getNipc());
+        assertEquals("923456789", org.getPhoneNumber());
         assertEquals("Rua de Santo Antonio, 123", org.getAddress().getStreet());
         assertEquals("Gondomar", org.getAddress().getCity());
         assertEquals("Porto", org.getAddress().getState());
@@ -61,8 +61,8 @@ public class OrganizationConverterTest {
         assertEquals("777777-77777777-7777", org.getId());
         assertEquals("Pet Adoption Center", org.getName());
         assertEquals("org@email.com", org.getEmail());
-        assertEquals("123456789", org.getNif());
-        assertEquals("123456789", org.getPhoneNumber());
+        assertEquals("523456789", org.getNipc());
+        assertEquals("923456789", org.getPhoneNumber());
         assertEquals("Rua de Santo Antonio, 123", org.getAddress().getStreet());
         assertEquals("Gondomar", org.getAddress().getCity());
         assertEquals("Porto", org.getAddress().getState());
@@ -84,7 +84,7 @@ public class OrganizationConverterTest {
         assertEquals("777777-77777777-7777", organizationGetDto.id());
         assertEquals("Pet Adoption Center", organizationGetDto.name());
         assertEquals("org@email.com", organizationGetDto.email());
-        assertEquals("123456789", organizationGetDto.phoneNumber());
+        assertEquals("923456789", organizationGetDto.phoneNumber());
         assertEquals("Rua de Santo Antonio, 123", organizationGetDto.address().getStreet());
         assertEquals("Gondomar", organizationGetDto.address().getCity());
         assertEquals("Porto", organizationGetDto.address().getState());

@@ -56,7 +56,7 @@ public class OrganizationControllerTest {
                 .id("777777-77777777-7777")
                 .name("Pet Adoption Center")
                 .email("email@email.com")
-                .nif("123456789")
+                .nipc("123456789")
                 .phoneNumber("123456789")
                 .address(createAddress())
                 .websiteUrl("https://www.org.com")
