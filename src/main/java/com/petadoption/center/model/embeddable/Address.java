@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import static com.petadoption.center.util.Messages.*;
@@ -16,7 +17,7 @@ import static com.petadoption.center.util.Messages.*;
 @Getter
 @Setter
 @Builder
-public class Address {
+public class Address implements Serializable {
 
     @NotBlank(message = BLANK_FIELD)
     @Pattern(regexp = "[a-zA-Z_0-9, .-]+", message = STREET_CHARACTERS)
