@@ -11,7 +11,7 @@ public class OrganizationConverter {
         return Organization.builder().
                 name(dto.name()).
                 email(dto.email()).
-                nif(dto.nif()).
+                nipc(dto.nipc()).
                 phoneNumber(dto.phoneNumber()).
                 address(dto.address()).
                 websiteUrl(dto.websiteUrl()).
@@ -25,7 +25,7 @@ public class OrganizationConverter {
                 id(dto.id()).
                 name(dto.name()).
                 email(dto.email()).
-                nif(dto.nif()).
+                nipc(dto.nipc()).
                 phoneNumber(dto.phoneNumber()).
                 address(dto.address()).
                 websiteUrl(dto.websiteUrl()).
@@ -40,7 +40,7 @@ public class OrganizationConverter {
                 .id(org.getId())
                 .name(org.getName())
                 .email(org.getEmail())
-                .nif(org.getNif())
+                .nipc(org.getNipc())
                 .phoneNumber(org.getPhoneNumber())
                 .address(org.getAddress())
                 .websiteUrl(org.getWebsiteUrl())

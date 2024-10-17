@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Regex.PHONE_NUMBER_REGEX;
 
 @Builder(toBuilder = true)
 public record OrganizationUpdateDto(
@@ -21,8 +22,7 @@ public record OrganizationUpdateDto(
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
-        @Pattern(regexp = "[0-9]+", message = PHONE_NUMBER_FORMAT)
-        @Size(max = 10, message = PHONE_NUMBER_SIZE)
+        @Pattern(regexp = PHONE_NUMBER_REGEX, message = PHONE_NUMBER_SIZE)
         String phoneNumber,
 
         @Valid

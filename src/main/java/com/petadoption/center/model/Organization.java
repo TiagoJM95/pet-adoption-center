@@ -19,7 +19,7 @@ import java.util.Objects;
 @Builder
 @Table(name = "organizations", uniqueConstraints = {
         @UniqueConstraint(name = "UniqueOrgEmail", columnNames = {"email"}),
-        @UniqueConstraint(name = "UniqueOrgNif", columnNames = {"nif"}),
+        @UniqueConstraint(name = "UniqueOrgNipc", columnNames = {"nipc"}),
         @UniqueConstraint(name = "UniqueOrgPhoneNumber", columnNames = {"phone_number"}),
         @UniqueConstraint(name = "UniqueOrgStreetAndPostalCode", columnNames = {"street", "postal_code"}),
         @UniqueConstraint(name = "UniqueOrgWebsiteUrl", columnNames = {"website_url"}),
@@ -35,7 +35,7 @@ public class Organization {
     private String id;
     private String name;
     private String email;
-    private String nif;
+    private String nipc;
 
     @Column(name = "phone_number")
     private String phoneNumber;
@@ -73,12 +73,12 @@ public class Organization {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Organization that = (Organization) o;
-        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(nif, that.nif) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(address, that.address) && Objects.equals(websiteUrl, that.websiteUrl) && Objects.equals(socialMedia, that.socialMedia) && Objects.equals(petsOwned, that.petsOwned);
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(email, that.email) && Objects.equals(nipc, that.nipc) && Objects.equals(phoneNumber, that.phoneNumber) && Objects.equals(address, that.address) && Objects.equals(websiteUrl, that.websiteUrl) && Objects.equals(socialMedia, that.socialMedia) && Objects.equals(petsOwned, that.petsOwned);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, email, nif, phoneNumber, address, websiteUrl, socialMedia, petsOwned);
+        return Objects.hash(id, name, email, nipc, phoneNumber, address, websiteUrl, socialMedia, petsOwned);
     }
 
     @PrePersist
