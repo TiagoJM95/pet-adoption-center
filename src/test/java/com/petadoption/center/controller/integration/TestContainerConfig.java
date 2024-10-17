@@ -21,13 +21,10 @@ public class TestContainerConfig {
 
     @Autowired
     protected MockMvc mockMvc;
-
     @Autowired
     protected ObjectMapper objectMapper;
-
     @Autowired
     protected TestPersistenceHelper helper;
-
     @Autowired
     protected  UserRepository userRepository;
     @Autowired
@@ -45,7 +42,7 @@ public class TestContainerConfig {
     @Autowired
     protected  InterestRepository interestRepository;
 
-
+    protected static final String URL = "/api/v1/";
 
     private static final PostgreSQLContainer<?> POSTGRE_SQL_CONTAINER;
 

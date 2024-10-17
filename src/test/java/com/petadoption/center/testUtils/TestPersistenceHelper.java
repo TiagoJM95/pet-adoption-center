@@ -21,15 +21,8 @@ public class TestPersistenceHelper {
 
     private Species species;
     private Breed primaryBreed;
-    private Breed secondaryBreed;
     private Color primaryColor;
-    private Color secondaryColor;
-    private Color tertiaryColor;
-    private Pet pet;
-    private User user;
     private Organization organization;
-    private AdoptionForm adoptionForm;
-    private Interest interest;
 
     @Autowired
     public TestPersistenceHelper(UserRepository userRepository, PetRepository petRepository, OrganizationRepository organizationRepository, AdoptionFormRepository adoptionFormRepository, SpeciesRepository speciesRepository, BreedRepository breedRepository, ColorRepository colorRepository, InterestRepository interestRepository) {
@@ -41,25 +34,6 @@ public class TestPersistenceHelper {
         this.breedRepository = breedRepository;
         this.colorRepository = colorRepository;
         this.interestRepository = interestRepository;
-    }
-
-    public String persistTestUser() {
-        user = createUserWithoutId();
-        userRepository.save(user);
-        return user.getId();
-    }
-
-    public String persistTestPet() {
-        pet = createPetWithoutId();
-        pet.setSpecies(species);
-        pet.setPrimaryBreed(primaryBreed);
-        pet.setSecondaryBreed(secondaryBreed);
-        pet.setPrimaryColor(primaryColor);
-        pet.setSecondaryColor(secondaryColor);
-        pet.setTertiaryColor(tertiaryColor);
-        pet.setOrganization(organization);
-        petRepository.save(pet);
-        return pet.getId();
     }
 
     public String persistTestSpecies() {
@@ -74,12 +48,6 @@ public class TestPersistenceHelper {
         return organization.getId();
     }
 
-    public String persistTestAdoptionForm() {
-        AdoptionForm adoptionForm = new AdoptionForm();
-        adoptionFormRepository.save(adoptionForm);
-        return adoptionForm.getId();
-    }
-
     public String persistTestPrimaryBreed() {
         primaryBreed = Breed.builder()
                 .name("Shepperd Doge")
@@ -89,37 +57,10 @@ public class TestPersistenceHelper {
         return primaryBreed.getId();
     }
 
-    public String persistTestSecondaryBreed() {
-        secondaryBreed = Breed.builder()
-                .name("Labrador")
-                .species(species)
-                .build();
-        breedRepository.save(secondaryBreed);
-        return secondaryBreed.getId();
-    }
-
     public String persistTestPrimaryColor() {
         primaryColor = createPrimaryColorWithoutId();
         colorRepository.save(primaryColor);
         return primaryColor.getId();
-    }
-
-    public String persistTestSecondaryColor() {
-        secondaryColor = createSecondaryColorWithoutId();
-        colorRepository.save(secondaryColor);
-        return secondaryColor.getId();
-    }
-
-    public String persistTestTertiaryColor() {
-        tertiaryColor = createTertiaryColorWithoutId();
-        colorRepository.save(tertiaryColor);
-        return tertiaryColor.getId();
-    }
-
-    public String persistTestInterest() {
-        Interest interest = new Interest();
-        interestRepository.save(interest);
-        return interest.getId();
     }
 
     public void cleanAll() {

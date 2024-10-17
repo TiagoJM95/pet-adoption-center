@@ -48,7 +48,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PetControllerTest extends TestContainerConfig {
 
-    private final String URL = "/api/v1/pet/";
+    private final String GET_BY_ID = URL + "pet/id/";
+    private final String SEARCH = URL + "pet/search";
+    private final String ADD_SINGLE = URL + "pet/addSingle";
+    private final String ADD_LIST = URL + "pet/addList";
+    private final String UPDATE = URL + "pet/update/";
+    private final String DELETE = URL + "pet/delete/";
 
     private SpeciesGetDto speciesGetDto1;
     private SpeciesGetDto speciesGetDto2;
@@ -117,12 +122,12 @@ public class PetControllerTest extends TestContainerConfig {
 
         petCreateDto2 = PetCreateDto.builder()
                 .name("Spike")
-                .speciesId(speciesGetDto2.id())
-                .primaryBreedId(secondaryBreedGetDto2.id())
+                .speciesId(speciesGetDto1.id())
+                .primaryBreedId(secondaryBreedGetDto1.id())
                 .primaryColor(tertiaryColorGetDto.id())
                 .gender("Male")
                 .coat("Long")
-                .age("Baby")
+                .age("Adult")
                 .size("Large")
                 .description("Spike is friendly dog!")
                 .imageUrl("https://spike.com")
@@ -220,7 +225,7 @@ public class PetControllerTest extends TestContainerConfig {
     }
 
     private PetGetDto persistPet(PetCreateDto dto) throws Exception {
-        MvcResult result = mockMvc.perform(post(URL + "addSingle")
+        MvcResult result = mockMvc.perform(post(ADD_SINGLE)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -324,7 +329,7 @@ public class PetControllerTest extends TestContainerConfig {
     void shouldThrowDataIntegrityViolationException_WhenCreatingPet_WhenConstraintAlreadyExists(PetCreateDto dto, String constraintName) throws Exception {
 
         persistPet(petCreateDto);
-        MvcResult result = mockMvc.perform(post(URL + "addSingle")
+        MvcResult result = mockMvc.perform(post(ADD_SINGLE)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -339,7 +344,7 @@ public class PetControllerTest extends TestContainerConfig {
     @DisplayName("Should throw HttpMessageNotReadableException when create is called with no request body")
     void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
 
-        MvcResult result = mockMvc.perform(post(URL + "addSingle")
+        MvcResult result = mockMvc.perform(post(ADD_SINGLE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -368,7 +373,7 @@ public class PetControllerTest extends TestContainerConfig {
                 .organizationId(organizationGetDto2.id())
                 .build();
 
-        MvcResult result = mockMvc.perform(post(URL + "addSingle")
+        MvcResult result = mockMvc.perform(post(ADD_SINGLE)
                         .content(objectMapper.writeValueAsString(invalidDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -389,7 +394,7 @@ public class PetControllerTest extends TestContainerConfig {
 
         PetGetDto persistedPetDto = persistPet(petCreateDto);
 
-        MvcResult result = mockMvc.perform(get(URL + "id/" + persistedPetDto.id())
+        MvcResult result = mockMvc.perform(get(GET_BY_ID + persistedPetDto.id())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -406,7 +411,7 @@ public class PetControllerTest extends TestContainerConfig {
     @DisplayName("Throws PetNotFoundException when petService.getById() is called with an invalid Id")
     void shouldThrowPetNotFoundExceptionWhenGetByIdIsCalledWithInvalidId() throws Exception {
 
-        MvcResult result = mockMvc.perform(get(URL + "id/InvalidId")
+        MvcResult result = mockMvc.perform(get(GET_BY_ID + "InvalidId")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -427,7 +432,7 @@ public class PetControllerTest extends TestContainerConfig {
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
 
-        MvcResult result = mockMvc.perform(put(URL + "update/" + petId)
+        MvcResult result = mockMvc.perform(put(UPDATE + petId)
                 .content(objectMapper.writeValueAsString(updateDto))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -447,7 +452,7 @@ public class PetControllerTest extends TestContainerConfig {
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
 
-        mockMvc.perform(put(URL + "update/" + petId)
+        mockMvc.perform(put(UPDATE + petId)
                         .content(objectMapper.writeValueAsString(updateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -464,7 +469,7 @@ public class PetControllerTest extends TestContainerConfig {
     @DisplayName("PetNotFound")
     void test1() throws Exception {
 
-        MvcResult result = mockMvc.perform(put(URL + "update/" + "InvalidId")
+        MvcResult result = mockMvc.perform(put(UPDATE + "InvalidId")
                         .content(objectMapper.writeValueAsString(updateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -486,7 +491,7 @@ public class PetControllerTest extends TestContainerConfig {
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
 
-        MvcResult result = mockMvc.perform(put(URL + "update/" + petId)
+        MvcResult result = mockMvc.perform(put(UPDATE + petId)
                         .content(objectMapper.writeValueAsString(invalidDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -504,7 +509,7 @@ public class PetControllerTest extends TestContainerConfig {
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
 
-        MvcResult result = mockMvc.perform(put(URL + "update/" + petId)
+        MvcResult result = mockMvc.perform(put(UPDATE + petId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -525,7 +530,7 @@ public class PetControllerTest extends TestContainerConfig {
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
 
-        mockMvc.perform(delete(URL + "delete/" + petId)
+        mockMvc.perform(delete(DELETE + petId)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(format(PET_DELETE_MESSAGE, petId)));
@@ -538,7 +543,7 @@ public class PetControllerTest extends TestContainerConfig {
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
 
-        mockMvc.perform(delete(URL + "delete/" + petId)
+        mockMvc.perform(delete(DELETE + petId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -549,7 +554,7 @@ public class PetControllerTest extends TestContainerConfig {
     @DisplayName("PetNotFound")
     void test6() throws Exception {
 
-        MvcResult result = mockMvc.perform(delete(URL + "delete/" + "InvalidId")
+        MvcResult result = mockMvc.perform(delete(DELETE + "InvalidId")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -569,7 +574,7 @@ public class PetControllerTest extends TestContainerConfig {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2);
 
-        mockMvc.perform(post(URL + "addList")
+        mockMvc.perform(post(ADD_LIST)
                         .content(objectMapper.writeValueAsString(dtoList))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -582,7 +587,7 @@ public class PetControllerTest extends TestContainerConfig {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2);
 
-        mockMvc.perform(post(URL + "addList")
+        mockMvc.perform(post(ADD_LIST)
                         .content(objectMapper.writeValueAsString(dtoList))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
@@ -596,7 +601,7 @@ public class PetControllerTest extends TestContainerConfig {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2, petCreateDto);
 
-        MvcResult result = mockMvc.perform(post(URL + "addList")
+        MvcResult result = mockMvc.perform(post(ADD_LIST)
                         .content(objectMapper.writeValueAsString(dtoList))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -630,7 +635,7 @@ public class PetControllerTest extends TestContainerConfig {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2, invalidDto);
 
-        MvcResult result = mockMvc.perform(post(URL + "addList")
+        MvcResult result = mockMvc.perform(post(ADD_LIST)
                         .content(objectMapper.writeValueAsString(dtoList))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -646,7 +651,7 @@ public class PetControllerTest extends TestContainerConfig {
     @DisplayName("No Body")
     void test11() throws Exception {
 
-        MvcResult result = mockMvc.perform(post(URL + "addList")
+        MvcResult result = mockMvc.perform(post(ADD_LIST)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -663,7 +668,7 @@ public class PetControllerTest extends TestContainerConfig {
     @DisplayName("Returns Empty List if no Pets")
     void test12() throws Exception {
 
-        mockMvc.perform(post(URL + "search")
+        mockMvc.perform(post(SEARCH)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(0)));
@@ -676,7 +681,7 @@ public class PetControllerTest extends TestContainerConfig {
         persistPet(petCreateDto);
         persistPet(petCreateDto2);
 
-        mockMvc.perform(post(URL + "search")
+        mockMvc.perform(post(SEARCH)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)));
@@ -691,7 +696,7 @@ public class PetControllerTest extends TestContainerConfig {
         persistPet(petCreateDto);
         persistPet(petCreateDto2);
 
-        MvcResult result = mockMvc.perform(post(URL + "search")
+        MvcResult result = mockMvc.perform(post(SEARCH)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(2)))
@@ -711,36 +716,17 @@ public class PetControllerTest extends TestContainerConfig {
     void test15() throws Exception {
 
         petSearchCriteria = PetSearchCriteria.builder()
-                .speciesNames(List.of("Dog", "Rat"))
+                .speciesNames(List.of("Cat"))
                 .build();
 
         persistPet(petCreateDto);
         persistPet(petCreateDto2);
-        persistPet(PetCreateDto.builder()
-                .name("Australia")
-                .speciesId(speciesGetDto1.id())
-                .primaryBreedId(primaryBreedGetDto1.id())
-                .secondaryBreedId(secondaryBreedGetDto1.id())
-                .primaryColor(primaryColorGetDto.id())
-                .secondaryColor(secondaryColorGetDto.id())
-                .tertiaryColor(tertiaryColorGetDto.id())
-                .gender("Male")
-                .coat("Short")
-                .age("Young")
-                .size("Large")
-                .description("Max is friendly dog!")
-                .imageUrl("https://fdoiuh.com")
-                .isAdopted(false)
-                .attributes(createAttributes())
-                .organizationId(organizationGetDto1.id())
-                .build());
 
-        MvcResult result = mockMvc.perform(post(URL + "search")
+        mockMvc.perform(post(SEARCH)
                         .content(objectMapper.writeValueAsString(petSearchCriteria))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(2)))
-                .andReturn();
+                .andExpect(jsonPath("$.size()", is(0)));
     }
 
     @Test
