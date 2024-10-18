@@ -45,7 +45,7 @@ public class Messages {
 
     // VALIDATION MESSAGES
     public static final String BLANK_FIELD = "This field cannot be blank";
-    public static final String CHARACTERS_LIMIT = "Must be between 7 and 100 characters";
+    public static final String CHARACTERS_LIMIT = "Must be less than 100 characters";
     public static final String STREET_CHARACTERS = "Special characters allowed are  , . - ";
     public static final String ONLY_LETTERS = "Only letters are allowed";
     public static final String ONLY_NUMBERS = "Only numbers are allowed";

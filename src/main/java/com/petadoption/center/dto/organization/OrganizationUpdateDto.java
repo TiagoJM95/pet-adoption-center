@@ -10,15 +10,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
-import static com.petadoption.center.util.Regex.PHONE_NUMBER_REGEX;
+import static com.petadoption.center.util.Regex.*;
 
 @Builder(toBuilder = true)
 public record OrganizationUpdateDto(
 
-        @Pattern(regexp = "[a-zA-Z_0-9 .-]+", message = LETTERS_AND_NUMBERS)
+        @Pattern(regexp = ORG_NAME_REGEX, message = LETTERS_AND_NUMBERS)
         String name,
 
-        @Email
+        @Email(regexp = EMAIL_REGEX, message = EMAIL_INVALID)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
@@ -29,7 +29,7 @@ public record OrganizationUpdateDto(
         @NotNull(message = BLANK_FIELD)
         Address address,
 
-        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
+        @Pattern(regexp = WEBSITE_REGEX, message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,
 

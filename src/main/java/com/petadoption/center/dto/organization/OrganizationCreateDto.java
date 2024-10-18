@@ -13,11 +13,11 @@ import static com.petadoption.center.util.Regex.*;
 public record OrganizationCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z_0-9 .-]+", message = LETTERS_AND_NUMBERS)
+        @Pattern(regexp = ORG_NAME_REGEX, message = LETTERS_AND_NUMBERS)
         String name,
 
         @NotBlank(message = BLANK_FIELD)
-        @Email
+        @Email(regexp = EMAIL_REGEX, message = EMAIL_INVALID)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 

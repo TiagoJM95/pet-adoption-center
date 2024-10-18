@@ -15,12 +15,12 @@ import static com.petadoption.center.util.Regex.*;
 public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
+        @Pattern(regexp = USER_NAME_REGEX, message = ONLY_LETTERS)
         @NotNull
         String firstName,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
+        @Pattern(regexp = USER_NAME_REGEX, message = ONLY_LETTERS)
         String lastName,
 
         @NotBlank(message = BLANK_FIELD)
