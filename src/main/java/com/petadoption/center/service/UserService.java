@@ -1,6 +1,5 @@
 package com.petadoption.center.service;
 
-import com.petadoption.center.controller.UserController;
 import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.converter.UserConverter;
 import com.petadoption.center.dto.pet.PetGetDto;
@@ -14,8 +13,6 @@ import com.petadoption.center.repository.UserRepository;
 import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import com.petadoption.center.util.Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.Pageable;
