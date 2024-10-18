@@ -24,6 +24,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class ColorControllerTest extends TestContainerConfig {
 
+    private final String GET_OR_CREATE = URL + "color/";
+    private final String GET_BY_ID = URL + "color/id/{id}";
+    private final String DELETE = URL + "color/delete/{id}";
+
     private ColorCreateDto colorCreateDto;
     private String colorId;
 
@@ -40,7 +44,7 @@ public class ColorControllerTest extends TestContainerConfig {
 
     private ColorGetDto persistColor() throws Exception {
 
-        var result =  mockMvc.perform(post("/api/v1/color/")
+        var result =  mockMvc.perform(post(GET_OR_CREATE)
                         .content(objectMapper.writeValueAsString(colorCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
@@ -51,9 +55,24 @@ public class ColorControllerTest extends TestContainerConfig {
         return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
     }
 
+    private ColorGetDto persistAnotherColor() throws Exception {
+
+        ColorCreateDto dto = ColorCreateDto.builder()
+                .name("Blue")
+                .build();
+
+        var result =  mockMvc.perform(post(GET_OR_CREATE)
+                        .content(objectMapper.writeValueAsString(dto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andReturn();
+
+        return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
+    }
+
     @Test
-    @DisplayName("Test if create color works correctly")
-    void createColor() throws Exception {
+    @DisplayName("Test if create color returns the created color with ColorGetDto")
+    void createColorReturnsColorGetDto() throws Exception {
 
         ColorGetDto expected = ColorGetDto.builder()
                 .name(colorCreateDto.name())
@@ -69,12 +88,12 @@ public class ColorControllerTest extends TestContainerConfig {
     }
 
     @Test
-    @DisplayName("Test if create color throws DataIntegrityViolationException")
-    void createColorThrowsDataIntegrityViolationException() throws Exception {
+    @DisplayName("Test if create color with duplicate fields of an existing color throws DataIntegrityViolationException")
+    void createColorThrowsDataIntegrityViolationExceptionIfDuplicateField() throws Exception {
 
         persistColor();
 
-        var result = mockMvc.perform(post("/api/v1/color/")
+        var result = mockMvc.perform(post(GET_OR_CREATE)
                         .content(objectMapper.writeValueAsString(colorCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -85,10 +104,10 @@ public class ColorControllerTest extends TestContainerConfig {
     }
 
     @Test
-    @DisplayName("Test if throw HttpMessageNotReadableException if request body is empty")
+    @DisplayName("Test if create color with no body throw HttpMessageNotReadableException")
     void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
 
-        var result = mockMvc.perform(post("/api/v1/color/")
+        var result = mockMvc.perform(post(GET_OR_CREATE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -98,12 +117,12 @@ public class ColorControllerTest extends TestContainerConfig {
     }
 
     @Test
-    @DisplayName("Test if get all colors works correctly")
-    void getAll() throws Exception {
+    @DisplayName("Test if get all colors returns a list ColorGetDto")
+    void getAllReturnsListOfColorGetDto() throws Exception {
 
         ColorGetDto colorCreatedGetDto = persistColor();
 
-        var result = mockMvc.perform(get("/api/v1/color/")
+        var result = mockMvc.perform(get(GET_OR_CREATE)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -117,12 +136,47 @@ public class ColorControllerTest extends TestContainerConfig {
     }
 
     @Test
-    @DisplayName("Test if get color by id works correctly")
-    void getById() throws Exception {
+    @DisplayName("Test if get all colors pagination return the number of elements requested")
+    void getAllReturnsNumberOfElementsOfRequest() throws Exception {
+
+        ColorGetDto firstColor = persistColor();
+        persistAnotherColor();
+
+        var result = mockMvc.perform(get(GET_OR_CREATE)
+                        .param("page", "0")
+                        .param("size", "1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ColorGetDto[] colorGetDtoArray = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto[].class);
+        assertThat(colorGetDtoArray).hasSize(1);
+        assertThat(colorGetDtoArray[0])
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(firstColor);
+    }
+
+    @Test
+    @DisplayName("Test if get all return empty list if no colors in database")
+    void getAllReturnEmptyList() throws Exception {
+
+        var result = mockMvc.perform(get(GET_OR_CREATE)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        ColorGetDto[] colorGetDtoArray = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto[].class);
+        assertThat(colorGetDtoArray).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Test if get color by id return the ColorGetDto of the requested color")
+    void getByIdReturnsColorGetDtoOfRequestedColor() throws Exception {
 
         ColorGetDto colorCreatedGetDto = persistColor();
 
-        var result = mockMvc.perform(get("/api/v1/color/id/{id}", colorId)
+        var result = mockMvc.perform(get(GET_BY_ID, colorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -139,20 +193,29 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if get color by id throws color not found exception")
     void getByIdThrowsColorNotFoundException() throws Exception {
 
-        mockMvc.perform(get("/api/v1/color/id/{id}", "11111-11111-1111-1111")
+        mockMvc.perform(get(GET_BY_ID, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @DisplayName("Test if delete color works correctly")
-    void delete() throws Exception {
+    @DisplayName("Test if delete color removes Color from database and returns message of success")
+    void deleteRemovesColorAndReturnsMessage() throws Exception {
 
         persistColor();
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/color/delete/{id}", colorId)
+        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE, colorId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorId)));
+    }
+
+    @Test
+    @DisplayName("Test if delete color throws color not found exception if color does not exist")
+    void deleteThrowsColorNotFoundExceptionIfColorDoesNotExist() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE, "11111-11111-1111-1111")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }
