@@ -25,14 +25,14 @@ public record UserCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Email(regexp = EMAIL_REGEX, message = EMAIL_INVALID)
-        @Size(min = 7, max = 100, message = CHARACTERS_LIMIT)
+        @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = NIF_REGEX, message = NIF_INVALID)
         String nif,
 
-        @JsonFormat(pattern = "dd/MM/yyyy", shape = JsonFormat.Shape.STRING)
+        @JsonFormat(pattern = DATE_REGEX, shape = JsonFormat.Shape.STRING)
         LocalDate dateOfBirth,
 
         @Valid

@@ -11,6 +11,7 @@ import lombok.Builder;
 import org.hibernate.validator.constraints.UUID;
 
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Regex.WEBSITE_REGEX;
 
 @Builder
 public record PetUpdateDto(
@@ -23,7 +24,7 @@ public record PetUpdateDto(
 
         String description,
 
-        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
+        @Pattern(regexp = WEBSITE_REGEX, message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String imageUrl,
 
