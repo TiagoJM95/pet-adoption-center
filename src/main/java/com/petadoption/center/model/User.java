@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.petadoption.center.util.Utils.truncateToMicros;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -85,7 +87,7 @@ public class User {
     @PrePersist
     protected void onCreate() {
         if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
+            this.createdAt = truncateToMicros(LocalDateTime.now());
         }
     }
 }
