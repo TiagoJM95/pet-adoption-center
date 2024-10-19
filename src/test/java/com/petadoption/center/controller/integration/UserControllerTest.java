@@ -3,6 +3,7 @@ package com.petadoption.center.controller.integration;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
+import com.petadoption.center.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import com.petadoption.center.aspect.Error;
 
@@ -24,8 +26,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 public class UserControllerTest extends TestContainerConfig{
+
+    @Autowired
+    UserService userService;
 
     private static UserCreateDto userCreateDto;
     private static UserUpdateDto userUpdateDto;
@@ -268,5 +272,17 @@ public class UserControllerTest extends TestContainerConfig{
         mockMvc.perform(delete("/api/v1/user/delete/{id}", "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DisplayName("Test if get user by id is in cache when called a second time")
+    void testIfRequestIsCachedWhenGettingUserByIdASecondTime() throws Exception {
+        persistUser();
+
+        userService.getById(userId);
+        userService.getById(userId);
+
+        Long dbAccessCount = userRepository.count();
+        assertEquals(1, dbAccessCount);
     }
 }
