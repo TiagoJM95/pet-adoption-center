@@ -19,7 +19,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-
 public class TestContainerConfig {
 
     @Autowired
