@@ -131,8 +131,8 @@ public class TestEntityFactory {
     public static SocialMedia createSocialMedia() {
         return SocialMedia.builder()
                 .facebook("https://www.facebook.com")
-                .instagram("https://www.instagram.com")
-                .twitter("https://www.twitter.com")
+                .instagram("petOrgInsta1")
+                .twitter("petOrgTwitter1")
                 .youtube("https://www.youtube.com")
                 .build();
     }
@@ -140,8 +140,8 @@ public class TestEntityFactory {
     public static SocialMedia otherCreateSocialMedia() {
         return SocialMedia.builder()
                 .facebook("https://www.facebook.com/outro")
-                .instagram("https://www.instagram.com/outro")
-                .twitter("https://www.twitter.com/outro")
+                .instagram("petOrgInsta2")
+                .twitter("petOrgTwitter2")
                 .youtube("https://www.youtube.com/outro")
                 .build();
     }

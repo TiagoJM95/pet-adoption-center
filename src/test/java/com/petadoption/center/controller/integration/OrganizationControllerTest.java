@@ -69,11 +69,11 @@ public class OrganizationControllerTest extends TestContainerConfig {
                         .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .instagram("https://www.instagram.com")
+                        .instagram("petOrgInsta1")
                         .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .twitter("https://www.twitter.com")
+                        .twitter("petOrgTwitter1")
                         .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
@@ -97,8 +97,8 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .socialMedia(SocialMedia.builder()
                         .facebook("https://www.facebook.com/test")
                         .youtube("https://www.youtube.com/test")
-                        .instagram("https://www.instagram.com/test")
-                        .twitter("https://www.twitter.com/test")
+                        .instagram("orgInstaTest")
+                        .twitter("orgTwitterTest")
                         .build())
                 .build();
 
@@ -120,11 +120,11 @@ public class OrganizationControllerTest extends TestContainerConfig {
                         .build()).build(), "repeated social media - facebook", "uniqueorgfacebook"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .instagram("https://www.instagram.com")
+                        .instagram("petOrgInsta1")
                         .build()).build(), "repeated social media - instagram", "uniqueorginstagram"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()
-                        .twitter("https://www.twitter.com")
+                        .twitter("petOrgTwitter1")
                         .build()).build(), "repeated social media - twitter", "uniqueorgtwitter"),
 
                 Arguments.of(baseOrg.toBuilder().socialMedia(SocialMedia.builder()

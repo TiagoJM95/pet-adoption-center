@@ -48,8 +48,8 @@ public class OrganizationConverterTest {
         assertEquals("4444-444", org.getAddress().getPostalCode());
         assertEquals("https://www.org.com", org.getWebsiteUrl());
         assertEquals("https://www.facebook.com", org.getSocialMedia().getFacebook());
-        assertEquals("https://www.instagram.com", org.getSocialMedia().getInstagram());
-        assertEquals("https://www.twitter.com", org.getSocialMedia().getTwitter());
+        assertEquals("petOrgInsta1", org.getSocialMedia().getInstagram());
+        assertEquals("petOrgTwitter1", org.getSocialMedia().getTwitter());
         assertEquals("https://www.youtube.com", org.getSocialMedia().getYoutube());
     }
 
@@ -69,8 +69,8 @@ public class OrganizationConverterTest {
         assertEquals("4444-444", org.getAddress().getPostalCode());
         assertEquals("https://www.org.com", org.getWebsiteUrl());
         assertEquals("https://www.facebook.com", org.getSocialMedia().getFacebook());
-        assertEquals("https://www.instagram.com", org.getSocialMedia().getInstagram());
-        assertEquals("https://www.twitter.com", org.getSocialMedia().getTwitter());
+        assertEquals("petOrgInsta1", org.getSocialMedia().getInstagram());
+        assertEquals("petOrgTwitter1", org.getSocialMedia().getTwitter());
         assertEquals("https://www.youtube.com", org.getSocialMedia().getYoutube());
     }
 
@@ -91,8 +91,8 @@ public class OrganizationConverterTest {
         assertEquals("4444-444", organizationGetDto.address().getPostalCode());
         assertEquals("https://www.org.com", organizationGetDto.websiteUrl());
         assertEquals("https://www.facebook.com", organizationGetDto.socialMedia().getFacebook());
-        assertEquals("https://www.instagram.com", organizationGetDto.socialMedia().getInstagram());
-        assertEquals("https://www.twitter.com", organizationGetDto.socialMedia().getTwitter());
+        assertEquals("petOrgInsta1", organizationGetDto.socialMedia().getInstagram());
+        assertEquals("petOrgTwitter1", organizationGetDto.socialMedia().getTwitter());
         assertEquals("https://www.youtube.com", organizationGetDto.socialMedia().getYoutube());
     }
 
