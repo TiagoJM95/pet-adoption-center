@@ -4,13 +4,11 @@ import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
 import com.petadoption.center.service.UserService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import com.petadoption.center.aspect.Error;
@@ -23,6 +21,8 @@ import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -284,5 +284,24 @@ public class UserControllerTest extends TestContainerConfig{
 
         Long dbAccessCount = userRepository.count();
         assertEquals(1, dbAccessCount);
+    }
+
+    @Test
+    @DisplayName("Test if getting a user by id gets retrieved from cache after the first time it's called")
+    void testIfGetUserByIdIsRetrievedFromCacheAfterTheFirstTimeItsCalled() throws Exception {
+
+        persistUser();
+
+        UserGetDto result = userService.getById(userId);
+        assertNotNull(result);
+        verify(userRepository, times(1)).findById(userId);
+
+        int queryTimes = 50;
+        for (int i = 1; i < queryTimes; i++) {
+            result = userService.getById(userId);
+            assertNotNull(result);
+        }
+
+        verify(userRepository, times(1)).findById(userId);
     }
 }
