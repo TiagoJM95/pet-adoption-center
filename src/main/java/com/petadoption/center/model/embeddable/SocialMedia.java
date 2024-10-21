@@ -8,6 +8,7 @@ import lombok.*;
 import java.util.Objects;
 
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Regex.*;
 
 @Embeddable
 @NoArgsConstructor
@@ -18,19 +19,19 @@ import static com.petadoption.center.util.Messages.*;
 public class SocialMedia {
 
 
-    @Pattern(regexp = "^[a-zA-Z0-9.:/-]*$", message = FACEBOOK_VALID)
+    @Pattern(regexp = WEBSITE_REGEX, message = FACEBOOK_VALID)
     @Size(max = 255, message = CHARACTERS_LIMIT)
     private String facebook;
 
-    @Pattern(regexp = "^[a-zA-Z0-9.:@/-]*$", message = INSTAGRAM_VALID)
+    @Pattern(regexp = INSTAGRAM_REGEX, message = INSTAGRAM_VALID)
     @Size(max = 255, message = CHARACTERS_LIMIT)
     private String instagram;
 
-    @Pattern(regexp = "^[a-zA-Z0-9.@:/-]*$", message = TWITTER_VALID)
+    @Pattern(regexp = TWITTER_REGEX, message = TWITTER_VALID)
     @Size(max = 255, message = CHARACTERS_LIMIT)
     private String twitter;
 
-    @Pattern(regexp = "^[a-zA-Z0-9.@:/-]*$", message = YOUTUBE_VALID)
+    @Pattern(regexp = WEBSITE_REGEX, message = YOUTUBE_VALID)
     @Size(max = 100, message = CHARACTERS_LIMIT)
     private String youtube;
 

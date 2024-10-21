@@ -14,12 +14,14 @@ import lombok.Builder;
 import org.hibernate.validator.constraints.UUID;
 
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Regex.USER_NAME_REGEX;
+import static com.petadoption.center.util.Regex.WEBSITE_REGEX;
 
 @Builder(toBuilder = true)
 public record PetCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
+        @Pattern(regexp = USER_NAME_REGEX, message = ONLY_LETTERS)
         String name,
 
         @UUID(message = ONLY_UUID)
@@ -56,7 +58,7 @@ public record PetCreateDto(
         String description,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
+        @Pattern(regexp = WEBSITE_REGEX, message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String imageUrl,
 

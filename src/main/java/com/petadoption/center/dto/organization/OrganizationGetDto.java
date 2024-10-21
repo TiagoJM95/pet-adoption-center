@@ -11,7 +11,7 @@ public record OrganizationGetDto(
         String id,
         String name,
         String email,
-        String nif,
+        String nipc,
         String phoneNumber,
         Address address,
         String websiteUrl,

@@ -3,38 +3,50 @@ package com.petadoption.center.controller.integration;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.dto.user.UserUpdateDto;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.petadoption.center.model.User;
+
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+
+
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import com.petadoption.center.aspect.Error;
 
 
+import java.time.LocalDate;
+
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
+import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
 import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 public class UserControllerTest extends TestContainerConfig{
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     private final String GET_OR_CREATE = URL + "user/";
     private final String GET_BY_ID = URL + "user/id/{id}";
     private final String UPDATE = URL + "user/update/{id}";
     private final String DELETE = URL + "user/delete/{id}";
 
+
     private static UserCreateDto userCreateDto;
     private static UserUpdateDto userUpdateDto;
     private String userId;
+
 
     @BeforeAll
     static void setUp() {
@@ -42,9 +54,18 @@ public class UserControllerTest extends TestContainerConfig{
         userUpdateDto = userUpdateDto();
     }
 
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAll();
+        clearRedisCache();
+    }
+
+    private void clearRedisCache() {
+        Set<String> keys = redisTemplate.keys("*");
+        if (keys != null) {
+            redisTemplate.delete(keys);
+        }
     }
 
     static Stream<Arguments> userCreateDtoProvider() {
@@ -53,8 +74,8 @@ public class UserControllerTest extends TestContainerConfig{
 
         return Stream.of(
                 Arguments.of(baseUser.toBuilder().email("user@email.com").build(), "repeated email", "uniqueuseremail"),
-                Arguments.of(baseUser.toBuilder().nif("987654321").build(), "repeated nif", "uniqueusernif"),
-                Arguments.of(baseUser.toBuilder().phoneNumber("987654321").build(), "repeated phone number", "uniqueuserphonenumber"));
+                Arguments.of(baseUser.toBuilder().nif("287654321").build(), "repeated nif", "uniqueusernif"),
+                Arguments.of(baseUser.toBuilder().phoneNumber("917654321").build(), "repeated phone number", "uniqueuserphonenumber"));
     }
 
     static Stream<Arguments> userUpdateDtoProvider() {
@@ -63,7 +84,7 @@ public class UserControllerTest extends TestContainerConfig{
 
         return Stream.of(
                 Arguments.of(baseUser.toBuilder().email("user@email.com").build(), "repeated email", "uniqueuseremail"),
-                Arguments.of(baseUser.toBuilder().phoneNumber("987654321").build(), "repeated phone number", "uniqueuserphonenumber"));
+                Arguments.of(baseUser.toBuilder().phoneNumber("917654321").build(), "repeated phone number", "uniqueuserphonenumber"));
     }
 
     private UserGetDto persistUser() throws Exception {
@@ -224,6 +245,39 @@ public class UserControllerTest extends TestContainerConfig{
     }
 
     @Test
+    @DisplayName("Test if get user by by id use redis cache")
+    void getUserByIdShouldUseRedisCache() throws Exception {
+
+        User user = User.builder()
+                .firstName("user")
+                .lastName("user")
+                .email("user@email.com")
+                .nif("123456789")
+                .dateOfBirth(LocalDate.of(1990, 1, 1))
+                .address(createAddress())
+                .phoneNumber("915678098")
+                .build();
+        userRepository.save(user);
+        String userCreatedId = user.getId();
+
+        mockMvc.perform(get(GET_BY_ID, userCreatedId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(userRepository, times(1)).findById(userCreatedId);
+
+        mockMvc.perform(get(GET_BY_ID, userCreatedId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(userRepository, times(1)).findById(userCreatedId);
+
+        String cacheKey = "user::" + userCreatedId;
+        Object cachedUser = redisTemplate.opsForValue().get(cacheKey);
+        assertNotNull(cachedUser);
+    }
+
+    @Test
     @DisplayName("Test if get user by id throws exception user not found if user does not exist")
     void getUserByIdShouldThrowExceptionIfUserDoesNotExist() throws Exception {
 
@@ -235,6 +289,7 @@ public class UserControllerTest extends TestContainerConfig{
     @Test
     @DisplayName("Test if update user changes fields of the requested user and return the updated user in userGetDto")
     void updateUserChangesFieldsOfRequestedUserAndReturnUpdatedUserGetDto() throws Exception {
+
 
         UserGetDto expectedUpdatedUserGetDto = UserGetDto.builder()
                 .firstName(userUpdateDto.firstName())
@@ -310,4 +365,5 @@ public class UserControllerTest extends TestContainerConfig{
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
 }

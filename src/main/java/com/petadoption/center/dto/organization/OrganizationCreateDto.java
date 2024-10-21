@@ -7,27 +7,26 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Regex.*;
 
 @Builder(toBuilder = true)
 public record OrganizationCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[a-zA-Z_0-9 .-]+", message = LETTERS_AND_NUMBERS)
+        @Pattern(regexp = ORG_NAME_REGEX, message = LETTERS_AND_NUMBERS)
         String name,
 
         @NotBlank(message = BLANK_FIELD)
-        @Email
+        @Email(regexp = EMAIL_REGEX, message = EMAIL_INVALID)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String email,
 
         @NotBlank(message = BLANK_FIELD)
-        @Size(min = 9, max = 9, message = PHONE_NUMBER_SIZE)
-        @Pattern(regexp = "[0-9]+", message = ONLY_NUMBERS)
-        String nif,
+        @Pattern(regexp = NIPC_REGEX, message = NIPC_INVALID)
+        String nipc,
 
-        @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "[0-9]+", message = PHONE_NUMBER_FORMAT)
-        @Size(max = 10, message = PHONE_NUMBER_SIZE)
+        @NotNull(message = BLANK_FIELD)
+        @Pattern(regexp = PHONE_NUMBER_REGEX, message = PHONE_NUMBER_SIZE)
         String phoneNumber,
 
         @Valid
@@ -35,7 +34,7 @@ public record OrganizationCreateDto(
         Address address,
 
         @NotBlank(message = BLANK_FIELD)
-        @Pattern(regexp = "^[a-zA-Z0-9.@_:/-]*$", message = WEBSITE_URL)
+        @Pattern(regexp = WEBSITE_REGEX, message = WEBSITE_URL)
         @Size(max = 100, message = CHARACTERS_LIMIT)
         String websiteUrl,
 

@@ -50,10 +50,12 @@ public class Messages {
     public static final String ONLY_LETTERS = "Only letters are allowed";
     public static final String ONLY_NUMBERS = "Only numbers are allowed";
     public static final String ONLY_UUID = "Only alphanumeric characters and - are allowed";
+    public static final String NIF_INVALID = "Must have 9 digits and start with '1', '2' or '3'";
+    public static final String NIPC_INVALID = "Must have 9 digits and start with '5', '6', '8' or '9'";
     public static final String POSTAL_CODE_FORMAT = "Postal Code must be in the format XXXX-XXX";
+    public static final String EMAIL_INVALID = "Must be a valid email address with an '@' symbol and domain.";
     public static final String POSTAL_CODE_SIZE = "Postal Code must be less than 9 characters";
-    public static final String PHONE_NUMBER_FORMAT = "Phone number must be only numbers";
-    public static final String PHONE_NUMBER_SIZE = "Phone number must be less than 10 characters";
+    public static final String PHONE_NUMBER_SIZE = "Phone number must have 9 digits, and start with a valid code (91, 92, 93, 96 or 2)";
     public static final String LETTERS_AND_NUMBERS = "Only letters and numbers are allowed";
     public static final String WEBSITE_URL = "Special characters allowed are  . - ";
     public static final String FACEBOOK_VALID = "Special characters allowed are  . - / ";

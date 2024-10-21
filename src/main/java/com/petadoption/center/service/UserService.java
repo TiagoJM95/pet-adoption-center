@@ -14,6 +14,7 @@ import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.*;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +28,7 @@ import static com.petadoption.center.util.Messages.*;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "user")
 public class UserService implements UserServiceI {
 
     private final UserRepository userRepository;
@@ -44,6 +46,7 @@ public class UserService implements UserServiceI {
     }
 
     @Override
+    @Cacheable(key = "#id")
     public UserGetDto getById(String id) {
         return toDto(findById(id));
     }
@@ -54,6 +57,7 @@ public class UserService implements UserServiceI {
     }
 
     @Override
+    @CachePut(key = "#id")
     public UserGetDto update(String id, UserUpdateDto dto) {
         User user = findById(id);
         updateFields(dto,user);
@@ -61,6 +65,7 @@ public class UserService implements UserServiceI {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     public String delete(String id) {
         findById(id);
         userRepository.deleteById(id);

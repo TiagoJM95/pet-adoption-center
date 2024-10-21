@@ -6,9 +6,11 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import static com.petadoption.center.util.Messages.*;
+import static com.petadoption.center.util.Regex.*;
 
 @Embeddable
 @AllArgsConstructor
@@ -16,23 +18,23 @@ import static com.petadoption.center.util.Messages.*;
 @Getter
 @Setter
 @Builder
-public class Address {
+public class Address implements Serializable {
 
     @NotBlank(message = BLANK_FIELD)
-    @Pattern(regexp = "[a-zA-Z_0-9, .-]+", message = STREET_CHARACTERS)
+    @Pattern(regexp = ADDRESS_NAME_REGEX, message = STREET_CHARACTERS)
     private String street;
 
     @NotBlank(message = BLANK_FIELD)
-    @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
+    @Pattern(regexp = ORG_NAME_REGEX, message = ONLY_LETTERS)
     private String city;
 
     @NotBlank(message = BLANK_FIELD)
-    @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
+    @Pattern(regexp = ORG_NAME_REGEX, message = ONLY_LETTERS)
     private String state;
 
     @NotBlank(message = BLANK_FIELD)
     @Size(max = 9, message = POSTAL_CODE_SIZE)
-    @Pattern(regexp = "[0-9]{4}-[0-9]{3}", message = POSTAL_CODE_FORMAT)
+    @Pattern(regexp = POSTAL_CODE_REGEX, message = POSTAL_CODE_FORMAT)
     private String postalCode;
 
     @Override
