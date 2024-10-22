@@ -13,6 +13,7 @@ public record BreedCreateDto(
         @Pattern(regexp = "[a-zA-Z ]+", message = ONLY_LETTERS)
         String name,
 
+        @NotBlank(message = BLANK_FIELD)
         @UUID(message = ONLY_UUID)
         String speciesId
 ) {}

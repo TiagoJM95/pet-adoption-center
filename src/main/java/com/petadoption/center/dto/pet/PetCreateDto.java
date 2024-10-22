@@ -1,5 +1,6 @@
 package com.petadoption.center.dto.pet;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.petadoption.center.enums.Ages;
 import com.petadoption.center.enums.Coats;
 import com.petadoption.center.enums.Genders;
@@ -8,6 +9,7 @@ import com.petadoption.center.model.embeddable.Attributes;
 import com.petadoption.center.validator.EnumValidator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
@@ -16,21 +18,25 @@ import org.hibernate.validator.constraints.UUID;
 import static com.petadoption.center.util.Messages.*;
 
 @Builder(toBuilder = true)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public record PetCreateDto(
 
         @NotBlank(message = BLANK_FIELD)
         @Pattern(regexp = "[a-zA-Z]+", message = ONLY_LETTERS)
         String name,
 
+        @NotBlank(message = BLANK_FIELD)
         @UUID(message = ONLY_UUID)
         String speciesId,
 
+        @NotBlank(message = BLANK_FIELD)
         @UUID(message = ONLY_UUID)
         String primaryBreedId,
 
         @UUID(allowEmpty = true, message = ONLY_UUID)
         String secondaryBreedId,
 
+        @NotBlank(message = BLANK_FIELD)
         @UUID(message = ONLY_UUID)
         String primaryColor,
 
@@ -65,6 +71,7 @@ public record PetCreateDto(
         @Valid
         Attributes attributes,
 
+        @NotBlank(message = BLANK_FIELD)
         @UUID(message = ONLY_UUID)
         String organizationId
 ) {}

@@ -1,6 +1,5 @@
 package com.petadoption.center.controller.integration;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.petadoption.center.aspect.Error;
 import com.petadoption.center.converter.PetConverter;
 import com.petadoption.center.dto.breed.BreedCreateDto;
@@ -21,7 +20,6 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.exception.not_found.PetNotFoundException;
 import com.petadoption.center.model.Pet;
 import com.petadoption.center.model.embeddable.Attributes;
-import com.petadoption.center.specifications.PetSearchCriteria;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -40,7 +38,6 @@ import static com.petadoption.center.testUtils.TestEntityFactory.createAttribute
 import static com.petadoption.center.util.Messages.*;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -48,12 +45,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class PetControllerTest extends TestContainerConfig {
 
-    private final String GET_BY_ID = URL + "pet/id/";
-    private final String SEARCH = URL + "pet/search";
-    private final String ADD_SINGLE = URL + "pet/addSingle";
-    private final String ADD_LIST = URL + "pet/addList";
-    private final String UPDATE = URL + "pet/update/";
-    private final String DELETE = URL + "pet/delete/";
+    final String GET_BY_ID = URL + "pet/id/";
+    final String SEARCH = URL + "pet/search";
+    final String ADD_SINGLE = URL + "pet/addSingle";
+    final String ADD_LIST = URL + "pet/addList";
+    final String UPDATE = URL + "pet/update/";
+    final String DELETE = URL + "pet/delete/";
 
     private SpeciesGetDto speciesGetDto1;
     private SpeciesGetDto speciesGetDto2;
@@ -76,9 +73,6 @@ public class PetControllerTest extends TestContainerConfig {
     private static PetGetDto expectedGetDto;
     private static PetGetDto expectedGetDto2;
     private static PetUpdateDto updateDto;
-
-    private PetSearchCriteria petSearchCriteria;
-
 
     @BeforeAll
     void setup() throws Exception {
@@ -188,7 +182,7 @@ public class PetControllerTest extends TestContainerConfig {
         petRepository.deleteAll();
     }
 
-    private SpeciesGetDto persistSpecies(SpeciesCreateDto dto) throws Exception {
+    SpeciesGetDto persistSpecies(SpeciesCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/species/")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -197,7 +191,7 @@ public class PetControllerTest extends TestContainerConfig {
         return objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
     }
 
-    private BreedGetDto persistBreed(BreedCreateDto dto) throws Exception {
+    BreedGetDto persistBreed(BreedCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/breed/")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -206,7 +200,7 @@ public class PetControllerTest extends TestContainerConfig {
         return objectMapper.readValue(result.getResponse().getContentAsString(), BreedGetDto.class);
     }
 
-    private ColorGetDto persistColor(ColorCreateDto dto) throws Exception {
+    ColorGetDto persistColor(ColorCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/color/")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -215,7 +209,7 @@ public class PetControllerTest extends TestContainerConfig {
         return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
     }
 
-    private OrganizationGetDto persistOrganization(OrganizationCreateDto dto) throws Exception {
+    OrganizationGetDto persistOrganization(OrganizationCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post("/api/v1/organization/")
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -224,7 +218,7 @@ public class PetControllerTest extends TestContainerConfig {
         return objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
     }
 
-    private PetGetDto persistPet(PetCreateDto dto) throws Exception {
+    PetGetDto persistPet(PetCreateDto dto) throws Exception {
         MvcResult result = mockMvc.perform(post(ADD_SINGLE)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -660,89 +654,4 @@ public class PetControllerTest extends TestContainerConfig {
 
         assertTrue(error.message().contains("Required request body is missing"));
     }
-
-
-    //search
-
-    @Test
-    @DisplayName("Returns Empty List if no Pets")
-    void test12() throws Exception {
-
-        mockMvc.perform(post(SEARCH)
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(0)));
-    }
-
-    @Test
-    @DisplayName("Returns list of X amount of pets")
-    void test13() throws Exception {
-
-        persistPet(petCreateDto);
-        persistPet(petCreateDto2);
-
-        mockMvc.perform(post(SEARCH)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(2)));
-    }
-
-    @Test
-    @DisplayName("Compare list of persisted with list returned")
-    void test14() throws Exception {
-
-        List<PetGetDto> expectedList = List.of(expectedGetDto, expectedGetDto2);
-
-        persistPet(petCreateDto);
-        persistPet(petCreateDto2);
-
-        MvcResult result = mockMvc.perform(post(SEARCH)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(2)))
-                .andReturn();
-
-        List<PetGetDto> actualList = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-
-        assertThat(expectedList)
-                .usingRecursiveComparison()
-                .ignoringFields("id")
-                .ignoringFieldsMatchingRegexes(".*createdAt")
-                .isEqualTo(actualList);
-    }
-
-    @Test
-    @DisplayName("Returns Empty List if no Pets match PetSearchCriteria")
-    void test15() throws Exception {
-
-        petSearchCriteria = PetSearchCriteria.builder()
-                .speciesNames(List.of("Cat"))
-                .build();
-
-        persistPet(petCreateDto);
-        persistPet(petCreateDto2);
-
-        mockMvc.perform(post(SEARCH)
-                        .content(objectMapper.writeValueAsString(petSearchCriteria))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(0)));
-    }
-
-    @Test
-    @DisplayName("Check if number of pages match")
-    void test16() throws Exception {}
-
-    @Test
-    @DisplayName("Check if number of elements match size number")
-    void test17() throws Exception {}
-
-    @Test
-    @DisplayName("Check if sort works for every property asc or desc")
-    void test18() throws Exception {}
-
-    @Test
-    @DisplayName("Test filters")
-    void test19() throws Exception {}
-
 }
