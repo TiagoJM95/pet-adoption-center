@@ -8,6 +8,8 @@ import org.hibernate.annotations.UuidGenerator;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static com.petadoption.center.util.Utils.truncateToMicros;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -62,7 +64,7 @@ public class Interest {
     @PrePersist
     protected void onCreate() {
         if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
+            this.createdAt = truncateToMicros(LocalDateTime.now());
         }
     }
 }

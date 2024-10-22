@@ -14,6 +14,7 @@ public record BreedCreateDto(
         @Pattern(regexp = ORG_NAME_REGEX, message = ONLY_LETTERS)
         String name,
 
+        @NotBlank(message = BLANK_FIELD)
         @UUID(message = ONLY_UUID)
         String speciesId
 ) {}

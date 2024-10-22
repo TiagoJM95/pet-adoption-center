@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.petadoption.center.util.Utils.truncateToMicros;
+
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -84,7 +86,7 @@ public class Organization {
     @PrePersist
     protected void onCreate() {
         if (this.createdAt == null) {
-            this.createdAt = LocalDateTime.now();
+            this.createdAt = truncateToMicros(LocalDateTime.now());
         }
     }
 }

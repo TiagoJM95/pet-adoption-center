@@ -1,5 +1,7 @@
 package com.petadoption.center.util;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.function.Consumer;
 
 public class Utils {
@@ -12,5 +14,9 @@ public class Utils {
 
     public static String formatStringForEnum(String value) {
         return value.trim().replace(" ", "_").toUpperCase();
+    }
+
+    public static LocalDateTime truncateToMicros(LocalDateTime dateTime) {
+        return dateTime.truncatedTo(ChronoUnit.MICROS);
     }
 }
