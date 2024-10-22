@@ -16,6 +16,10 @@ import com.petadoption.center.service.interfaces.PetServiceI;
 import com.petadoption.center.service.interfaces.UserServiceI;
 import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +31,7 @@ import static com.petadoption.center.util.Messages.ADOPTION_FORM_NOT_FOUND;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "adoptionForm")
 public class AdoptionFormService implements AdoptionFormServiceI {
 
     private final AdoptionFormRepository adoptionFormRepository;
@@ -41,11 +46,13 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     }
 
     @Override
+    @Cacheable
     public List<AdoptionFormGetDto> getAll(Pageable pageable) {
         return adoptionFormRepository.findAll(pageable).stream().map(AdoptionFormConverter::toDto).toList();
     }
 
     @Override
+    @Cacheable(key = "#id")
     public AdoptionFormGetDto getById(String id) {
         return toDto(findById(id));
     }
@@ -57,6 +64,7 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     }
 
     @Override
+    @CachePut(key = "#id")
     public AdoptionFormGetDto update(String id, AdoptionFormUpdateDto dto) {
         AdoptionForm adoptionForm = findById(id);
         updateFields(dto, adoptionForm);
@@ -64,6 +72,7 @@ public class AdoptionFormService implements AdoptionFormServiceI {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     public String delete(String id) {
         findById(id);
         adoptionFormRepository.deleteById(id);

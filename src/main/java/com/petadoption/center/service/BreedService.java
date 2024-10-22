@@ -14,6 +14,10 @@ import com.petadoption.center.repository.BreedRepository;
 import com.petadoption.center.service.interfaces.BreedServiceI;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +29,7 @@ import static com.petadoption.center.util.Utils.updateFields;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "breed")
 public class BreedService implements BreedServiceI {
 
     private final BreedRepository breedRepository;
@@ -37,11 +42,13 @@ public class BreedService implements BreedServiceI {
     }
 
     @Override
+    @Cacheable
     public List<BreedGetDto> getAll(Pageable pageable) {
         return breedRepository.findAll(pageable).stream().map(BreedConverter::toDto).toList();
     }
 
     @Override
+    @Cacheable(key = "#id")
     public BreedGetDto getById(String id) {
         return BreedConverter.toDto(findById(id));
     }
@@ -62,6 +69,7 @@ public class BreedService implements BreedServiceI {
     }
 
     @Override
+    @CachePut(key = "#id")
     public BreedGetDto update(String id, BreedUpdateDto dto) {
         Breed breed = findById(id);
         updateFields(dto.name(), breed.getName(), breed::setName);
@@ -69,6 +77,7 @@ public class BreedService implements BreedServiceI {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     public String delete(String id) {
         findById(id);
         breedRepository.deleteById(id);

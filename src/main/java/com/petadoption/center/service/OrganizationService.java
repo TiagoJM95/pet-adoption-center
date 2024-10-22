@@ -10,6 +10,10 @@ import com.petadoption.center.repository.OrganizationRepository;
 import com.petadoption.center.service.interfaces.OrganizationServiceI;
 import com.petadoption.center.util.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -20,17 +24,20 @@ import static com.petadoption.center.util.Messages.ORG_NOT_FOUND;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "organization")
 public class OrganizationService implements OrganizationServiceI {
 
     @Autowired
     private OrganizationRepository organizationRepository;
 
     @Override
+    @Cacheable
     public List<OrganizationGetDto> getAll(Pageable pageable) {
         return organizationRepository.findAll(pageable).stream().map(OrganizationConverter::toDto).toList();
     }
 
     @Override
+    @Cacheable(key = "#id")
     public OrganizationGetDto getById(String id) {
         return OrganizationConverter.toDto(findById(id));
     }
@@ -41,6 +48,7 @@ public class OrganizationService implements OrganizationServiceI {
     }
 
     @Override
+    @CachePut(key = "#id")
     public OrganizationGetDto update(String id, OrganizationUpdateDto dto) {
         Organization org = findById(id);
         updateFields(dto,org);
@@ -48,6 +56,7 @@ public class OrganizationService implements OrganizationServiceI {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     public String delete(String id) {
         findById(id);
         organizationRepository.deleteById(id);

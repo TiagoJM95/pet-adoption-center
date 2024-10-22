@@ -41,6 +41,7 @@ public class UserService implements UserServiceI {
     }
 
     @Override
+    @Cacheable
     public List<UserGetDto> getAll(Pageable pageable) {
         return userRepository.findAll(pageable).stream().map(UserConverter::toDto).toList();
     }

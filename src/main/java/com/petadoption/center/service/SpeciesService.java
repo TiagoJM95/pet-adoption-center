@@ -9,6 +9,7 @@ import com.petadoption.center.model.Species;
 import com.petadoption.center.repository.SpeciesRepository;
 import com.petadoption.center.service.interfaces.SpeciesServiceI;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import static com.petadoption.center.util.Utils.updateFields;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "species")
 public class SpeciesService implements SpeciesServiceI {
 
     private final SpeciesRepository speciesRepository;

@@ -19,6 +19,10 @@ import com.petadoption.center.specifications.PetSearchCriteria;
 import com.petadoption.center.util.Utils;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,7 @@ import static com.petadoption.center.util.Messages.*;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "pet")
 public class PetService implements PetServiceI {
 
     private final PetRepository petRepository;
@@ -50,6 +55,7 @@ public class PetService implements PetServiceI {
     }
 
     @Override
+    @Cacheable(key = "#id")
     public PetGetDto getById(String id) {
         return PetConverter.toDto(findById(id));
     }
@@ -79,6 +85,7 @@ public class PetService implements PetServiceI {
     }
 
     @Override
+    @CachePut(key = "#id")
     public PetGetDto update(String id, PetUpdateDto dto) {
         Pet pet = findById(id);
         updateFields(dto, pet);
@@ -87,6 +94,7 @@ public class PetService implements PetServiceI {
     }
 
     @Override
+    @CacheEvict(key = "#id")
     public String delete(String id) {
         findById(id);
         petRepository.deleteById(id);

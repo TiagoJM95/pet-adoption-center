@@ -17,6 +17,7 @@ import com.petadoption.center.model.embeddable.Family;
 import com.petadoption.center.repository.InterestRepository;
 import com.petadoption.center.service.interfaces.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import static com.petadoption.center.util.Messages.*;
 import static java.lang.String.format;
 
 @Service
+@CacheConfig(cacheNames = "interest")
 public class InterestService implements InterestServiceI {
 
     private final InterestRepository interestRepository;
