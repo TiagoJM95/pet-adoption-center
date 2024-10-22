@@ -18,6 +18,7 @@ import com.petadoption.center.aspect.Error;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
 
+import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
 import static com.petadoption.center.testUtils.TestEntityFactory.createSocialMedia;
@@ -30,17 +31,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class OrganizationControllerTest extends TestContainerConfig {
+public class OrganizationControllerTest extends AbstractIntegrationTest {
 
-    private final String GET_OR_CREATE = URL + "organization/";
-    private final String GET_BY_ID = URL + "organization/id/{id}";
-    private final String UPDATE = URL + "organization/update/{id}";
-    private final String DELETE = URL + "organization/delete/{id}";
-
-    private OrganizationGetDto organizationGetDto;
     private OrganizationCreateDto organizationCreateDto;
     private OrganizationUpdateDto organizationUpdateDto;
-    private String organizationId;
 
     @BeforeEach
     void setUp() {
@@ -138,31 +132,6 @@ public class OrganizationControllerTest extends TestContainerConfig {
         );
     }
 
-    private OrganizationGetDto persistOrganization() throws Exception {
-
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(organizationCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        OrganizationGetDto resultDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
-        organizationId = resultDto.id();
-        return resultDto;
-    }
-
-    private OrganizationGetDto persistOrganizationToUpdate() throws Exception {
-
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(otherOrganizationCreateDto()))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        organizationGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
-        return objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto.class);
-    }
-
     @Test
     @DisplayName("Test if create organization return OrganizationGetDto of the created organization")
     void createOrganizationAndReturnOrganizationGetDto() throws Exception {
@@ -178,7 +147,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .createdAt(LocalDateTime.of(2024,1,1,1,1))
                 .build();
 
-       OrganizationGetDto orgGetDto = persistOrganization();
+       OrganizationGetDto orgGetDto = persistOrganization(organizationCreateDto);
 
        assertThat(orgGetDto)
                .usingRecursiveComparison()
@@ -194,12 +163,12 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @ParameterizedTest(name = "Test {index}: Creating organization with {1}")
     @MethodSource("orgCreateDtoProvider")
     @DisplayName("Test if create organization throws DataIntegrityViolationException if duplicated field is provided")
-    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto organizationCreateDto, String fieldBeingTested, String constraint) throws Exception {
+    void createOrganizationThrowsDataIntegrityException(OrganizationCreateDto dto, String fieldBeingTested, String constraint) throws Exception {
 
-        persistOrganization();
+        persistOrganization(organizationCreateDto);
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(organizationCreateDto))
+        var result = mockMvc.perform(post(ORG_GET_ALL_OR_CREATE_URL)
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
@@ -212,7 +181,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test create organization if throw HttpMessageNotReadableException if request body is empty")
     void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
+        var result = mockMvc.perform(post(ORG_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -225,9 +194,9 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all organizations return a list of OrganizationGetDto")
     void getAllOrganizationsReturnsListOfOrganizationGetDto() throws Exception {
 
-        OrganizationGetDto orgCreatedDto= persistOrganization();
+        OrganizationGetDto orgCreatedDto= persistOrganization(organizationCreateDto);
 
-        mockMvc.perform(get(GET_OR_CREATE)
+        mockMvc.perform(get(ORG_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id", is(orgCreatedDto.id())))
@@ -242,10 +211,10 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all organizations pagination return the number of elements requested")
     void getAllOrganizationsReturnNumberOfElementsOfRequest() throws Exception {
 
-        OrganizationGetDto firstOrganization = persistOrganization();
-        persistOrganizationToUpdate();
+        OrganizationGetDto firstOrganization = persistOrganization(organizationCreateDto);
+        persistOrganization(otherOrganizationCreateDto());
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(ORG_GET_ALL_OR_CREATE_URL)
                         .param("page", "0")
                         .param("size", "1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -264,7 +233,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all organizations return a empty list if no organizations in database")
     void getAllOrganizationsReturnEmptyList() throws Exception {
 
-        mockMvc.perform(get(GET_OR_CREATE)
+        mockMvc.perform(get(ORG_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
@@ -274,9 +243,9 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if get organization by id return OrganizationGetDto of the organization requested")
     void getOrganizationByIdReturnsRequestedOrganizationGetDto() throws Exception {
 
-        OrganizationGetDto orgCreated = persistOrganization();
+        OrganizationGetDto orgCreated = persistOrganization(organizationCreateDto);
 
-        var result = mockMvc.perform(get(GET_BY_ID, organizationId)
+        var result = mockMvc.perform(get(ORG_GET_BY_ID_URL, orgCreated.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -293,7 +262,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if get organization by id throws organization not found exception if organization does not exist")
     void getOrganizationByIdThrowsOrganizationNotFoundExceptionIfOrganizationDoesNotExist() throws Exception {
 
-        mockMvc.perform(get(GET_BY_ID, "11111-11111-1111-1111")
+        mockMvc.perform(get(ORG_GET_BY_ID_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -311,9 +280,9 @@ public class OrganizationControllerTest extends TestContainerConfig {
                 .socialMedia(organizationUpdateDto.socialMedia())
                 .build();
 
-        persistOrganization();
+        OrganizationGetDto orgToUpdate = persistOrganization(organizationCreateDto);
 
-        var result = mockMvc.perform(put(UPDATE, organizationId)
+        var result = mockMvc.perform(put(ORG_UPDATE_URL, orgToUpdate.id())
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -332,7 +301,7 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if update organization throws organization not found exception if organization does not exist")
     void updateOrganizationThrowsOrganizationNotFoundExceptionIfOrganizationDoesNotExist() throws Exception {
 
-        mockMvc.perform(put(UPDATE, "11111-11111-1111-1111")
+        mockMvc.perform(put(ORG_UPDATE_URL, "11111-11111-1111-1111")
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -343,11 +312,10 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if update organization send DataIntegrityViolationException if duplicated field of an existing organization is provided")
     void updateOrganizationThrowsDataIntegrityException(OrganizationUpdateDto organizationUpdateDto, String fieldBeingTested, String constraint) throws Exception {
 
-        persistOrganization();
+       persistOrganization(organizationCreateDto);
+       OrganizationGetDto orgToUpdate = persistOrganization(otherOrganizationCreateDto());
 
-        persistOrganizationToUpdate();
-
-       var result = mockMvc.perform(put(UPDATE, organizationGetDto.id())
+       var result = mockMvc.perform(put(ORG_UPDATE_URL, orgToUpdate.id())
                         .content(objectMapper.writeValueAsString(organizationUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -361,21 +329,20 @@ public class OrganizationControllerTest extends TestContainerConfig {
     @DisplayName("Test if delete organization removes Organization from database and returns message of success")
     void deleteOrganizationRemovesOrganizationAndReturnsSuccessMessage() throws Exception {
 
-        persistOrganization();
+        OrganizationGetDto orgToDelete = persistOrganization(organizationCreateDto);
 
-        mockMvc.perform(delete(DELETE, organizationId)
+        mockMvc.perform(delete(ORG_DELETE_URL, orgToDelete.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(ORG_DELETE_MESSAGE, organizationId)));
+                .andExpect(content().string(format(ORG_DELETE_MESSAGE, orgToDelete.id())));
     }
 
     @Test
     @DisplayName("Test if delete organization throws organization not found exception if organization does not exist")
     void deleteOrganizationThrowsOrganizationNotFoundExceptionIfOrganizationDoesNotExist() throws Exception {
 
-        mockMvc.perform(delete(DELETE, "11111-11111-1111-1111")
+        mockMvc.perform(delete(ORG_DELETE_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
-
 }

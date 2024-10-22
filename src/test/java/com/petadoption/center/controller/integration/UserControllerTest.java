@@ -22,6 +22,7 @@ import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAddress;
 import static com.petadoption.center.util.Messages.USER_DELETE_MESSAGE;
@@ -32,28 +33,18 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class UserControllerTest extends TestContainerConfig{
+public class UserControllerTest extends AbstractIntegrationTest {
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
-
-    private final String GET_OR_CREATE = URL + "user/";
-    private final String GET_BY_ID = URL + "user/id/{id}";
-    private final String UPDATE = URL + "user/update/{id}";
-    private final String DELETE = URL + "user/delete/{id}";
-
-
     private static UserCreateDto userCreateDto;
     private static UserUpdateDto userUpdateDto;
-    private String userId;
-
 
     @BeforeAll
     static void setUp() {
         userCreateDto = userCreateDto();
         userUpdateDto = userUpdateDto();
     }
-
 
     @AfterEach
     void tearDown() {
@@ -87,31 +78,6 @@ public class UserControllerTest extends TestContainerConfig{
                 Arguments.of(baseUser.toBuilder().phoneNumber("917654321").build(), "repeated phone number", "uniqueuserphonenumber"));
     }
 
-    private UserGetDto persistUser() throws Exception {
-
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(userCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        UserGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-        userId = createResultDto.id();
-        return createResultDto;
-    }
-
-    private void persistUserToUpdate() throws Exception {
-
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(otherUserCreateDto()))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        UserGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-        userId = createResultDto.id();
-    }
-
     @Test
     @DisplayName("Test if create user return the created user in userGetDto")
     void createUserReturnUserGetDto() throws Exception {
@@ -126,7 +92,7 @@ public class UserControllerTest extends TestContainerConfig{
                 .phoneNumber(userCreateDto.phoneNumber())
                 .build();
 
-        UserGetDto userCreatedGetDto = persistUser();
+        UserGetDto userCreatedGetDto = persistUser(userCreateDto);
 
         assertThat(userCreatedGetDto)
                 .usingRecursiveComparison()
@@ -141,18 +107,18 @@ public class UserControllerTest extends TestContainerConfig{
     @ParameterizedTest(name = "Test {index}: Creating user with {1}")
     @MethodSource("userCreateDtoProvider")
     @DisplayName("Test if create user with duplicated fields of an existing user throws DataIntegrityViolationException")
-    void createUserThrowsDataIntegrityException(UserCreateDto userCreateDto, String fieldBeingTested, String constraint) throws Exception {
+    void createUserThrowsDataIntegrityException(UserCreateDto dto, String fieldBeingTested, String constraint) throws Exception {
 
-        persistUser();
+        persistUser(userCreateDto);
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(userCreateDto))
+        var result = mockMvc.perform(post(USER_GET_ALL_OR_CREATE_URL)
+                        .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
                 .andReturn();
 
         Error error = objectMapper.readValue(result.getResponse().getContentAsString(), Error.class);
-        assertEquals(error.constraint(), constraint);
+        assertEquals(constraint, error.constraint());
 
     }
 
@@ -160,7 +126,7 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if create user throw HttpMessageNotReadableException if request body is empty")
     void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
+        var result = mockMvc.perform(post(USER_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -173,9 +139,9 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if get all returns a list of UserGetDto")
     void getAllUsersReturnsListOfUserGetDto() throws Exception {
 
-        UserGetDto userCreatedGetDto = persistUser();
+        UserGetDto userCreatedGetDto = persistUser(userCreateDto);
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(USER_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -194,10 +160,10 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if get all users pagination return the number of elements requested")
     void getAllReturnNumberOfElementsOfRequest() throws Exception {
 
-        UserGetDto firstUser = persistUser();
-        persistUserToUpdate();
+        UserGetDto firstUser = persistUser(userCreateDto);
+        persistUser(otherUserCreateDto());
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(USER_GET_ALL_OR_CREATE_URL)
                         .param("page", "0")
                         .param("size", "1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -217,7 +183,7 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if get all users return empty list if no users in database")
     void getAllReturnEmptyList() throws Exception {
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(USER_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -230,9 +196,9 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if get user by id return the userGetDto of the requested user")
     void getUserByIdReturnUserGetDtoOfRequestedUser() throws Exception {
 
-        UserGetDto userCreatedGetDto = persistUser();
+        UserGetDto userCreatedGetDto = persistUser(userCreateDto);
 
-        var result = mockMvc.perform(get(GET_BY_ID, userId)
+        var result = mockMvc.perform(get(USER_GET_BY_ID_URL, userCreatedGetDto.id())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -260,13 +226,13 @@ public class UserControllerTest extends TestContainerConfig{
         userRepository.save(user);
         String userCreatedId = user.getId();
 
-        mockMvc.perform(get(GET_BY_ID, userCreatedId)
+        mockMvc.perform(get(USER_GET_BY_ID_URL, userCreatedId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
         verify(userRepository, times(1)).findById(userCreatedId);
 
-        mockMvc.perform(get(GET_BY_ID, userCreatedId)
+        mockMvc.perform(get(USER_GET_BY_ID_URL, userCreatedId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -281,7 +247,7 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if get user by id throws exception user not found if user does not exist")
     void getUserByIdShouldThrowExceptionIfUserDoesNotExist() throws Exception {
 
-        mockMvc.perform(get(GET_BY_ID, "11111-11111-1111-1111")
+        mockMvc.perform(get(USER_GET_BY_ID_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -299,9 +265,9 @@ public class UserControllerTest extends TestContainerConfig{
                 .phoneNumber(userUpdateDto.phoneNumber())
                 .build();
 
-        persistUser();
+        UserGetDto userToUpdate = persistUser(userCreateDto);
 
-        var result = mockMvc.perform(put(UPDATE, userId)
+        var result = mockMvc.perform(put(USER_UPDATE_URL, userToUpdate.id())
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -320,11 +286,11 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if update user throws DataIntegrityViolationException if duplicated fields of an existing user")
     void updateUserThrowsDataIntegrityException(UserUpdateDto userUpdateDto, String fieldBeingTested, String constraint) throws Exception {
 
-        persistUser();
+        persistUser(userCreateDto);
 
-        persistUserToUpdate();
+        UserGetDto userToUpdate = persistUser(otherUserCreateDto());
 
-       var result = mockMvc.perform(put(UPDATE, userId)
+       var result = mockMvc.perform(put(USER_UPDATE_URL, userToUpdate.id())
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -338,7 +304,7 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if update user throws exception user not found if user does not exist")
     void updateUserShouldThrowExceptionIfUserDoesNotExist() throws Exception {
 
-        mockMvc.perform(put(UPDATE, "11111-11111-1111-1111")
+        mockMvc.perform(put(USER_UPDATE_URL, "11111-11111-1111-1111")
                         .content(objectMapper.writeValueAsString(userUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -349,19 +315,19 @@ public class UserControllerTest extends TestContainerConfig{
     @DisplayName("Test if delete user removes user from database and return message of success")
     void deleteUserRemovesUserAndReturnSuccessMessage() throws Exception {
 
-        persistUser();
+        UserGetDto userToDelete = persistUser(userCreateDto);
 
-        mockMvc.perform(delete(DELETE, userId)
+        mockMvc.perform(delete(USER_DELETE_URL, userToDelete.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(USER_DELETE_MESSAGE, userId)));
+                .andExpect(content().string(format(USER_DELETE_MESSAGE, userToDelete.id())));
     }
 
     @Test
     @DisplayName("Test if delete user throws exception user not found if user does not exist")
     void deleteUserShouldThrowExceptionIfUserDoesNotExist() throws Exception {
 
-        mockMvc.perform(delete(DELETE, "11111-11111-1111-1111")
+        mockMvc.perform(delete(USER_DELETE_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

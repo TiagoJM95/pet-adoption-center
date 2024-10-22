@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.petadoption.center.testUtils.ConstantsURL.PET_SEARCH_URL;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.otherOrganizationCreateDto;
 import static org.hamcrest.Matchers.is;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class PetSearchTest extends PetControllerTest {
+public class PetSearchTest extends AbstractIntegrationTest {
 
     private SpeciesGetDto dog;
     private SpeciesGetDto cat;
@@ -72,7 +73,7 @@ public class PetSearchTest extends PetControllerTest {
     private PetGetDto pet9;
     private PetGetDto pet10;
 
-    void persistSpecies() throws Exception {
+    void persistTestSpecies() throws Exception {
         dog = persistSpecies(speciesCreateDto());
         cat = persistSpecies(otherSpeciesCreateDto());
     }
@@ -133,7 +134,7 @@ public class PetSearchTest extends PetControllerTest {
                 .build());
     }
 
-    void persistColors() throws Exception {
+    void persistTestColors() throws Exception {
 
         black = persistColor(new ColorCreateDto("Black"));
         white = persistColor(new ColorCreateDto("White"));
@@ -142,14 +143,14 @@ public class PetSearchTest extends PetControllerTest {
         yellow = persistColor(new ColorCreateDto("Yellow"));
     }
 
-    void persistOrganization() throws Exception {
+    void persistTestOrganization() throws Exception {
         org1 = persistOrganization(organizationCreateDto());
         org2 = persistOrganization(otherOrganizationCreateDto());
         org3 = persistOrganization(OrganizationCreateDto.builder()
                 .name("Assossiacao Patinhas")
                 .email("patinhas@email.com")
-                .nif("999999999")
-                .phoneNumber("999999999")
+                .nipc("999999999")
+                .phoneNumber("919999999")
                 .websiteUrl("www.patinhas.com")
                 .address(Address.builder()
                         .street("Rua dos Patinhas, 666")
@@ -159,14 +160,14 @@ public class PetSearchTest extends PetControllerTest {
                         .build())
                 .socialMedia(SocialMedia.builder()
                         .facebook("www.facebook.com/patinhas")
-                        .instagram("www.instagram.com/patinhas")
-                        .twitter("www.twitter.com/patinhas")
+                        .instagram("patinhas")
+                        .twitter("patinhas")
                         .youtube("www.youtube.com/patinhas")
                         .build())
                 .build());
     }
 
-    void persistPets() throws Exception {
+    void persistTestPets() throws Exception {
 
         pet1 = persistPet(PetCreateDto.builder()
                 .name("Spike")
@@ -426,16 +427,13 @@ public class PetSearchTest extends PetControllerTest {
 
     @BeforeAll
     void setup() throws Exception {
-        persistSpecies();
+        persistTestSpecies();
         persistDogBreeds();
         persistCatBreeds();
-        persistColors();
-        persistOrganization();
-        persistPets();
+        persistTestColors();
+        persistTestOrganization();
+        persistTestPets();
     }
-
-    @AfterEach
-    void reset() {}
 
     private Stream<Arguments> provideSpeciesFilter() {
         return Stream.of(
@@ -455,29 +453,12 @@ public class PetSearchTest extends PetControllerTest {
     }
 
     @Test
-    @DisplayName("Should return an empty list if pets table in the database is empty")
-    void shouldReturnEmptyList_WhenSearchIsCalled_WhileDbIsEmpty() throws Exception {
-
-        petRepository.deleteAll();
-
-        MvcResult result = mockMvc.perform(post(SEARCH)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()", is(0)))
-                .andReturn();
-
-        List<PetGetDto> actualList = objectMapper.readValue(result.getResponse().getContentAsString(), new TypeReference<>() {});
-
-        assertNotNull(actualList);
-    }
-
-    @Test
     @DisplayName("Should return a list with same size as Pets stored in pets table when filters are not provided")
     void shouldReturnListWithSameSizeAsPetsInDb_WhenSearchIsCalledWithNoFilters() throws Exception {
 
         List<PetGetDto> expectedList = List.of(pet1, pet2, pet3, pet4, pet5, pet6, pet7, pet8, pet9, pet10);
 
-        MvcResult result = mockMvc.perform(post(SEARCH)
+        MvcResult result = mockMvc.perform(post(PET_SEARCH_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -492,7 +473,7 @@ public class PetSearchTest extends PetControllerTest {
     @DisplayName("")
     void shouldReturnListOfPetsThatMatchFilters_WhenSearchIsCalled_WithSpeciesAsFilter(PetSearchCriteria filters, List<PetGetDto> expectedList) throws Exception {
 
-        MvcResult result = mockMvc.perform(post(SEARCH)
+        MvcResult result = mockMvc.perform(post(PET_SEARCH_URL)
                         .content(objectMapper.writeValueAsString(filters))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

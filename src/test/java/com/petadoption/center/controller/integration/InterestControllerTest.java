@@ -24,7 +24,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class InterestControllerTest extends TestContainerConfig {
+public class InterestControllerTest extends AbstractIntegrationTest {
 
     private InterestGetDto interestGetDto;
     private InterestCreateDto interestCreateDto;

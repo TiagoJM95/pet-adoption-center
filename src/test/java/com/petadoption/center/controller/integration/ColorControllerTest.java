@@ -11,8 +11,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.petadoption.center.aspect.Error;
 
 
-
+import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.primaryColorCreateDto;
+import static com.petadoption.center.testUtils.TestDtoFactory.secondaryColorCreateDto;
 import static com.petadoption.center.util.Messages.COLOR_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -21,16 +22,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
-public class ColorControllerTest extends TestContainerConfig {
-
-    private final String GET_OR_CREATE = URL + "color/";
-    private final String GET_BY_ID = URL + "color/id/{id}";
-    private final String DELETE = URL + "color/delete/{id}";
+public class ColorControllerTest extends AbstractIntegrationTest {
 
     private ColorCreateDto colorCreateDto;
-    private String colorId;
-
 
     @BeforeEach
     void setUp() {
@@ -42,33 +36,6 @@ public class ColorControllerTest extends TestContainerConfig {
         colorRepository.deleteAll();
     }
 
-    private ColorGetDto persistColor() throws Exception {
-
-        var result =  mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(colorCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        ColorGetDto colorCreatedDto = objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-        colorId = colorCreatedDto.id();
-        return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-    }
-
-    private ColorGetDto persistAnotherColor() throws Exception {
-
-        ColorCreateDto dto = ColorCreateDto.builder()
-                .name("Blue")
-                .build();
-
-        var result =  mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        return objectMapper.readValue(result.getResponse().getContentAsString(), ColorGetDto.class);
-    }
 
     @Test
     @DisplayName("Test if create color returns the created color with ColorGetDto")
@@ -78,7 +45,7 @@ public class ColorControllerTest extends TestContainerConfig {
                 .name(colorCreateDto.name())
                 .build();
 
-        ColorGetDto colorCreatedGetDto = persistColor();
+        ColorGetDto colorCreatedGetDto = persistColor(colorCreateDto);
 
         assertThat(colorCreatedGetDto)
                 .usingRecursiveComparison()
@@ -91,9 +58,9 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if create color with duplicate fields of an existing color throws DataIntegrityViolationException")
     void createColorThrowsDataIntegrityViolationExceptionIfDuplicateField() throws Exception {
 
-        persistColor();
+        persistColor(colorCreateDto);
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
+        var result = mockMvc.perform(post(COLOR_GET_ALL_OR_CREATE_URL)
                         .content(objectMapper.writeValueAsString(colorCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -107,7 +74,7 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if create color with no body throw HttpMessageNotReadableException")
     void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
+        var result = mockMvc.perform(post(COLOR_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -120,9 +87,9 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all colors returns a list ColorGetDto")
     void getAllReturnsListOfColorGetDto() throws Exception {
 
-        ColorGetDto colorCreatedGetDto = persistColor();
+        ColorGetDto colorCreatedGetDto = persistColor(colorCreateDto);
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(COLOR_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -139,10 +106,10 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all colors pagination return the number of elements requested")
     void getAllReturnsNumberOfElementsOfRequest() throws Exception {
 
-        ColorGetDto firstColor = persistColor();
-        persistAnotherColor();
+        ColorGetDto firstColor = persistColor(colorCreateDto);
+        persistColor(secondaryColorCreateDto());
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(COLOR_GET_ALL_OR_CREATE_URL)
                         .param("page", "0")
                         .param("size", "1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -161,7 +128,7 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if get all return empty list if no colors in database")
     void getAllReturnEmptyList() throws Exception {
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(COLOR_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -174,9 +141,9 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if get color by id return the ColorGetDto of the requested color")
     void getByIdReturnsColorGetDtoOfRequestedColor() throws Exception {
 
-        ColorGetDto colorCreatedGetDto = persistColor();
+        ColorGetDto colorCreatedGetDto = persistColor(colorCreateDto);
 
-        var result = mockMvc.perform(get(GET_BY_ID, colorId)
+        var result = mockMvc.perform(get(COLOR_GET_BY_ID_URL, colorCreatedGetDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -193,7 +160,7 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if get color by id throws color not found exception")
     void getByIdThrowsColorNotFoundException() throws Exception {
 
-        mockMvc.perform(get(GET_BY_ID, "11111-11111-1111-1111")
+        mockMvc.perform(get(COLOR_GET_BY_ID_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -202,19 +169,19 @@ public class ColorControllerTest extends TestContainerConfig {
     @DisplayName("Test if delete color removes Color from database and returns message of success")
     void deleteRemovesColorAndReturnsMessage() throws Exception {
 
-        persistColor();
+        ColorGetDto colorToDelete = persistColor(colorCreateDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE, colorId)
+        mockMvc.perform(MockMvcRequestBuilders.delete(COLOR_DELETE_URL, colorToDelete.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorId)));
+                .andExpect(content().string(format(COLOR_DELETE_MESSAGE, colorToDelete.id())));
     }
 
     @Test
     @DisplayName("Test if delete color throws color not found exception if color does not exist")
     void deleteThrowsColorNotFoundExceptionIfColorDoesNotExist() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE, "11111-11111-1111-1111")
+        mockMvc.perform(MockMvcRequestBuilders.delete(COLOR_DELETE_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

@@ -12,9 +12,8 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.petadoption.center.aspect.Error;
 
 
-
-import static com.petadoption.center.testUtils.TestDtoFactory.speciesCreateDto;
-import static com.petadoption.center.testUtils.TestDtoFactory.speciesUpdateDto;
+import static com.petadoption.center.testUtils.ConstantsURL.*;
+import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.util.Messages.SPECIES_DELETE_MESSAGE;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,17 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-public class SpeciesControllerTest extends TestContainerConfig{
-
-    private final String GET_OR_CREATE = URL + "species/";
-    private final String GET_BY_ID = URL + "species/id/{id}";
-    private final String UPDATE = URL + "species/update/{id}";
-    private final String DELETE = URL + "species/delete/{id}";
+public class SpeciesControllerTest extends AbstractIntegrationTest {
 
     private SpeciesCreateDto speciesCreateDto;
     private SpeciesUpdateDto speciesUpdateDto;
-    private String speciesId;
-    private String anotherSpeciesId;
 
     @BeforeEach
     void setUp() {
@@ -45,36 +37,6 @@ public class SpeciesControllerTest extends TestContainerConfig{
         speciesRepository.deleteAll();
     }
 
-    private SpeciesGetDto persistSpecies() throws Exception {
-
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(speciesCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        SpeciesGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
-        speciesId = createResultDto.id();
-        return createResultDto;
-    }
-
-    private SpeciesGetDto persistAnotherSpecies() throws Exception {
-
-        SpeciesCreateDto dto = SpeciesCreateDto.builder()
-                .name("Bird")
-                .build();
-
-        var result = mockMvc.perform(post(GET_OR_CREATE)
-                        .content(objectMapper.writeValueAsString(dto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        SpeciesGetDto createResultDto = objectMapper.readValue(result.getResponse().getContentAsString(), SpeciesGetDto.class);
-        anotherSpeciesId = createResultDto.id();
-        return createResultDto;
-    }
-
     @Test
     @DisplayName("Test if create species returns the created species SpeciesGetDto")
     void createSpeciesReturnsTheCreatedSpeciesSpeciesGetDto() throws Exception {
@@ -83,7 +45,7 @@ public class SpeciesControllerTest extends TestContainerConfig{
                 .name(speciesCreateDto.name())
                 .build();
 
-        SpeciesGetDto createdSpeciesDto = persistSpecies();
+        SpeciesGetDto createdSpeciesDto = persistSpecies(speciesCreateDto);
 
         assertThat(createdSpeciesDto)
                 .usingRecursiveComparison()
@@ -98,9 +60,9 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @Test
     @DisplayName("Test if create species with duplicate fields of an existing species throws DataIntegrityViolationException")
     void createSpeciesThrowsDataIntegrityViolationExceptionIfSpeciesFieldsAlreadyExists() throws Exception {
-        persistSpecies();
+        persistSpecies(speciesCreateDto);
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
+        var result = mockMvc.perform(post(SPECIES_GET_ALL_OR_CREATE_URL)
                         .content(objectMapper.writeValueAsString(speciesCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -114,7 +76,7 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if create species with empty request body throws HttpMessageNotReadableException")
     void shouldThrowHttpMessageNotReadableException_WhenCreateIsCalledWithNoBody() throws Exception {
 
-        var result = mockMvc.perform(post(GET_OR_CREATE)
+        var result = mockMvc.perform(post(SPECIES_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -127,9 +89,9 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if get all species returns list of SpeciesGetDto")
     void getAllSpeciesReturnsListOfSpeciesGetDto() throws Exception {
 
-        SpeciesGetDto createdSpeciesDto = persistSpecies();
+        SpeciesGetDto createdSpeciesDto = persistSpecies(speciesCreateDto);
 
-        var result =mockMvc.perform(get(GET_OR_CREATE)
+        var result =mockMvc.perform(get(SPECIES_GET_ALL_OR_CREATE_URL)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -150,10 +112,10 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if get all species pagination returns the number of elements requested")
     void getAllSpeciesReturnNumberOfElementsOfRequest() throws Exception {
 
-        SpeciesGetDto firstSpecies = persistSpecies();
-        persistAnotherSpecies();
+        SpeciesGetDto firstSpecies = persistSpecies(speciesCreateDto);
+        persistSpecies(otherSpeciesCreateDto());
 
-        var result = mockMvc.perform(get(GET_OR_CREATE)
+        var result = mockMvc.perform(get(SPECIES_GET_ALL_OR_CREATE_URL)
                         .param("page", "0")
                         .param("size", "1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -172,7 +134,7 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if get all return a empty list if no species in database")
     void getAllReturnEmptyList() throws Exception {
 
-       var result = mockMvc.perform(get(GET_OR_CREATE)
+       var result = mockMvc.perform(get(SPECIES_GET_ALL_OR_CREATE_URL)
                        .contentType(MediaType.APPLICATION_JSON))
                .andExpect(status().isOk())
                .andReturn();
@@ -185,9 +147,9 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if get species by id return SpeciesGetDto of the requested species")
     void getSpeciesByIdReturnsTheRequestedSpeciesSpeciesGetDto() throws Exception {
 
-        SpeciesGetDto createdSpeciesDto = persistSpecies();
+        SpeciesGetDto createdSpeciesDto = persistSpecies(speciesCreateDto);
 
-        var result = mockMvc.perform(get(GET_BY_ID, speciesId)
+        var result = mockMvc.perform(get(SPECIES_GET_BY_ID_URL, createdSpeciesDto.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -204,7 +166,7 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if get species by id throws not found exception if species does not exist")
     void getSpeciesByIdThrowsNotFoundExceptionIfSpeciesDoesNotExist() throws Exception {
 
-        mockMvc.perform(get(GET_BY_ID, "11111-11111-1111-1111")
+        mockMvc.perform(get(SPECIES_GET_BY_ID_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -217,8 +179,9 @@ public class SpeciesControllerTest extends TestContainerConfig{
                 .name(speciesUpdateDto.name())
                 .build();
 
-        persistSpecies();
-        var result = mockMvc.perform(put(UPDATE, speciesId)
+        SpeciesGetDto speciesToUpdate = persistSpecies(speciesCreateDto);
+
+        var result = mockMvc.perform(put(SPECIES_UPDATE_URL, speciesToUpdate.id())
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -240,15 +203,15 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if update species throws DataIntegrityViolationException duplicate fields of an existing species")
     void updateSpeciesThrowsDataIntegrityViolationExceptionIfSpeciesFieldsAlreadyExists() throws Exception {
 
-        persistSpecies();
+        persistSpecies(speciesCreateDto);
 
-        persistAnotherSpecies();
+        SpeciesGetDto speciesToUpdate = persistSpecies(otherSpeciesCreateDto());
 
         SpeciesUpdateDto dto = SpeciesUpdateDto.builder()
                 .name(speciesCreateDto.name())
                 .build();
 
-        var result = mockMvc.perform(put(UPDATE, anotherSpeciesId)
+        var result = mockMvc.perform(put(SPECIES_UPDATE_URL, speciesToUpdate.id())
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict())
@@ -262,7 +225,7 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if update species throws not found exception if species does not exist")
     void updateSpeciesThrowsNotFoundExceptionIfSpeciesDoesNotExist() throws Exception {
 
-        mockMvc.perform(put(UPDATE, "11111-11111-1111-1111")
+        mockMvc.perform(put(SPECIES_UPDATE_URL, "11111-11111-1111-1111")
                         .content(objectMapper.writeValueAsString(speciesUpdateDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -272,19 +235,19 @@ public class SpeciesControllerTest extends TestContainerConfig{
     @DisplayName("Test if delete species removes Species from database and returns message of success")
     void deleteRemovesSpeciesAndReturnsSuccessMessage() throws Exception {
 
-        persistSpecies();
+        SpeciesGetDto speciesToDelete = persistSpecies(speciesCreateDto);
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE, speciesId)
+        mockMvc.perform(MockMvcRequestBuilders.delete(SPECIES_DELETE_URL, speciesToDelete.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(SPECIES_DELETE_MESSAGE, speciesId)));
+                .andExpect(content().string(format(SPECIES_DELETE_MESSAGE, speciesToDelete.id())));
     }
 
     @Test
     @DisplayName("Test if delete species throws not found exception if species does not exist")
     void deleteThrowsNotFoundExceptionIfSpeciesDoesNotExist() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete(DELETE, "11111-11111-1111-1111")
+        mockMvc.perform(MockMvcRequestBuilders.delete(SPECIES_DELETE_URL, "11111-11111-1111-1111")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
