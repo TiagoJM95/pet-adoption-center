@@ -470,7 +470,7 @@ public class PetSearchTest extends AbstractIntegrationTest {
 
     @ParameterizedTest
     @MethodSource("provideSpeciesFilter")
-    @DisplayName("")
+    @DisplayName("Should return a list of pets that match the species name passed as a filter")
     void shouldReturnListOfPetsThatMatchFilters_WhenSearchIsCalled_WithSpeciesAsFilter(PetSearchCriteria filters, List<PetGetDto> expectedList) throws Exception {
 
         MvcResult result = mockMvc.perform(post(PET_SEARCH_URL)

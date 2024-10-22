@@ -150,13 +150,13 @@ public class PetControllerTest extends AbstractIntegrationTest {
         petRepository.deleteAll();
     }
 
-
     private Stream<Arguments> provideCreateDtosWithAllPropsAndNullProps() {
         return Stream.of(
-                arguments(petCreateDto, expectedGetDto),
+                arguments(petCreateDto, "dto with all fields", expectedGetDto),
                 arguments(petCreateDto.toBuilder()
                                 .secondaryBreedId(null)
                                 .build(),
+                        "dto with null secondary breed",
                         expectedGetDto.toBuilder()
                                 .secondaryBreedDto(null)
                                 .build()),
@@ -165,6 +165,7 @@ public class PetControllerTest extends AbstractIntegrationTest {
                                 .secondaryColor(null)
                                 .tertiaryColor(null)
                                 .build(),
+                        "dto with all nullable fields null",
                         expectedGetDto.toBuilder()
                                 .secondaryBreedDto(null)
                                 .secondaryColorDto(null)
@@ -207,11 +208,12 @@ public class PetControllerTest extends AbstractIntegrationTest {
     // create
 
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Test with a {1}")
     @MethodSource("provideCreateDtosWithAllPropsAndNullProps")
-    @DisplayName("Should persist a new Pet and return a PetGetDto with correct fields when a valid PetCreateDto is provided")
-    void shouldCreatePetAndReturnCorrectPetGetDto_whenPetIsValid(PetCreateDto createDto, PetGetDto expected) throws Exception {
+    @DisplayName("Should persist a new Pet and return correct PetGetDto when valid PetCreateDto is provided")
+    void shouldPersistNewPetAndReturnCorrectDto_whenValidPetCreateDtoIsProvided(PetCreateDto createDto, String testName, PetGetDto expected) throws Exception {
 
+        System.out.println(testName);
         PetGetDto persistedPetDto = persistPet(createDto);
 
         assertThat(persistedPetDto)
@@ -223,11 +225,12 @@ public class PetControllerTest extends AbstractIntegrationTest {
         assertTrue(persistedPetDto.id().matches("^[0-9a-fA-F-]{36}$"));
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Test with a {1}")
     @MethodSource("provideCreateDtosWithAllPropsAndNullProps")
     @DisplayName("Persisted Pet should match the Pet retrieved from the database")
-    void shouldMatchPersistedPetWithRetrievedPet_whenPetIsValid(PetCreateDto createDto) throws Exception {
+    void shouldMatchPersistedPetWithRetrievedPet_whenPetIsValid(PetCreateDto createDto, String testName) throws Exception {
 
+        System.out.println(testName);
         PetGetDto persistedPetDto = persistPet(createDto);
 
         Pet retrievedPet = petRepository.findById(persistedPetDto.id())
@@ -363,8 +366,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Check If pet was updated in db")
-    void test() throws Exception {
+    @DisplayName("Should verify that the Pet was correctly updated in the database")
+    void shouldVerifyUpdatedPetInDatabase() throws Exception {
 
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
@@ -383,8 +386,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("PetNotFound")
-    void test1() throws Exception {
+    @DisplayName("Should throw PetNotFoundException when updating a Pet with an invalid Id")
+    void shouldThrowPetNotFoundException_whenUpdatingWithInvalidId() throws Exception {
 
         MvcResult result = mockMvc.perform(put(PET_UPDATE_URL, "InvalidId")
                         .content(objectMapper.writeValueAsString(updateDto))
@@ -398,8 +401,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("InvalidDto")
-    void test2() throws Exception {
+    @DisplayName("Should throw MethodArgumentNotValidException when an invalid PetUpdateDto is provided")
+    void shouldThrowMethodArgumentNotValidException_whenInvalidUpdateDtoIsProvided() throws Exception {
 
         PetUpdateDto invalidDto = PetUpdateDto.builder()
                 .age("INVALID")
@@ -420,8 +423,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("No Body")
-    void test3() throws Exception {
+    @DisplayName("Should throw HttpMessageNotReadableException when no request body is provided for update")
+    void shouldThrowHttpMessageNotReadableException_whenNoRequestBodyIsProvidedForUpdate() throws Exception {
 
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
@@ -441,8 +444,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    @DisplayName("Delete returns string")
-    void test4() throws Exception {
+    @DisplayName("Should delete Pet and return success message when a valid Id is provided")
+    void shouldDeletePetAndReturnSuccessMessage_whenValidIdIsProvided() throws Exception {
 
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
@@ -454,8 +457,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Check if pet was deleted in db")
-    void test5() throws Exception {
+    @DisplayName("Should verify that the Pet was deleted from the database")
+    void shouldVerifyPetWasDeletedInDatabase() throws Exception {
 
         PetGetDto persistedPetDto = persistPet(petCreateDto);
         String petId = persistedPetDto.id();
@@ -468,8 +471,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("PetNotFound")
-    void test6() throws Exception {
+    @DisplayName("Should throw PetNotFoundException when deleting a Pet with an invalid Id")
+    void shouldThrowPetNotFoundException_whenDeletingWithInvalidId() throws Exception {
 
         MvcResult result = mockMvc.perform(delete(PET_DELETE_URL,"InvalidId")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -486,8 +489,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
 
 
     @Test
-    @DisplayName("Should persist a list Pet and return a String")
-    void test7() throws Exception {
+    @DisplayName("Should persist a list of Pets and return success message when a valid list is provided")
+    void shouldPersistPetListAndReturnSuccessMessage_whenValidListIsProvided() throws Exception {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2);
 
@@ -499,8 +502,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Confirm all the pets were added")
-    void test8() throws Exception {
+    @DisplayName("Should verify that all Pets were successfully added to the database")
+    void shouldVerifyAllPetsWereAddedToDatabase() throws Exception {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2);
 
@@ -513,8 +516,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("DataIntegrityViolationException in any element")
-    void test9() throws Exception {
+    @DisplayName("Should throw DataIntegrityViolationException when a duplicate Pet exists in the list")
+    void shouldThrowDataIntegrityViolationException_whenDuplicateExistsInPetList() throws Exception {
 
         List<PetCreateDto> dtoList = List.of(petCreateDto, petCreateDto2, petCreateDto);
 
@@ -531,8 +534,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("InvalidDto")
-    void test10() throws Exception {
+    @DisplayName("Should throw MethodArgumentNotValidException when an invalid PetCreateDto exists in the list")
+    void shouldThrowMethodArgumentNotValidException_whenInvalidPetInList() throws Exception {
 
         PetCreateDto invalidDto = PetCreateDto.builder()
                 .name("Fifas")
@@ -565,8 +568,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("No Body")
-    void test11() throws Exception {
+    @DisplayName("Should throw HttpMessageNotReadableException when no request body is provided for creation")
+    void shouldThrowHttpMessageNotReadableException_whenNoRequestBodyIsProvidedForCreation() throws Exception {
 
         MvcResult result = mockMvc.perform(post(PET_ADD_LIST_URL)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -578,6 +581,8 @@ public class PetControllerTest extends AbstractIntegrationTest {
         assertTrue(error.message().contains("Required request body is missing"));
     }
 
+
+    // search
 
     @Test
     @DisplayName("Should return an empty list if pets table in the database is empty")
