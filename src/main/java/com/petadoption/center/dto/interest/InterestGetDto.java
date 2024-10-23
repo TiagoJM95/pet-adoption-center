@@ -15,6 +15,6 @@ public record InterestGetDto(
         PetGetDto petDto,
         OrganizationGetDto organizationDto,
         Status status,
-        LocalDateTime timestamp,
+        LocalDateTime createdAt,
         LocalDateTime reviewTimestamp
 ) {}

@@ -160,7 +160,7 @@ public class TestDtoFactory {
                 .petDto(petGetDto())
                 .organizationDto(orgGetDto())
                 .status(Status.PENDING)
-                .timestamp(LocalDateTime.of(2024, 1, 1, 1 ,1))
+                .createdAt(LocalDateTime.of(2024, 1, 1, 1 ,1))
                 .build();
 
     }
@@ -172,7 +172,7 @@ public class TestDtoFactory {
                 .petDto(petGetDto())
                 .organizationDto(orgGetDto())
                 .status(Status.ACCEPTED)
-                .timestamp(LocalDateTime.of(2024, 1, 1, 1 ,1))
+                .createdAt(LocalDateTime.of(2024, 1, 1, 1 ,1))
                 .reviewTimestamp(LocalDateTime.of(2024, 1, 1, 2, 1))
                 .build();
 

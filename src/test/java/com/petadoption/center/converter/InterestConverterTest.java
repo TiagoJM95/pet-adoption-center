@@ -59,6 +59,6 @@ public class InterestConverterTest {
         assertEquals(petGetDto, interestConverted.petDto());
         assertEquals(organizationGetDto, interestConverted.organizationDto());
         assertEquals(Status.PENDING, interestConverted.status());
-        assertEquals(LocalDateTime.of(2024, 1, 1, 1 ,1), interestConverted.timestamp());
+        assertEquals(LocalDateTime.of(2024, 1, 1, 1 ,1), interestConverted.createdAt());
     }
 }
