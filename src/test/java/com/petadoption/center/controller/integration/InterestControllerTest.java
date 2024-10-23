@@ -13,7 +13,6 @@ import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.enums.Status;
 import org.junit.jupiter.api.*;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 
 import java.time.LocalDateTime;
 
@@ -37,6 +36,8 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     private InterestUpdateDto interestUpdateDtoFormRequested;
     private InterestGetDto expectedInterestGetDto;
 
+    private String UNIQUE_USER_PET_ORG_CONSTRAINT;
+
     private String invalidInterestId;
     private String invalidOrgId;
     private String invalidUserId;
@@ -45,6 +46,8 @@ public class InterestControllerTest extends AbstractIntegrationTest {
 
     @BeforeAll
     void setUp() throws Exception {
+        UNIQUE_USER_PET_ORG_CONSTRAINT = "uniqueuserandpetandorganization";
+
         SpeciesGetDto speciesGetDto = persistSpecies(speciesCreateDto());
         BreedGetDto primaryBreedGetDto = persistBreed(primaryBreedCreateDto(speciesGetDto.id()));
         ColorGetDto primaryColorGetDto = persistColor(primaryColorCreateDto());
@@ -264,15 +267,13 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get current interest with invalid id throws InterestNotFoundException")
     void testGetInterestByIdReturnsInterestNotFoundException() throws Exception {
 
-        String invalidId = "123123-123123";
-
-        mockMvc.perform(get(INTEREST_GET_BY_ID_URL, invalidId)
+        mockMvc.perform(get(INTEREST_GET_BY_ID_URL, invalidInterestId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)))
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidInterestId)))
                 .andReturn();
     }
 
@@ -290,6 +291,23 @@ public class InterestControllerTest extends AbstractIntegrationTest {
 
         assertNotNull(persistedInterest.createdAt());
         assertTrue(persistedInterest.id().matches("^[0-9a-fA-F-]{36}$"));
+    }
+
+    @Test
+    @DisplayName("Test if create interest with repeated User/Pet/Org combination returns conflict with correct constraint and message")
+    void testIfCreateInterestWithExistentUserAndPetAndOrgReturnsConflict() throws Exception {
+
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
+
+        assertNotNull(persistedInterest.createdAt());
+        assertTrue(persistedInterest.id().matches("^[0-9a-fA-F-]{36}$"));
+
+        mockMvc.perform(post(INTEREST_CREATE_URL)
+                        .content(objectMapper.writeValueAsString(interestCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(constraintMessageResolver.getMessage(UNIQUE_USER_PET_ORG_CONSTRAINT)))
+                .andExpect(jsonPath("$.constraint").value(UNIQUE_USER_PET_ORG_CONSTRAINT));
     }
 
     @Test
