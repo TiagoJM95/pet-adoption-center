@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.UUID;
 import static com.petadoption.center.util.Messages.BLANK_FIELD;
 import static com.petadoption.center.util.Messages.ONLY_UUID;
 
-@Builder
+@Builder(toBuilder = true)
 public record AdoptionFormCreateDto(
 
         @NotBlank(message = BLANK_FIELD)

@@ -12,10 +12,14 @@ import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
@@ -104,6 +108,17 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
        clearRedisCache();
     }
 
+    private Stream<Arguments> provideCreateDTOsWithInvalidProps() {
+        return Stream.of(
+                Arguments.of(adoptionFormCreateDto.toBuilder().userId(null).build(), "userId"),
+                Arguments.of(adoptionFormCreateDto.toBuilder().petId(null).build(), "petId"),
+                Arguments.of(adoptionFormCreateDto.toBuilder().userFamily(null).build(), "userFamily"),
+                Arguments.of(adoptionFormCreateDto.toBuilder().petVacationHome(null).build(), "petVacationHome"),
+                Arguments.of(adoptionFormCreateDto.toBuilder().isResponsibleForPet(null).build(), "isResponsibleForPet"),
+                Arguments.of(adoptionFormCreateDto.toBuilder().petAddress(null).build(), "petAddress")
+        );
+    }
+
     @Test
     @DisplayName("Test if get all AdoptionForms when repository is empty returns empty list")
     void testIfGetAllEmptyAdoptionFormsReturnsEmptyList() throws Exception {
@@ -121,7 +136,7 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
 
     @Test
     @DisplayName("Test if getting all AdoptionForms with 1 element in repository returns 1 element list")
-    void testIfGetAllAdoptionFormWhenRepositorsHasOneElementReturnsListOfSizeOne() throws Exception {
+    void testIfGetAllAdoptionFormWhenRepositoryHasOneElementReturnsListOfSizeOne() throws Exception {
 
         AdoptionFormGetDto persistedAdoptionForm = persistAdoptionForm(adoptionFormCreateDto);
 
@@ -199,6 +214,18 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(constraintMessageResolver.getMessage(UNIQUE_USER_PET_CONSTRAINT)))
                 .andExpect(jsonPath("$.constraint").value(UNIQUE_USER_PET_CONSTRAINT));
+    }
+
+    @ParameterizedTest(name = "Test {index}: Test with invalid {1}")
+    @MethodSource("provideCreateDTOsWithInvalidProps")
+    @DisplayName("Test if create an AdoptionForm with invalid field throws exception and validation message")
+    void testIfCreatingAdoptionFormWithInvalidFieldThrowsException(AdoptionFormCreateDto adoptionFormCreateDto, String invalidField) throws Exception{
+
+        mockMvc.perform(post(ADOPTION_FORM_GET_ALL_OR_CREATE_URL)
+                        .content(objectMapper.writeValueAsString(adoptionFormCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.validationIssue." + invalidField, is(BLANK_FIELD)));
     }
 
     @Test

@@ -12,15 +12,18 @@ import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.enums.Status;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
 
 import java.time.LocalDateTime;
+import java.util.stream.Stream;
 
 import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
-import static com.petadoption.center.util.Messages.INTEREST_DELETE_MESSAGE;
-import static com.petadoption.center.util.Messages.INTEREST_NOT_FOUND;
+import static com.petadoption.center.util.Messages.*;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -104,17 +107,6 @@ public class InterestControllerTest extends AbstractIntegrationTest {
         clearRedisCache();
     }
 
-    private void updateInterestToFormRequested() throws Exception {
-
-        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
-
-        mockMvc.perform(put(INTEREST_UPDATE_URL, persistedInterest.id())
-                        .content(objectMapper.writeValueAsString(interestUpdateDtoFormRequested))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
-
     private void persistAndUpdateInterestToRejected() throws Exception {
 
         InterestGetDto persistedInterest = persistInterest(interestCreateDto);
@@ -124,6 +116,14 @@ public class InterestControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
+    }
+
+    private Stream<Arguments> provideCreateDTOsWithInvalidProps() {
+        return Stream.of(
+                Arguments.of(interestCreateDto.toBuilder().userId(null).build(), "userId"),
+                Arguments.of(interestCreateDto.toBuilder().petId(null).build(), "petId"),
+                Arguments.of(interestCreateDto.toBuilder().organizationId(null).build(), "organizationId")
+        );
     }
 
     @Test
@@ -308,6 +308,18 @@ public class InterestControllerTest extends AbstractIntegrationTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.message").value(constraintMessageResolver.getMessage(UNIQUE_USER_PET_ORG_CONSTRAINT)))
                 .andExpect(jsonPath("$.constraint").value(UNIQUE_USER_PET_ORG_CONSTRAINT));
+    }
+
+    @ParameterizedTest(name = "Test {index}: Test with invalid {1}")
+    @MethodSource("provideCreateDTOsWithInvalidProps")
+    @DisplayName("Test if create an Interest with invalid field throws exception and validation message")
+    void testIfCreatingInterestFormWithInvalidFieldThrowsException(InterestCreateDto interestCreateDto, String invalidField) throws Exception{
+
+        mockMvc.perform(post(INTEREST_CREATE_URL)
+                        .content(objectMapper.writeValueAsString(interestCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.validationIssue." + invalidField, is(BLANK_FIELD)));
     }
 
     @Test
