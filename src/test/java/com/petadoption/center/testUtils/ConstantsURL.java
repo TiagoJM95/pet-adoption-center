@@ -39,4 +39,13 @@ public class ConstantsURL {
     public static final String SPECIES_GET_BY_ID_URL = URL + "species/id/{id}";
     public static final String SPECIES_UPDATE_URL = URL + "species/update/{id}";
     public static final String SPECIES_DELETE_URL = URL + "species/delete/{id}";
+
+    public static final String INTEREST_CREATE_URL = URL + "interest/";
+    public static final String INTEREST_GET_BY_ID_URL = URL + "interest/id/{id}";
+    public static final String INTEREST_GET_CURRENT_BY_ORG_ID_URL = URL + "interest/organization/{organizationId}/current";
+    public static final String INTEREST_GET_HISTORY_BY_ORG_ID_URL = URL + "interest/organization/{organizationId}/history";
+    public static final String INTEREST_GET_CURRENT_BY_USER_ID_URL = URL + "interest/user/{userId}/current";
+    public static final String INTEREST_GET_HISTORY_BY_USER_ID_URL = URL + "interest/user/{userId}/history";
+    public static final String INTEREST_UPDATE_URL = URL + "interest/update/{id}";
+    public static final String INTEREST_DELETE_URL = URL + "interest/delete/{id}";
 }

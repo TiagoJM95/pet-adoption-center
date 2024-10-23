@@ -33,7 +33,6 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
     private static AdoptionFormUpdateDto adoptionFormUpdateDto;
     private static AdoptionFormGetDto expectedAdoptionFormGetDto;
 
-
     private SpeciesGetDto speciesGetDto;
     private BreedGetDto primaryBreedGetDto;
     private ColorGetDto primaryColorGetDto;
@@ -43,7 +42,7 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
     private PetGetDto petGetDto;
 
     @BeforeAll
-    void setup() throws Exception {
+    void setUp() throws Exception {
         speciesGetDto = persistSpecies(speciesCreateDto());
         primaryBreedGetDto = persistBreed(primaryBreedCreateDto(speciesGetDto.id()));
         primaryColorGetDto = persistColor(primaryColorCreateDto());

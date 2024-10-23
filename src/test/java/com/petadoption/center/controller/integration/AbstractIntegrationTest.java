@@ -146,7 +146,7 @@ public class AbstractIntegrationTest extends TestContainerConfig {
     }
 
     InterestGetDto persistInterest(InterestCreateDto dto) throws Exception {
-        MvcResult result = mockMvc.perform(post("")
+        MvcResult result = mockMvc.perform(post(INTEREST_CREATE_URL)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
