@@ -18,8 +18,6 @@ import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.repository.*;
-import com.petadoption.center.testUtils.ConstantsURL;
-import com.petadoption.center.testUtils.TestPersistenceHelper;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +48,6 @@ public class AbstractIntegrationTest extends TestContainerConfig {
     protected MockMvc mockMvc;
     @Autowired
     protected ObjectMapper objectMapper;
-    @Autowired
-    protected TestPersistenceHelper helper;
     @SpyBean
     protected UserRepository userRepository;
     @Autowired

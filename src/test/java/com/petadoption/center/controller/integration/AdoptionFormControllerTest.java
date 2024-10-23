@@ -33,22 +33,14 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
     private static AdoptionFormUpdateDto adoptionFormUpdateDto;
     private static AdoptionFormGetDto expectedAdoptionFormGetDto;
 
-    private SpeciesGetDto speciesGetDto;
-    private BreedGetDto primaryBreedGetDto;
-    private ColorGetDto primaryColorGetDto;
-    private OrganizationGetDto organizationGetDto;
-    private PetCreateDto petCreateDto;
-    private UserGetDto userGetDto;
-    private PetGetDto petGetDto;
-
     @BeforeAll
     void setUp() throws Exception {
-        speciesGetDto = persistSpecies(speciesCreateDto());
-        primaryBreedGetDto = persistBreed(primaryBreedCreateDto(speciesGetDto.id()));
-        primaryColorGetDto = persistColor(primaryColorCreateDto());
-        organizationGetDto = persistOrganization(organizationCreateDto());
+        SpeciesGetDto speciesGetDto = persistSpecies(speciesCreateDto());
+        BreedGetDto primaryBreedGetDto = persistBreed(primaryBreedCreateDto(speciesGetDto.id()));
+        ColorGetDto primaryColorGetDto = persistColor(primaryColorCreateDto());
+        OrganizationGetDto organizationGetDto = persistOrganization(organizationCreateDto());
 
-        petCreateDto = PetCreateDto.builder()
+        PetCreateDto petCreateDto = PetCreateDto.builder()
                 .name("Max")
                 .speciesId(speciesGetDto.id())
                 .primaryBreedId(primaryBreedGetDto.id())
@@ -64,8 +56,8 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
                 .organizationId(organizationGetDto.id())
                 .build();
 
-        userGetDto = persistUser(userCreateDto());
-        petGetDto = persistPet(petCreateDto);
+        UserGetDto userGetDto = persistUser(userCreateDto());
+        PetGetDto petGetDto = persistPet(petCreateDto);
 
         adoptionFormCreateDto = AdoptionFormCreateDto.builder()
                 .userId(userGetDto.id())
@@ -98,8 +90,8 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
 
     @AfterEach
     void cleanTable(){
-        helper.cleanAll();
-        clearRedisCache();
+       adoptionFormRepository.deleteAll();
+       clearRedisCache();
     }
 
     @Test
