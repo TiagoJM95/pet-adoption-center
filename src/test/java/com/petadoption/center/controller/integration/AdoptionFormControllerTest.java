@@ -84,6 +84,7 @@ public class AdoptionFormControllerTest extends AbstractIntegrationTest {
     @AfterEach
     void cleanTable(){
         helper.cleanAll();
+        clearRedisCache();
     }
 
     private void addUser() throws Exception {

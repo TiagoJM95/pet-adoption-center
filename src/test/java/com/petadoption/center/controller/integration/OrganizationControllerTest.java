@@ -45,6 +45,7 @@ public class OrganizationControllerTest extends AbstractIntegrationTest {
     @AfterEach
     void tearDown() {
         organizationRepository.deleteAll();
+        clearRedisCache();
     }
 
     static Stream<Arguments> orgCreateDtoProvider() {
@@ -194,17 +195,19 @@ public class OrganizationControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test if get all organizations return a list of OrganizationGetDto")
     void getAllOrganizationsReturnsListOfOrganizationGetDto() throws Exception {
 
-        OrganizationGetDto orgCreatedDto= persistOrganization(organizationCreateDto);
+        OrganizationGetDto orgCreatedDto = persistOrganization(organizationCreateDto);
 
-        mockMvc.perform(get(ORG_GET_ALL_OR_CREATE_URL)
+        var result = mockMvc.perform(get(ORG_GET_ALL_OR_CREATE_URL)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id", is(orgCreatedDto.id())))
-                .andExpect(jsonPath("$[0].name", is(orgCreatedDto.name())))
-                .andExpect(jsonPath("$[0].email", is(orgCreatedDto.email())))
-                .andExpect(jsonPath("$[0].nipc", is(orgCreatedDto.nipc())))
-                .andExpect(jsonPath("$[0].phoneNumber", is(orgCreatedDto.phoneNumber())))
-                .andExpect(jsonPath("$[0].websiteUrl", is(orgCreatedDto.websiteUrl())));
+                .andReturn();
+
+        OrganizationGetDto[] organizationGetDtoArray = objectMapper.readValue(result.getResponse().getContentAsString(), OrganizationGetDto[].class);
+        assertThat(organizationGetDtoArray).hasSize(1);
+        assertThat(organizationGetDtoArray[0])
+                .usingRecursiveComparison()
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(orgCreatedDto);
     }
 
     @Test

@@ -26,10 +26,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+
+import java.util.Set;
 
 import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,6 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AbstractIntegrationTest extends TestContainerConfig {
 
+    @Autowired
+    protected RedisTemplate<String, Object> redisTemplate;
     @Autowired
     protected MockMvc mockMvc;
     @Autowired
@@ -63,6 +68,13 @@ public class AbstractIntegrationTest extends TestContainerConfig {
     protected ColorRepository colorRepository;
     @Autowired
     protected InterestRepository interestRepository;
+
+    protected void clearRedisCache() {
+        Set<String> keys = redisTemplate.keys("*");
+        if (keys != null) {
+            redisTemplate.delete(keys);
+        }
+    }
 
 
     @AfterAll

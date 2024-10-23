@@ -34,6 +34,7 @@ public class ColorControllerTest extends AbstractIntegrationTest {
     @AfterEach
     void tearDown() {
         colorRepository.deleteAll();
+        clearRedisCache();
     }
 
 

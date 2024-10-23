@@ -36,6 +36,7 @@ public class BreedControllerTest extends AbstractIntegrationTest {
     @AfterEach
     void tearDown() {
         breedRepository.deleteAll();
+        clearRedisCache();
     }
 
 

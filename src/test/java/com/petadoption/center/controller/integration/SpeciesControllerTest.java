@@ -35,6 +35,7 @@ public class SpeciesControllerTest extends AbstractIntegrationTest {
     @AfterEach
     void tearDown() {
         speciesRepository.deleteAll();
+        clearRedisCache();
     }
 
     @Test

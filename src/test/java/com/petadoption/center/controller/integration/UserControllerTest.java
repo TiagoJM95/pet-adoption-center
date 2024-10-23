@@ -35,8 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class UserControllerTest extends AbstractIntegrationTest {
 
-    @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+
     private static UserCreateDto userCreateDto;
     private static UserUpdateDto userUpdateDto;
 
@@ -52,12 +51,7 @@ public class UserControllerTest extends AbstractIntegrationTest {
         clearRedisCache();
     }
 
-    private void clearRedisCache() {
-        Set<String> keys = redisTemplate.keys("*");
-        if (keys != null) {
-            redisTemplate.delete(keys);
-        }
-    }
+
 
     static Stream<Arguments> userCreateDtoProvider() {
 

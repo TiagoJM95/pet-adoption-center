@@ -148,6 +148,7 @@ public class PetControllerTest extends AbstractIntegrationTest {
     @AfterEach
     void reset(){
         petRepository.deleteAll();
+        clearRedisCache();
     }
 
     private Stream<Arguments> provideCreateDtosWithAllPropsAndNullProps() {
