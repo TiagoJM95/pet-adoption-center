@@ -3,6 +3,7 @@ package com.petadoption.center.model.embeddable;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Embeddable
@@ -11,7 +12,7 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
-public class Attributes {
+public class Attributes implements Serializable {
     private boolean sterilized;
     private boolean vaccinated;
     private boolean chipped;

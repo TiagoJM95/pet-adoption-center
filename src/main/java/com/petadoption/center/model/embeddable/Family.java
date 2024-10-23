@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ import static com.petadoption.center.util.Messages.ONLY_NUMBERS;
 @Builder
 @Getter
 @Setter
-public class Family {
+public class Family implements Serializable {
 
     @Min(value = 0, message = ONLY_NUMBERS)
     private Integer familyCount;

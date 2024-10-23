@@ -6,6 +6,7 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.Family;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -19,4 +20,4 @@ public record AdoptionFormGetDto(
         String otherNotes,
         Address petAddress,
         LocalDateTime createdAt
-) {}
+)implements Serializable {}

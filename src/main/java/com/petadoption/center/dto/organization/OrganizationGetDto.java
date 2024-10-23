@@ -4,6 +4,7 @@ import com.petadoption.center.model.embeddable.Address;
 import com.petadoption.center.model.embeddable.SocialMedia;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder
@@ -17,4 +18,4 @@ public record OrganizationGetDto(
         String websiteUrl,
         SocialMedia socialMedia,
         LocalDateTime createdAt
-) {}
+) implements Serializable {}

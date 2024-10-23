@@ -11,6 +11,7 @@ import com.petadoption.center.enums.Sizes;
 import com.petadoption.center.model.embeddable.Attributes;
 import lombok.Builder;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Builder(toBuilder = true)
@@ -33,4 +34,4 @@ public record PetGetDto(
         Attributes attributes,
         LocalDateTime createdAt,
         OrganizationGetDto organizationDto
-) {}
+)implements Serializable {}

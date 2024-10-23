@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 import static com.petadoption.center.util.Messages.*;
@@ -16,7 +17,7 @@ import static com.petadoption.center.util.Regex.*;
 @Getter
 @Setter
 @Builder
-public class SocialMedia {
+public class SocialMedia implements Serializable {
 
 
     @Pattern(regexp = WEBSITE_REGEX, message = FACEBOOK_VALID)
