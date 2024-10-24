@@ -13,7 +13,7 @@ public class InterestConverter {
                 .petDto(PetConverter.toDto(interest.getPet()))
                 .organizationDto(OrganizationConverter.toDto(interest.getOrganization()))
                 .status(interest.getStatus())
-                .timestamp(interest.getCreatedAt())
+                .createdAt(interest.getCreatedAt())
                 .reviewTimestamp(interest.getReviewTimestamp())
                 .build();
     }

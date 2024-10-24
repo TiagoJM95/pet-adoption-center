@@ -1,151 +1,136 @@
 package com.petadoption.center.controller.integration;
 
+import com.petadoption.center.dto.breed.BreedGetDto;
+import com.petadoption.center.dto.color.ColorGetDto;
 import com.petadoption.center.dto.interest.InterestCreateDto;
 import com.petadoption.center.dto.interest.InterestGetDto;
 import com.petadoption.center.dto.interest.InterestUpdateDto;
 import com.petadoption.center.dto.organization.OrganizationGetDto;
 import com.petadoption.center.dto.pet.PetCreateDto;
 import com.petadoption.center.dto.pet.PetGetDto;
-import com.petadoption.center.dto.user.UserCreateDto;
+import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.user.UserGetDto;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import com.petadoption.center.enums.Status;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MvcResult;
 
+import java.time.LocalDateTime;
+import java.util.stream.Stream;
+
+import static com.petadoption.center.testUtils.ConstantsURL.*;
 import static com.petadoption.center.testUtils.TestDtoFactory.*;
 import static com.petadoption.center.testUtils.TestEntityFactory.createAttributes;
-import static com.petadoption.center.util.Messages.INTEREST_DELETE_MESSAGE;
-import static com.petadoption.center.util.Messages.INTEREST_NOT_FOUND;
+import static com.petadoption.center.util.Messages.*;
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class InterestControllerTest extends AbstractIntegrationTest {
 
-    private InterestGetDto interestGetDto;
     private InterestCreateDto interestCreateDto;
     private InterestUpdateDto interestUpdateDtoRejected;
     private InterestUpdateDto interestUpdateDtoFormRequested;
-    private UserGetDto userGetDto;
-    private PetGetDto petGetDto;
-    private OrganizationGetDto organizationGetDto;
-    private String userId;
-    private String petId;
+    private InterestGetDto expectedInterestGetDto;
+
+    private String UNIQUE_USER_PET_ORG_CONSTRAINT;
+
+    private String invalidInterestId;
+    private String invalidOrgId;
+    private String invalidUserId;
     private String orgId;
-    private String speciesId;
-    private String breedId;
-    private String colorId;
-    private String interestId;
-    private String URL = "/api/v1";
+    private String userId;
 
-    @BeforeEach
+    @BeforeAll
     void setUp() throws Exception {
-        speciesId = helper.persistTestSpecies();
-        breedId = helper.persistTestPrimaryBreed();
-        colorId = helper.persistTestPrimaryColor();
-        orgId = helper.persistTestOrg();
+        UNIQUE_USER_PET_ORG_CONSTRAINT = "uniqueuserandpetandorganization";
 
-        addUser();
-        addPet();
+        SpeciesGetDto speciesGetDto = persistSpecies(speciesCreateDto());
+        BreedGetDto primaryBreedGetDto = persistBreed(primaryBreedCreateDto(speciesGetDto.id()));
+        ColorGetDto primaryColorGetDto = persistColor(primaryColorCreateDto());
+
+        OrganizationGetDto organizationGetDto = persistOrganization(organizationCreateDto());
+        orgId = organizationGetDto.id();
+
+        PetCreateDto petCreateDto = PetCreateDto.builder()
+                .name("Max")
+                .speciesId(speciesGetDto.id())
+                .primaryBreedId(primaryBreedGetDto.id())
+                .primaryColor(primaryColorGetDto.id())
+                .gender("Male")
+                .coat("Medium")
+                .age("Adult")
+                .size("Large")
+                .description("Max is friendly dog!")
+                .imageUrl("https://dog.com")
+                .isAdopted(false)
+                .attributes(createAttributes())
+                .organizationId(organizationGetDto.id())
+                .build();
+
+        UserGetDto userGetDto = persistUser(userCreateDto());
+        userId = userGetDto.id();
+
+        PetGetDto petGetDto = persistPet(petCreateDto);
 
         interestCreateDto = new InterestCreateDto(
-                userId,
-                petId,
-                orgId
+                userGetDto.id(),
+                petGetDto.id(),
+                organizationGetDto.id()
         );
 
         interestUpdateDtoRejected = interestUpdateDtoToRejected();
         interestUpdateDtoFormRequested = interestUpdateDtoToFormRequested();
+
+        expectedInterestGetDto = InterestGetDto.builder()
+                .userDto(userGetDto)
+                .petDto(petGetDto)
+                .organizationDto(organizationGetDto)
+                .status(Status.PENDING)
+                .createdAt(LocalDateTime.of(2024, 1, 1, 1 ,1))
+                .build();
+
+        invalidInterestId = "1111-1111";
+        invalidOrgId = "2222-2222";
+        invalidUserId = "3333-3333";
     }
 
     @AfterEach
-    void cleanTable() {
-        helper.cleanAll();
+    void reset(){
+        interestRepository.deleteAll();
+        clearRedisCache();
     }
 
-    private void addUser() throws Exception {
-        UserCreateDto userCreateDto = userCreateDto();
+    private void persistAndUpdateInterestToRejected() throws Exception {
 
-        MvcResult result = mockMvc.perform(post(URL + "/user/")
-                        .content(objectMapper.writeValueAsString(userCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
 
-        userGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), UserGetDto.class);
-
-        userId = userGetDto.id();
-    }
-
-    private void addPet() throws Exception {
-        PetCreateDto petCreateDto = PetCreateDto.builder()
-                .name("Bobi")
-                .speciesId(speciesId)
-                .primaryBreedId(breedId)
-                .primaryColor(colorId)
-                .gender("MALE")
-                .coat("HAIRLESS")
-                .size("SMALL")
-                .age("BABY")
-                .description("Description")
-                .imageUrl("http://aeer.com")
-                .isAdopted(false)
-                .attributes(createAttributes())
-                .organizationId(orgId)
-                .build();
-
-        MvcResult result = mockMvc.perform(post(URL + "/pet/addSingle")
-                        .content(objectMapper.writeValueAsString(petCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andReturn();
-
-        petGetDto = objectMapper.readValue(result.getResponse().getContentAsString(), PetGetDto.class);
-
-        petId = petGetDto.id();
-    }
-
-    private void createInterest() throws Exception {
-
-        MvcResult result = mockMvc.perform(post(URL + "/interest/")
-                        .content(objectMapper.writeValueAsString(interestCreateDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        InterestGetDto interestGetDtoCreated = objectMapper.readValue(result.getResponse().getContentAsString(), InterestGetDto.class);
-
-        interestId = interestGetDtoCreated.id();
-
-        interestGetDto = new InterestGetDto(
-                interestId,
-                userGetDto,
-                petGetDto,
-                organizationGetDto,
-                interestGetDtoCreated.status(),
-                interestGetDtoCreated.timestamp(),
-                interestGetDtoCreated.reviewTimestamp()
-        );
-    }
-
-    private void updateInterestToRejected() throws Exception {
-
-        createInterest();
-
-        mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
+        mockMvc.perform(put(INTEREST_UPDATE_URL, persistedInterest.id())
                         .content(objectMapper.writeValueAsString(interestUpdateDtoRejected))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andReturn();
     }
 
+    private Stream<Arguments> provideCreateDTOsWithInvalidProps() {
+        return Stream.of(
+                Arguments.of(interestCreateDto.toBuilder().userId(null).build(), "userId"),
+                Arguments.of(interestCreateDto.toBuilder().petId(null).build(), "petId"),
+                Arguments.of(interestCreateDto.toBuilder().organizationId(null).build(), "organizationId")
+        );
+    }
+
     @Test
     @DisplayName("Test get current interest by organization id returns empty")
     void testGetCurrentInterestByOrganizationIdReturnsEmpty() throws Exception {
 
-        mockMvc.perform(get(URL + "/interest/organization/{organizationId}/current", orgId)
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_ORG_ID_URL, orgId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -159,9 +144,9 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get current interest by organization id returns interest list with size 1")
     void testGetCurrentInterestByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
-        createInterest();
+        persistInterest(interestCreateDto);
 
-        mockMvc.perform(get(URL + "/interest/organization/{organizationId}/current", orgId)
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_ORG_ID_URL, orgId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -172,10 +157,26 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test get current interest with invalid organization id returns organization not found")
+    void testGetCurrentInterestWithInvalidOrganizationIdReturnsInterestSizeOne() throws Exception {
+
+        persistInterest(interestCreateDto);
+
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_ORG_ID_URL, invalidOrgId)
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sort", "id")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is(format(ORG_NOT_FOUND, invalidOrgId))))
+                .andReturn();
+    }
+
+    @Test
     @DisplayName("Test get interest history by organization id returns empty")
     void testGetInterestHistoryByOrganizationIdReturnsEmpty() throws Exception {
 
-        mockMvc.perform(get(URL + "/interest/organization/{organizationId}/history", orgId)
+        mockMvc.perform(get(INTEREST_GET_HISTORY_BY_ORG_ID_URL, orgId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -189,9 +190,9 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get interest history by organization id returns interest list with size 1")
     void testGetInterestHistoryByOrganizationIdReturnsInterestSizeOne() throws Exception {
 
-        updateInterestToRejected();
+        persistAndUpdateInterestToRejected();
 
-        mockMvc.perform(get(URL + "/interest/organization/{orgId}/history", orgId)
+        mockMvc.perform(get(INTEREST_GET_HISTORY_BY_ORG_ID_URL, orgId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -205,7 +206,7 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get current interest by user id returns empty")
     void testGetCurrentInterestByUserIdReturnsEmpty() throws Exception {
 
-        mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_USER_ID_URL, userId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -219,9 +220,9 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get current interest by user id returns interest list with size 1")
     void testGetCurrentInterestByUserIdReturnsInterestSizeOne() throws Exception {
 
-        createInterest();
+        persistInterest(interestCreateDto);
 
-        mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_USER_ID_URL, userId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -232,10 +233,26 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test get current interest with invalid user id returns user not found")
+    void testGetCurrentInterestWithInvalidUserIdReturnsInterestSizeOne() throws Exception {
+
+        persistInterest(interestCreateDto);
+
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_USER_ID_URL, invalidUserId)
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sort", "id")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is(format(USER_NOT_FOUND, invalidUserId))))
+                .andReturn();
+    }
+
+    @Test
     @DisplayName("Test get interest history by user id returns empty")
     void testGetInterestHistoryByUserIdReturnsEmpty() throws Exception {
 
-        mockMvc.perform(get(URL + "/interest/user/{userId}/current", userId)
+        mockMvc.perform(get(INTEREST_GET_HISTORY_BY_USER_ID_URL, userId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -250,9 +267,9 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get interest history by user id returns interest list with size 1")
     void testGetInterestHistoryByUserIdReturnsInterestSizeOne() throws Exception {
 
-        updateInterestToRejected();
+        persistAndUpdateInterestToRejected();
 
-        mockMvc.perform(get(URL + "/interest/user/{userId}/history", userId)
+        mockMvc.perform(get(INTEREST_GET_HISTORY_BY_USER_ID_URL, userId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
@@ -266,15 +283,15 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get current interest by id returns interest")
     void testGetInterestByIdReturnsInterest() throws Exception {
 
-        createInterest();
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
 
-        mockMvc.perform(get(URL + "/interest/id/{id}", interestId)
+        mockMvc.perform(get(INTEREST_GET_BY_ID_URL, persistedInterest.id())
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(interestGetDto.id())))
+                .andExpect(jsonPath("$.id", is(persistedInterest.id())))
                 .andReturn();
     }
 
@@ -282,15 +299,13 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test get current interest with invalid id throws InterestNotFoundException")
     void testGetInterestByIdReturnsInterestNotFoundException() throws Exception {
 
-        String invalidId = "123123-123123";
-
-        mockMvc.perform(get(URL + "/interest/id/{id}", invalidId)
+        mockMvc.perform(get(INTEREST_GET_BY_ID_URL, invalidInterestId)
                         .param("page", "0")
                         .param("size", "5")
                         .param("sort", "id")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)))
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidInterestId)))
                 .andReturn();
     }
 
@@ -298,34 +313,54 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test create new interest works correctly")
     void testCreateInterest() throws Exception {
 
-        MvcResult result = mockMvc.perform(post(URL + "/interest/")
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
+
+        assertThat(persistedInterest)
+                .usingRecursiveComparison()
+                .ignoringFields("id")
+                .ignoringFieldsMatchingRegexes(".*createdAt")
+                .isEqualTo(expectedInterestGetDto);
+
+        assertNotNull(persistedInterest.createdAt());
+        assertTrue(persistedInterest.id().matches("^[0-9a-fA-F-]{36}$"));
+    }
+
+    @Test
+    @DisplayName("Test if create interest with repeated User/Pet/Org combination returns conflict with correct constraint and message")
+    void testIfCreateInterestWithExistentUserAndPetAndOrgReturnsConflict() throws Exception {
+
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
+
+        assertNotNull(persistedInterest.createdAt());
+        assertTrue(persistedInterest.id().matches("^[0-9a-fA-F-]{36}$"));
+
+        mockMvc.perform(post(INTEREST_CREATE_URL)
                         .content(objectMapper.writeValueAsString(interestCreateDto))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isCreated())
-                .andReturn();
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value(constraintMessageResolver.getMessage(UNIQUE_USER_PET_ORG_CONSTRAINT)))
+                .andExpect(jsonPath("$.constraint").value(UNIQUE_USER_PET_ORG_CONSTRAINT));
+    }
 
-        InterestGetDto interestGetDtoCreated = objectMapper.readValue(result.getResponse().getContentAsString(), InterestGetDto.class);
+    @ParameterizedTest(name = "Test {index}: Test with invalid {1}")
+    @MethodSource("provideCreateDTOsWithInvalidProps")
+    @DisplayName("Test if create an Interest with invalid field throws exception and validation message")
+    void testIfCreatingInterestFormWithInvalidFieldThrowsException(InterestCreateDto interestCreateDto, String invalidField) throws Exception{
 
-        interestId = interestGetDtoCreated.id();
-
-        interestGetDto = new InterestGetDto(
-                interestId,
-                userGetDto,
-                petGetDto,
-                organizationGetDto,
-                interestGetDtoCreated.status(),
-                interestGetDtoCreated.timestamp(),
-                interestGetDtoCreated.reviewTimestamp()
-        );
+        mockMvc.perform(post(INTEREST_CREATE_URL)
+                        .content(objectMapper.writeValueAsString(interestCreateDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.validationIssue." + invalidField, is(BLANK_FIELD)));
     }
 
     @Test
     @DisplayName("Test if update interest to form requested works correctly")
     void testUpdateInterestToFormRequested() throws Exception {
 
-        createInterest();
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
 
-        mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
+        mockMvc.perform(put(INTEREST_UPDATE_URL, persistedInterest.id())
                         .content(objectMapper.writeValueAsString(interestUpdateDtoFormRequested))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -336,9 +371,9 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test if update interest to rejected works correctly")
     void testUpdateInterestToRejected() throws Exception {
 
-        createInterest();
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
 
-        mockMvc.perform(put(URL + "/interest/update/{id}", interestId)
+        mockMvc.perform(put(INTEREST_UPDATE_URL, persistedInterest.id())
                         .content(objectMapper.writeValueAsString(interestUpdateDtoRejected))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -349,23 +384,21 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     @DisplayName("Test if delete interest works correctly")
     void testDeleteInterest() throws Exception {
 
-        createInterest();
+        InterestGetDto persistedInterest = persistInterest(interestCreateDto);
 
-        mockMvc.perform(delete(URL + "/interest/delete/{id}", interestGetDto.id())
+        mockMvc.perform(delete(INTEREST_DELETE_URL, persistedInterest.id())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().string(format(INTEREST_DELETE_MESSAGE, interestGetDto.id())));
+                .andExpect(content().string(format(INTEREST_DELETE_MESSAGE, persistedInterest.id())));
     }
 
     @Test
     @DisplayName("Test if delete interest with invalid id throws InterestNotFoundException")
     void testDeleteInterestWithInvalidIdThrowsInterestNotFoundException() throws Exception {
 
-        String invalidId = "123123-123123";
-
-        mockMvc.perform(delete(URL + "/interest/delete/{id}", invalidId)
+        mockMvc.perform(delete(INTEREST_DELETE_URL, invalidInterestId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidId)));
+                .andExpect(jsonPath("$.message").value(format(INTEREST_NOT_FOUND, invalidInterestId)));
     }
 }

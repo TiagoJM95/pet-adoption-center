@@ -18,8 +18,7 @@ import com.petadoption.center.dto.species.SpeciesGetDto;
 import com.petadoption.center.dto.user.UserCreateDto;
 import com.petadoption.center.dto.user.UserGetDto;
 import com.petadoption.center.repository.*;
-import com.petadoption.center.testUtils.ConstantsURL;
-import com.petadoption.center.testUtils.TestPersistenceHelper;
+import com.petadoption.center.util.ConstraintMessageResolver;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +50,7 @@ public class AbstractIntegrationTest extends TestContainerConfig {
     @Autowired
     protected ObjectMapper objectMapper;
     @Autowired
-    protected TestPersistenceHelper helper;
+    protected ConstraintMessageResolver constraintMessageResolver;
     @SpyBean
     protected UserRepository userRepository;
     @Autowired
@@ -146,7 +145,7 @@ public class AbstractIntegrationTest extends TestContainerConfig {
     }
 
     InterestGetDto persistInterest(InterestCreateDto dto) throws Exception {
-        MvcResult result = mockMvc.perform(post("")
+        MvcResult result = mockMvc.perform(post(INTEREST_CREATE_URL)
                         .content(objectMapper.writeValueAsString(dto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
