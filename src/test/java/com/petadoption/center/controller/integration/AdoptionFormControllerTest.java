@@ -35,9 +35,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AdoptionFormControllerTest extends AbstractIntegrationTest {
 
 
-    private static AdoptionFormCreateDto adoptionFormCreateDto;
-    private static AdoptionFormUpdateDto adoptionFormUpdateDto;
-    private static AdoptionFormGetDto expectedAdoptionFormGetDto;
+    private AdoptionFormCreateDto adoptionFormCreateDto;
+    private AdoptionFormUpdateDto adoptionFormUpdateDto;
+    private AdoptionFormGetDto expectedAdoptionFormGetDto;
 
     private String invalidAdoptionFormId;
 

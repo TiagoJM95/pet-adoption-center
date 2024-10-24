@@ -157,6 +157,22 @@ public class InterestControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @DisplayName("Test get current interest with invalid organization id returns organization not found")
+    void testGetCurrentInterestWithInvalidOrganizationIdReturnsInterestSizeOne() throws Exception {
+
+        persistInterest(interestCreateDto);
+
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_ORG_ID_URL, invalidOrgId)
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sort", "id")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is(format(ORG_NOT_FOUND, invalidOrgId))))
+                .andReturn();
+    }
+
+    @Test
     @DisplayName("Test get interest history by organization id returns empty")
     void testGetInterestHistoryByOrganizationIdReturnsEmpty() throws Exception {
 
@@ -213,6 +229,22 @@ public class InterestControllerTest extends AbstractIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()", is(1)))
+                .andReturn();
+    }
+
+    @Test
+    @DisplayName("Test get current interest with invalid user id returns user not found")
+    void testGetCurrentInterestWithInvalidUserIdReturnsInterestSizeOne() throws Exception {
+
+        persistInterest(interestCreateDto);
+
+        mockMvc.perform(get(INTEREST_GET_CURRENT_BY_USER_ID_URL, invalidUserId)
+                        .param("page", "0")
+                        .param("size", "5")
+                        .param("sort", "id")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message", is(format(USER_NOT_FOUND, invalidUserId))))
                 .andReturn();
     }
 
