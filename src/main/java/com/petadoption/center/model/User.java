@@ -2,29 +2,43 @@ package com.petadoption.center.model;
 
 import com.petadoption.center.model.embeddable.Address;
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
-@Entity
-@Data
-@NoArgsConstructor
-@Table(name = "users")
-public class User {
+import static com.petadoption.center.util.Utils.truncateToMicros;
 
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "UniqueUserEmail", columnNames = {"email"}),
+        @UniqueConstraint(name = "UniqueUserNif", columnNames = {"nif"}),
+        @UniqueConstraint(name = "UniqueUserPhoneNumber", columnNames = {"phone_number"})
+})
+public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @UuidGenerator
+    private String id;
 
     @Column(name = "first_name")
     private String firstName;
 
     @Column(name = "last_name")
     private String lastName;
-
     private String email;
+    private String nif;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
@@ -38,19 +52,13 @@ public class User {
     })
     private Address address;
 
-    @Column(name = "phone_country_code")
-    private String phoneCountryCode;
-
-    @Column(name = "phone_number")
-    private Integer phoneNumber;
-
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "user_favorite_pets",
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "pets_id")
     )
-    private Set<Pet> favoritePets;
+    private Set<Pet> favoritePets = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
@@ -58,8 +66,28 @@ public class User {
             joinColumns = @JoinColumn(name = "users_id"),
             inverseJoinColumns = @JoinColumn(name = "pets_id")
     )
-    private Set<Pet> adoptedPets;
+    private Set<Pet> adoptedPets = new HashSet<>();
 
-    @OneToMany(mappedBy = "user_id", fetch = FetchType.EAGER)
-    private Set<AdoptionForm> userAdoptionForms;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(email, user.email) && Objects.equals(nif, user.nif) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(dateOfBirth, user.dateOfBirth) && Objects.equals(address, user.address) && Objects.equals(favoritePets, user.favoritePets) && Objects.equals(adoptedPets, user.adoptedPets);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, email, nif, phoneNumber, dateOfBirth, address, favoritePets, adoptedPets);
+    }
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.createdAt == null) {
+            this.createdAt = truncateToMicros(LocalDateTime.now());
+        }
+    }
 }

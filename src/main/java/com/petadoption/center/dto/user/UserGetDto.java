@@ -1,34 +1,21 @@
 package com.petadoption.center.dto.user;
 
 import com.petadoption.center.model.embeddable.Address;
-import com.petadoption.center.model.AdoptionForm;
-import com.petadoption.center.model.Pet;
+import lombok.Builder;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
+import java.time.LocalDateTime;
 
-public record UserGetDto(
-
-        Long id,
-
+@Builder
+public record UserGetDto (
+        String id,
         String firstName,
-
         String lastName,
-
         String email,
-
+        String nif,
         LocalDate dateOfBirth,
-
         Address address,
-
-        String phoneCountryCode,
-
-        Integer phoneNumber,
-
-        List<Pet> favoritePets,
-
-        List<Pet> adoptedPets,
-
-        List<AdoptionForm> adoptionForms
-) {
-}
+        String phoneNumber,
+        LocalDateTime createdAt
+) implements Serializable {}
