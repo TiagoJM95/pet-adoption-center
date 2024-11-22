@@ -31,10 +31,10 @@ The objective of this project is to:
 
 ## 👥 Contributors
 
-| Name              | GitHub Profile                                | LinkedIn Profile                             |  
-|-------------------|-----------------------------------------------|----------------------------------------------|  
-| **Tiago Moreira** | [GitHub](https://github.com/TiagoJM95)      | [LinkedIn](https://www.linkedin.com/in/tiagojm95/) |  
-| **Fábio Guedes**  | [GitHub](https://github.com/Fguedes10/fguedes10)    | [LinkedIn](https://www.linkedin.com/in/fguedes10/)  |  
-| **Luís Matos**    | [GitHub](https://github.com/mtsluis/mtsluis)    | [LinkedIn](https://www.linkedin.com/in/matosmluis/)  |  
+| Name              | GitHub Profile                          | LinkedIn Profile                             |  
+|-------------------|-----------------------------------------|----------------------------------------------|  
+| **Tiago Moreira** | [GitHub](https://github.com/TiagoJM95)  | [LinkedIn](https://www.linkedin.com/in/tiagojm95/) |  
+| **Fábio Guedes**  | [GitHub](https://github.com/Fguedes10/fguedes10) | [LinkedIn](https://www.linkedin.com/in/fguedes10/)  |  
+| **Luís Matos**    | [GitHub](https://github.com/mtsluis)    | [LinkedIn](https://www.linkedin.com/in/matosmluis/)  |  
 
 ---
